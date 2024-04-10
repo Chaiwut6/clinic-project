@@ -12,20 +12,44 @@ body{
     min-height: 100vh;
 }
 
-.wapper p{
+.container p{
     font-size: 18px;
     text-align: center;
     padding: 1.5rem;
     font-weight: bold;
 }
 
-.wapper .btn{
+.container .btn{
     width: 100%;
     display: flex;
     justify-content: center;
 }
 
-.wapper .btn .button{
+.container .btn .login{
+    font-weight: bold;
+    margin: 16px;
+    font-size: 18px;
+    flex-basis: 30%;
+    background-color: #F2E1C1;
+    color: #1E1446;
+    height: 50px;
+    border-radius: 15px;
+    border: 0;
+    outline: 0;
+    cursor: pointer;
+    box-shadow: #000,#fff;
+}
+
+.container .btn .login:hover{
+    background-color: #ffd3c2;
+}
+
+.container .btn .register:hover{
+    background-color: #ffd3c2;
+}
+
+
+.container .btn .register{
     font-weight: bold;
     margin: 16px;
     font-size: 18px;
