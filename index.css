@@ -1,0 +1,40 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Kanit", sans-serif;
+}
+
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.wapper p{
+    font-size: 18px;
+    text-align: center;
+    padding: 1.5rem;
+    font-weight: bold;
+}
+
+.wapper .btn{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.wapper .btn .button{
+    font-weight: bold;
+    margin: 16px;
+    font-size: 18px;
+    flex-basis: 30%;
+    background-color: #F2E1C1;
+    color: #1E1446;
+    height: 50px;
+    border-radius: 15px;
+    border: 0;
+    outline: 0;
+    cursor: pointer;
+}
