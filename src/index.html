@@ -15,59 +15,124 @@
     <img src="/image/273012312_332483798892801_8651670715699583586_n 1.png" alt="logo">
     <p>สวัสดีค่ะ ยินดีต้อนรับเข้าสู่คลินิกกำลังใจ</p>
     <div class="btn">
-        <button class="login" type="button">ลงทะเบียน</button>
-        <button class="register" type="button">เข้าสู่ระบบ</button>
+        <button class="register" type="button" onclick="registerToggle()">ลงทะเบียน</button>
+        <button class="login" type="button"  onclick="loginToggle()">เข้าสู่ระบบ</button>
     </div>
     </div>  
-      <div class="register-from">
-        <div class="from">
-      <div class="close"><i class="fa-solid fa-xmark"></i></div>
+
+      <div class="register-form">
+        <div class="form">
+      <div class="close" onclick="registerToggle()"><i class="fa-regular fa-circle-xmark fa-lg" style="color: #f00000;"></i></div>
         <div class="text">
             <h1>ลงทะเบียน</h1>
         </div>
         <form action="#">
-            <input type="text" placeholder="ชื่อจริง">
-            <input type="text" placeholder="นามสกุล">
-            <br>
-            <input type="text" placeholder="ชื่อเล่น">
-            <input type="tel" placeholder="เบอร์โทร" maxlength="10">
-            <br>
+            <div class="user-details">
+            <div class="input-box">
+                <span class="details">ชื่อจริง</span>
+                <input type="text" >  
+            </div>
+            <div class="input-box">
+                <span class="details">นามสกุล</span>
+                <input type="text" > 
+            </div>
+            <div class="input-box">
+                <span class="details">ชื่อเล่น</span>
+                <input type="text" >
+            </div>
+            <div class="input-box">
+                <span class="details">เบอร์โทร</span>
+                <input type="tel"  maxlength="10">
+            </div>
+            <div class="input-box">
+                <span class="details">คณะ</span>
+                <div class="select-box">
             <select id="faculty" name="faculty">
-                <option value="science">วิทยาศาสตร์</option>
-                <option value="engineering">วิศวกรรม</option>
-                <option value="arts">ศิลปกรรม</option>
-                <option value="medicine">แพทยศาสตร์</option>
+                <option value="Business">บริหารธุรกิจ </option>
+                <option value="engineering">วิศวกรรมศาสตร์</option>
+                <option value="Economics">เทคโนโลยีคหกรรมศาสตร์</option>
+                <option value=" Arts">ศิลปกรรมศาสตร์</option>
+                <option value="Agricultural">เทคโนโลยีการเกษตร</option>
+                <option value="Education">ครุศาสตร์อุตสาหกรรม</option>
+                <option value="Architecture">สถาปัตยกรรมศาสตร์</option>
+                <option value="Science">วิทยาศาสตร์และเทคโนโลยี</option>
+                <option value="Communication">เทคโนโลยีสื่อสารมวลชน</option>
+                <option value="Liberal Art">ศิลปศาสตร์</option>
+                <option value="Integrative">แพทย์บูรณาการ</option>
+                <option value="Nursing">พยาบาลศาสตร์</option>
             </select>
+        </div>
+            </div>
+            
+            <div class="input-box">
+                <span class="details">ชั้นปี</span>
+            <div class="select-box">
             <select id="year" name="year">
                 <option value="1">ปี 1</option>
                 <option value="2">ปี 2</option>
                 <option value="3">ปี 3</option>
                 <option value="4">ปี 4</option>
             </select>
-            <br>
-            <input type="text" placeholder="รหัสประจำตัว" maxlength="14">
-            <br>
-            <input type="password" placeholder="รหัสผ่าน">
-            <input type="password" placeholder="ยืนยันรหัสผ่าน">
-            <br>
-            <input type="submit" value="ลงทะเบียน">
+            </div>
+            </div>
+            <div class="input-box">
+                <span class="details">รหัสประจำตัว(มีขีด)</span>
+                <input type="text"  maxlength="14">
+            </div>
+            <div class="input-box">
+                <span class="details">รหัสผ่าน</span>
+                <input type="password" >
+            </div>
+        
+            <div class="input-box">
+                <span class="details">ยืนยันรหัสผ่าน</span>
+                <input type="password" >
+            </div>
+        </div>
+            <div class="button">
+                <input type="submit" value="ลงทะเบียน">
+            </div>   
         </form>
         </div>
       </div>
-      <div class="login-register">
-        <div class="from">
-            <div class="close"><i class="fa-solid fa-xmark"></i></div>
-              <div class="text">
+
+      <div class="login-form">
+        <div class="form">
+            <div class="close" onclick="loginToggle()"><i class="fa-regular fa-circle-xmark fa-lg" style="color: #f00000;"></i></div>
+              <div class="text-login">
                   <h1>เข้าสู่ระบบ</h1>
               </div>
               <form action="#">
-                  <input type="text" placeholder="รหัสประจำตัว" maxlength="14">
-                  <br>
-                  <input type="password" placeholder="รหัสผ่าน">
-                  <br>
-                  <input type="submit" value="เข้าสู่ระบบ">
+                <div class="login-details">
+                <div class="login-input-box">
+                    <span class="details">รหัสประจำตัว(มีขีด)</span>
+                    <input type="text"  maxlength="14">
+                </div>
+                <div class="login-input-box">
+                    <span class="details">รหัสผ่าน</span>
+                    <input type="password" >
+                </div>
+            </div>
+                <div class="button">
+                    <input type="submit" value="เข้าสู่ระบบ">
+                </div> 
               </form>
               </div>
       </div>
+
+      <script>
+        function registerToggle(){
+            var container = document.querySelector('.container');
+            container.classList.toggle('active');
+            var popup = document.querySelector('.register-form');
+            popup.classList.toggle('active');
+        }
+        function loginToggle(){
+            var container = document.querySelector('.container');
+            container.classList.toggle('active');
+            var popup = document.querySelector('.login-form');
+            popup.classList.toggle('active');
+        }
+      </script>
 </body>
 </html>

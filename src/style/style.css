@@ -37,7 +37,7 @@ body{
     border: 0;
     outline: 0;
     cursor: pointer;
-    box-shadow: #000,#fff;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
 }
 
 .container .btn .login:hover{
@@ -61,4 +61,170 @@ body{
     border: 0;
     outline: 0;
     cursor: pointer;
+}
+
+.register-form,.login-form{
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+    transform: translate(-50%,-50%);
+    transition: .5s;
+    visibility: hidden;
+    opacity: 0;
+}
+
+.form{
+    max-width: 700px;
+    width: 100%;
+    padding: 25px 30px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+}
+
+.form .close{
+    text-align: right;
+    cursor: pointer;
+}
+
+.form .text h1{
+    text-align: left;
+    font-size: 30px;
+    color: #1E1446;
+}
+
+.form .text-login h1{
+    text-align: center;
+    font-size: 30px;
+    color: #1E1446;
+}
+
+
+.register-form form .user-details{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 20px 0 12px 0;
+}
+
+.login-form form .login-details{
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 20px 0 12px 0;
+}
+
+.login-input-box input{
+    height: 45px;
+    width: 100%;
+    outline: none;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    padding-left: 15px;
+    font-size: 16px;
+    border-bottom-width: 2px;
+    transition: all 0.3s ease;
+}
+
+.login-input-box .details{
+    font-weight: 500;
+    margin-bottom: 5px; 
+    color: #1E1446;
+}
+form .user-details .input-box{
+    margin-bottom: 15px;
+    width: calc(100% / 2 - 20px);
+}
+
+form .login-details .login-input-box{
+    margin-bottom: 15px;
+}
+
+.user-details .input-box .details{
+    display: block;
+   font-weight: 500;
+   margin-bottom: 5px; 
+   color: #1E1446;
+}
+.user-details .input-box input{
+    height: 45px;
+    width: 100%;
+    outline: none;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    padding-left: 15px;
+    font-size: 16px;
+    border-bottom-width: 2px;
+    transition: all 0.3s ease; 
+}
+
+ .input-box .select-box select{
+    outline: none;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    padding-left: 5px;
+    font-size: 16px;
+    border-bottom-width: 2px;
+    height: 45px;
+    width: 100%;
+}
+
+.user-details .input-box input:focus,
+.user-details .input-box input:valid{
+    border-color: #ccc;
+}
+
+form .button{
+    height: 45px;
+    margin: 45px 0;
+}
+
+form .button input{
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 18px;
+    height: 100%;
+    width: 100%;
+    outline: none;
+    color: #1E1446;
+    background: #F2E1C1;
+    border: none;
+    letter-spacing: 1px;
+    border-radius: 10px;
+}
+form .button input:hover{
+    background-color: #ffd3c2;
+}
+
+.register-form.active,
+.login-form.active{
+    top: 50%;
+    transition: .5s;
+    visibility: visible;
+    opacity: 1;
+}
+
+.container.active{
+    filter: blur(5px);
+    transition: .5s;
+    pointer-events: none;
+}
+
+@media (max-width: 584px) {
+    .form{
+        max-width: 100%;
+    }
+    form .user-details .input-box{
+        margin-bottom: 15px;
+        width: 100%;
+    }
+    .register-form form .user-details{
+        max-height: 300px;
+        overflow-y:scroll;
+    }
+    .user-details::-webkit-scrollbar{
+        width: 0;
+    }
+    
 }
