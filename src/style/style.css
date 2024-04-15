@@ -64,7 +64,7 @@ body{
     cursor: pointer;
 }
 
-.register-form,.login-form{
+.register-form,.login-form,.policy-form{
     position: absolute;
     top: 15%;
     left: 50%;
@@ -181,7 +181,8 @@ form .button{
     margin: 45px 0;
 }
 
-form .button input{
+
+form .button button{
     cursor: pointer;
     font-weight: bold;
     font-size: 18px;
@@ -194,12 +195,38 @@ form .button input{
     letter-spacing: 1px;
     border-radius: 10px;
 }
-form .button input:hover{
-    transform: scale(0.99);
+form .button button:hover{
+    transform: scale(0.9);
 }
 
+#regisbtn {
+    background-color: lightgrey; 
+    color: #FBFBF8;
+    border: none;
+    cursor: pointer;
+}
+#regisbtn:disabled {
+    background-color: lightgrey; 
+    cursor: not-allowed;
+}
+#regisbtn:enabled {
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 18px;
+    height: 100%;
+    width: 100%;
+    outline: none;
+    color: #FBFBF8;
+    background: #ffbd03;
+    border: none;
+    letter-spacing: 1px;
+    border-radius: 10px;
+}
+
+
 .register-form.active,
-.login-form.active{
+.login-form.active,
+.policy-form.active{
     top: 50%;
     transition: .5s;
     visibility: visible;

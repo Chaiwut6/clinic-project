@@ -30,24 +30,24 @@
             <div class="user-details">
             <div class="input-box">
                 <span class="details">ชื่อจริง</span>
-                <input type="text" >  
+                <input type="text" required>  
             </div>
             <div class="input-box">
                 <span class="details">นามสกุล</span>
-                <input type="text" > 
+                <input type="text" required> 
             </div>
             <div class="input-box">
                 <span class="details">ชื่อเล่น</span>
-                <input type="text" >
+                <input type="text" required>
             </div>
             <div class="input-box">
                 <span class="details">เบอร์โทร</span>
-                <input type="tel"  maxlength="10">
+                <input type="tel"  maxlength="10" required>
             </div>
             <div class="input-box">
                 <span class="details">คณะ</span>
                 <div class="select-box">
-            <select id="faculty" name="faculty">
+            <select id="faculty" name="faculty" >
                 <option value="Business">บริหารธุรกิจ </option>
                 <option value="engineering">วิศวกรรมศาสตร์</option>
                 <option value="Economics">เทคโนโลยีคหกรรมศาสตร์</option>
@@ -65,9 +65,9 @@
             </div>
             
             <div class="input-box">
-                <span class="details">ชั้นปี</span>
+                <span class="details" >ชั้นปี</span>
             <div class="select-box">
-            <select id="year" name="year">
+            <select id="year" name="year" required>
                 <option value="1">ปี 1</option>
                 <option value="2">ปี 2</option>
                 <option value="3">ปี 3</option>
@@ -77,20 +77,25 @@
             </div>
             <div class="input-box">
                 <span class="details">รหัสประจำตัว(มีขีด)</span>
-                <input type="text"  maxlength="14">
+                <input type="text"  maxlength="14" required>
             </div>
             <div class="input-box">
                 <span class="details">รหัสผ่าน</span>
-                <input type="password" >
+                <input type="password" required>
             </div>
         
             <div class="input-box">
                 <span class="details">ยืนยันรหัสผ่าน</span>
-                <input type="password" >
-            </div>
+                <input type="password" required>
+            </div>  
         </div>
-            <div class="button">
-                <input type="submit" value="ลงทะเบียน">
+        <!-- <div class="policy">
+            <input type="checkbox" id="checkbox">
+            <span>ยอมรับ</span> 
+            <a onclick="policyToggle()" >นโยบายความเป็นส่วนตัว</a>
+        </div> -->
+            <div class="button" >
+                <button id="regisbtn" type="submit"  >ลงทะเบียน</button>
             </div>   
         </form>
         </div>
@@ -106,21 +111,34 @@
                 <div class="login-details">
                 <div class="login-input-box">
                     <span class="details">รหัสประจำตัว(มีขีด)</span>
-                    <input type="text"  maxlength="14">
+                    <input type="text"  maxlength="14" required>
                 </div>
                 <div class="login-input-box">
                     <span class="details">รหัสผ่าน</span>
-                    <input type="password" >
+                    <input type="password" required>
                 </div>
             </div>
                 <div class="button">
-                    <input type="submit" value="เข้าสู่ระบบ">
+                    <button type="submit">เข้าสู่ระบบ</button>
                 </div> 
               </form>
               </div>
       </div>
 
+      <!-- <div class="policy-form">
+        <div class="form">
+            <div class="close" onclick="policyToggle()"><i class="fa-regular fa-circle-xmark fa-lg" style="color: #f00000;"></i></div>
+              <div class="text-login">
+                  <h1>นโยบายความเป็นส่วนตัว</h1>
+              </div>
+              <form action="#">
+                
+              </form>
+              </div>
+      </div> -->
+
       <script>
+    
         function registerToggle(){
             var container = document.querySelector('.container');
             container.classList.toggle('active');
@@ -133,6 +151,13 @@
             var popup = document.querySelector('.login-form');
             popup.classList.toggle('active');
         }
+        function policyToggle(){
+            var container = document.querySelector('.container');
+            container.classList.toggle('active');
+            var popup = document.querySelector('.policy-form');
+            popup.classList.toggle('active');
+        }
+
       </script>
 </body>
 </html>
