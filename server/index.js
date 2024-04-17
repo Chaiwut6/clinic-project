@@ -6,7 +6,7 @@ const mysql = require('mysql2/promise')
 // const jwt = require('jsonwebtoken')
 // const cookieParser = require('cookie-parser')
 // const session = require('express-session')
-// const bcrypt = require('bcryqt')
+const bcrypt = require('bcrypt')
 
 
 const app = express()
@@ -22,8 +22,9 @@ const app = express()
 //   resave: false,
 //   saveUninitialized: true
 // }))
-const port = 8001
+const port = 8000
 // const secret = 'mysecret'
+
 
 let conn = null
 
@@ -55,10 +56,10 @@ app.use(bodyParser.json());
 
 app.post('/api/register', async (req, res) => {
   const { user_id, password, user_fname, user_lname, nickname, year, phone, faculty } = req.body;
-
+  const passwordHash = await bcrypt.hash(password, 10)
   const userData = {
     user_id, 
-    password, 
+    password : passwordHash, 
     user_fname, 
     user_lname, 
     nickname, 
@@ -66,6 +67,7 @@ app.post('/api/register', async (req, res) => {
     phone, 
     faculty
   };
+
 
   const [results] = await conn.query('INSERT INTO users SET ?', userData);
   res.json({
