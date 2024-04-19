@@ -15,4 +15,4 @@ COPY ./index.js ./
 EXPOSE 8000
 
 
-CMD ["npm", "start"]
+CMD ["npx", "nodemon", "--legacy-watch", "index.js"]
