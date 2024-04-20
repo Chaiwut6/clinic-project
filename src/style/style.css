@@ -85,9 +85,18 @@ body{
     border-radius: 15px;
 }
 
-.form .close{
+.form .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: right;
     cursor: pointer;
+
 }
 
 .form .text h1{
@@ -178,7 +187,7 @@ form .login-details .login-input-box{
 
 form .button{
     height: 45px;
-    margin: 45px 0;
+    margin: 25px 0;
 }
 
 
