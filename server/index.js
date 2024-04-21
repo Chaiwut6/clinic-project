@@ -3,10 +3,11 @@ const bodyParser = require('body-parser');
 const http = require('http')
 const express = require('express')
 const mysql = require('mysql2/promise')
-// const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken')
 // const cookieParser = require('cookie-parser')
 // const session = require('express-session')
 const bcrypt = require('bcryptjs')
+const fs = require('fs');
 
 
 const app = express()
@@ -23,7 +24,8 @@ const app = express()
 //   saveUninitialized: true
 // }))
 const port = 8000
-// const secret = 'mysecret'
+const secret = 'mysecret'
+
 
 
 let conn = null
@@ -88,8 +90,19 @@ app.post("/api/login", async (req, res) => {
     const { user_id, password} = req.body;
     const [results] = await conn.query("SELECT * from users WHERE user_id = ?", user_id);
     const userData = results[0]
+    const match = await bcrypt.compare(password,userData.password)
+    if(!match){
+      res.status(400).json({
+        message: 'login fail (wrong userid,pass)'
+      })
+      return false
+    }
+
+    const token = jwt.sign({user_id}, secret,{expiresIn: '1h'})
+
     res.json({
-      userData
+      message: 'login success',
+      token
     })
   } catch (error) {
     console.log('error',error)
