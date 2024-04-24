@@ -1,4 +1,4 @@
-// const cors = require('cors')
+const cors = require('cors')
 const bodyParser = require('body-parser');
 const http = require('http')
 const express = require('express')
@@ -11,11 +11,11 @@ const fs = require('fs');
 
 
 const app = express()
-// app.use(express.json())
-// app.use(cors({
-//   credentials: true,
-//   origin: ['http://localhost:8888']
-// }))
+app.use(express.json())
+app.use(cors({
+  credentials: true,
+  origin: ['http://localhost:8888']
+}))
 // app.use(cookieParser())
 
 // app.use(session({
@@ -113,11 +113,33 @@ app.post("/api/login", async (req, res) => {
   }
 })
 
-app.get('/users', async (req, res) => {
-  const [results] = await conn.query('SELECT * FROM users')
-  res.json(results)
+app.get('/api/users', async (req, res) => {
+  try {
+    const authHeader = req.headers['authorization']
+    let authToken = ''
+    if(authHeader){
+      authToken = authHeader.split(' ')[1]
+    }
+    console.log('authToken',authToken)
+    const user = jwt.verify(authToken,secret)
+    const [checkResults] = await conn.query('SELECT * FROM users where user_id = ?' , user.user_id)
+    if(!checkResults[0]){
+      throw{message: 'user not found'}
+    }
+    const [results] = await conn.query('SELECT * FROM users')
+    res.json({
+    users: results
+  })
+  } catch (error) {
+    console.log('error',error)
+    res.status(403).json({
+      message: 'authentication fail',
+      error
+    })
+  }
 })
 
 app.listen(port, async () => {
     console.log(`Server running at http://localhost:${port}/`);
 });
+

@@ -112,18 +112,18 @@
                 <div class="login-details">
                 <div class="login-input-box">
                     <span class="details">รหัสประจำตัว(มีขีด)</span>
-                    <input type="text"  maxlength="14" required>
+                    <input name="user_id" type="text"  maxlength="14" required>
                 </div>
                 <div class="login-input-box">
                     <span class="details">รหัสผ่าน</span>
-                    <input type="password" required>
+                    <input name="password" type="password" required>
                 </div>
                 <div class="forgot-pass">
                     <a href="#">ลืมรหัสผ่าน</a>
                 </div>
             </div>
                 <div class="button">
-                    <button type="submit">เข้าสู่ระบบ</button>
+                    <button onclick="login()" type="submit">เข้าสู่ระบบ</button>
                 </div> 
 
               </form>
@@ -141,7 +141,7 @@
               </form>
               </div>
       </div> -->
-
+      <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
       <script src="../่script/index.js"></script>
 </body>
 </html>

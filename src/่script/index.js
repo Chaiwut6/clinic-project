@@ -27,3 +27,9 @@ var inputs = document.querySelectorAll('input');
             var popup = document.querySelector('.policy-form');
             popup.classList.toggle('active');
         }
+
+const login = () => {
+    const user_id = document.querySelector('input[name=user_id]').value
+    const password = document.querySelector('input[name=password]').value
+    console.log(user_id,password)
+}            

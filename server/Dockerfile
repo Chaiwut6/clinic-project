@@ -16,3 +16,4 @@ EXPOSE 8000
 
 
 CMD ["npx", "nodemon", "--legacy-watch", "index.js"]
+
