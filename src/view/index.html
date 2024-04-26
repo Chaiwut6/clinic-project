@@ -9,10 +9,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../style/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../js/login.js"></script>
 </head>
 <body>
     <div class="container">
-    <img src="/image/273012312_332483798892801_8651670715699583586_n 1.png" alt="logo">
+    <img src="../image/273012312_332483798892801_8651670715699583586_n 1.png" alt="logo">
     <p>สวัสดีค่ะ ยินดีต้อนรับเข้าสู่คลินิกกำลังใจ</p>
     <div class="btn">
         <button class="register" type="button" onclick="registerToggle()">ลงทะเบียน</button>
@@ -108,7 +111,7 @@
               <div class="text-login">
                   <h1>เข้าสู่ระบบ</h1>
               </div>
-              <form action="#">
+              <form action="http://localhost:8000/api/login" method="post">
                 <div class="login-details">
                 <div class="login-input-box">
                     <span class="details">รหัสประจำตัว(มีขีด)</span>
@@ -125,7 +128,7 @@
                 <div class="button">
                     <button onclick="login()" type="submit">เข้าสู่ระบบ</button>
                 </div> 
-
+                <div id="status-message"></div>
               </form>
               </div>
       </div>
@@ -141,7 +144,6 @@
               </form>
               </div>
       </div> -->
-      <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
-      <script src="../่script/index.js"></script>
+
 </body>
 </html>

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "python3 -m http.server 8888 --directory ../src/view",
+    "start": "python3 -m http.server --directory ../src 8888",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

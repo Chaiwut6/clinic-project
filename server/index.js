@@ -87,31 +87,38 @@ app.post('/api/register', async (req, res) => {
 
 app.post("/api/login", async (req, res) => {
   try {
-    const { user_id, password} = req.body;
-    const [results] = await conn.query("SELECT * from users WHERE user_id = ?", user_id);
-    const userData = results[0]
-    const match = await bcrypt.compare(password,userData.password)
-    if(!match){
+    const { user_id, password } = req.body;
+    const [results] = await conn.query("SELECT * FROM users WHERE user_id = ?", [user_id]);
+    const userData = results[0];
+    if (!userData) {
       res.status(400).json({
-        message: 'login fail (wrong userid,pass)'
-      })
-      return false
+        message: 'login fail (wrong userid)'
+      });
+      return false;
+    }
+    const match = await bcrypt.compare(password, userData.password);
+    if (!match) {
+      res.status(400).json({
+        message: 'login fail (wrong password)'
+      });
+      return false;
     }
 
-    const token = jwt.sign({user_id}, secret,{expiresIn: '1h'})
+    const token = jwt.sign({ user_id }, secret, { expiresIn: '1h' });
 
     res.json({
       message: 'login success',
       token
-    })
+    });
   } catch (error) {
-    console.log('error',error)
+    console.log('error', error);
     res.status(401).json({
       message: 'login fail',
       error
-    })
+    });
   }
-})
+});
+
 
 app.get('/api/users', async (req, res) => {
   try {

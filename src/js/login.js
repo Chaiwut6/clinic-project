@@ -1,3 +1,4 @@
+
 var inputs = document.querySelectorAll('input');
         inputs.forEach(function(input) {
             input.addEventListener('invalid', function(event) {
@@ -28,8 +29,22 @@ var inputs = document.querySelectorAll('input');
             popup.classList.toggle('active');
         }
 
-const login = () => {
-    const user_id = document.querySelector('input[name=user_id]').value
-    const password = document.querySelector('input[name=password]').value
-    console.log(user_id,password)
-}            
+        const login = async () => {
+            try {
+              const user_id = document.querySelector('input[name=user_id]').value
+              const password = document.querySelector('input[name=password]').value
+              const response = await axios.post('http://localhost:8000/api/login',{
+                user_id,
+                password
+              })
+              localStorage.setItem('token',response.data.token)
+              alert('login success');
+              window.location.href = '../view/main.html';
+            } catch (error) {
+              console.error('Error:', error);
+              alert('login fail');
+              window.location.href = '../view/index.html';
+            }
+          }   
+          
+
