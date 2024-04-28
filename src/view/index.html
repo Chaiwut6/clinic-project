@@ -29,40 +29,40 @@
         <div class="text">
             <h1>ลงทะเบียน</h1>
         </div>
-        <form action="#">
+        <form action="http://localhost:8000/api/register" method="post">
             <div class="user-details">
             <div class="input-box">
                 <span class="details">ชื่อจริง</span>
-                <input  type="text" required>  
+                <input id=user_fname type="text" required>  
             </div>
             <div class="input-box">
                 <span class="details">นามสกุล</span>
-                <input type="text" required> 
+                <input id=user_lname type="text" required> 
             </div>
             <div class="input-box">
                 <span class="details">ชื่อเล่น</span>
-                <input type="text" required>
+                <input id=nickname type="text" required>
             </div>
             <div class="input-box">
                 <span class="details">เบอร์โทร</span>
-                <input type="tel"  maxlength="10" required>
+                <input id=phone type="tel"  maxlength="10" required>
             </div>
             <div class="input-box">
                 <span class="details">คณะ</span>
                 <div class="select-box">
             <select id="faculty" name="faculty" >
-                <option value="Business">บริหารธุรกิจ </option>
-                <option value="engineering">วิศวกรรมศาสตร์</option>
-                <option value="Economics">เทคโนโลยีคหกรรมศาสตร์</option>
-                <option value=" Arts">ศิลปกรรมศาสตร์</option>
-                <option value="Agricultural">เทคโนโลยีการเกษตร</option>
-                <option value="Education">ครุศาสตร์อุตสาหกรรม</option>
-                <option value="Architecture">สถาปัตยกรรมศาสตร์</option>
-                <option value="Science">วิทยาศาสตร์และเทคโนโลยี</option>
-                <option value="Communication">เทคโนโลยีสื่อสารมวลชน</option>
-                <option value="Liberal Art">ศิลปศาสตร์</option>
-                <option value="Integrative">แพทย์บูรณาการ</option>
-                <option value="Nursing">พยาบาลศาสตร์</option>
+                <option value="บริหารธุรกิจ ">บริหารธุรกิจ</option>
+                <option value="วิศวกรรมศาสตร์">วิศวกรรมศาสตร์</option>
+                <option value="เทคโนโลยีคหกรรมศาสตร์">เทคโนโลยีคหกรรมศาสตร์</option>
+                <option value="ศิลปกรรมศาสตร์">ศิลปกรรมศาสตร์</option>
+                <option value="เทคโนโลยีการเกษตร">เทคโนโลยีการเกษตร</option>
+                <option value="ครุศาสตร์อุตสาหกรรม">ครุศาสตร์อุตสาหกรรม</option>
+                <option value="สถาปัตยกรรมศาสตร์">สถาปัตยกรรมศาสตร์</option>
+                <option value="วิทยาศาสตร์และเทคโนโลยี">วิทยาศาสตร์และเทคโนโลยี</option>
+                <option value="เทคโนโลยีสื่อสารมวลชน">เทคโนโลยีสื่อสารมวลชน</option>
+                <option value="ศิลปศาสตร์">ศิลปศาสตร์</option>
+                <option value="แพทย์บูรณาการ">แพทย์บูรณาการ</option>
+                <option value="พยาบาลศาสตร์">พยาบาลศาสตร์</option>
             </select>
         </div>
             </div>
@@ -71,26 +71,26 @@
                 <span class="details" >ชั้นปี</span>
             <div class="select-box">
             <select id="year" name="year" required>
-                <option value="1">ปี 1</option>
-                <option value="2">ปี 2</option>
-                <option value="3">ปี 3</option>
-                <option value="4">ปี 4</option>
-                <option value="5">ปี 5</option>
+                <option value="ปี 1">ปี 1</option>
+                <option value="ปี 2">ปี 2</option>
+                <option value="ปี 3">ปี 3</option>
+                <option value="ปี 4">ปี 4</option>
+                <option value="ปี 5">ปี 5</option>
             </select>
             </div>
             </div>
             <div class="input-box">
                 <span class="details">รหัสประจำตัว(มีขีด)</span>
-                <input type="text"  maxlength="14" required>
+                <input id= user_id type="text"  maxlength="14" required>
             </div>
             <div class="input-box">
                 <span class="details">รหัสผ่าน</span>
-                <input type="password" required>
+                <input id="password" type="password" required>
             </div>
         
             <div class="input-box">
                 <span class="details">ยืนยันรหัสผ่าน</span>
-                <input type="password" required>
+                <input id="confirm_password" type="password" required>
             </div>  
         </div>
         <!-- <div class="policy">
@@ -99,7 +99,7 @@
             <a onclick="policyToggle()" >นโยบายความเป็นส่วนตัว</a>
         </div> -->
             <div class="button" >
-                <button id="regisbtn" type="submit"  >ลงทะเบียน</button>
+                <button onclick="register()" type="button"  >ลงทะเบียน</button>
             </div>   
         </form>
         </div>

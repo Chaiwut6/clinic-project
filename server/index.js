@@ -59,7 +59,7 @@ app.use(bodyParser.json());
 app.post('/api/register', async (req, res) => {
   try {
   const { user_id, password, user_fname, user_lname, nickname, year, phone, faculty } = req.body;
-  const passwordHash = await bcrypt.hash(password, 10)
+  const passwordHash = await bcrypt.hash(password, 10);
   const userData = {
     user_id, 
     password : passwordHash, 
@@ -80,7 +80,7 @@ app.post('/api/register', async (req, res) => {
     console.log('error', error)
     res.json({
       message: 'insert error',
-      error
+      error: error.message
     })
   }
 });

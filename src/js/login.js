@@ -29,6 +29,57 @@ var inputs = document.querySelectorAll('input');
             popup.classList.toggle('active');
         }
 
+        const register = async () => {
+          try {
+            const password = document.querySelector('#password').value;
+            const confirm_password = document.querySelector('#confirm_password').value;
+        
+            if (password !== confirm_password) {
+              alert('รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน');
+              document.querySelector('#password').value = '';
+              document.querySelector('#confirm_password').value = '';
+              return; 
+            }
+        
+            if (!password || password.length === 0) {
+              alert('กรุณากรอกรหัสผ่าน');
+              return;
+            }
+        
+            const user_fname = document.querySelector('#user_fname').value;
+            const user_lname = document.querySelector('#user_lname').value;
+            const nickname = document.querySelector('#nickname').value;
+            const phone = document.querySelector('#phone').value;
+            const faculty = document.querySelector('#faculty').value;
+            const year = document.querySelector('#year').value;
+            const user_id = document.querySelector('#user_id').value;
+        
+            const response = await axios.post('http://localhost:8000/api/register', {
+              user_fname,
+              user_lname,
+              nickname,
+              phone,
+              faculty,
+              year,
+              user_id,
+              password
+            });
+            if (response.data.message === 'insert OK') {
+              alert('ลงทะเบียนสำเร็จ');
+              window.location.href = '../view/test.html';
+            } else {
+              alert('มีข้อผิดพลาดในการลงทะเบียน');
+              window.location.href = '../view/index.html';
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('มีข้อผิดพลาดในการลงทะเบียน');
+            window.location.href = '../view/index.html';
+          }
+        };
+        
+        
+
         const login = async () => {
             try {
               const user_id = document.querySelector('input[name=user_id]').value
