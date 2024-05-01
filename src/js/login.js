@@ -54,7 +54,7 @@ var inputs = document.querySelectorAll('input');
             const year = document.querySelector('#year').value;
             const user_id = document.querySelector('#user_id').value;
         
-            const response = await axios.post('http://localhost:8000/api/register', {
+            const response = await axios.post('http://localhost:8000/api/register-user', {
               user_fname,
               user_lname,
               nickname,
@@ -66,7 +66,7 @@ var inputs = document.querySelectorAll('input');
             });
             if (response.data.message === 'insert OK') {
               alert('ลงทะเบียนสำเร็จ');
-              window.location.href = '../view/test.html';
+              window.location.href = '../view/user_test.html';
             } else {
               alert('มีข้อผิดพลาดในการลงทะเบียน');
               window.location.href = '../view/index.html';
@@ -78,19 +78,55 @@ var inputs = document.querySelectorAll('input');
           }
         };
         
+        const login = async () => {
+          const user_id = document.querySelector('input[name=user_id]').value;
+          const doc_id = document.querySelector('input[name=user_id]').value;
+          
+          try {
+            if (user_id) {
+              loginuser();
+            } else if (doc_id) {
+              logindoctor();
+            } 
+            console.log("Login success");
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Login failed');
+            window.location.href = '../view/index.html';
+          }
+        };
+      
         
 
-        const login = async () => {
+        const loginuser = async () => {
             try {
               const user_id = document.querySelector('input[name=user_id]').value
               const password = document.querySelector('input[name=password]').value
-              const response = await axios.post('http://localhost:8000/api/login',{
+              const response_user = await axios.post('http://localhost:8000/api/login-user',{
                 user_id,
                 password
               })
-              localStorage.setItem('token',response.data.token)
+              localStorage.setItem('token',response_user.data.token)
               alert('login success');
-              window.location.href = '../view/main.html';
+              window.location.href = '../view/user_main.html';
+            } catch (error) {
+              console.error('Error:', error);
+              alert('login fail');
+              window.location.href = '../view/index.html';
+            }
+          }   
+
+          const logindoctor = async () => {
+            try {
+              const doc_id = document.querySelector('input[name=user_id]').value
+              const password = document.querySelector('input[name=password]').value
+              const response_doctor = await axios.post('http://localhost:8000/api/login-doctor',{
+                doc_id,
+                password
+              })
+              localStorage.setItem('token',response_doctor.data.token)
+              alert('login success');
+              window.location.href = '../view/doc_main.html';
             } catch (error) {
               console.error('Error:', error);
               alert('login fail');

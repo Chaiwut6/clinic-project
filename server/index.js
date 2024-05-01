@@ -56,9 +56,9 @@ app.use(async (req, res, next) => {
 
 app.use(bodyParser.json());
 
-app.post('/api/register', async (req, res) => {
+app.post('/api/register-user', async (req, res) => {
   try {
-  const { user_id, password, user_fname, user_lname, nickname, year, phone, faculty } = req.body;
+  const { user_id, password, user_fname, user_lname, nickname, year, phone, faculty, status } = req.body;
   const passwordHash = await bcrypt.hash(password, 10);
   const userData = {
     user_id, 
@@ -68,7 +68,8 @@ app.post('/api/register', async (req, res) => {
     nickname, 
     year, 
     phone, 
-    faculty
+    faculty,
+    status:"user"
   };
 
   const [results] = await conn.query('INSERT INTO users SET ?', userData);
@@ -85,39 +86,146 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-app.post("/api/login", async (req, res) => {
+app.post('/api/register-doctor', async (req, res) => {
+  try {
+  const { doc_id, password, doc_name, status} = req.body;
+  const passwordHash = await bcrypt.hash(password, 10);
+  const doctorData = {
+    doc_id, 
+    password : passwordHash, 
+    doc_name, 
+    status:'doctor' 
+  };
+
+  const [results] = await conn.query('INSERT INTO doctor SET ?', doctorData);
+  res.json({
+    message: 'insert OK',
+    results
+  });   
+  } catch (error) {
+    console.log('error', error)
+    res.json({
+      message: 'insert error',
+      error: error.message
+    })
+  }
+});
+
+app.post('/api/register-employee', async (req, res) => {
+  try {
+  const { employee_id, password, status} = req.body;
+  const passwordHash = await bcrypt.hash(password, 10);
+  const employeeData = {
+    employee_id, 
+    password : passwordHash,  
+    status:'employee' 
+  };
+  const [results] = await conn.query('INSERT INTO employee SET ?', employeeData);
+  res.json({
+    message: 'insert OK',
+    results
+  });   
+  } catch (error) {
+    console.log('error', error)
+    res.json({
+      message: 'insert error',
+      error: error.message
+    })
+  }
+});
+
+app.post('/api/register-manager', async (req, res) => {
+  try {
+  const { man_id, password, status} = req.body;
+  const passwordHash = await bcrypt.hash(password, 10);
+  const managerData = {
+    man_id, 
+    password : passwordHash,  
+    status:'manager' 
+  };
+  const [results] = await conn.query('INSERT INTO manager SET ?', managerData);
+  res.json({
+    message: 'insert OK',
+    results
+  });   
+  } catch (error) {
+    console.log('error', error)
+    res.json({
+      message: 'insert error',
+      error: error.message
+    })
+  }
+});
+
+
+app.post("/api/login-user", async (req, res) => {
   try {
     const { user_id, password } = req.body;
     const [results] = await conn.query("SELECT * FROM users WHERE user_id = ?", [user_id]);
     const userData = results[0];
     if (!userData) {
-      res.status(400).json({
-        message: 'login fail (wrong userid)'
+      return res.status(400).json({
+        message: 'Login failed (wrong userid)'
       });
-      return false;
     }
     const match = await bcrypt.compare(password, userData.password);
     if (!match) {
-      res.status(400).json({
-        message: 'login fail (wrong password)'
+      return res.status(400).json({
+        message: 'Login failed (wrong password)'
       });
-      return false;
     }
+
 
     const token = jwt.sign({ user_id }, secret, { expiresIn: '1h' });
 
     res.json({
-      message: 'login success',
+      message: 'Login success',
       token
     });
   } catch (error) {
-    console.log('error', error);
+    console.log('Error:', error);
     res.status(401).json({
-      message: 'login fail',
+      message: 'Login failed',
       error
     });
   }
 });
+
+app.post("/api/login-doctor", async (req, res) => {
+  try {
+    const { doc_id, password } = req.body;
+    const [results] = await conn.query("SELECT * FROM doctor WHERE doc_id = ?", [doc_id]);
+    const doctorData = results[0];
+    if (!doctorData) {
+      return res.status(400).json({
+        message: 'Login failed (wrong userid)'
+      });
+    }
+    const match = await bcrypt.compare(password, doctorData.password);
+    if (!match) {
+      return res.status(400).json({
+        message: 'Login failed (wrong password)'
+      });
+    }
+
+ 
+    const token = jwt.sign({ doc_id }, secret, { expiresIn: '1h' });
+
+    res.json({
+      message: 'Login success',
+      token
+    });
+  } catch (error) {
+    console.log('Error:', error);
+    res.status(401).json({
+      message: 'Login failed',
+      error
+    });
+  }
+});
+
+
+
 
 
 app.get('/api/users', async (req, res) => {
