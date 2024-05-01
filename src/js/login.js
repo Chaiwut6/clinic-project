@@ -79,59 +79,43 @@ var inputs = document.querySelectorAll('input');
         };
         
         const login = async () => {
-          const user_id = document.querySelector('input[name=user_id]').value;
-          const doc_id = document.querySelector('input[name=user_id]').value;
-          
+          const login_id = document.querySelector('input[name=user_id]').value;
+          const password = document.querySelector('input[name=password]').value;   
           try {
-            if (user_id) {
-              loginuser();
-            } else if (doc_id) {
-              logindoctor();
+            if (login_id) {
+              const response_user = await axios.post('http://localhost:8000/api/login', { 
+                login_id, password});
+              const responseData = response_user.data; 
+              console.log(responseData.roles); 
+              if (responseData.roles === 'user') {
+                localStorage.setItem('token', responseData.token);
+                alert('Login success');
+                window.location.href = '../view/user_main.html';
+              }else if (responseData.roles === 'doctor'){
+                localStorage.setItem('token', responseData.token);
+                alert('Login success');
+                window.location.href = '../view/doc_main.html';
+              }else if (responseData.roles === 'employee'){
+                localStorage.setItem('token', responseData.token);
+                alert('Login success');
+                window.location.href = '../view/employee_main.html';
+              }else if (responseData.roles === 'manager'){
+                localStorage.setItem('token', responseData.token);
+                alert('Login success');
+                window.location.href = '../view/man_main.html';
+              }
             } 
-            console.log("Login success");
           } catch (error) {
             console.error('Error:', error);
-            alert('Login failed');
+            alert('Login fail');
             window.location.href = '../view/index.html';
           }
         };
-      
         
 
-        const loginuser = async () => {
-            try {
-              const user_id = document.querySelector('input[name=user_id]').value
-              const password = document.querySelector('input[name=password]').value
-              const response_user = await axios.post('http://localhost:8000/api/login-user',{
-                user_id,
-                password
-              })
-              localStorage.setItem('token',response_user.data.token)
-              alert('login success');
-              window.location.href = '../view/user_main.html';
-            } catch (error) {
-              console.error('Error:', error);
-              alert('login fail');
-              window.location.href = '../view/index.html';
-            }
-          }   
 
-          const logindoctor = async () => {
-            try {
-              const doc_id = document.querySelector('input[name=user_id]').value
-              const password = document.querySelector('input[name=password]').value
-              const response_doctor = await axios.post('http://localhost:8000/api/login-doctor',{
-                doc_id,
-                password
-              })
-              localStorage.setItem('token',response_doctor.data.token)
-              alert('login success');
-              window.location.href = '../view/doc_main.html';
-            } catch (error) {
-              console.error('Error:', error);
-              alert('login fail');
-              window.location.href = '../view/index.html';
-            }
-          }   
+        
+        
+         
           
 

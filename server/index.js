@@ -58,21 +58,26 @@ app.use(bodyParser.json());
 
 app.post('/api/register-user', async (req, res) => {
   try {
-  const { user_id, password, user_fname, user_lname, nickname, year, phone, faculty, status } = req.body;
+  const { user_id, password, user_fname, user_lname, nickname, year, phone, faculty, role } = req.body;
   const passwordHash = await bcrypt.hash(password, 10);
   const userData = {
     user_id, 
-    password : passwordHash, 
     user_fname, 
     user_lname, 
     nickname, 
     year, 
     phone, 
     faculty,
-    status:"user"
+    roles: 'user'
+  };
+  const loginData = {
+    login_id: user_id, 
+    password: passwordHash,
+    roles: 'user' 
   };
 
   const [results] = await conn.query('INSERT INTO users SET ?', userData);
+  const [resultslogin] = await conn.query('INSERT INTO login SET ?', loginData);
   res.json({
     message: 'insert OK',
     results
@@ -90,17 +95,25 @@ app.post('/api/register-doctor', async (req, res) => {
   try {
   const { doc_id, password, doc_name, status} = req.body;
   const passwordHash = await bcrypt.hash(password, 10);
+
+  const loginData = {
+    login_id: doc_id, 
+    password: passwordHash,
+    roles: 'doctor' 
+  };
+
   const doctorData = {
     doc_id, 
-    password : passwordHash, 
     doc_name, 
-    status:'doctor' 
+    roles:'doctor' 
   };
 
   const [results] = await conn.query('INSERT INTO doctor SET ?', doctorData);
+  const [resultslogin] = await conn.query('INSERT INTO login SET ?', loginData);
   res.json({
     message: 'insert OK',
-    results
+    results,
+    resultslogin
   });   
   } catch (error) {
     console.log('error', error)
@@ -117,10 +130,15 @@ app.post('/api/register-employee', async (req, res) => {
   const passwordHash = await bcrypt.hash(password, 10);
   const employeeData = {
     employee_id, 
-    password : passwordHash,  
-    status:'employee' 
+    roles:'employee' 
+  };
+  const loginData = {
+    login_id: employee_id, 
+    password: passwordHash,
+    roles:'employee'  
   };
   const [results] = await conn.query('INSERT INTO employee SET ?', employeeData);
+  const [resultslogin] = await conn.query('INSERT INTO login SET ?', loginData);
   res.json({
     message: 'insert OK',
     results
@@ -139,10 +157,15 @@ app.post('/api/register-manager', async (req, res) => {
   const { man_id, password, status} = req.body;
   const passwordHash = await bcrypt.hash(password, 10);
   const managerData = {
-    man_id, 
-    password : passwordHash,  
-    status:'manager' 
+    man_id,  
+    roles:'manager'  
   };
+  const loginData = {
+    login_id: man_id, 
+    password: passwordHash,
+    roles:'manager'  
+  };
+  const [resultslogin] = await conn.query('INSERT INTO login SET ?', loginData);
   const [results] = await conn.query('INSERT INTO manager SET ?', managerData);
   res.json({
     message: 'insert OK',
@@ -158,10 +181,10 @@ app.post('/api/register-manager', async (req, res) => {
 });
 
 
-app.post("/api/login-user", async (req, res) => {
+app.post("/api/login", async (req, res) => {
   try {
-    const { user_id, password } = req.body;
-    const [results] = await conn.query("SELECT * FROM users WHERE user_id = ?", [user_id]);
+    const { login_id, password } = req.body;
+    const [results] = await conn.query("SELECT * FROM login WHERE login_id = ?", [login_id]);
     const userData = results[0];
     if (!userData) {
       return res.status(400).json({
@@ -175,10 +198,10 @@ app.post("/api/login-user", async (req, res) => {
       });
     }
 
-
-    const token = jwt.sign({ user_id }, secret, { expiresIn: '1h' });
-
+    const token = jwt.sign({ login_id }, secret, { expiresIn: '1h' });
+    const roles = userData.roles;
     res.json({
+      roles,
       message: 'Login success',
       token
     });
@@ -195,13 +218,13 @@ app.post("/api/login-doctor", async (req, res) => {
   try {
     const { doc_id, password } = req.body;
     const [results] = await conn.query("SELECT * FROM doctor WHERE doc_id = ?", [doc_id]);
-    const doctorData = results[0];
-    if (!doctorData) {
+    const userData = results[0];
+    if (!userData) {
       return res.status(400).json({
         message: 'Login failed (wrong userid)'
       });
     }
-    const match = await bcrypt.compare(password, doctorData.password);
+    const match = await bcrypt.compare(password, userData.password);
     if (!match) {
       return res.status(400).json({
         message: 'Login failed (wrong password)'
@@ -209,9 +232,10 @@ app.post("/api/login-doctor", async (req, res) => {
     }
 
  
-    const token = jwt.sign({ doc_id }, secret, { expiresIn: '1h' });
-
+    const token = jwt.sign({ doc_id , role:'doctor' }, secret, { expiresIn: '1h' });
+    const roles = userData.roles;
     res.json({
+      roles,
       message: 'Login success',
       token
     });
@@ -223,9 +247,6 @@ app.post("/api/login-doctor", async (req, res) => {
     });
   }
 });
-
-
-
 
 
 app.get('/api/users', async (req, res) => {
