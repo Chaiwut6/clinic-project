@@ -90,19 +90,19 @@ var inputs = document.querySelectorAll('input');
               if (responseData.roles === 'user') {
                 localStorage.setItem('token', responseData.token);
                 alert('Login success');
-                window.location.href = '../view/user_main.html';
+                window.location.href = '../view/users/user_main.html';
               }else if (responseData.roles === 'doctor'){
                 localStorage.setItem('token', responseData.token);
                 alert('Login success');
-                window.location.href = '../view/doc_main.html';
+                window.location.href = '../view/doctor/doc_main.html';
               }else if (responseData.roles === 'employee'){
                 localStorage.setItem('token', responseData.token);
                 alert('Login success');
-                window.location.href = '../view/employee_main.html';
+                window.location.href = '../view/staff/employee_main.html';
               }else if (responseData.roles === 'manager'){
                 localStorage.setItem('token', responseData.token);
                 alert('Login success');
-                window.location.href = '../view/man_main.html';
+                window.location.href = '../view/manager/man_main.html';
               }
             } 
           } catch (error) {
