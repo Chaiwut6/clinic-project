@@ -92,38 +92,6 @@
 
 
 
-.tabs {
-  display: flex;
-  padding: 1rem;
-  flex-wrap: wrap;
-  justify-content: center; 
-  gap: 5px; 
-}
-
-.tab {
-  background-color: #FBFBF8; 
-  padding: 10px;
-  margin-bottom: 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  max-width: calc(100% / 3 - 10px);
-  text-align: center;
-  flex-grow: 1;
-  transition: background-color 0.3s; 
-}
-
-.tab:hover {
-  background-color: #82d5fc; 
-  color: #ffffff; 
-}
-
-
-.tab.active {
-  background-color: #82d5fc;
-  color: #ffffff;
-}
-
-
 
 
 
