@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const nextQuestion = document.querySelector('.question' + (currentIndex + 2));
     
             const selectedChoice = currentQuestion.querySelector('.choice-container.selected .choice-text');
-
+    
             if (selectedChoice) {
                 totalScore += Number(selectedChoice.dataset.number);
     
@@ -26,12 +26,21 @@ document.addEventListener("DOMContentLoaded", function() {
                     const progressPercent = (completedQuestions / totalQuestions) * 100;
                     progressBar.style.width = progressPercent + '%';
     
-                    currentIndex++;
+                    currentIndex++; // เพิ่มค่า currentIndex ทุกครั้งที่คลิกปุ่ม "ต่อไป"
                 } else {
-                    // window.location.href='user_main.html';
-                    totalScoreDisplay.textContent = "คะแนนรวม: " + totalScore; // แสดงคะแนนรวม
+                    let result = ""; // เตรียมตัวแปรสำหรับเก็บข้อความผลลัพธ์
+                    // ตรวจสอบระดับคะแนนและกำหนดข้อความผลลัพธ์ตามเงื่อนไข
+                    if (totalScore >= 7 && totalScore <= 12) {
+                        result = "ระดับน้อย";
+                    } else if (totalScore >= 13 && totalScore <= 18) {
+                        result = "ระดับปานกลาง";
+                    } else {
+                        result = "ระดับรุนแรง";
+                    }
+                    // แสดงคะแนนรวมและผลลัพธ์
+                    totalScoreDisplay.textContent = "คะแนนรวม: " + totalScore + ", ระดับความรุนแรง: " + result;
+                    window.location.href='user_main.html';
                 }
-                loadTabs(); 
             } else {
                 alert("โปรดเลือกคำตอบก่อนดำเนินการต่อ");
             }
@@ -47,4 +56,8 @@ document.addEventListener("DOMContentLoaded", function() {
             container.classList.add('selected');
         });
     });
+
 });
+
+
+// window.location.href='user_main.html';
