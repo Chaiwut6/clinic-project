@@ -3,10 +3,12 @@ document.addEventListener("DOMContentLoaded", function() {
     const choiceContainers = document.querySelectorAll('.choice-container');
     const progressBar = document.querySelector('.progress');
     const totalScoreDisplay = document.getElementById('totalScoreDisplay'); 
-
+    const currentDateDisplay = document.getElementById('currentDateDisplay'); // เพิ่มตัวแปรสำหรับแสดงวันที่
+    
     let currentIndex = 0;
     let totalScore = 0; 
-
+    let currentDate = new Date(); // เพิ่มตัวแปรสำหรับเก็บวันที่และเวลาปัจจุบัน
+    
     buttons.forEach((button, index) => {
         button.addEventListener('click', () => {
             const currentQuestion = document.querySelector('.question' + (currentIndex + 1));
@@ -38,8 +40,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         result = "ระดับรุนแรง";
                     }
                     // แสดงคะแนนรวมและผลลัพธ์
-                    totalScoreDisplay.textContent = "คะแนนรวม: " + totalScore + ", ระดับความรุนแรง: " + result;
-                    window.location.href='user_main.html';
+                    totalScoreDisplay.textContent = "คะแนนรวม: " + totalScore + ", ระดับความรุนแรง: " + result + ", วันที่ทำ: " + currentDate.toLocaleDateString() + ", เวลา: " + currentDate.toLocaleTimeString();
+                    // window.location.href='user_main.html';
                 }
             } else {
                 alert("โปรดเลือกคำตอบก่อนดำเนินการต่อ");
@@ -58,6 +60,3 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
 });
-
-
-// window.location.href='user_main.html';
