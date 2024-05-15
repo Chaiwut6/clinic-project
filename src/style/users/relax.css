@@ -1,0 +1,182 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Kanit", sans-serif;
+}
+
+.container img{
+    margin: 2rem auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container .text p{
+    font-size: 20.8px;
+    text-align: center;
+    padding: 2px;
+    color: #1E1446;
+}
+
+.container .btn{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.container .main1 h1{
+    font-size: 40px;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    color: #EF7C8E;
+}
+ 
+.btn .button1 {
+    font-weight: bold;
+    margin: 16px;
+    font-size: 18px;
+    flex-basis: 20%;
+    background-color: #EF7C8E;
+    color: #FBFBF8;
+    height: 50px;
+    border-radius: 15px;
+    border: 0;
+    outline: 0;
+    cursor: pointer;
+}
+
+  .button1:hover {
+    transform: scale(0.9);
+}
+
+.container .main2 h1{
+    font-size: 40px;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    color: #3B6040;
+}
+ 
+.btn .button2 {
+    font-weight: bold;
+    margin: 16px;
+    font-size: 18px;
+    flex-basis: 20%;
+    background-color: #3B6040;
+    color: #FBFBF8;
+    height: 50px;
+    border-radius: 15px;
+    border: 0;
+    outline: 0;
+    cursor: pointer;
+}
+
+  .button2:hover {
+    transform: scale(0.9);
+}
+
+.container .main3 h1{
+    font-size: 40px;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    color: #C1AEA8;
+}
+ 
+.btn .button3 {
+    font-weight: bold;
+    margin: 16px;
+    font-size: 18px;
+    flex-basis: 20%;
+    background-color: #C1AEA8;
+    color: #FBFBF8;
+    height: 50px;
+    border-radius: 15px;
+    border: 0;
+    outline: 0;
+    cursor: pointer;
+}
+
+  .button3:hover {
+    transform: scale(0.9);
+}
+
+.container .main4 h1{
+    font-size: 40px;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    color: #8C5243;
+}
+ 
+.btn .button4 {
+    font-weight: bold;
+    margin: 16px;
+    font-size: 18px;
+    flex-basis: 20%;
+    background-color: #8C5243;
+    color: #FBFBF8;
+    height: 50px;
+    border-radius: 15px;
+    border: 0;
+    outline: 0;
+    cursor: pointer;
+}
+
+  .button4:hover {
+    transform: scale(0.9);
+}
+
+.container .main5 h1{
+    font-size: 40px;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    color: #619AE3;
+}
+ 
+.btn .button5 {
+    font-weight: bold;
+    margin: 16px;
+    font-size: 18px;
+    flex-basis: 20%;
+    background-color: #619AE3;
+    color: #FBFBF8;
+    height: 50px;
+    border-radius: 15px;
+    border: 0;
+    outline: 0;
+    cursor: pointer;
+}
+
+  .button5:hover {
+    transform: scale(0.9);
+}
+
+.container .main6 h1{
+    font-size: 40px;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    color: #FD9B79;
+}
+ 
+.btn .button6 {
+    font-weight: bold;
+    margin: 16px;
+    font-size: 18px;
+    flex-basis: 20%;
+    background-color: #FD9B79;
+    color: #FBFBF8;
+    height: 50px;
+    border-radius: 15px;
+    border: 0;
+    outline: 0;
+    cursor: pointer;
+}
+
+  .button6:hover {
+    transform: scale(0.9);
+}
