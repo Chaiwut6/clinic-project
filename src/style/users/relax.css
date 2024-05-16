@@ -1,182 +1,135 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: "Kanit", sans-serif;
 }
 
-.container img{
-    margin: 2rem auto;
+body {
     display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container img {
+    margin: 2rem auto;
     justify-content: center;
     align-items: center;
 }
 
-.container .text p{
+.container .text p {
     font-size: 20.8px;
     text-align: center;
     padding: 2px;
     color: #1E1446;
 }
 
-.container .btn{
+.container .btn {
     width: 100%;
     display: flex;
     justify-content: center;
 }
 
-.container .main1 h1{
+.container .main1 h1,
+.container .main2 h1,
+.container .main3 h1,
+.container .main4 h1,
+.container .main5 h1,
+.container .main6 h1 {
     font-size: 40px;
     text-align: center;
     padding: 10px;
     font-weight: bold;
-    color: #EF7C8E;
-}
- 
-.btn .button1 {
-    font-weight: bold;
-    margin: 16px;
-    font-size: 18px;
-    flex-basis: 20%;
-    background-color: #EF7C8E;
-    color: #FBFBF8;
-    height: 50px;
-    border-radius: 15px;
-    border: 0;
-    outline: 0;
-    cursor: pointer;
 }
 
-  .button1:hover {
-    transform: scale(0.9);
-}
-
-.container .main2 h1{
-    font-size: 40px;
-    text-align: center;
-    padding: 10px;
-    font-weight: bold;
-    color: #3B6040;
-}
- 
-.btn .button2 {
-    font-weight: bold;
-    margin: 16px;
-    font-size: 18px;
-    flex-basis: 20%;
-    background-color: #3B6040;
-    color: #FBFBF8;
-    height: 50px;
-    border-radius: 15px;
-    border: 0;
-    outline: 0;
-    cursor: pointer;
-}
-
-  .button2:hover {
-    transform: scale(0.9);
-}
-
-.container .main3 h1{
-    font-size: 40px;
-    text-align: center;
-    padding: 10px;
-    font-weight: bold;
-    color: #C1AEA8;
-}
- 
-.btn .button3 {
-    font-weight: bold;
-    margin: 16px;
-    font-size: 18px;
-    flex-basis: 20%;
-    background-color: #C1AEA8;
-    color: #FBFBF8;
-    height: 50px;
-    border-radius: 15px;
-    border: 0;
-    outline: 0;
-    cursor: pointer;
-}
-
-  .button3:hover {
-    transform: scale(0.9);
-}
-
-.container .main4 h1{
-    font-size: 40px;
-    text-align: center;
-    padding: 10px;
-    font-weight: bold;
-    color: #8C5243;
-}
- 
-.btn .button4 {
-    font-weight: bold;
-    margin: 16px;
-    font-size: 18px;
-    flex-basis: 20%;
-    background-color: #8C5243;
-    color: #FBFBF8;
-    height: 50px;
-    border-radius: 15px;
-    border: 0;
-    outline: 0;
-    cursor: pointer;
-}
-
-  .button4:hover {
-    transform: scale(0.9);
-}
-
-.container .main5 h1{
-    font-size: 40px;
-    text-align: center;
-    padding: 10px;
-    font-weight: bold;
-    color: #619AE3;
-}
- 
-.btn .button5 {
-    font-weight: bold;
-    margin: 16px;
-    font-size: 18px;
-    flex-basis: 20%;
-    background-color: #619AE3;
-    color: #FBFBF8;
-    height: 50px;
-    border-radius: 15px;
-    border: 0;
-    outline: 0;
-    cursor: pointer;
-}
-
-  .button5:hover {
-    transform: scale(0.9);
-}
-
-.container .main6 h1{
-    font-size: 40px;
-    text-align: center;
-    padding: 10px;
-    font-weight: bold;
-    color: #FD9B79;
-}
- 
+.btn .button1,
+.btn .button2,
+.btn .button3,
+.btn .button4,
+.btn .button5,
 .btn .button6 {
     font-weight: bold;
     margin: 16px;
     font-size: 18px;
-    flex-basis: 20%;
-    background-color: #FD9B79;
-    color: #FBFBF8;
+    width: 22rem; /* กำหนดความกว้างเป็น 200px */
     height: 50px;
     border-radius: 15px;
     border: 0;
     outline: 0;
     cursor: pointer;
+    transform: scale(1);
 }
 
-  .button6:hover {
+.btn .button1 {
+    background-color: #EF7C8E;
+    color: #FBFBF8;
+}
+
+.container .main1 h1{
+    color: #EF7C8E;
+}
+
+.btn .button2 {
+    background-color: #3B6040;
+    color: #FBFBF8;
+}
+
+.container .main2 h1{
+    color: #3B6040;
+}
+
+.btn .button3 {
+    background-color: #C1AEA8;
+    color: #FBFBF8;
+}
+
+.container .main3 h1{
+    color: #C1AEA8;
+}
+
+.btn .button4 {
+    background-color: #8C5243;
+    color: #FBFBF8;
+}
+
+.container .main4 h1{
+    color: #8C5243;
+}
+
+.btn .button5 {
+    background-color: #619AE3;
+    color: #FBFBF8;
+}
+
+.container .main5 h1{
+    color: #619AE3;
+}
+
+.btn .button6 {
+    background-color: #FD9B79;
+    color: #FBFBF8;
+}
+
+.container .main6 h1{
+    color: #FD9B79;
+}
+
+.button1:hover,
+.button2:hover,
+.button3:hover,
+.button4:hover,
+.button5:hover,
+.button6:hover {
     transform: scale(0.9);
+}
+
+.container {
+    display: none;
+}
+
+.container.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }

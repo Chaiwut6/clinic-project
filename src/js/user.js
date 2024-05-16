@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                     // แสดงคะแนนรวมและผลลัพธ์
                     totalScoreDisplay.textContent = "คะแนนรวม: " + totalScore + ", ระดับความรุนแรง: " + result + ", วันที่ทำ: " + currentDate.toLocaleDateString() + ", เวลา: " + currentDate.toLocaleTimeString();
-                    // window.location.href='user_main.html';
+                    window.location.href='user_main.html';
                 }
             } else {
                 alert("โปรดเลือกคำตอบก่อนดำเนินการต่อ");
