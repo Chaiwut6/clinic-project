@@ -15,10 +15,13 @@ document.addEventListener("DOMContentLoaded", function() {
             const nextQuestion = document.querySelector('.question' + (currentIndex + 2));
     
             const selectedChoice = currentQuestion.querySelector('.choice-container.selected .choice-text');
-    
+
             if (selectedChoice) {
-                totalScore += Number(selectedChoice.dataset.number);
-    
+                const choiceValue = Number(selectedChoice.dataset.number);
+                console.log("Selected choice value:", choiceValue); // Debug log
+                totalScore += choiceValue;
+                console.log("Total score:", totalScore); // Debug log
+
                 if (nextQuestion) {
                     currentQuestion.style.display = 'none';
                     nextQuestion.style.display = 'flex';
@@ -32,16 +35,20 @@ document.addEventListener("DOMContentLoaded", function() {
                 } else {
                     let result = ""; // เตรียมตัวแปรสำหรับเก็บข้อความผลลัพธ์
                     // ตรวจสอบระดับคะแนนและกำหนดข้อความผลลัพธ์ตามเงื่อนไข
-                    if (totalScore >= 7 && totalScore <= 12) {
+                    if (totalScore <= 12) {
                         result = "ระดับน้อย";
+                        window.location.href='relax.html';
                     } else if (totalScore >= 13 && totalScore <= 18) {
                         result = "ระดับปานกลาง";
-                    } else {
+                        window.location.href='user_consult.html';
+                    } else if (totalScore > 19) {
                         result = "ระดับรุนแรง";
-                    }
+                        window.location.href='user_consult.html';
+                    } 
+                    console.log("Result:", result); // Debug log
                     // แสดงคะแนนรวมและผลลัพธ์
                     totalScoreDisplay.textContent = "คะแนนรวม: " + totalScore + ", ระดับความรุนแรง: " + result + ", วันที่ทำ: " + currentDate.toLocaleDateString() + ", เวลา: " + currentDate.toLocaleTimeString();
-                    window.location.href='user_main.html';
+                    // window.location.href='user_main.html';
                 }
             } else {
                 alert("โปรดเลือกคำตอบก่อนดำเนินการต่อ");
