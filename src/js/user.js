@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     // ตรวจสอบระดับคะแนนและกำหนดข้อความผลลัพธ์ตามเงื่อนไข
                     if (totalScore <= 12) {
                         result = "ระดับน้อย";
-                        window.location.href='relax.html';
+                        window.location.href='evaluation results/user_low.html';
                     } else if (totalScore >= 13 && totalScore <= 18) {
                         result = "ระดับปานกลาง";
                         window.location.href='user_consult.html';
