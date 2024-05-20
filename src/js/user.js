@@ -4,13 +4,15 @@ document.addEventListener("DOMContentLoaded", function() {
     const progressBar = document.querySelector('.progress');
     const totalScoreDisplay = document.getElementById('totalScoreDisplay'); 
     const currentDateDisplay = document.getElementById('currentDateDisplay'); // เพิ่มตัวแปรสำหรับแสดงวันที่
-    
+
     let currentIndex = 0;
     let totalScore = 0; 
     let currentDate = new Date(); // เพิ่มตัวแปรสำหรับเก็บวันที่และเวลาปัจจุบัน
-    
+
+
+
     buttons.forEach((button, index) => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', async () => {
             const currentQuestion = document.querySelector('.question' + (currentIndex + 1));
             const nextQuestion = document.querySelector('.question' + (currentIndex + 2));
     
@@ -37,17 +39,60 @@ document.addEventListener("DOMContentLoaded", function() {
                     // ตรวจสอบระดับคะแนนและกำหนดข้อความผลลัพธ์ตามเงื่อนไข
                     if (totalScore <= 12) {
                         result = "ระดับน้อย";
+                        try {
+                            const response = await axios.post('http://localhost:8000/api/save-result', {
+                                totalScore: totalScore,
+                                result: result,
+                                date: currentDate
+                            });
+                            console.log('Success:', response.data);
+                        } catch (error) {
+                            console.error('Error:', error);
+                        }
                         window.location.href='evaluation results/user_low.html';
                     } else if (totalScore >= 13 && totalScore <= 18) {
                         result = "ระดับปานกลาง";
+                        try {
+                            const response = await axios.post('http://localhost:8000/api/save-result', {
+                                totalScore: totalScore,
+                                result: result,
+                                date: currentDate
+                            });
+                            console.log('Success:', response.data);
+                        } catch (error) {
+                            console.error('Error:', error);
+                        }
                         window.location.href='user_consult.html';
                     } else if (totalScore > 19) {
                         result = "ระดับรุนแรง";
+                        try {
+                            const response = await axios.post('http://localhost:8000/api/save-result', {
+                                totalScore: totalScore,
+                                result: result,
+                                date: currentDate
+                            });
+                            console.log('Success:', response.data);
+                        } catch (error) {
+                            console.error('Error:', error);
+                        }
                         window.location.href='user_consult.html';
                     } 
                     console.log("Result:", result); // Debug log
                     // แสดงคะแนนรวมและผลลัพธ์
                     totalScoreDisplay.textContent = "คะแนนรวม: " + totalScore + ", ระดับความรุนแรง: " + result + ", วันที่ทำ: " + currentDate.toLocaleDateString() + ", เวลา: " + currentDate.toLocaleTimeString();
+
+                    // ส่งผลลัพธ์และวันที่ไปยังเซิร์ฟเวอร์
+                    // try {
+                    //     const response = await axios.post('http://localhost:8000/api/save-result', {
+                    //         user_id: user_id,
+                    //         totalScore: totalScore,
+                    //         result: result,
+                    //         date: currentDate
+                    //     });
+                    //     console.log('Success:', response.data);
+                    // } catch (error) {
+                    //     console.error('Error:', error);
+                    // }
                     // window.location.href='user_main.html';
                 }
             } else {
@@ -55,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     });
-    
+
     choiceContainers.forEach(container => {
         container.addEventListener('click', () => {
             const choices = container.parentElement.querySelectorAll('.choice-container');

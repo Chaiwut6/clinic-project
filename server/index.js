@@ -9,7 +9,6 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const fs = require('fs');
 
-
 const app = express()
 app.use(express.json())
 app.use(cors({
@@ -25,8 +24,6 @@ app.use(cors({
 // }))
 const port = 8000
 const secret = 'mysecret'
-
-
 
 let conn = null
 
@@ -58,7 +55,7 @@ app.use(bodyParser.json());
 
 app.post('/api/register-user', async (req, res) => {
   try {
-  const { user_id, password, user_fname, user_lname, nickname, year, phone, faculty, role } = req.body;
+  const { user_id, password, user_fname, user_lname, nickname, year, phone, faculty, role} = req.body;
   const passwordHash = await bcrypt.hash(password, 10);
   const userData = {
     user_id, 
@@ -68,7 +65,8 @@ app.post('/api/register-user', async (req, res) => {
     year, 
     phone, 
     faculty,
-    roles: 'user'
+    roles: 'user',
+
   };
   const loginData = {
     login_id: user_id, 
@@ -76,8 +74,17 @@ app.post('/api/register-user', async (req, res) => {
     roles: 'user' 
   };
 
+  // const resultData = {
+  //   user_id: user_id, 
+  //   totalScore,
+  //   result,
+  // };
+
   const [results] = await conn.query('INSERT INTO users SET ?', userData);
   const [resultslogin] = await conn.query('INSERT INTO login SET ?', loginData);
+  // const [resultsData] = await conn.query('INSERT INTO results SET ?', resultData);
+  
+
   res.json({
     message: 'insert OK',
     results
@@ -180,7 +187,6 @@ app.post('/api/register-manager', async (req, res) => {
   }
 });
 
-
 app.post("/api/login", async (req, res) => {
   try {
     const { login_id, password } = req.body;
@@ -231,7 +237,6 @@ app.post("/api/login-doctor", async (req, res) => {
       });
     }
 
- 
     const token = jwt.sign({ doc_id , role:'doctor' }, secret, { expiresIn: '1h' });
     const roles = userData.roles;
     res.json({
@@ -247,7 +252,6 @@ app.post("/api/login-doctor", async (req, res) => {
     });
   }
 });
-
 
 app.get('/api/users', async (req, res) => {
   try {
@@ -275,7 +279,37 @@ app.get('/api/users', async (req, res) => {
   }
 })
 
+// เพิ่มสำหรับบันทึกผลลัพธ์
+app.post('/api/save-result', async (req, res) => {
+  try {
+    const { totalScore, result} = req.body;
+
+    // เพิ่มข้อมูลในตาราง results
+    const userData = {
+      total_score: totalScore,
+      result: result,
+    };
+
+    const [results] = await conn.query('INSERT INTO results SET ?', userData);
+    // const [total] = await conn.query('INSERT INTO users SET ?', userData);
+
+    res.json({
+      message: 'Result saved successfully',
+      results
+    });
+  } catch (error) {
+    console.log('error', error);
+    res.status(500).json({
+      message: 'Error saving result',
+      error: error.message
+    });
+  }
+});
+
+
+
+
+
 app.listen(port, async () => {
     console.log(`Server running at http://localhost:${port}/`);
 });
-
