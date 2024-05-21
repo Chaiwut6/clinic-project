@@ -1,10 +1,7 @@
        document.addEventListener("DOMContentLoaded", function() {
             const urlParams = new URLSearchParams(window.location.search);
             const user_id = urlParams.get('user_id');
-            if (!user_id) {
-                alert('ไม่พบรหัสประจำตัว');
-                return;
-            }
+ 
 
             const buttons = document.querySelectorAll('.button');
             const choiceContainers = document.querySelectorAll('.choice-container');
@@ -75,13 +72,12 @@
                 });
             });
 
-            async function saveResult(user_id, totalScore, result, date) {
+            async function saveResult(user_id, totalScore, result) {
                 try {
                     const response = await axios.post('http://localhost:8000/api/save-result', {
                         user_id: user_id,
                         totalScore: totalScore,
                         result: result,
-                        date: date
                     });
                     console.log('Success:', response.data);
                 } catch (error) {

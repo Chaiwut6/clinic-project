@@ -66,7 +66,7 @@ var inputs = document.querySelectorAll('input');
             });
             if (response.data.message === 'insert OK') {
               alert('ลงทะเบียนสำเร็จ');
-              window.location.href = '../view/users/user_testmain.html';
+              window.location.href = `../view/users/user_testmain.html?user_id=${user_id}`;
             } else {
               alert('มีข้อผิดพลาดในการลงทะเบียน');
               window.location.href = '../view/index.html';
