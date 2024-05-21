@@ -282,29 +282,36 @@ app.get('/api/users', async (req, res) => {
 // เพิ่มสำหรับบันทึกผลลัพธ์
 app.post('/api/save-result', async (req, res) => {
   try {
-    const { totalScore, result} = req.body;
+    const { user_id, totalScore, result } = req.body;
 
-    // เพิ่มข้อมูลในตาราง results
+    // Check if user_id exists
+    if (!user_id) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    // Prepare data for insertion
     const userData = {
+      user_id: user_id,
       total_score: totalScore,
-      result: result,
+      result: result
     };
 
+    // Insert data into the database
     const [results] = await conn.query('INSERT INTO results SET ?', userData);
-    // const [total] = await conn.query('INSERT INTO users SET ?', userData);
 
     res.json({
       message: 'Result saved successfully',
       results
     });
   } catch (error) {
-    console.log('error', error);
+    console.log('Error:', error);
     res.status(500).json({
       message: 'Error saving result',
       error: error.message
     });
   }
 });
+
 
 
 

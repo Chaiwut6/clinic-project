@@ -9,15 +9,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="../../style/users/user_testmain.css">
+<script src="../../js/user.js"></script>
 </head>
 <body>
     <div class="container">
         <img src="../../image/1_1.png" alt="logo">
         <h1>มาทำความเข้าใจความรู้สึกตัวเองกันเถอะ</h1>
-        <p >ทุกปัญหามีทางออก</p>
-        <div class="btn">
-            <button class="question" type="button" onclick="window.location.href='user_test1.html'">เริ่มสำรวจความรู้สึกของคุณ</button>
+        <p>ทุกปัญหามีทางออก</p>
+        <div class="input-box">
+            <span class="details">รหัสประจำตัว(มีขีด)</span>
+            <input id="user_id" type="text" maxlength="14" required autocomplete="off">
         </div>
-        </div>  
+        <div class="btn">
+            <button class="question" type="button" onclick="startSurvey()">เริ่มสำรวจความรู้สึกของคุณ</button>
+        </div>
+    </div>
+    <script>
+        function startSurvey() {
+            const userId = document.querySelector('#user_id').value;
+            if (userId) {
+                window.location.href = `user_test1.html?user_id=${encodeURIComponent(userId)}`;
+            } 
+        }
+    </script>
 </body>
 </html>
