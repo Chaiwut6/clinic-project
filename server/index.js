@@ -74,17 +74,10 @@ app.post('/api/register-user', async (req, res) => {
     roles: 'user' 
   };
 
-  // const resultData = {
-  //   user_id: user_id, 
-  //   totalScore,
-  //   result,
-  // };
 
   const [results] = await conn.query('INSERT INTO users SET ?', userData);
   const [resultslogin] = await conn.query('INSERT INTO login SET ?', loginData);
-  // const [resultsData] = await conn.query('INSERT INTO results SET ?', resultData);
-  
-
+ 
   res.json({
     message: 'insert OK',
     results
@@ -282,18 +275,20 @@ app.get('/api/users', async (req, res) => {
 // เพิ่มสำหรับบันทึกผลลัพธ์
 app.post('/api/save-result', async (req, res) => {
   try {
-    const { user_id, totalScore, result } = req.body;
+    const { user_id, totalScore, result, user_fname, user_lname } = req.body;
 
-    // Check if user_id exists
+
     if (!user_id) {
       return res.status(400).json({ message: 'User ID is required' });
     }
 
-    // Prepare data for insertion
+ 
     const userData = {
       user_id: user_id,
       total_score: totalScore,
-      result: result
+      result: result,
+      user_fname: user_fname,
+      user_lname: user_lname
     };
 
     // Insert data into the database
@@ -311,6 +306,7 @@ app.post('/api/save-result', async (req, res) => {
     });
   }
 });
+
 
 
 

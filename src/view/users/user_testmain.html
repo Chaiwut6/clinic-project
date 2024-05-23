@@ -28,10 +28,13 @@
         function startSurvey() {
             const urlParams = new URLSearchParams(window.location.search);
             const user_id = urlParams.get('user_id');
-            if (user_id) {
-                window.location.href = `user_test1.html?user_id=${encodeURIComponent(user_id)}`;
-            } 
+            let user_fname = urlParams.get('user_fname');
+            let user_lname = urlParams.get('user_lname');
+    
+            window.location.href = `../users/user_test1.html?user_id=${user_id}&user_fname=${user_fname}&user_lname=${user_lname}`;
+
         }
     </script>
+    
 </body>
 </html>
