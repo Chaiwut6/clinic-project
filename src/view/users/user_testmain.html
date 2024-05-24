@@ -25,15 +25,20 @@
         </div>
     </div>
     <script>
+        
         function startSurvey() {
             const urlParams = new URLSearchParams(window.location.search);
             const user_id = urlParams.get('user_id');
-            let user_fname = urlParams.get('user_fname');
-            let user_lname = urlParams.get('user_lname');
-    
-            window.location.href = `../users/user_test1.html?user_id=${user_id}&user_fname=${user_fname}&user_lname=${user_lname}`;
-
+            const user_fname = urlParams.get('user_fname');
+            const user_lname = urlParams.get('user_lname');
+        
+            sessionStorage.setItem('user_id', user_id);
+            sessionStorage.setItem('user_fname', user_fname);
+            sessionStorage.setItem('user_lname', user_lname);
+        
+            window.location.href = '../users/user_test1.html';
         }
+        
     </script>
     
 </body>

@@ -1,8 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const user_id = urlParams.get('user_id');
-    const user_fname = urlParams.get('user_fname');
-    const user_lname = urlParams.get('user_lname');
+    const user_id = sessionStorage.getItem('user_id');
+    const user_fname = sessionStorage.getItem('user_fname');
+    const user_lname = sessionStorage.getItem('user_lname');
 
     const buttons = document.querySelectorAll('.button');
     const choiceContainers = document.querySelectorAll('.choice-container');
