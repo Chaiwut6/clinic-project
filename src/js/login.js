@@ -28,11 +28,26 @@ var inputs = document.querySelectorAll('input');
             var popup = document.querySelector('.policy-form');
             popup.classList.toggle('active');
         }
+        function toggleLink() {
+          const checkbox = document.getElementById('checkbox');
+          const policyLink = document.getElementById('policy-link');
+          if (checkbox.checked) {
+              policyLink.style.pointerEvents = 'auto';
+          } else {
+              policyLink.style.pointerEvents = 'none';
+          }
+      }
 
         const register = async () => {
           try {
             const password = document.querySelector('#password').value;
             const confirm_password = document.querySelector('#confirm_password').value;
+            const policyCheckbox = document.querySelector('#policy_checkbox');
+
+            if (!policyCheckbox.checked) {
+              alert('กรุณายอมรับนโยบายความเป็นส่วนตัว');
+              return;
+          }
         
             if (password !== confirm_password) {
               alert('รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน');
@@ -115,6 +130,7 @@ var inputs = document.querySelectorAll('input');
             window.location.href = '../view/index.html';
           }
         };
+
         
 
 

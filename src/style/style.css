@@ -64,10 +64,23 @@ body{
     cursor: pointer;
 }
 
-.register-form,.login-form,.policy-form{
+.register-form,.login-form{
     position: absolute;
     top: 15%;
     left: 50%;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+    transform: translate(-50%,-50%);
+    transition: .5s;
+    visibility: hidden;
+    opacity: 0;
+}
+.policy-form{
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    width: 20%;
     background: #fff;
     border-radius: 15px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
@@ -265,3 +278,24 @@ form .button button:hover{
     }
     
 }
+
+.policy {
+    display: flex;
+    align-items: center;
+}
+
+.policy span {
+    margin-left: 10px;
+}
+
+.policy a {
+    margin-left: 10px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+.policy input[type="checkbox"]:checked + span + a {
+    pointer-events: auto;
+
+}
+
+
