@@ -183,13 +183,16 @@ app.post('/api/register-manager', async (req, res) => {
 app.post("/api/login", async (req, res) => {
   try {
     const { login_id, password } = req.body;
-    const [results] = await conn.query("SELECT * FROM login WHERE login_id = ?", [login_id]);
-    const userData = results[0];
+
+    const [loginResults] = await conn.query("SELECT * FROM login WHERE login_id = ?", [login_id]);
+    const userData = loginResults[0];
     if (!userData) {
       return res.status(400).json({
         message: 'Login failed (wrong userid)'
       });
     }
+
+    // ตรวจสอบรหัสผ่าน
     const match = await bcrypt.compare(password, userData.password);
     if (!match) {
       return res.status(400).json({
@@ -197,13 +200,24 @@ app.post("/api/login", async (req, res) => {
       });
     }
 
+    // สร้าง token
     const token = jwt.sign({ login_id }, secret, { expiresIn: '1h' });
     const roles = userData.roles;
+
+    const [userResults] = await conn.query("SELECT * FROM users WHERE user_id = ?", [login_id]);
+    const [userAssess] = await conn.query("SELECT * FROM results WHERE user_id = ?", [login_id]);
+    const userInfo = userResults[0];
+    const Assess = userAssess[0];
+    
+
     res.json({
       roles,
       message: 'Login success',
-      token
+      token,
+      user: userInfo,
+      Assess:Assess
     });
+
   } catch (error) {
     console.log('Error:', error);
     res.status(401).json({
@@ -212,6 +226,7 @@ app.post("/api/login", async (req, res) => {
     });
   }
 });
+
 
 app.post("/api/login-doctor", async (req, res) => {
   try {
@@ -254,6 +269,7 @@ app.get('/api/users', async (req, res) => {
       authToken = authHeader.split(' ')[1]
     }
     console.log('authToken',authToken)
+
     const user = jwt.verify(authToken,secret)
     const [checkResults] = await conn.query('SELECT * FROM users where user_id = ?' , user.user_id)
     if(!checkResults[0]){

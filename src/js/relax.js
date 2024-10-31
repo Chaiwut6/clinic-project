@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     nextContainer.classList.add('active');
                 } else {
                     // เปลี่ยนเส้นทางไปยังหน้าอื่น
-                    window.location.href = 'user_main.html'; 
+                    window.location.href = '../view/users/user_main.html'; 
                 }
             }
         });
