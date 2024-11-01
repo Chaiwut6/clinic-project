@@ -104,29 +104,29 @@ const login = async () => {
     if (login_id) {
       const response_user = await axios.post('http://localhost:8000/api/login', {
         login_id, password
+      }, {
+        withCredentials: true // รวมคุกกี้ไปในคำร้องขอ
       });
+
       const responseData = response_user.data;
       console.log(responseData);
 
+      // ไม่มีการเก็บ token ใน localStorage
+      const userInfo = responseData.user;
+      const userAssess = responseData.Assess; 
+      console.log(userAssess);
+      console.log(userInfo);
+
+      // เปลี่ยนเส้นทางตามบทบาทผู้ใช้
       if (responseData.roles === 'user') {
-        localStorage.setItem('token', responseData.token);
-
-        const userInfo = responseData.user;
-        const userAssess = responseData.Assess; 
-        console.log(userAssess);
-        console.log(userInfo); 
-
         // window.location.href = '../view/users/user_main.html';
       } else if (responseData.roles === 'doctor') {
-        localStorage.setItem('token', responseData.token);
         alert('Login success');
         window.location.href = '../view/doctor/doc_main.html';
       } else if (responseData.roles === 'employee') {
-        localStorage.setItem('token', responseData.token);
         alert('Login success');
         window.location.href = '../view/staff/employee_main.html';
       } else if (responseData.roles === 'manager') {
-        localStorage.setItem('token', responseData.token);
         alert('Login success');
         window.location.href = '../view/manager/man_main.html';
       }
@@ -137,6 +137,7 @@ const login = async () => {
     window.location.href = '../view/index.html';
   }
 };
+
 
 
 
