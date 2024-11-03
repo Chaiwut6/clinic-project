@@ -119,7 +119,7 @@ const login = async () => {
 
       // เปลี่ยนเส้นทางตามบทบาทผู้ใช้
       if (responseData.roles === 'user') {
-        // window.location.href = '../view/users/user_main.html';
+        window.location.href = '../view/users/user_main.html';
       } else if (responseData.roles === 'doctor') {
         alert('Login success');
         window.location.href = '../view/doctor/doc_main.html';
@@ -138,8 +138,28 @@ const login = async () => {
   }
 };
 
+const fetchUserInfo = async () => {
+  try {
+      const response = await axios.get('http://localhost:8000/api/userinfo', { withCredentials: true });
+      console.log('Response Data:', response.data);
 
+      const userInfo = response.data.user;
+      const userAssess = response.data.Assess;
 
+      console.log('User Info:', userInfo);
+      console.log('User Assessment:', userAssess);
+      
+      // แสดงข้อมูลใน HTML
+      document.getElementById('userName').textContent = userInfo.name;
+      document.getElementById('userEmail').textContent = userInfo.email;
+      document.getElementById('userAssess').textContent = userAssess.score;
+
+  } catch (error) {
+      console.error('Error fetching user info:', error);
+      alert('Session expired. Please log in again.');
+      // window.location.href = '../view/index.html';
+  }
+};
 
 
 

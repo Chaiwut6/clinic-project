@@ -17,7 +17,16 @@ app.use(cors({
   origin: ['http://localhost:8888']
 }))
 
-// Test git
+const verifyToken = (req, res, next) => {
+  const token = req.cookies.token;
+  if (!token) return res.status(401).json({ message: 'Unauthorized' });
+
+  jwt.verify(token, secret, (err, decoded) => {
+    if (err) return res.status(403).json({ message: 'Token invalid' });
+    req.user = decoded;
+    next();
+  });
+};
 
 // app.use(cookieParser())
 
@@ -321,6 +330,28 @@ app.post('/api/save-result', async (req, res) => {
       message: 'Error saving result',
       error: error.message
     });
+  }
+});
+
+app.get('/api/userinfo', verifyToken, async (req, res) => {
+  const login_id = req.user.login_id;
+
+  try {
+    const [userResults] = await conn.query("SELECT * FROM users WHERE user_id = ?", [login_id]);
+    const [userAssess] = await conn.query("SELECT * FROM results WHERE user_id = ?", [login_id]);
+    const userInfo = userResults[0];
+    const userAssessInfo = userAssess[0];
+
+    if (!userInfo) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({
+      user: userInfo,
+      Assess: userAssessInfo,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving user data' });
   }
 });
 
