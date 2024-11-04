@@ -150,9 +150,16 @@ const fetchUserInfo = async () => {
       console.log('User Assessment:', userAssess);
       
       // แสดงข้อมูลใน HTML
-      document.getElementById('userName').textContent = userInfo.name;
-      document.getElementById('userEmail').textContent = userInfo.email;
-      document.getElementById('userAssess').textContent = userAssess.score;
+      document.getElementById('id').textContent = userInfo.user_id;
+      document.getElementById('fname').textContent = userInfo.user_fname;
+      document.getElementById('lname').textContent = userInfo.user_lname;
+      document.getElementById('nickname').textContent = userInfo.user_lname;
+      document.getElementById('year').textContent = userInfo.year;
+      document.getElementById('phone').textContent = userInfo.phone;
+      document.getElementById('faculty').textContent = userInfo.faculty;
+      document.getElementById('result').textContent = userAssess.result;
+      document.getElementById('total_scor').textContent = userAssess.total_scor;
+      document.getElementById('date').textContent = userAssess.date;
 
   } catch (error) {
       console.error('Error fetching user info:', error);
