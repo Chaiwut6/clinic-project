@@ -138,35 +138,52 @@ const login = async () => {
   }
 };
 
-const fetchUserInfo = async () => {
-  try {
-      const response = await axios.get('http://localhost:8000/api/userinfo', { withCredentials: true });
-      console.log('Response Data:', response.data);
+document.addEventListener("DOMContentLoaded", () => {
+  const fetchUserInfo = async () => {
+      try {
+          const response = await axios.get('http://localhost:8000/api/userinfo', { withCredentials: true });
+          console.log('Response Data:', response.data);
 
-      const userInfo = response.data.user;
-      const userAssess = response.data.Assess;
+          const userInfo = response.data.user;
+          const userAssess = response.data.Assess;
 
-      console.log('User Info:', userInfo);
-      console.log('User Assessment:', userAssess);
-      
-      // แสดงข้อมูลใน HTML
-      document.getElementById('id').textContent = userInfo.user_id;
-      document.getElementById('fname').textContent = userInfo.user_fname;
-      document.getElementById('lname').textContent = userInfo.user_lname;
-      document.getElementById('nickname').textContent = userInfo.user_lname;
-      document.getElementById('year').textContent = userInfo.year;
-      document.getElementById('phone').textContent = userInfo.phone;
-      document.getElementById('faculty').textContent = userInfo.faculty;
-      document.getElementById('result').textContent = userAssess.result;
-      document.getElementById('total_scor').textContent = userAssess.total_scor;
-      document.getElementById('date').textContent = userAssess.date;
+          console.log('User Info:', userInfo);
+          console.log('User Assessment:', userAssess);
+          
+          // ใช้ querySelectorAll สำหรับ class
+          const idElements = document.querySelectorAll('.id');
+          const fnameElements = document.querySelectorAll('.fname');
+          const lnameElements = document.querySelectorAll('.lname');
+          const nicknameElements = document.querySelectorAll('.nickname');
+          const yearElements = document.querySelectorAll('.year');
+          const phoneElements = document.querySelectorAll('.phone');
+          const facultyElements = document.querySelectorAll('.faculty');
+          const resultElements = document.querySelectorAll('.result');
+          const totalScoreElements = document.querySelectorAll('.total_score');
+          const dateElements = document.querySelectorAll('.date');
 
-  } catch (error) {
-      console.error('Error fetching user info:', error);
-      alert('Session expired. Please log in again.');
-      // window.location.href = '../view/index.html';
-  }
-};
+          // แสดงข้อมูลใน HTML สำหรับแต่ละ class
+          idElements.forEach(element => element.textContent = userInfo.user_id);
+          fnameElements.forEach(element => element.textContent = userInfo.user_fname);
+          lnameElements.forEach(element => element.textContent = userInfo.user_lname);
+          nicknameElements.forEach(element => element.textContent = userInfo.nickname);
+          yearElements.forEach(element => element.textContent = userInfo.year);
+          phoneElements.forEach(element => element.textContent = userInfo.phone);
+          facultyElements.forEach(element => element.textContent = userInfo.faculty);
+          resultElements.forEach(element => element.textContent = userAssess.result);
+          totalScoreElements.forEach(element => element.textContent = userAssess.total_score);
+          dateElements.forEach(element => element.textContent = userAssess.date);
+
+      } catch (error) {
+          console.error('Error fetching user info:', error);
+          alert('Session expired. Please log in again.');
+          // window.location.href = '../view/index.html';
+      }
+  };
+
+  // เรียกใช้ฟังก์ชันเมื่อโหลดหน้าเสร็จ
+  fetchUserInfo();
+});
 
 
 
