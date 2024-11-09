@@ -272,8 +272,7 @@
     </a>
 
     <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -285,12 +284,24 @@
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <!-- <a class="btn btn-primary" href="index.html">Logout</a> -->
+                    <a class="btn btn-primary" href="../index.html" onclick="Logout()" >Logout</a>
                 </div>
             </div>
         </div>
-
     </div>
+
+    <!-- <script>
+        const logout = async () => {
+            try {
+                await axios.post('http://localhost:8000/api/logout', {}, { withCredentials: true });
+                alert('You have been logged out successfully.');
+                window.location.href = '../view';
+            } catch (error) {
+                console.error('Logout failed:', error);
+                alert('Logout failed. Please try again.');
+            }
+        };
+    </script> -->
 
     <script src="../../js/jquery.min.js"></script>
     <!-- <script src="../../js/bootstrap.bundle.min.js"></script> -->

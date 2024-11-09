@@ -139,17 +139,20 @@ const login = async () => {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  const fetchUserInfo = async () => {
+  // ตรวจสอบว่า URL ของหน้าปัจจุบันเป็น user_main.html หรือไม่
+  if (window.location.pathname.includes("user_main.html")) {
+    const fetchUserInfo = async () => {
       try {
-          const response = await axios.get('http://localhost:8000/api/userinfo', { withCredentials: true });
-          console.log('Response Data:', response.data);
+        const response = await axios.get('http://localhost:8000/api/userinfo', { withCredentials: true });
 
+        // ตรวจสอบว่า response.data มีข้อมูล
+        if (response.data && response.data.user && response.data.Assess) {
           const userInfo = response.data.user;
           const userAssess = response.data.Assess;
 
           console.log('User Info:', userInfo);
           console.log('User Assessment:', userAssess);
-          
+
           // ใช้ querySelectorAll สำหรับ class
           const idElements = document.querySelectorAll('.id');
           const fnameElements = document.querySelectorAll('.fname');
@@ -173,17 +176,41 @@ document.addEventListener("DOMContentLoaded", () => {
           resultElements.forEach(element => element.textContent = userAssess.result);
           totalScoreElements.forEach(element => element.textContent = userAssess.total_score);
           dateElements.forEach(element => element.textContent = userAssess.date);
-
+        } else {
+          console.error('Invalid data format received from API');
+          // หากข้อมูลไม่ถูกต้องหรือไม่ได้รับข้อมูลที่จำเป็น สามารถทำการรีไดเร็กต์
+          window.location.href = '../view/index.html';
+        }
       } catch (error) {
-          console.error('Error fetching user info:', error);
-          alert('Session expired. Please log in again.');
-          // window.location.href = '../view/index.html';
+        console.error('Error fetching user info:', error);
+        // หากเกิดข้อผิดพลาดในการดึงข้อมูล เช่น ไม่มีการยืนยันตัวตน
+        window.location.href = '../view/index.html';  // เปลี่ยนเส้นทางไปที่หน้าเข้าสู่ระบบ
       }
-  };
+    };
 
-  // เรียกใช้ฟังก์ชันเมื่อโหลดหน้าเสร็จ
-  fetchUserInfo();
+    // เรียกใช้ฟังก์ชันเมื่อโหลดหน้าเสร็จ
+    fetchUserInfo();
+  }
 });
+
+
+
+const Logout= async () => {
+  try {
+      // เรียก API logout ไปที่เซิร์ฟเวอร์
+      await axios.post('http://localhost:8000/api/logout', {}, { withCredentials: true });
+
+      // แจ้งผู้ใช้ว่าออกจากระบบแล้ว
+      alert('You have been logged out successfully.');
+
+      // เปลี่ยนเส้นทางไปยังหน้าเข้าสู่ระบบ
+      // window.location.href = '../view';
+  } catch (error) {
+      console.error('Logout failed:', error);
+      alert('Logout failed. Please try again.');
+  }
+}
+
 
 
 
