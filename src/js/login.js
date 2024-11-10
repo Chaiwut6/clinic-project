@@ -121,19 +121,19 @@ const login = async () => {
       if (responseData.roles === 'user') {
         window.location.href = '../view/users/user_main.html';
       } else if (responseData.roles === 'doctor') {
-        alert('Login success');
+        // alert('Login success');
         window.location.href = '../view/doctor/doc_main.html';
       } else if (responseData.roles === 'employee') {
-        alert('Login success');
+        // alert('Login success');
         window.location.href = '../view/staff/employee_main.html';
       } else if (responseData.roles === 'manager') {
-        alert('Login success');
+        // alert('Login success');
         window.location.href = '../view/manager/man_main.html';
       }
     }
   } catch (error) {
     console.error('Error:', error);
-    alert('Login fail');
+    // alert('Login fail');
     window.location.href = '../view/index.html';
   }
 };
@@ -201,13 +201,14 @@ const Logout= async () => {
       await axios.post('http://localhost:8000/api/logout', {}, { withCredentials: true });
 
       // แจ้งผู้ใช้ว่าออกจากระบบแล้ว
-      alert('You have been logged out successfully.');
+      // alert('You have been logged out successfully.');
+      console.log('You have been logged out successfully.');
 
       // เปลี่ยนเส้นทางไปยังหน้าเข้าสู่ระบบ
       // window.location.href = '../view';
   } catch (error) {
       console.error('Logout failed:', error);
-      alert('Logout failed. Please try again.');
+      // alert('Logout failed. Please try again.');
   }
 }
 
