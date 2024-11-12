@@ -11276,3 +11276,98 @@
     
   }
   
+  .header-main{
+    font-size: 40px;
+    color: #1E1446;
+    text-align: left;
+    margin: 20px;
+    font-weight: bold;
+  }
+  .table-header{
+    width: 50%;
+    border-collapse: collapse;
+    margin-top: 30px;
+    margin-left: 15px;
+  }
+  .table-header th tr{
+    text-align: left;
+    font-size: 18px;
+    color: #6c757d;
+    background-color: #f8f9fa;
+  }
+  .change-pass{
+    width: 20%;
+    height: 100%;
+    border-radius: 8px;
+    margin-top: 30px;
+    margin-left: 15px;
+  }
+  .change-pass label{
+    font-size: 18px;
+    color: #1E1446;
+    display: block;
+    font-weight: 500;
+    margin-top: 8px;
+  }
+  .change-pass input[type="password"]{
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    font-size: 14px;
+  }
+
+  .change-pass .submit-btn{
+    width: 40%;
+    padding: 10px;
+    background-color: #619AE3;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+  }
+  .change-pass .submit-btn:hover {
+    background-color: #357ab8;
+  }
+  .profile{
+    width: 30%;
+    height: 100%;
+    border-radius: 8px;
+    margin-top: 10px;
+    margin-left: 15px;
+  }
+  .profile label{
+    font-size: 18px;
+    color: #1E1446;
+    display: block;
+    font-weight: 500;
+    margin-top: 8px;
+  }
+
+  .profile input[type="text"],
+  select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    font-size: 14px;
+  }
+  .profile .submit-btn {
+    width: 40%;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #619AE3;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+  }
+  .profile .submit-btn {
+    background-color: #357ab8;
+  }

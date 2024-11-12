@@ -104,7 +104,7 @@
                     </button>
 
                     <!-- Topbar Search -->
-                    <h1 class="header-main">การนัดพบแพทย์</h1>
+                    <h1 class="header-main">ข้อมูลส่วนตัว</h1>
                     <!-- <form
                         class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <div class="input-group">
@@ -218,7 +218,7 @@
                                     <i class="fas fa-lock fa-sm fa-fw mr-2 text-gray-400"></i>
                                     เปลี่ยนรหัสผ่าน
                                 </a>
-                                    
+
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -243,31 +243,54 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     <!-- Page Heading -->
-                    <table class="table-header">
-                        <thead>
-                          <tr>
-                            <th>ชื่อแพทย์</th>
-                            <th>วันที่นัด</th>
-                            <th>เวลาที่นัด</th>
-                            <th>ยืนยันการนัด</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                              <td>ชัยวุฒิ อยู่โต</td>
-                              <td>4-01-2024</td>
-                              <td>10:00</td>
-                              <!-- <td>
-                                <span class="check-icon">&#10003;</span>
-                                <span class="cross-icon">&#10007;</span>
-                              </td> -->
-                            </tr>
-                          </tbody>
-                      </table>
+                    <form class="profile">
+                        <label for="student-id">รหัสประจำตัว (มีขีด)</label>
+                        <input type="text" id="student-id" name="student-id" required>
+
+                        <label for="first-name">ชื่อจริง</label>
+                        <input type="text" id="first-name" name="first-name" required>
+
+                        <label for="last-name">นามสกุล</label>
+                        <input type="text" id="last-name" name="last-name" required>
+
+                        <label for="nickname">ชื่อเล่น</label>
+                        <input type="text" id="nickname" name="nickname" required>
+
+                        <label for="faculty">คณะ</label>
+                        <select id="faculty" name="faculty" required>
+                            <option value="บริหารธุรกิจ ">บริหารธุรกิจ</option>
+                            <option value="วิศวกรรมศาสตร์">วิศวกรรมศาสตร์</option>
+                            <option value="เทคโนโลยีคหกรรมศาสตร์">เทคโนโลยีคหกรรมศาสตร์</option>
+                            <option value="ศิลปกรรมศาสตร์">ศิลปกรรมศาสตร์</option>
+                            <option value="เทคโนโลยีการเกษตร">เทคโนโลยีการเกษตร</option>
+                            <option value="ครุศาสตร์อุตสาหกรรม">ครุศาสตร์อุตสาหกรรม</option>
+                            <option value="สถาปัตยกรรมศาสตร์">สถาปัตยกรรมศาสตร์</option>
+                            <option value="วิทยาศาสตร์และเทคโนโลยี">วิทยาศาสตร์และเทคโนโลยี</option>
+                            <option value="เทคโนโลยีสื่อสารมวลชน">เทคโนโลยีสื่อสารมวลชน</option>
+                            <option value="ศิลปศาสตร์">ศิลปศาสตร์</option>
+                            <option value="แพทย์บูรณาการ">แพทย์บูรณาการ</option>
+                            <option value="พยาบาลศาสตร์">พยาบาลศาสตร์</option>
+                            <!-- เพิ่มคณะอื่นๆ ตามที่ต้องการ -->
+                        </select>
+
+                        <label for="year">ชั้นปี</label>
+                        <select id="year" name="year" required>
+                            <option value="ปี 1">ปี 1</option>
+                            <option value="ปี 2">ปี 2</option>
+                            <option value="ปี 3">ปี 3</option>
+                            <option value="ปี 4">ปี 4</option>
+                            <option value="ปี 5">ปี 5</option>
+                        </select>
+
+                        <label for="phone">เบอร์โทร</label>
+                        <input type="text" id="phone" name="phone" required>
+
+                        <button type="submit" class="submit-btn">บันทึก</button>
+                    </form>
                     <!-- Display fname here -->
 
                 </div>
-               
+
                 <!-- /.container-fluid -->
 
             </div>
@@ -289,7 +312,8 @@
     </a>
 
     <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -300,7 +324,7 @@
                 <div class="modal-body">เลือก "ออกจากระบบ" ด้านล่างหากคุณพร้อมที่จะออกจากเว็บไซต์ปัจจุบันของคุณ</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">ยกเลิก</button>
-                    <a class="btn btn-primary" href="../index.html" onclick="Logout()" >ออกจากระบบ</a>
+                    <a class="btn btn-primary" href="../index.html" onclick="Logout()">ออกจากระบบ</a>
                 </div>
             </div>
         </div>
