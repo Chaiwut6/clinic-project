@@ -1537,7 +1537,8 @@
   .table-primary,
   .table-primary > th,
   .table-primary > td {
-    background-color: #cdd8f6;
+    background-color: #7FB0EE;
+    color: #fff;
   }
   
   .table-primary th,
@@ -11371,3 +11372,4 @@
   .profile .submit-btn {
     background-color: #357ab8;
   }
+

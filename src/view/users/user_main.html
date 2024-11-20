@@ -87,7 +87,11 @@
             <!-- <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div> -->
-
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-toggle="modal" data-target="#logoutModal">
+                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                    <span>ออกจากระบบ</span></a>
+            </li>
         </ul>
         <!-- End of Sidebar -->
 
@@ -219,12 +223,12 @@
                                     เปลี่ยนรหัสผ่าน
                                 </a>
                                     
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                <!-- <div class="dropdown-divider"></div> -->
+                                <!-- <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     ออกจากระบบ
 
-                                </a>
+                                </a> -->
 
                             </div>
                         </li>
@@ -243,13 +247,13 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     <!-- Page Heading -->
-                    <table class="table table-bordered mt-3">
-                        <thead class="thead-light">
+                    <table class="table align-middle shadow-sm rounded">
+                        <thead class="table-primary">
                           <tr>
                             <th>ชื่อแพทย์</th>
                             <th>วันที่นัด</th>
                             <th>เวลาที่นัด</th>
-                            <th>ยืนยันการนัด</th>
+                            <th class="text-center">การยืนยัน</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -257,15 +261,14 @@
                             <td>ชัยวุฒิ อยู่โต</td>
                             <td>4-01-2024</td>
                             <td>10:00</td>
-                            <!-- <td>
-                              <span class="text-success">&#10003;</span>
-                              <span class="text-danger">&#10007;</span>
-                            </td> -->
+                            <td class="text-center">
+                              <button class="btn btn-success btn-sm me-2">ยืนยัน</button>
+                              <button class="btn btn-danger btn-sm">ยกเลิก</button>
+                            </td>
                           </tr>
                         </tbody>
                       </table>
                     <!-- Display fname here -->
-
                 </div>
                
                 <!-- /.container-fluid -->
