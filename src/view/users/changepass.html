@@ -33,7 +33,9 @@
 
     <!-- Custom styles for this template-->
     <link href="../../style/users/user_main.css" rel="stylesheet">
-    <!-- <script src="../../js/login.js"></script> -->
+    <script src="../../js/login.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
+
 </head>
 
 <body id="page-top">
@@ -206,10 +208,10 @@
                         <li class="nav-item dropdown no-arrow">
 
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="fname mr-2 d-none d-lg-inline text-gray-600 small"></span>
-                                <span class="lname mr-2 d-none d-lg-inline text-gray-600 small"></span>
-                            </a>
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="fname mr-2 d-none d-lg-inline text-gray-600 small"></span>
+                            <span class="lname mr-2 d-none d-lg-inline text-gray-600 small"></span>
+                        </a>
 
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -248,20 +250,20 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     <!-- Page Heading -->
-                    <form class="change-pass">
+                    <form class="change-pass" id="change-password-form">
                         <label for="current-password">รหัสผ่านเดิม</label>
                         <input type="password" id="current-password" name="current-password" required>
-                    
+                      
                         <label for="new-password">รหัสผ่านใหม่</label>
                         <input type="password" id="new-password" name="new-password" required>
-                    
+                      
                         <label for="confirm-password">ยืนยันรหัสผ่านใหม่</label>
                         <input type="password" id="confirm-password" name="confirm-password" required>
-                    
-                        <button type="submit" class="submit-btn">เปลี่ยนรหัสผ่าน</button>
+                      
+                        <button type="submit" class="submit-btn" onclick="changePassword()">เปลี่ยนรหัสผ่าน</button>
                       </form>
+                      
                     <!-- Display fname here -->
-
                 </div>
                
                 <!-- /.container-fluid -->

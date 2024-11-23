@@ -357,7 +357,55 @@ app.get('/api/userinfo', verifyToken, async (req, res) => {
 
 app.post('/api/logout', (req, res) => {
   res.clearCookie('token', { httpOnly: true, secure: true, sameSite: 'Strict' });
-  res.status(200).json({ message: 'Logout successful' });
+  res.status(200).json({ message: 'ออกจากระบบสำเร็จ' });
+});
+
+app.post('/api/change-password', verifyToken, async (req, res) => {
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+  const login_id = req.user.login_id;  // ใช้ login_id จากข้อมูลใน token
+
+  // ตรวจสอบว่า newPassword และ confirmPassword ตรงกันหรือไม่
+  if (newPassword !== confirmPassword) {
+    return res.status(400).json({ message: 'รหัสผ่านใหม่และการยืนยันไม่ตรงกัน' });
+  }
+
+  try {
+    // ค้นหาผู้ใช้จาก login_id ในฐานข้อมูล
+    const [userLogin] = await conn.query("SELECT * FROM login WHERE login_id = ?", [login_id]);
+    
+    // หากไม่พบผู้ใช้
+    if (!userLogin || userLogin.length === 0) {
+      return res.status(404).json({ message: 'ไม่พบผู้ใช้' });
+    }
+
+    const userInfo = userLogin[0];
+
+    // ตรวจสอบรหัสผ่านเดิม
+    const isMatch = await bcrypt.compare(oldPassword, userInfo.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'รหัสผ่านเก่าไม่ถูกต้อง' });
+    }
+
+    // ตรวจสอบว่า newPassword ไม่เหมือนกับรหัสเดิม
+    const isSamePassword = await bcrypt.compare(newPassword, userInfo.password);
+    if (isSamePassword) {
+      return res.status(400).json({ message: 'รหัสผ่านใหม่ต้องไม่เหมือนกับรหัสผ่านเก่า' });
+    }
+
+    // เข้ารหัสรหัสผ่านใหม่
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // อัปเดตรหัสผ่านในฐานข้อมูล
+    const [result] = await conn.query("UPDATE login SET password = ? WHERE login_id = ?", [hashedPassword, login_id]);
+console.log("Update result:", result);
+
+    // ส่งคำตอบสำเร็จ
+    res.status(200).json({ message: 'อัปเดตรหัสผ่านเรียบร้อยแล้ว' });
+  } catch (error) {
+    console.error('เกิดข้อผิดพลาดระหว่างการอัพเดตรหัสผ่าน:', error);
+    res.status(500).json({ message: 'Server error: ' + error.message });
+  }
 });
 
 
