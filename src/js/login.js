@@ -241,6 +241,73 @@ const changePassword = async () => {
   });
 };
 
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("profileForm");
+
+  // ฟังก์ชันดึงข้อมูลเก่า
+  const fetchUserInfo = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/api/userinfo', { withCredentials: true });
+      if (response.data && response.data.user) {
+        const userInfo = response.data.user;
+        populateForm(userInfo); // เติมข้อมูลลงในฟอร์ม
+      } else {
+        console.error("Invalid user data");
+      }
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+    }
+  };
+
+  // ฟังก์ชันเติมข้อมูลในฟอร์ม
+  const populateForm = (userInfo) => {
+    document.getElementById("student-id").value = userInfo.user_id || '';
+    document.getElementById("first-name").value = userInfo.user_fname || '';
+    document.getElementById("last-name").value = userInfo.user_lname || '';
+    document.getElementById("nickname").value = userInfo.nickname || '';
+    document.getElementById("faculty").value = userInfo.faculty || '';
+    document.getElementById("year").value = userInfo.year || '';
+    document.getElementById("phone").value = userInfo.phone || '';
+  };
+
+  // ฟังก์ชันบันทึกข้อมูลใหม่
+  if (form) {
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault(); // ป้องกันการโหลดหน้าใหม่
+      const updatedData = {
+        user_id: document.getElementById("student-id").value,
+        user_fname: document.getElementById("first-name").value,
+        user_lname: document.getElementById("last-name").value,
+        nickname: document.getElementById("nickname").value,
+        faculty: document.getElementById("faculty").value,
+        year: document.getElementById("year").value,
+        phone: document.getElementById("phone").value,
+      };
+
+      console.log(updatedData);
+
+      try {
+        const response = await axios.post('http://localhost:8000/api/updateuser', updatedData, { withCredentials: true });
+        if (response.data.success) {
+          alert("ข้อมูลได้รับการอัปเดตเรียบร้อยแล้ว!");
+          fetchUserInfo(); 
+          window.location.reload()
+        } else {
+          console.error("Update failed:", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error updating user info:", error);
+        alert('Error: ' + (error.response?.data?.message || error.message || 'Unknown error'));
+      }
+    });
+  }
+
+  // เรียกข้อมูลเก่าเมื่อหน้าโหลดเสร็จ
+  if (window.location.pathname.endsWith('profile.html')) {
+    fetchUserInfo();
+  }
+});
+
 
 
 

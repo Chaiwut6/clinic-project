@@ -408,7 +408,37 @@ console.log("Update result:", result);
   }
 });
 
+app.post('/api/updateuser', verifyToken, async (req, res) => {
+  const login_id = req.user.login_id;
+  const {
+    user_id, user_fname, user_lname, nickname, faculty, year, phone
+  } = req.body;
 
+  try {
+    // Check for missing required fields
+    if (!user_id || !user_fname || !user_lname || !faculty || !year || !nickname || !phone) {
+      return res.status(400).json({ success: false, message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
+    }
+
+    // Run the SQL query
+    const [result] = await conn.query(
+      "UPDATE users SET user_id = ?, user_fname = ?, user_lname = ?, nickname = ?, faculty = ?, year = ?, phone = ? WHERE user_id = ?",
+      [user_id, user_fname, user_lname, nickname, faculty, year, phone, login_id]
+    );
+
+    // Check if any rows were updated
+    if (result.affectedRows > 0) {
+      res.status(200).json({ success: true, message: 'อัปเดตข้อมูลสำเร็จ' });
+    } else {
+      res.status(404).json({ success: false, message: 'ไม่พบผู้ใช้นี้ในระบบ' });
+    }
+  } catch (error) {
+    // Log detailed error information
+    console.error('Error during user update:', error.message);
+    console.error('Stack trace:', error.stack);
+    res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดในระบบ', error: error.message });
+  }
+});
 
 
 

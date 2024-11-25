@@ -251,22 +251,22 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     <!-- Page Heading -->
-                    <form class="profile">
+                    <form class="profile" id="profileForm">
                         <label for="student-id">รหัสประจำตัว (มีขีด)</label>
                         <input type="text" id="student-id" name="student-id" required>
-
+                    
                         <label for="first-name">ชื่อจริง</label>
                         <input type="text" id="first-name" name="first-name" required>
-
+                    
                         <label for="last-name">นามสกุล</label>
                         <input type="text" id="last-name" name="last-name" required>
-
+                    
                         <label for="nickname">ชื่อเล่น</label>
                         <input type="text" id="nickname" name="nickname" required>
-
+                    
                         <label for="faculty">คณะ</label>
-                        <select id="faculty" name="faculty" required>
-                            <option value="บริหารธุรกิจ ">บริหารธุรกิจ</option>
+                        <select id="faculty" name="faculty"  required>
+                            <option value="บริหารธุรกิจ">บริหารธุรกิจ</option>
                             <option value="วิศวกรรมศาสตร์">วิศวกรรมศาสตร์</option>
                             <option value="เทคโนโลยีคหกรรมศาสตร์">เทคโนโลยีคหกรรมศาสตร์</option>
                             <option value="ศิลปกรรมศาสตร์">ศิลปกรรมศาสตร์</option>
@@ -278,23 +278,23 @@
                             <option value="ศิลปศาสตร์">ศิลปศาสตร์</option>
                             <option value="แพทย์บูรณาการ">แพทย์บูรณาการ</option>
                             <option value="พยาบาลศาสตร์">พยาบาลศาสตร์</option>
-                            <!-- เพิ่มคณะอื่นๆ ตามที่ต้องการ -->
                         </select>
-
+                    
                         <label for="year">ชั้นปี</label>
-                        <select id="year" name="year" required>
+                        <select id="year" name="year"  required>
                             <option value="ปี 1">ปี 1</option>
                             <option value="ปี 2">ปี 2</option>
                             <option value="ปี 3">ปี 3</option>
                             <option value="ปี 4">ปี 4</option>
                             <option value="ปี 5">ปี 5</option>
                         </select>
-
+                    
                         <label for="phone">เบอร์โทร</label>
                         <input type="text" id="phone" name="phone" required>
-
+                    
                         <button type="submit" class="submit-btn">บันทึก</button>
                     </form>
+                    
                     <!-- Display fname here -->
 
                 </div>
