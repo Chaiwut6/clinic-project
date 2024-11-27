@@ -29,7 +29,7 @@
 
     <!-- Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Custom styles for this template-->
     <link href="../../style/users/user_main.css" rel="stylesheet">
@@ -208,10 +208,10 @@
                         <li class="nav-item dropdown no-arrow">
 
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <span class="fname mr-2 d-none d-lg-inline text-gray-600 small"></span>
-                            <span class="lname mr-2 d-none d-lg-inline text-gray-600 small"></span>
-                        </a>
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="fname mr-2 d-none d-lg-inline text-gray-600 small"></span>
+                                <span class="lname mr-2 d-none d-lg-inline text-gray-600 small"></span>
+                            </a>
 
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -225,7 +225,7 @@
                                     <i class="fas fa-lock fa-sm fa-fw mr-2 text-gray-400"></i>
                                     เปลี่ยนรหัสผ่าน
                                 </a>
-                                    
+
                                 <!-- <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -252,20 +252,53 @@
                     <!-- Page Heading -->
                     <form class="change-pass" id="change-password-form">
                         <label for="current-password">รหัสผ่านเดิม</label>
-                        <input type="password" id="current-password" name="current-password" required>
-                      
+                        <div class="password-wrapper">
+                             <input type="password" id="current-password" name="current-password" class="password-input"
+                                required>
+                            <i class="bi bi-eye" onclick="togglePassword('current-password', this)"></i>
+                                                
+                        </div>
+
+
                         <label for="new-password">รหัสผ่านใหม่</label>
-                        <input type="password" id="new-password" name="new-password" required>
-                      
+                        <div class="password-wrapper">
+                            <input type="password" id="new-password" name="new-password" class="password-input"
+                                required>
+                            <i class="bi bi-eye" onclick="togglePassword('new-password', this)"></i>
+                        </div>
+
                         <label for="confirm-password">ยืนยันรหัสผ่านใหม่</label>
-                        <input type="password" id="confirm-password" name="confirm-password" required>
-                      
+                        <div class="password-wrapper">
+                            <input type="password" id="confirm-password" name="confirm-password" class="password-input"
+                                required>
+                            <i class="bi bi-eye" onclick="togglePassword('confirm-password', this)"></i>
+                        </div>
+
                         <button type="submit" class="submit-btn" onclick="changePassword()">เปลี่ยนรหัสผ่าน</button>
-                      </form>
-                      
+                    </form>
+
+
+                    <script>
+                        function togglePassword(inputId, iconElement) {
+                            const inputField = document.getElementById(inputId);
+                            const icon = iconElement;
+                        
+                            if (inputField.type === 'password') {
+                                inputField.type = 'text';
+                                inputField.classList.add('show-password'); // เพิ่ม class เมื่อแสดงรหัสผ่าน
+                                icon.classList.remove('bi-eye');
+                                icon.classList.add('bi-eye-slash');
+                            } else {
+                                inputField.type = 'password';
+                                inputField.classList.remove('show-password'); // ลบ class เมื่อซ่อนรหัสผ่าน
+                                icon.classList.remove('bi-eye-slash');
+                                icon.classList.add('bi-eye');
+                            }
+                        }
+                    </script>
                     <!-- Display fname here -->
                 </div>
-               
+
                 <!-- /.container-fluid -->
 
             </div>
@@ -287,7 +320,8 @@
     </a>
 
     <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -298,7 +332,7 @@
                 <div class="modal-body">เลือก "ออกจากระบบ" ด้านล่างหากคุณพร้อมที่จะออกจากเว็บไซต์ปัจจุบันของคุณ</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">ยกเลิก</button>
-                    <a class="btn btn-primary" href="../index.html" onclick="Logout()" >ออกจากระบบ</a>
+                    <a class="btn btn-primary" href="../index.html" onclick="Logout()">ออกจากระบบ</a>
                 </div>
             </div>
         </div>

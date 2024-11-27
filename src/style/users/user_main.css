@@ -11310,15 +11310,17 @@
     font-weight: 500;
     margin-top: 8px;
   }
-  .change-pass input[type="password"]{
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #000000;
-    border-radius: 10px;
-    font-size: 14px;
+  .change-pass input[type="password"],
+  .change-pass input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #000000;
+      border-radius: 10px;
+      font-size: 14px;
+      display: flex;
   }
-
+  
   .change-pass .submit-btn{
     width: 40%;
     padding: 10px;
@@ -11373,3 +11375,25 @@
     background-color: #357ab8;
   }
 
+  .password-wrapper {
+    position: relative;
+}
+
+.password-input {
+    padding-right: 2.5rem; 
+    padding-left: 10px; 
+    height: 100%; 
+    font-size: 1px;
+    border: 1px solid #000000;
+    border-radius: 10px;
+}
+
+.password-wrapper i {
+    position: absolute;
+    right: 10px; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    cursor: pointer;
+    color: #6c757d;
+    font-size: 1.2rem;
+}
