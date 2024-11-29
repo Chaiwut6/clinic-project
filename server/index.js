@@ -68,41 +68,61 @@ app.use(bodyParser.json());
 
 app.post('/api/register-user', async (req, res) => {
   try {
-  const { user_id, password, user_fname, user_lname, nickname, year, phone, faculty, role} = req.body;
-  const passwordHash = await bcrypt.hash(password, 10);
-  const userData = {
-    user_id, 
-    user_fname, 
-    user_lname, 
-    nickname, 
-    year, 
-    phone, 
-    faculty,
-    roles: 'user',
+    const { user_id, password, user_fname, user_lname, nickname, year, phone, faculty, role } = req.body;
 
-  };
-  const loginData = {
-    login_id: user_id, 
-    password: passwordHash,
-    roles: 'user' 
-  };
+    // Hash the password
+    const passwordHash = await bcrypt.hash(password, 10);
 
+    // Prepare the user data and login data for insertion
+    const userData = {
+      user_id,
+      user_fname,
+      user_lname,
+      nickname,
+      year,
+      phone,
+      faculty,
+      roles: 'user', // Default role is 'user'
+    };
 
-  const [results] = await conn.query('INSERT INTO users SET ?', userData);
-  const [resultslogin] = await conn.query('INSERT INTO login SET ?', loginData);
- 
-  res.json({
-    message: 'insert OK',
-    results
-  });   
-  } catch (error) {
-    console.log('error', error)
+    const loginData = {
+      login_id: user_id,
+      password: passwordHash,
+      roles: 'user', // Default role is 'user'
+    };
+
+    // Insert user data into the users table
+    const [userResults] = await conn.query('INSERT INTO users SET ?', userData);
+
+    // Insert login data into the login table
+    const [loginResults] = await conn.query('INSERT INTO login SET ?', loginData);
+
+    // Create a JWT token for the new user (login_id as payload)
+    const token = jwt.sign({ login_id: user_id }, secret, { expiresIn: '1h' });
+
+    // Set the token in a cookie for the user (httpOnly for security)
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 3600000, // 1 hour
+    });
+
+    // Respond with success message and include token in the response
     res.json({
-      message: 'insert error',
-      error: error.message
-    })
+      message: 'User registered successfully',
+      user_id,
+      token, // Send the token in the response
+    });
+
+  } catch (error) {
+    console.log('error', error);
+    res.status(500).json({
+      message: 'Registration failed',
+      error: error.message,
+    });
   }
 });
+
 
 app.post('/api/register-doctor', async (req, res) => {
   try {
@@ -271,7 +291,7 @@ app.post("/api/login-doctor", async (req, res) => {
   }
 });
 
-app.get('/api/users', async (req, res) => {
+app.post('/api/users', async (req, res) => {
   try {
     const authHeader = req.headers['authorization']
     let authToken = ''
@@ -333,7 +353,7 @@ app.post('/api/save-result', async (req, res) => {
   }
 });
 
-app.get('/api/userinfo', verifyToken, async (req, res) => {
+app.post('/api/userinfo', verifyToken, async (req, res) => {
   const login_id = req.user.login_id;
 
   try {

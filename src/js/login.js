@@ -40,15 +40,18 @@ function toggleLink() {
 
 const register = async () => {
   try {
+    // Collect form data
     const password = document.querySelector('#password').value;
     const confirm_password = document.querySelector('#confirm_password').value;
     const policyCheckbox = document.querySelector('#policy_checkbox');
 
+    // Validate the terms of service checkbox
     if (!policyCheckbox.checked) {
       alert('กรุณายอมรับนโยบายความเป็นส่วนตัว');
       return;
     }
 
+    // Validate passwords match
     if (password !== confirm_password) {
       alert('รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน');
       document.querySelector('#password').value = '';
@@ -56,11 +59,13 @@ const register = async () => {
       return;
     }
 
+    // Check if password is provided
     if (!password || password.length === 0) {
       alert('กรุณากรอกรหัสผ่าน');
       return;
     }
 
+    // Collect other form data
     const user_fname = document.querySelector('#user_fname').value;
     const user_lname = document.querySelector('#user_lname').value;
     const nickname = document.querySelector('#nickname').value;
@@ -69,6 +74,7 @@ const register = async () => {
     const year = document.querySelector('#year').value;
     const user_id = document.querySelector('#user_id').value;
 
+    // Call the API to register the user
     const response = await axios.post('http://localhost:8000/api/register-user', {
       user_fname,
       user_lname,
@@ -79,23 +85,39 @@ const register = async () => {
       user_id,
       password
     });
-    if (response.data.message === 'insert OK') {
+
+    // Check if the registration was successful
+    if (response.data.message === 'User registered successfully') {
       alert('ลงทะเบียนสำเร็จ');
+
+      // Store user data in sessionStorage (optional)
       sessionStorage.setItem('user_id', user_id);
       sessionStorage.setItem('user_fname', user_fname);
       sessionStorage.setItem('user_lname', user_lname);
-      window.location.href = `../view/users/user_testmain.html`;
 
+      // Store the token in cookies
+      const token = response.data.token;
+      const expirationDate = new Date();
+      expirationDate.setHours(expirationDate.getHours() + 1); // Token expiration time (1 hour)
+
+      document.cookie = `token=${token};expires=${expirationDate.toUTCString()};path=/;secure;SameSite=Strict`;
+
+      // Redirect to the main test page
+      window.location.href = `../view/users/user_testmain.html`;
     } else {
+      // Handle the case where registration was unsuccessful
       alert('มีข้อผิดพลาดในการลงทะเบียน');
-      window.location.href = '../view/index.html';
+      window.location.href = '/view/index.html';
     }
   } catch (error) {
+    // Handle any other errors (e.g., network issues, server issues)
     console.error('Error:', error);
     alert('มีข้อผิดพลาดในการลงทะเบียน');
-    window.location.href = '../view/index.html';
+    window.location.href = '/view/index.html';
   }
 };
+
+
 
 const login = async () => {
   const login_id = document.querySelector('input[name=user_id]').value;
@@ -134,29 +156,32 @@ const login = async () => {
   } catch (error) {
     console.error('Error:', error);
     // alert('Login fail');
-    window.location.href = '../view/index.html';
+    window.location.href = '/view/index.html';
   }
 };
 
 document.addEventListener("DOMContentLoaded", () => {
   const fetchUserInfo = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/userinfo', { withCredentials: true });
+      // ใช้ POST แทน GET ในการดึงข้อมูล
+      const response = await axios.post('http://localhost:8000/api/userinfo', {}, {
+        withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
+      });
 
       if (response.data && response.data.user && response.data.Assess) {
         const userInfo = response.data.user;
         const userAssess = response.data.Assess;
-        console.log(userInfo);
-        console.log(userAssess);
+        console.log("userInfo:", userInfo);
+        console.log("userAssess:", userAssess);
         // แสดงข้อมูลบนหน้า
         updatePageData(userInfo, userAssess);
       } else {
         console.error('Invalid data format received from API');
-        window.location.href = '../view/index.html';
+        window.location.href = '/view/index.html'; // ถ้าไม่มีข้อมูลที่ถูกต้อง ให้กลับไปหน้าอื่น
       }
     } catch (error) {
       console.error('Error fetching user info:', error);
-      window.location.href = '../view/index.html';
+      window.location.href = '/view/index.html'; // ถ้ามีข้อผิดพลาดในการดึงข้อมูล ให้ไปหน้าอื่น
     }
   };
 
@@ -168,6 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
 
+    // อัปเดตข้อมูลในหน้า HTML
     updateElements('.id', userInfo.user_id);
     updateElements('.fname', userInfo.user_fname);
     updateElements('.lname', userInfo.user_lname);
@@ -175,35 +201,57 @@ document.addEventListener("DOMContentLoaded", () => {
     updateElements('.year', userInfo.year);
     updateElements('.phone', userInfo.phone);
     updateElements('.faculty', userInfo.faculty);
-    updateElements('.result', userAssess.result);
-    updateElements('.total_score', userAssess.total_score);
-    updateElements('.date', userAssess.date);
+    updateElements('.result', userAssess?.result);
+    updateElements('.total_score', userAssess?.total_score);
+
+    // แปลงวันที่และอัปเดตในหน้า
+    const formattedDate = formatDate(userAssess?.date);
+    updateElements('.date', formattedDate);
   };
 
-  // เรียกใช้ fetchUserInfo เมื่อหน้าโหลดเสร็จ
-  if (window.location.pathname !== '/view/index.html'){
+  // ฟังก์ชันแปลงวันที่
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A'; // ตรวจสอบว่า dateString มีข้อมูลหรือไม่
+    const date = new Date(dateString); // แปลงเป็น Date object
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // เดือน
+    const day = String(date.getDate()).padStart(2, '0'); // วัน
+    return `${year}-${month}-${day}`; // คืนค่าเป็นรูปแบบ YYYY-MM-DD
+  };
+
+  // เรียก fetchUserInfo เมื่อโหลดหน้าเสร็จ
+  if (window.location.pathname !== '/view/index.html') {
     fetchUserInfo();
   }
-
 });
 
 
-const Logout= async () => {
-  try {
-      // เรียก API logout ไปที่เซิร์ฟเวอร์
-      await axios.post('http://localhost:8000/api/logout', {}, { withCredentials: true });
 
-      // แจ้งผู้ใช้ว่าออกจากระบบแล้ว
-      // alert('You have been logged out successfully.');
+
+const Logout = async () => {
+  try {
+    // เรียก API logout ไปที่เซิร์ฟเวอร์
+    const response = await axios.post('http://localhost:8000/api/logout', {}, { withCredentials: true });
+
+    // ตรวจสอบผลลัพธ์จากการออกจากระบบ
+    if (response.data.message === 'ออกจากระบบสำเร็จ') {
       console.log('คุณออกจากระบบเรียบร้อยแล้ว');
 
+      // ลบข้อมูลจาก sessionStorage
+      sessionStorage.removeItem('user_id');
+      sessionStorage.removeItem('user_fname');
+      sessionStorage.removeItem('user_lname');
+      
       // เปลี่ยนเส้นทางไปยังหน้าเข้าสู่ระบบ
-      // window.location.href = '../view';
+      // window.location.href = '../view/index.html'; // หรือหน้าอื่นที่คุณต้องการ
+    } else {
+      console.error('การออกจากระบบล้มเหลว');
+    }
   } catch (error) {
-      console.error('Logout failed:', error);
-      // alert('Logout failed. Please try again.');
+    console.error('Logout failed:', error);
   }
-}
+};
+
 
 const changePassword = async () => {
   document.getElementById('change-password-form').addEventListener('submit', async (event) => {
@@ -244,10 +292,10 @@ const changePassword = async () => {
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("profileForm");
 
-  // ฟังก์ชันดึงข้อมูลเก่า
+  // ฟังก์ชันดึงข้อมูลเก่า (ใช้ POST แทน GET)
   const fetchUserInfo = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/userinfo', { withCredentials: true });
+      const response = await axios.post('http://localhost:8000/api/userinfo', {}, { withCredentials: true });
       if (response.data && response.data.user) {
         const userInfo = response.data.user;
         populateForm(userInfo); // เติมข้อมูลลงในฟอร์ม
@@ -291,7 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (response.data.success) {
           alert("ข้อมูลได้รับการอัปเดตเรียบร้อยแล้ว!");
           fetchUserInfo(); 
-          window.location.reload()
+          window.location.reload();
         } else {
           console.error("Update failed:", response.data.message);
         }
@@ -307,6 +355,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchUserInfo();
   }
 });
+
 
 
 
