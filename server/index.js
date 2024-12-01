@@ -222,7 +222,7 @@ app.post("/api/login", async (req, res) => {
     const [userResults] = await conn.query("SELECT * FROM users WHERE user_id = ?", [login_id]);
     const [userAssess] = await conn.query("SELECT * FROM results WHERE user_id = ?", [login_id]);
     const userInfo = userResults[0];
-    const Assess = userAssess[0];
+ 
     
     if (!userData) {
       return res.status(400).json({ message: 'Login failed (wrong userid)' });
@@ -248,7 +248,7 @@ app.post("/api/login", async (req, res) => {
       roles,
       message: 'Login success',
       user: userData,userInfo,
-      Assess:Assess
+      Assess:userAssess
     });
   } catch (error) {
     console.log('Error:', error);
@@ -360,7 +360,7 @@ app.post('/api/userinfo', verifyToken, async (req, res) => {
     const [userResults] = await conn.query("SELECT * FROM users WHERE user_id = ?", [login_id]);
     const [userAssess] = await conn.query("SELECT * FROM results WHERE user_id = ?", [login_id]);
     const userInfo = userResults[0];
-    const userAssessInfo = userAssess[0];
+    const userAssessInfo = userAssess;
 
     if (!userInfo) {
       return res.status(404).json({ message: 'User not found' });

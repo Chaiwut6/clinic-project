@@ -135,7 +135,9 @@ const login = async () => {
 
       // ไม่มีการเก็บ token ใน localStorage
       const userInfo = responseData.user;
-      const userAssess = responseData.Assess; 
+      const userAssess = responseData.Assess;
+     
+ 
       console.log(userAssess);
       console.log(userInfo);
 
@@ -173,16 +175,44 @@ document.addEventListener("DOMContentLoaded", () => {
         const userAssess = response.data.Assess;
         console.log("userInfo:", userInfo);
         console.log("userAssess:", userAssess);
+
+        sessionStorage.setItem('user_id', response.data.user.user_id);
+        sessionStorage.setItem('user_fname', response.data.user.user_fname);
+        sessionStorage.setItem('user_lname', response.data.user.user_lname);
+
         // แสดงข้อมูลบนหน้า
+        populateAssessments(userAssess);
         updatePageData(userInfo, userAssess);
+
       } else {
         console.error('Invalid data format received from API');
-        window.location.href = '/view/index.html'; // ถ้าไม่มีข้อมูลที่ถูกต้อง ให้กลับไปหน้าอื่น
       }
     } catch (error) {
       console.error('Error fetching user info:', error);
-      window.location.href = '/view/index.html'; // ถ้ามีข้อผิดพลาดในการดึงข้อมูล ให้ไปหน้าอื่น
     }
+  };
+
+  const populateAssessments = (assessments) => {
+    const tableBody = document.getElementById("assessmentTableBody");
+    if (!tableBody) {
+      console.error('Table body not found');
+      return;
+    }
+    assessments.forEach((assessment) => {
+      const row = document.createElement("tr");
+      const date = formatDate(assessment.date); 
+      const totalScore = assessment.total_score || 'N/A'; 
+      const result = assessment.result || 'N/A'; 
+
+      row.innerHTML = `
+        <td class="date">${date}</td>
+        <td class="total_score">${totalScore}</td>
+        <td class="result">${result}</td>
+      `;
+      
+      // เพิ่มแถวในตาราง
+      tableBody.appendChild(row);
+    });
   };
 
   const updatePageData = (userInfo, userAssess) => {
@@ -193,30 +223,39 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
 
-    // อัปเดตข้อมูลในหน้า HTML
-    updateElements('.id', userInfo.user_id);
-    updateElements('.fname', userInfo.user_fname);
-    updateElements('.lname', userInfo.user_lname);
-    updateElements('.nickname', userInfo.nickname);
-    updateElements('.year', userInfo.year);
-    updateElements('.phone', userInfo.phone);
-    updateElements('.faculty', userInfo.faculty);
-    updateElements('.result', userAssess?.result);
-    updateElements('.total_score', userAssess?.total_score);
+    // อัปเดตข้อมูลผู้ใช้
+    if (userInfo) {
+      updateElements('.id', userInfo.user_id);
+      updateElements('.fname', userInfo.user_fname);
+      updateElements('.lname', userInfo.user_lname);
+      updateElements('.nickname', userInfo.nickname);
+      updateElements('.year', userInfo.year);
+      updateElements('.phone', userInfo.phone);
+      updateElements('.faculty', userInfo.faculty);
+    } else {
+      console.warn("User info is missing");
+    }
 
-    // แปลงวันที่และอัปเดตในหน้า
-    const formattedDate = formatDate(userAssess?.date);
-    updateElements('.date', formattedDate);
+    // อัปเดตข้อมูลการประเมิน
+    // if (userAssess && userAssess.length > 0) {
+    //   const latestAssess = userAssess[1]; // อาจจะเลือกข้อมูลล่าสุดจาก list
+    //   updateElements('.result', latestAssess.result);
+    //   updateElements('.total_score', latestAssess.total_score);
+    //   updateElements('.date', formatDate(latestAssess.date));
+    // } else {
+    //   console.warn("Assessment data is missing or empty");
+    // }
   };
 
   // ฟังก์ชันแปลงวันที่
   const formatDate = (dateString) => {
-    if (!dateString) return 'N/A'; // ตรวจสอบว่า dateString มีข้อมูลหรือไม่
-    const date = new Date(dateString); // แปลงเป็น Date object
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'N/A';
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // เดือน
-    const day = String(date.getDate()).padStart(2, '0'); // วัน
-    return `${year}-${month}-${day}`; // คืนค่าเป็นรูปแบบ YYYY-MM-DD
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${day}-${month}-${year}`;
   };
 
   // เรียก fetchUserInfo เมื่อโหลดหน้าเสร็จ
@@ -224,7 +263,6 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchUserInfo();
   }
 });
-
 
 
 
