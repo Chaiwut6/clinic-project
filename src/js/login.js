@@ -143,7 +143,8 @@ const login = async () => {
 
       // เปลี่ยนเส้นทางตามบทบาทผู้ใช้
       if (responseData.roles === 'user') {
-        window.location.href = '../view/users/user_main.html';
+        window.location.href = '/view/users/user_main.html';
+
       } else if (responseData.roles === 'doctor') {
         // alert('Login success');
         window.location.href = '../view/doctor/doc_main.html';
@@ -195,7 +196,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const populateAssessments = (assessments) => {
     const tableBody = document.getElementById("assessmentTableBody");
     if (!tableBody) {
-      console.error('Table body not found');
       return;
     }
     assessments.forEach((assessment) => {
@@ -281,7 +281,8 @@ const Logout = async () => {
       sessionStorage.removeItem('user_lname');
       
       // เปลี่ยนเส้นทางไปยังหน้าเข้าสู่ระบบ
-      // window.location.href = '../view/index.html'; // หรือหน้าอื่นที่คุณต้องการ
+      window.location.href = '/view/index.html'; // 
+     // หรือหน้าอื่นที่คุณต้องการ
     } else {
       console.error('การออกจากระบบล้มเหลว');
     }
@@ -330,8 +331,7 @@ const changePassword = async () => {
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("profileForm");
 
-  // ฟังก์ชันดึงข้อมูลเก่า (ใช้ POST แทน GET)
-  const fetchUserInfo = async () => {
+  const fetchUserUpdate = async () => {
     try {
       const response = await axios.post('http://localhost:8000/api/userinfo', {}, { withCredentials: true });
       if (response.data && response.data.user) {
@@ -341,7 +341,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Invalid user data");
       }
     } catch (error) {
-      console.error("Error fetching user info:", error);
+      console.error("Error fetching user info from:", error);
     }
   };
 
@@ -390,7 +390,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // เรียกข้อมูลเก่าเมื่อหน้าโหลดเสร็จ
   if (window.location.pathname.endsWith('profile.html')) {
-    fetchUserInfo();
+    fetchUserUpdate();
   }
 });
 

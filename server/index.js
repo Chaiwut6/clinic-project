@@ -104,7 +104,9 @@ app.post('/api/register-user', async (req, res) => {
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 3600000, // 1 hour
+      maxAge: 3600000,
+      sameSite: 'Strict', 
+      
     });
 
     // Respond with success message and include token in the response
@@ -241,7 +243,8 @@ app.post("/api/login", async (req, res) => {
     res.cookie('token', token, {
       httpOnly: true, 
       secure: process.env.NODE_ENV === 'production', 
-      maxAge: 3600000 
+      maxAge: 3600000,
+      sameSite: 'Strict',
     });
 
     res.json({
@@ -376,7 +379,11 @@ app.post('/api/userinfo', verifyToken, async (req, res) => {
 });
 
 app.post('/api/logout', (req, res) => {
-  res.clearCookie('token', { httpOnly: true, secure: true, sameSite: 'Strict' });
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'Strict',
+  });
   res.status(200).json({ message: 'ออกจากระบบสำเร็จ' });
 });
 
