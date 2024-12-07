@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบนัดหมายแพทย์ - ส่งออกข้อมูล</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #000;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        .export-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #FFF;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .export-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<h2>ระบบนัดหมายแพทย์</h2>
+<table id="appointmentTable">
+    <thead>
+        <tr>
+            <th>รหัสนัดหมาย</th>
+            <th>ชื่อแพทย์</th>
+            <th>ชื่อผู้ป่วย</th>
+            <th>วันที่</th>
+            <th>เวลา</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>นพ. จอห์น โด</td>
+            <td>เจน สมิธ</td>
+            <td>2024-12-06</td>
+            <td>10:00 AM</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>พญ. อลิซ บราวน์</td>
+            <td>ไมค์ จอห์นสัน</td>
+            <td>2024-12-06</td>
+            <td>11:30 AM</td>
+        </tr>
+    </tbody>
+</table>
+
+<button class="export-btn" onclick="exportToExcel()">ส่งออกเป็น Excel</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+    function exportToExcel() {
+        // ดึงตารางข้อมูล
+        const table = document.getElementById("appointmentTable");
+        
+        // แปลงตารางเป็นไฟล์ Excel
+        const workbook = XLSX.utils.table_to_book(table, { sheet: "Appointments" });
+        
+        // บันทึกไฟล์ Excel
+        XLSX.writeFile(workbook, "DoctorAppointments.xlsx");
+    }
+</script>
+
+</body>
+</html>
