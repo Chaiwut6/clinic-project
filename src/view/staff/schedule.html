@@ -36,7 +36,7 @@
     <link rel="stylesheet" href="../../style/staff/schedule.css">
     <!-- <script src="../../js/login.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
-    
+
     <script src="../../js/staff.js"></script>
 
 </head>
@@ -157,15 +157,15 @@
 
                         <!-- Nav Item - Alerts -->
                         <!-- <li class="nav-item dropdown no-arrow mx-1"> -->
-                            <!-- <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                        <!-- <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-bell fa-fw"></i>
                                 <!-- Counter - Alerts -->
-                                <!-- <span class="badge badge-danger badge-counter">3+</span> -->
-                            <!-- </a> --> 
+                        <!-- <span class="badge badge-danger badge-counter">3+</span> -->
+                        <!-- </a> -->
 
-                            <!-- Dropdown - Alerts -->
-                            <!-- <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                        <!-- Dropdown - Alerts -->
+                        <!-- <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="alertsDropdown">
                                 <h6 class="dropdown-header">
                                     Alerts Center
@@ -216,7 +216,7 @@
                                 <span class="lname mr-2 d-none d-lg-inline text-gray-600 small"></span>
                                 <!-- <img src="../../image/user.png" style="height: 50%; wigth: 50px;"> -->
                             </a>
-                            
+
 
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -230,7 +230,7 @@
                                     <i class="fas fa-lock fa-sm fa-fw mr-2 text-gray-400"></i>
                                     เปลี่ยนรหัสผ่าน
                                 </a>
-                                    
+
                                 <!-- <div class="dropdown-divider"></div> -->
                                 <!-- <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -258,33 +258,61 @@
                     <div class="container">
                         <header>
                             <h1>รายชื่อแพทย์</h1>
-                          <div class="header-actions">
-                            <input type="text" id="searchDoctor" placeholder="ค้นหา">
-                            <button id="addDoctorBtn">เพิ่มแพทย์</button>
-                          </div>
+                            <div class="header-actions">
+                                <input type="text" id="searchDoctor" placeholder="ค้นหา">
+                                <button id="addDoctorBtn">เพิ่มแพทย์</button>
+                            </div>
                         </header>
                         <table>
-                          <thead>
-                            <tr>
-                              <th>ID</th>
-                              <th>ชื่อแพทย์</th>
-                              <th>เบอร์โทรศัพท์</th>
-                              <th>เพิ่มเติม</th>
-                            </tr>
-                          </thead>
-                          <tbody id="doctorsTable">
-                            <tr>
-                              <td>1</td>
-                              <td>Doctor Om</td>
-                              <td>8888899999</td>
-                              <td><button class="actionBtn"><i class="fa-solid fa-grip-lines"></i></button></td>
-                            </tr>
-                          </tbody>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>ชื่อแพทย์</th>
+                                    <th>เบอร์โทรศัพท์</th>
+                                    <th>เพิ่มเติม</th>
+                                </tr>
+                            </thead>
+                            <tbody id="doctorsTable">
+                                <tr>
+                                    <td>1</td>
+                                    <td>Doctor Om</td>
+                                    <td>8888899999</td>
+                                    <td><button class="actionBtn"><i class="fa-solid fa-grip-lines"></i></button></td>
+                                </tr>
+                            </tbody>
                         </table>
-                      </div>
+                    </div>
                     <!-- Display fname here -->
                 </div>
-               
+
+                <!-- Popup Modal -->
+                <div id="addDoctorModal" class="modal">
+                    <div class="modal-content">
+                    <div>
+                        <span class="close">&times;</span>     
+                     </div>
+                                             
+                        <form id="addDoctorForm">
+                            <label for="doctorName">ชื่อแพทย์</label>
+                            <input type="text" id="doctorName" />
+
+                            <label for="phoneNumber">เบอร์โทรศัพท์</label>
+                            <input type="text" id="phoneNumber"/>
+
+                            <label for="email">รหัสประจำตัว</label>
+                            <input type="email" id="email"/>
+
+                            <label for="password">รหัสผ่าน</label>
+                            <input type="password" id="password"/>
+                            
+                            <label for="password">ยืนยันรหัสผ่าน</label>
+                            <input type="confirm-password" id="confirm-password"/>
+
+                            <button type="submit">Save</button>
+                        </form>
+                    </div>
+                </div>
+
                 <!-- /.container-fluid -->
 
             </div>
@@ -306,7 +334,8 @@
     </a>
 
     <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">

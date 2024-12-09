@@ -115,3 +115,95 @@
   }
 
 
+  /* ปุ่ม Add Doctor */
+#addDoctorBtn {
+  padding: 10px 20px;
+  background-color: #4f80ff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#addDoctorBtn:hover {
+  background-color: #3c66d6;
+}
+
+/* Modal */
+.modal {
+  display: none; /* ซ่อน modal โดยค่าเริ่มต้น */
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5); /* พื้นหลังโปร่งใส */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: white;
+  margin: 5% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 50%; /* กำหนดความกว้าง */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ปุ่มปิด Modal */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+}
+
+/* Form สไตล์ */
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-weight: bold;
+  padding-top: 15px;
+}
+
+input,
+select,
+textarea {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+textarea {
+  resize: none;
+  height: 80px;
+}
+
+button[type="submit"] {
+  background-color: #4f80ff;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+button[type="submit"]:hover {
+  background-color: #3c66d6;
+}
+
+
+
