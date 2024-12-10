@@ -20,3 +20,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Get all dropdown buttons
+    const dropdownButtons = document.querySelectorAll('.actionBtn');
+
+    dropdownButtons.forEach((button) => {
+        button.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent clicks from bubbling up
+            const dropdown = button.closest('.dropdown-doctor');
+            dropdown.classList.toggle('show'); // Toggle the dropdown menu
+        });
+    });
+
+    // Close dropdown when clicking outside
+    window.addEventListener('click', () => {
+        const dropdowns = document.querySelectorAll('.dropdown-doctor');
+        dropdowns.forEach((dropdown) => dropdown.classList.remove('show'));
+    });
+});

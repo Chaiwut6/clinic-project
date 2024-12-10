@@ -205,5 +205,67 @@ button[type="submit"]:hover {
   background-color: #3c66d6;
 }
 
+/* Style for the dropdown container */
+.dropdown-doctor{
+  position: relative;
+  display: inline-block;
+  
+}
+
+/* Style for the dropdown menu (hidden by default) */
+.dropdown-content {
+  position: absolute;
+  left: 0;
+  z-index: 1000;
+  display: none;
+  float: left;
+  min-width: 10rem;
+  padding: 0.5rem 0;
+  margin: 0.125rem 0 0;
+  font-size: 0.85rem;
+  color: #858796;
+  text-align: left;
+  list-style: none;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #e3e6f0;
+  border-radius: 0.35rem;
+}
+
+/* Links inside the dropdown menu */
+.dropdown-content a {
+  display: block;
+  width: 100%;
+  padding: 0.25rem 1.5rem;
+  clear: both;
+  font-weight: 400;
+  color: #3a3b45;
+  text-align: inherit;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+}
+
+.dropdown-content a:last-child {
+  border-bottom: none;
+}
+
+/* Hover effect for dropdown links */
+.dropdown-content a:hover {
+  color: #2e2f37;
+  text-decoration: none;
+  background-color: #eaecf4;
+}
+
+/* Show the dropdown menu when the dropdown is active */
+.dropdown-doctor.show .dropdown-content {
+  display: block;
+}
+
+.actionBtn i{
+  color: #2e2f37; 
+  font-size: 16px; 
+}
+
 
 
