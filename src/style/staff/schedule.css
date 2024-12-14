@@ -236,15 +236,26 @@ button[type="submit"]:hover {
 .dropdown-content a {
   display: block;
   width: 100%;
-  padding: 0.25rem 1.5rem;
+  padding: 0.25rem 1rem;
   clear: both;
   font-weight: 400;
   color: #3a3b45;
-  text-align: inherit;
   white-space: nowrap;
   background-color: transparent;
   border: 0;
 }
+
+.dropdown-content i {
+  width: 23%;
+  height: 23%;
+  padding: 8px;
+  color: #858796;
+}
+.dropdown-content span {
+  color: #858796;
+}
+
+
 
 .dropdown-content a:last-child {
   border-bottom: none;
@@ -263,7 +274,7 @@ button[type="submit"]:hover {
 }
 
 .actionBtn i{
-  color: #2e2f37; 
+  color: #858796; 
   font-size: 16px; 
 }
 
