@@ -1,22 +1,18 @@
-.container-fluid{
-    width: 100%;
-    padding-right: 0.75rem;
-    padding-left: 0.75rem;
-    margin-right: auto;
-    margin-left: auto;
+.container-fluid {
+  width: 95%;
+  padding: 1rem;
+  margin: auto;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  
 }
-
 .container {
-    width: 100%;
-    margin: 20px auto;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    display: flex;
-    flex-direction: column; 
     margin: 20px;
-    width: 100%;
   }
   
   header {
@@ -27,8 +23,10 @@
   }
   
   header h1 {
-    font-size: 24px;
+    display: flex;
+    font-size: 26px;
     font-weight: bold;
+
   }
   
   header button {
@@ -45,8 +43,14 @@
     background-color: #3c66d6;
   }
   
+
+   .table-container {
+    overflow-y: visible; 
+    border: 1px solid #ddd; 
+  }
   table {
     width: 100%;
+
     border-collapse: collapse;
   }
   
@@ -55,8 +59,9 @@
   }
   
   thead th {
-    text-align: left;
     padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
   }
   
   tbody tr {
@@ -208,14 +213,13 @@ button[type="submit"]:hover {
 /* Style for the dropdown container */
 .dropdown-doctor{
   position: relative;
-  display: inline-block;
-  
 }
 
 /* Style for the dropdown menu (hidden by default) */
 .dropdown-content {
   position: absolute;
   left: 0;
+  top: 0;
   z-index: 1000;
   display: none;
   float: left;
@@ -243,6 +247,7 @@ button[type="submit"]:hover {
   white-space: nowrap;
   background-color: transparent;
   border: 0;
+  
 }
 
 .dropdown-content i {

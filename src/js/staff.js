@@ -22,20 +22,41 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Get all dropdown buttons
     const dropdownButtons = document.querySelectorAll('.actionBtn');
-
+  
     dropdownButtons.forEach((button) => {
-        button.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent clicks from bubbling up
-            const dropdown = button.closest('.dropdown-doctor');
-            dropdown.classList.toggle('show'); // Toggle the dropdown menu
+      button.addEventListener('click', (e) => {
+        e.stopPropagation(); // หยุดการ propagate event ไปที่อื่น
+  
+        const dropdownContent = button.closest('.dropdown-doctor').querySelector('.dropdown-content');
+        const dropdown = dropdownContent.parentElement;
+  
+        // ปิด dropdown อื่นๆ ที่เปิดอยู่ก่อนหน้า
+        document.querySelectorAll('.dropdown-doctor.show').forEach((otherDropdown) => {
+          if (otherDropdown !== dropdown) {
+            otherDropdown.classList.remove('show');
+            otherDropdown.querySelector('.dropdown-content').style.cssText = ''; // ลบการตั้งค่า style ที่ปรับ
+          }
         });
+  
+        // เปิดหรือลบสถานะการเปิดของ dropdown ปัจจุบัน
+        dropdown.classList.toggle('show');
+  
+        // ปรับตำแหน่งของ dropdown
+        const rect = dropdownContent.getBoundingClientRect();
+        dropdownContent.style.left = rect.right > window.innerWidth ? `${window.innerWidth - rect.right}px` : '';
+        dropdownContent.style.left = rect.left < 0 ? '2px' : dropdownContent.style.left;
+        dropdownContent.style.top = rect.bottom > window.innerHeight ? `${window.innerHeight - rect.bottom}px` : '';
+      });
     });
-
-    // Close dropdown when clicking outside
+  
+    // ปิด dropdown เมื่อคลิกที่พื้นที่นอก dropdown
     window.addEventListener('click', () => {
-        const dropdowns = document.querySelectorAll('.dropdown-doctor');
-        dropdowns.forEach((dropdown) => dropdown.classList.remove('show'));
+      document.querySelectorAll('.dropdown-doctor').forEach((dropdown) => {
+        dropdown.classList.remove('show');
+        dropdown.querySelector('.dropdown-content').style.cssText = ''; // รีเซ็ตตำแหน่ง
+      });
     });
-});
+  });
+  
+
