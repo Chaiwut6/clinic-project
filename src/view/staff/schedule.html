@@ -36,6 +36,7 @@
     <link rel="stylesheet" href="../../style/staff/schedule.css">
     <!-- <script src="../../js/login.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
+    
 
     <script src="../../js/staff.js"></script>
 
@@ -77,6 +78,11 @@
                 <a class="nav-link" href="">
                     <i class="fa-solid fa-stethoscope"></i>
                     <span>จัดการข้อมูลแพทย์</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>ผู้ป่วยที่อยู่ในการดูแล</span></a>
             </li>
             <!-- <li class="nav-item">
                 <a class="nav-link" href="index.html">
@@ -222,10 +228,10 @@
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
 
-                                <a class="dropdown-item" href="profile.html">
+                                <!-- <a class="dropdown-item" href="profile.html">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     ข้อมูลส่วนตัว
-                                </a>
+                                </a> -->
                                 <a class="dropdown-item" href="changepass.html">
                                     <i class="fas fa-lock fa-sm fa-fw mr-2 text-gray-400"></i>
                                     เปลี่ยนรหัสผ่าน
@@ -252,7 +258,9 @@
                         <header>
                             <h1>รายชื่อแพทย์</h1>
                             <div class="header-actions">
-                                <input type="text" id="searchDoctor" placeholder="ค้นหา">
+                                <div class="search-box">
+                                    <input type="text" id="search" placeholder="ค้นหา" >
+                                  </div>
                                 <button id="addDoctorBtn">เพิ่มแพทย์</button>
                             </div>
                         </header>
@@ -266,7 +274,7 @@
                                         <th>เพิ่มเติม</th>
                                     </tr>
                                 </thead>
-                                <tbody >
+                                <tbody id="doctorinTable">
                                     <tr>
                                         <td>1</td>
                                         <td>Doctor Om</td>
@@ -281,23 +289,24 @@
                                                     </a>
                                                     <a href="#">
                                                         <i class="fa-solid fa-user-plus"></i>
-                                                        <span>ผู้ใช้ที่อยู่ในการดูแล</span>
+                                                        <span>ผู้ป่วยที่อยู่ในการดูแล</span>
                                                     </a>
-                                                    <a href="#">
+                                                    <a href="#" class="editBtn">
                                                         <i class="fa-solid fa-pen-to-square"></i>
                                                         <span>แก้ไขข้อมูล</span>
                                                     </a>
-                                                    <a href="#">
+                                                    <a href="#" class="delete-trigger">
                                                         <i class="fa-solid fa-trash"></i>
                                                         <span>ลบ</span>
                                                     </a>
+                                                    
                                                 </div>
                                             </div>
                                         </td>  
                                     </tr>
                                     <tr>
-                                        <td>2</td>
-                                        <td>Doctor Om</td>
+                                        <td>1</td>
+                                        <td>Doctor dd</td>
                                         <td>8888899999</td>
                                         <td>
                                             <div class="dropdown-doctor">
@@ -309,21 +318,21 @@
                                                     </a>
                                                     <a href="#">
                                                         <i class="fa-solid fa-user-plus"></i>
-                                                        <span>ผู้ใช้ที่อยู่ในการดูแล</span>
+                                                        <span>ผู้ป่วยที่อยู่ในการดูแล</span>
                                                     </a>
-                                                    <a href="#">
+                                                    <a href="#" class="editBtn">
                                                         <i class="fa-solid fa-pen-to-square"></i>
                                                         <span>แก้ไขข้อมูล</span>
                                                     </a>
-                                                    <a href="#">
+                                                    <a href="#" class="delete-trigger">
                                                         <i class="fa-solid fa-trash"></i>
                                                         <span>ลบ</span>
                                                     </a>
+                                                    
                                                 </div>
                                             </div>
-                                        </td>
+                                        </td>  
                                     </tr>
-                                    
                                     
                                 </tbody>
                             </table>
@@ -335,6 +344,34 @@
 
                 <!-- Popup Modal -->
                 <div id="addDoctorModal" class="modal">
+                    <div class="modal-content">
+                    <div>
+                        <span class="close">&times;</span>     
+                     </div>
+                                             
+                        <form id="addDoctorForm">
+                            <label for="doctorName">ชื่อแพทย์</label>
+                            <input type="text" id="doctorName" />
+
+                            <label for="phoneNumber">เบอร์โทรศัพท์</label>
+                            <input type="text" id="phoneNumber"/>
+
+                            <label for="email">รหัสประจำตัว</label>
+                            <input type="email" id="email"/>
+
+                            <label for="password">รหัสผ่าน</label>
+                            <input type="password" id="password"/>
+                            
+                            <label for="password">ยืนยันรหัสผ่าน</label>
+                            <input type="confirm-password" id="confirm-password"/>
+
+                            <button type="submit">Save</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- edit Modal -->
+                <div id="editModal" class="modal">
                     <div class="modal-content">
                     <div>
                         <span class="close">&times;</span>     
@@ -381,24 +418,22 @@
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">เลือก "ออกจากระบบ" ด้านล่างหากคุณพร้อมที่จะออกจากเว็บไซต์ปัจจุบันของคุณ</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">ยกเลิก</button>
-                    <a class="btn btn-primary" href="../index.html" onclick="Logout()">ออกจากระบบ</a>
-                </div>
-            </div>
+<!-- Delete Modal -->
+<div class="delete-popup">
+    <div class="delete-content">
+        <div class="delete-header">
+            <h5 class="delete-title">ยืนยันการลบ</h5>
+            <button class="close-delete-btn">&times;</button>
+        </div>
+        <div class="delete-body">
+            <p>คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้ การกระทำนี้ไม่สามารถย้อนกลับได้</p>
+        </div>
+        <div class="delete-footer">
+            <!-- <button class="btn cancel-btn close-delete-btn">ยกเลิก</button> -->
+            <a class="btn delete-btn" href="">ลบ</a>
         </div>
     </div>
+</div>
 
     <!-- <script>
         const logout = async () => {

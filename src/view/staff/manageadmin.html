@@ -33,8 +33,12 @@
 
     <!-- Custom styles for this template-->
     <link href="../../style/users/user_main.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../style/staff/schedule.css">
     <!-- <script src="../../js/login.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
+    
+
+    <script src="../../js/staff.js"></script>
 
 </head>
 
@@ -63,7 +67,7 @@
             <li class="nav-item">
                 <a class="nav-link" href="">
                     <i class="fa fa-folder"></i>
-                    <span>การนัดพบแพทย์</span></a>
+                    <span>จัดการข้อมูลผู้ใช้</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="">
@@ -73,12 +77,17 @@
             <li class="nav-item">
                 <a class="nav-link" href="">
                     <i class="fa-solid fa-stethoscope"></i>
-                    <span>การจัดการตารางแพทย์</span></a>
+                    <span>จัดการข้อมูลแพทย์</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="">
                     <i class="fa-solid fa-user-plus"></i>
                     <span>ผู้ป่วยที่อยู่ในการดูแล</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="">
+                    <i class="fa fa-folder"></i>
+                    <span>จัดการผู้ดูแลระบบ</span></a>
             </li>
             <!-- <li class="nav-item">
                 <a class="nav-link" href="index.html">
@@ -115,7 +124,7 @@
                     </button>
 
                     <!-- Topbar Search -->
-                    <h1 class="header-main">ข้อมูลการนัดพบแพทย์</h1>
+                    <h1 class="header-main">จัดการผู้ดูแลระบบ</h1>
                     <!-- <form
                         class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <div class="input-group">
@@ -159,15 +168,15 @@
 
                         <!-- Nav Item - Alerts -->
                         <!-- <li class="nav-item dropdown no-arrow mx-1"> -->
-                            <!-- <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                        <!-- <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-bell fa-fw"></i>
                                 <!-- Counter - Alerts -->
-                                <!-- <span class="badge badge-danger badge-counter">3+</span> -->
-                            <!-- </a> --> 
+                        <!-- <span class="badge badge-danger badge-counter">3+</span> -->
+                        <!-- </a> -->
 
-                            <!-- Dropdown - Alerts -->
-                            <!-- <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                        <!-- Dropdown - Alerts -->
+                        <!-- <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="alertsDropdown">
                                 <h6 class="dropdown-header">
                                     Alerts Center
@@ -218,7 +227,7 @@
                                 <span class="lname mr-2 d-none d-lg-inline text-gray-600 small"></span>
                                 <!-- <img src="../../image/user.png" style="height: 50%; wigth: 50px;"> -->
                             </a>
-                            
+
 
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -232,13 +241,6 @@
                                     <i class="fas fa-lock fa-sm fa-fw mr-2 text-gray-400"></i>
                                     เปลี่ยนรหัสผ่าน
                                 </a>
-                                    
-                                <!-- <div class="dropdown-divider"></div> -->
-                                <!-- <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    ออกจากระบบ
-
-                                </a> -->
 
                             </div>
                         </li>
@@ -257,30 +259,131 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     <!-- Page Heading -->
-                    <table class="table align-middle shadow-sm rounded">
-                        <thead class="table-primary">
-                          <tr>
-                            <th>ชื่อแพทย์</th>
-                            <th>วันที่นัด</th>
-                            <th>เวลาที่นัด</th>
-                            <th class="text-center">การยืนยัน</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>ชัยวุฒิ อยู่โต</td>
-                            <td>4-01-2024</td>
-                            <td>10:00</td>
-                            <td class="text-center">
-                              <button class="btn btn-success btn-sm me-2">ยืนยัน</button>
-                              <button class="btn btn-danger btn-sm">ยกเลิก</button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+                    <div>
+                        <header>
+                            <h1>รายชื่อผู้ดูแลระบบ</h1>
+                            <div class="header-actions">
+                                <div class="search-box">
+                                    <input type="text" id="search" placeholder="ค้นหา" >
+                                  </div>
+                                <button id="addDoctorBtn">เพิ่มผู้ดูแลระบบ</button>
+                            </div>
+                        </header>
+                        <div >
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>รหัสประจำตัว</th>
+                                        <th>ชื่อ</th>
+                                        <th>เบอร์โทรศัพท์</th>
+                                        <th>เพิ่มเติม</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="addminTable"  >
+                                    <tr>
+                                        <td>1</td>
+                                        <td>emp_001</td>
+                                        <td>Om</td>
+                                        <td>8888899999</td>
+                                        <td>
+                                            <div class="dropdown-doctor">
+                                                <button class="actionBtn"><i class="fa-solid fa-grip-lines"></i></button>
+                                                <div class="dropdown-content">
+                                                    <a href="#" class="editBtn">
+                                                        <i class="fa-solid fa-pen-to-square"></i>
+                                                        <span>แก้ไขข้อมูล</span>
+                                                    </a>
+                                                    <a href="#" class="delete-trigger">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                        <span>ลบ</span>
+                                                    </a>
+                                                    
+                                                </div>
+                                            </div>
+                                        </td>  
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>emp_002</td>
+                                        <td>Om</td>
+                                        <td>8888899999</td>
+                                        <td>
+                                            <div class="dropdown-doctor">
+                                                <button class="actionBtn"><i class="fa-solid fa-grip-lines"></i></button>
+                                                <div class="dropdown-content">
+                                                    <a href="#" class="editBtn">
+                                                        <i class="fa-solid fa-pen-to-square"></i>
+                                                        <span>แก้ไขข้อมูล</span>
+                                                    </a>
+                                                    <a href="#" class="delete-trigger">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                        <span>ลบ</span>
+                                                    </a>
+                                                    
+                                                </div>
+                                            </div>
+                                        </td>  
+                                    </tr>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    
+                    </div>
                     <!-- Display fname here -->
                 </div>
-               
+
+                <!-- Popup Modal -->
+                <div id="addDoctorModal" class="modal">
+                    <div class="modal-content">
+                    <div>
+                        <span class="close">&times;</span>     
+                     </div>
+                                             
+                        <form id="addDoctorForm">
+                            <label for="doctorName">ชื่อผู้ดูแล</label>
+                            <input type="text" id="doctorName" />
+
+                            <label for="phoneNumber">เบอร์โทรศัพท์</label>
+                            <input type="text" id="phoneNumber"/>
+
+                            <label for="email">รหัสประจำตัว</label>
+                            <input type="email" id="email"/>
+
+                            <label for="password">รหัสผ่าน</label>
+                            <input type="password" id="password"/>
+                            
+                            <label for="password">ยืนยันรหัสผ่าน</label>
+                            <input type="confirm-password" id="confirm-password"/>
+
+                            <button type="submit">Save</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- edit Modal -->
+                <div id="editModal" class="modal">
+                    <div class="modal-content">
+                    <div>
+                        <span class="close">&times;</span>     
+                     </div>
+                                             
+                        <form id="addDoctorForm">
+                            <label for="doctorName">ชื่อผู้ดูแล</label>
+                            <input type="text" id="doctorName" />
+
+                            <label for="phoneNumber">เบอร์โทรศัพท์</label>
+                            <input type="text" id="phoneNumber"/>
+
+                            <label for="email">รหัสประจำตัว</label>
+                            <input type="email" id="email"/>
+
+                            <button type="submit">Save</button>
+                        </form>
+                    </div>
+                </div>
+
                 <!-- /.container-fluid -->
 
             </div>
@@ -301,23 +404,22 @@
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">เลือก "ออกจากระบบ" ด้านล่างหากคุณพร้อมที่จะออกจากเว็บไซต์ปัจจุบันของคุณ</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">ยกเลิก</button>
-                    <a class="btn btn-primary" href="../index.html" onclick="Logout()">ออกจากระบบ</a>
-                </div>
-            </div>
+<!-- Delete Modal -->
+<div class="delete-popup">
+    <div class="delete-content">
+        <div class="delete-header">
+            <h5 class="delete-title">ยืนยันการลบ</h5>
+            <button class="close-delete-btn">&times;</button>
+        </div>
+        <div class="delete-body">
+            <p>คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้ การกระทำนี้ไม่สามารถย้อนกลับได้</p>
+        </div>
+        <div class="delete-footer">
+            <!-- <button class="btn cancel-btn close-delete-btn">ยกเลิก</button> -->
+            <a class="btn delete-btn" href="">ลบ</a>
         </div>
     </div>
+</div>
 
     <!-- <script>
         const logout = async () => {

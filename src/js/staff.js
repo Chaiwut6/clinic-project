@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', () => {
+//เพิ่มแพทย์
+document.addEventListener("DOMContentLoaded", () => {
     const addDoctorBtn = document.getElementById('addDoctorBtn');
     const addDoctorModal = document.getElementById('addDoctorModal');
     const closeBtn = document.querySelector('#addDoctorModal .close');
@@ -21,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+//dropdown
 document.addEventListener('DOMContentLoaded', () => {
     const dropdownButtons = document.querySelectorAll('.actionBtn');
   
@@ -58,5 +60,154 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   });
+
+//ลบข้อมูล
+document.addEventListener("DOMContentLoaded", function () {
+  // Open Popup เมื่อคลิกปุ่ม delete-trigger
+  document.querySelectorAll(".delete-trigger").forEach(function (trigger) {
+      trigger.addEventListener("click", function (e) {
+          e.preventDefault(); // ป้องกันการกระทำของลิงก์
+          document.querySelector(".delete-popup").style.display = "flex";
+      });
+  });
+
+  // Close Popup เมื่อคลิกปุ่ม close-delete-btn
+  document.querySelectorAll(".close-delete-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+          document.querySelector(".delete-popup").style.display = "none";
+      });
+  });
+});
+
+
+//edit 
+document.addEventListener('DOMContentLoaded', () => {
+  const editBtns = document.querySelectorAll('.editBtn'); // เลือกทุกปุ่มที่มี class "editDoctorBtn"
+  const editModal = document.getElementById('editModal');
+  const closeBtn = document.querySelector('#editModal .close');
+
+  // เปิด modal เมื่อคลิกที่ปุ่มแก้ไข
+  editBtns.forEach(button => {
+    button.addEventListener('click', () => {
+      editModal.style.display = 'block'; // แสดง modal
+    });
+  });
+
+  // ปิด modal เมื่อคลิกที่ปุ่ม "X"
+  closeBtn.addEventListener('click', () => {
+    editModal.style.display = 'none'; // ซ่อน modal
+  });
+
+  // ปิด modal เมื่อคลิกภายนอก modal
+  window.addEventListener('click', (event) => {
+    if (event.target === editModal) {
+      editModal.style.display = 'none'; // ซ่อน modal
+    }
+  });
+});
+
+//ค้นหาผู้ป่วย
+document.addEventListener("DOMContentLoaded", () => {
+  const searchInput = document.getElementById("search");
+  const tableRows = document.querySelectorAll("#patientTable tr");
+  const dateFilter = document.getElementById("dateFilter");
+
+  // ฟังก์ชันสำหรับการค้นหา
+  searchInput.addEventListener("input", (e) => {
+    const query = e.target.value.toLowerCase();
+
+    tableRows.forEach((row) => {
+      const rowText = row.innerText.toLowerCase();
+      if (rowText.includes(query)) {
+        row.style.display = "";
+      } else {
+        row.style.display = "none";
+      }
+    });
+  });
+
+  
+
+  // ฟังก์ชันสำหรับการกรองตามวันที่
+  dateFilter.addEventListener("change", (e) => {
+    const selectedDate = new Date(e.target.value);
+    tableRows.forEach((row) => {
+      const dateCell = row.querySelector(".date-cell");
+      if (dateCell) {
+        const rowDate = new Date(dateCell.innerText);
+        if (rowDate.toDateString() === selectedDate.toDateString()) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      }
+    });
+  });
+});
+
+function exportToExcel() {
+  // ดึงตารางข้อมูล
+  const table = document.getElementById("patientTable");
+  
+  // แปลงตารางเป็นไฟล์ Excel
+  const workbook = XLSX.utils.table_to_book(table, { sheet: "Appointments" });
+  
+  // บันทึกไฟล์ Excel
+  XLSX.writeFile(workbook, "DoctorAppointments.xlsx");
+}
+//ค้นหาaddmin
+document.addEventListener("DOMContentLoaded", () => {
+  const searchInput = document.getElementById("search");
+  const tableRows = document.querySelectorAll("#addminTable tr");
+
+  // ฟังก์ชันสำหรับการค้นหา
+  searchInput.addEventListener("input", (e) => {
+    const query = e.target.value.toLowerCase();
+
+    tableRows.forEach((row) => {
+      const rowText = row.innerText.toLowerCase();
+      if (rowText.includes(query)) {
+        row.style.display = "";
+      } else {
+        row.style.display = "none";
+      }
+    });
+  });
+
+  
+
+  // ฟังก์ชันสำหรับการกรองตามวันที่
+
+});
+
+//ค้นหาdoctor
+document.addEventListener("DOMContentLoaded", () => {
+  const searchInput = document.getElementById("search");
+  const tableRows = document.querySelectorAll("#doctorinTable tr");
+
+  // ฟังก์ชันสำหรับการค้นหา
+  searchInput.addEventListener("input", (e) => {
+    const query = e.target.value.toLowerCase();
+
+    tableRows.forEach((row) => {
+      const rowText = row.innerText.toLowerCase();
+      if (rowText.includes(query)) {
+        row.style.display = "";
+      } else {
+        row.style.display = "none";
+      }
+    });
+  });
+
+  
+
+  // ฟังก์ชันสำหรับการกรองตามวันที่
+});
+
+
+
+
+
+
   
 

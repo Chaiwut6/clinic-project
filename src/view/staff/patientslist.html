@@ -33,8 +33,13 @@
 
     <!-- Custom styles for this template-->
     <link href="../../style/users/user_main.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../style/staff/schedule.css">
+    <link rel="stylesheet" href="../../style/staff/patientslist.css">
     <!-- <script src="../../js/login.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
+    <script src="../../js/staff.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 
 </head>
 
@@ -63,7 +68,7 @@
             <li class="nav-item">
                 <a class="nav-link" href="">
                     <i class="fa fa-folder"></i>
-                    <span>การนัดพบแพทย์</span></a>
+                    <span>จัดการข้อมูลผู้ใช้</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="">
@@ -73,7 +78,7 @@
             <li class="nav-item">
                 <a class="nav-link" href="">
                     <i class="fa-solid fa-stethoscope"></i>
-                    <span>การจัดการตารางแพทย์</span></a>
+                    <span>จัดการข้อมูลแพทย์</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="">
@@ -115,7 +120,7 @@
                     </button>
 
                     <!-- Topbar Search -->
-                    <h1 class="header-main">ข้อมูลการนัดพบแพทย์</h1>
+                    <h1 class="header-main">ผู้ป่วยที่อยู่ในการดูแล</h1>
                     <!-- <form
                         class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <div class="input-group">
@@ -159,15 +164,15 @@
 
                         <!-- Nav Item - Alerts -->
                         <!-- <li class="nav-item dropdown no-arrow mx-1"> -->
-                            <!-- <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                        <!-- <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-bell fa-fw"></i>
                                 <!-- Counter - Alerts -->
-                                <!-- <span class="badge badge-danger badge-counter">3+</span> -->
-                            <!-- </a> --> 
+                        <!-- <span class="badge badge-danger badge-counter">3+</span> -->
+                        <!-- </a> -->
 
-                            <!-- Dropdown - Alerts -->
-                            <!-- <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                        <!-- Dropdown - Alerts -->
+                        <!-- <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="alertsDropdown">
                                 <h6 class="dropdown-header">
                                     Alerts Center
@@ -218,7 +223,7 @@
                                 <span class="lname mr-2 d-none d-lg-inline text-gray-600 small"></span>
                                 <!-- <img src="../../image/user.png" style="height: 50%; wigth: 50px;"> -->
                             </a>
-                            
+
 
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -232,13 +237,6 @@
                                     <i class="fas fa-lock fa-sm fa-fw mr-2 text-gray-400"></i>
                                     เปลี่ยนรหัสผ่าน
                                 </a>
-                                    
-                                <!-- <div class="dropdown-divider"></div> -->
-                                <!-- <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    ออกจากระบบ
-
-                                </a> -->
 
                             </div>
                         </li>
@@ -257,30 +255,85 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     <!-- Page Heading -->
-                    <table class="table align-middle shadow-sm rounded">
-                        <thead class="table-primary">
-                          <tr>
-                            <th>ชื่อแพทย์</th>
-                            <th>วันที่นัด</th>
-                            <th>เวลาที่นัด</th>
-                            <th class="text-center">การยืนยัน</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>ชัยวุฒิ อยู่โต</td>
-                            <td>4-01-2024</td>
-                            <td>10:00</td>
-                            <td class="text-center">
-                              <button class="btn btn-success btn-sm me-2">ยืนยัน</button>
-                              <button class="btn btn-danger btn-sm">ยกเลิก</button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+                        <!-- Doctor Selection Filter -->
+                        <h4 for="doctorSelect">
+                            เลือกแพทย์เพื่อแสดงรายการผู้ป่วย
+                        </h4>
+
+                        <div class="filter-container">
+                          <select id="doctorSelect">
+                            <option value="Doctor Om">Doctor Om</option>
+                            <option value="Doctor Om">Doctor Om</option>
+                            <option value="Doctor Om">Doctor Om</option>
+                            <option value="Doctor Om">Doctor Om</option>
+                            <option value="Doctor Om">Doctor Om</option>
+                            <option value="Doctor Om">Doctor Om</option>
+                            <!-- Add more doctors here -->
+                          </select>
+                          <input type="date" id="dateFilter">
+                          <button class="filter-button">ค้นหา</button>
+
+                          <button onclick="exportToExcel()" style="cursor: pointer;">
+                            <i class="fa-solid fa-print" onclick="exportToExcel()"></i> 
+                          </button>
+                        </div>
+                    
+                        <!-- Table -->
+                        <div class="table-container">
+                          <div class="table-options">
+                            <label >
+                                รายชื่อผู้ป่วยในการดูแล</label>
+                            <div class="search-box">
+                              <label for="search">ค้นหา:</label>
+                              <input type="text" id="search" >
+                            </div>
+                          </div>
+                    
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>รหัสประจำตัว</th>
+                                <th>ชื่อ-นามสกุล</th>
+                                <th>ชื่อเล่น</th>
+                                <th>คณะ</th>
+                                <th>เบอร์โทร</th>
+                                <th>ปัญหา</th>
+                                <th>วันนัด</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                                <tbody id="patientTable" >
+                                  <tr>
+                                    <td>ved prakash n</td>
+                                    <td>vedn@gmail.com</td>
+                                    <td>15</td>
+                                    <td>X</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="date-cell" >2024-08-24</td>
+                                    <td><button class="action-btn">View Appointments</button></td>
+                                  </tr>
+                                  <tr>
+                                    <td>Doctor Om</td>
+                                    <td>doctorom@gmail.com</td>
+                                    <td>20</td>
+                                    <td>8888899999</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="date-cell" >2024-08-25</td>
+                                    <td><button class="action-btn">View Appointments</button></td>
+                                  </tr>
+                                </tbody>
+
+                          </table>
+                    
+                        </div>
+                        <!-- id="patientTable" border="1" -->
                     <!-- Display fname here -->
                 </div>
+
                
+
                 <!-- /.container-fluid -->
 
             </div>
@@ -301,23 +354,7 @@
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">เลือก "ออกจากระบบ" ด้านล่างหากคุณพร้อมที่จะออกจากเว็บไซต์ปัจจุบันของคุณ</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">ยกเลิก</button>
-                    <a class="btn btn-primary" href="../index.html" onclick="Logout()">ออกจากระบบ</a>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <!-- <script>
         const logout = async () => {
