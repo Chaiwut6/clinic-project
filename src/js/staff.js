@@ -204,6 +204,38 @@ document.addEventListener("DOMContentLoaded", () => {
   // ฟังก์ชันสำหรับการกรองตามวันที่
 });
 
+function filterPatients() {
+  // Function to filter patients based on input and dropdowns
+  const nameFilter = document.getElementById('searchName').value.toLowerCase();
+  const facultyFilter = document.getElementById('searchFaculty').value;
+  const yearFilter = document.getElementById('searchYear').value;
+  const table = document.getElementById('patientTable');
+  const rows = table.getElementsByTagName('tr');
+
+  for (let i = 0; i < rows.length; i++) {
+    const cells = rows[i].getElementsByTagName('td');
+    if (cells.length > 0) {
+      const name = cells[1].textContent.toLowerCase();
+      const faculty = cells[3].textContent;
+      const year = cells[0].textContent; // Adjust if you store year in a different column
+
+      if (
+        (name.includes(nameFilter) || !nameFilter) &&
+        (faculty === facultyFilter || !facultyFilter) &&
+        (year.includes(yearFilter) || !yearFilter)
+      ) {
+        rows[i].style.display = '';
+      } else {
+        rows[i].style.display = 'none';
+      }
+    }
+  }
+}
+
+function goToAppointmentPage(patientId) {
+  alert('ไปยังหน้าลงวันนัดสำหรับผู้ป่วย ID: ' + patientId);
+  // Add navigation logic here
+}
 
 
 
