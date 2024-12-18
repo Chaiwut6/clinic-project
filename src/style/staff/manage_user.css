@@ -1,0 +1,68 @@
+
+  .table-container {
+    overflow-y: auto; /* เพิ่ม Scroll */
+    max-height: 800px; /* จำกัดความสูงของตาราง */
+    border: 1px solid #ccc; /* เพิ่มขอบ */
+    margin-top: 10px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead th {
+    position: relative;
+    top: 0;
+    background: #f4f4f4; /* เพิ่มสีพื้นหลังให้ Header */
+    z-index: 100; /* ให้ Header อยู่ด้านบนสุด */
+    text-align: left;
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+
+  tbody td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  tbody tr:hover {
+    background-color: #f1f1f1;
+  }
+
+  .action-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    
+  }
+
+  .action-btn:hover {
+    background-color: #0056b3;
+  }
+
+  .risk-btn {
+    width: 900px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 5px 5px;
+    margin-left: 2px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .risk-btn:hover {
+    background-color: #218838;
+  }
+
+  .filter-button{
+    border-radius: 4px;
+  }
