@@ -5,14 +5,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeBtn = document.querySelector('#addDoctorModal .close');
 
     // Open the modal when "เพิ่มแพทย์" button is clicked
-    addDoctorBtn.addEventListener('click', () => {
-        addDoctorModal.style.display = 'block'; // Show the modal
-    });
+    if (addDoctorBtn) { // ตรวจสอบว่าปุ่มมีอยู่จริง
+      addDoctorBtn.addEventListener('click', () => {
+          const addDoctorModal = document.getElementById('addDoctorModal');
+          addDoctorModal.style.display = 'block';
+      });
+  }
 
     // Close the modal when "X" button is clicked
-    closeBtn.addEventListener('click', () => {
+    if (closeBtn) { // ตรวจสอบว่าปุ่มมีอยู่จริง
+      closeBtn.addEventListener('click', () => {
         addDoctorModal.style.display = 'none'; // Hide the modal
     });
+  }
 
     // Close the modal if the user clicks outside the modal content
     window.addEventListener('click', (event) => {
@@ -20,6 +25,35 @@ document.addEventListener("DOMContentLoaded", () => {
             addDoctorModal.style.display = 'none'; // Hide the modal
         }
     });
+});
+
+//เพิ่มaddmin
+document.addEventListener("DOMContentLoaded", () => {
+  const addAddminBtn = document.getElementById('addAddminBtn');
+  const addAddminModal = document.getElementById('addAddminModal');
+  const closeBtn = document.querySelector('#addAddminModal .close');
+
+  // Open the modal when "เพิ่มแพทย์" button is clicked
+  if (addAddminBtn) { // ตรวจสอบว่าปุ่มมีอยู่จริง
+    addAddminBtn.addEventListener('click', () => {
+        const addAddminModal = document.getElementById('addAddminModal');
+        addAddminModal.style.display = 'block';
+    });
+}
+
+  // Close the modal when "X" button is clicked
+  if (closeBtn) { // ตรวจสอบว่าปุ่มมีอยู่จริง
+    closeBtn.addEventListener('click', () => {
+      addAddminModal.style.display = 'none'; // Hide the modal
+  });
+}
+
+  // Close the modal if the user clicks outside the modal content
+  window.addEventListener('click', (event) => {
+      if (event.target === addAddminModal) {
+          addAddminModal.style.display = 'none'; // Hide the modal
+      }
+  });
 });
 
 //dropdown
@@ -94,9 +128,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ปิด modal เมื่อคลิกที่ปุ่ม "X"
-  closeBtn.addEventListener('click', () => {
-    editModal.style.display = 'none'; // ซ่อน modal
-  });
+  if (closeBtn) { // ตรวจสอบว่าปุ่มมีอยู่จริง
+    closeBtn.addEventListener('click', () => {
+      editModal.style.display = 'none'; // ซ่อน modal
+    });
+}
 
   // ปิด modal เมื่อคลิกภายนอก modal
   window.addEventListener('click', (event) => {
@@ -108,42 +144,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
 //ค้นหาผู้ป่วย
 document.addEventListener("DOMContentLoaded", () => {
-  const searchInput = document.getElementById("search");
-  const tableRows = document.querySelectorAll("#patientTable tr");
-  const dateFilter = document.getElementById("dateFilter");
+  const searchInputs = document.querySelectorAll(".searchpatiet");
+  const tableRows = document.querySelectorAll(".patientTable tr");
+  const dateFilter = document.querySelector(".dateFilter");
 
-  // ฟังก์ชันสำหรับการค้นหา
-  searchInput.addEventListener("input", (e) => {
-    const query = e.target.value.toLowerCase();
+  if (searchInputs.length > 0 && tableRows.length > 0) { // ตรวจสอบว่ามี input สำหรับค้นหาหรือแถวในตาราง
+    // ฟังก์ชันสำหรับการค้นหา
+    searchInputs.forEach(searchInput => {
+      searchInput.addEventListener("input", (e) => {
+        const query = e.target.value.toLowerCase();
 
-    tableRows.forEach((row) => {
-      const rowText = row.innerText.toLowerCase();
-      if (rowText.includes(query)) {
-        row.style.display = "";
-      } else {
-        row.style.display = "none";
-      }
+        tableRows.forEach((row) => {
+          const rowText = row.innerText.toLowerCase();
+          if (rowText.includes(query)) {
+            row.style.display = "";
+          } else {
+            row.style.display = "none";
+          }
+        });
+      });
     });
-  });
+  }
 
-  
-
-  // ฟังก์ชันสำหรับการกรองตามวันที่
-  dateFilter.addEventListener("change", (e) => {
-    const selectedDate = new Date(e.target.value);
-    tableRows.forEach((row) => {
-      const dateCell = row.querySelector(".date-cell");
-      if (dateCell) {
-        const rowDate = new Date(dateCell.innerText);
-        if (rowDate.toDateString() === selectedDate.toDateString()) {
-          row.style.display = "";
-        } else {
-          row.style.display = "none";
+  if (dateFilter) { // ตรวจสอบว่ามี dateFilter หรือไม่
+    // ฟังก์ชันสำหรับการกรองตามวันที่
+    dateFilter.addEventListener("change", (e) => {
+      const selectedDate = new Date(e.target.value); // รับค่าจาก dateFilter
+      tableRows.forEach((row) => {
+        const dateCell = row.querySelector(".date-cell"); // ค้นหา date-cell ในแต่ละแถว
+        if (dateCell) {
+          // แปลงวันที่ในเซลล์เป็นวันที่ที่สามารถใช้งานได้
+          const rowDate = new Date(dateCell.innerText.trim());
+          if (rowDate.toDateString() === selectedDate.toDateString()) { // เปรียบเทียบวันที่
+            row.style.display = ""; // แสดงแถว
+          } else {
+            row.style.display = "none"; // ซ่อนแถว
+          }
         }
-      }
+      });
     });
-  });
+  }
 });
+
 
 function exportToExcel() {
   // ดึงตารางข้อมูล
@@ -157,20 +199,22 @@ function exportToExcel() {
 }
 //ค้นหาaddmin
 document.addEventListener("DOMContentLoaded", () => {
-  const searchInput = document.getElementById("search");
+  const searchInput = document.querySelectorAll(".searchaddmin");
   const tableRows = document.querySelectorAll("#addminTable tr");
 
   // ฟังก์ชันสำหรับการค้นหา
-  searchInput.addEventListener("input", (e) => {
-    const query = e.target.value.toLowerCase();
-
-    tableRows.forEach((row) => {
-      const rowText = row.innerText.toLowerCase();
-      if (rowText.includes(query)) {
-        row.style.display = "";
-      } else {
-        row.style.display = "none";
-      }
+  searchInput.forEach(searchInput => {
+    searchInput.addEventListener("input", (e) => {
+      const query = e.target.value.toLowerCase();
+  
+      tableRows.forEach((row) => {
+        const rowText = row.innerText.toLowerCase();
+        if (rowText.includes(query)) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
     });
   });
 
@@ -182,26 +226,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
 //ค้นหาdoctor
 document.addEventListener("DOMContentLoaded", () => {
-  const searchInput = document.getElementById("search");
+  const searchInput = document.querySelectorAll(".searchdoctor");
   const tableRows = document.querySelectorAll("#doctorinTable tr");
+  
 
   // ฟังก์ชันสำหรับการค้นหา
-  searchInput.addEventListener("input", (e) => {
-    const query = e.target.value.toLowerCase();
-
-    tableRows.forEach((row) => {
-      const rowText = row.innerText.toLowerCase();
-      if (rowText.includes(query)) {
-        row.style.display = "";
-      } else {
-        row.style.display = "none";
-      }
+  searchInput.forEach(searchInput => {
+    searchInput.addEventListener("input", (e) => {
+      const query = e.target.value.toLowerCase();
+  
+      tableRows.forEach((row) => {
+        const rowText = row.innerText.toLowerCase();
+        if (rowText.includes(query)) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
     });
   });
 
-  
-
-  // ฟังก์ชันสำหรับการกรองตามวันที่
 });
 
 function filterPatients() {
@@ -209,7 +253,7 @@ function filterPatients() {
   const nameFilter = document.getElementById('searchName').value.toLowerCase();
   const facultyFilter = document.getElementById('searchFaculty').value;
   const yearFilter = document.getElementById('searchYear').value;
-  const table = document.getElementById('patientTable');
+  const table = document.getElementById('UserTable');
   const rows = table.getElementsByTagName('tr');
 
   for (let i = 0; i < rows.length; i++) {
@@ -236,6 +280,37 @@ function goToAppointmentPage(patientId) {
   alert('ไปยังหน้าลงวันนัดสำหรับผู้ป่วย ID: ' + patientId);
   // Add navigation logic here
 }
+
+// Open Risk
+function openRisk() {
+  document.getElementById("risk-popup").style.display = "flex";
+}
+
+// Close the popup
+function closerisk() {
+  document.getElementById("risk-popup").style.display = "none";
+}
+
+// Confirm assessment date and time
+function confirmAssessment() {
+  const startDate = document.getElementById("startDate").value;
+  const endDate = document.getElementById("endDate").value;
+
+
+  if (!startDate || !endDate) {
+    alert("กรุณาเลือกวันที่เริ่มต้นและวันที่สิ้นสุดให้ครบถ้วน!");
+    return;
+  }
+
+  if (new Date(startDate) > new Date(endDate)) {
+    alert("วันที่เริ่มต้นต้องไม่เกินวันที่สิ้นสุด!");
+    return;
+  }
+
+  alert(`ช่วงวันที่ที่กำหนด: \nเริ่มต้น: ${startDate}\nสิ้นสุด: ${endDate}`);
+  closerisk();
+}
+
 
 
 

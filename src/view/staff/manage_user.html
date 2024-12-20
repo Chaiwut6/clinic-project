@@ -198,7 +198,7 @@
                       </select>
                   
                       <button class="filter-button" onclick="filterPatients()">ค้นหา</button>
-                      <button class="risk-btn" onclick="">กำหนดเวลาแบบประเมิน</button>
+                      <button class="risk-btn" onclick="openRisk()">กำหนดเวลาแบบประเมิน</button>
                     </div>
                   
                     <!-- Table Section -->
@@ -216,7 +216,7 @@
                             <th>Action</th>
                           </tr>
                         </thead>
-                        <tbody id="patientTable">
+                        <tbody id="UserTable">
                           <tr>
                             <td>101</td>
                             <td>สมชาย ใจดี</td>
@@ -318,9 +318,27 @@
                         </tbody>
                       </table>
                     </div>
+                    
                   </div>
-                  
-                  
+                  <!-- risk -->
+                  <div id="risk-popup" class="risk-popup">
+                    <div class="risk-content">
+                      <span class="close-risk" onclick="closerisk()">&times;</span>
+                      <h4>กำหนดวันประเมิน</h4>
+                
+                      <label for="startDate">เลือกวันที่เริ่มต้น:</label>
+                      <input type="date" id="startDate" />
+                
+                      <!-- End date -->
+                      <label for="endDate">เลือกวันที่สิ้นสุด:</label>
+                      <input type="date" id="endDate" />
+                
+                      <!-- Confirm and cancel buttons -->
+                      <div class="risk-buttons">
+                        <button class="confirm-risk" onclick="confirmAssessment()">ยืนยัน</button>
+                        <button class="cancel-risk" onclick="closerisk()">ยกเลิก</button>
+                      </div>
+                    </div>
 
                
 
