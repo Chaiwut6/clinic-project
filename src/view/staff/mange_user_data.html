@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>คลินิกกำลังใจ</title>
+
+    <!-- Custom fonts for this template-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- jQuery (จำเป็นสำหรับบางฟังก์ชันใน Bootstrap 4) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+
+    <!-- Custom styles for this template-->
+    <link href="../../style/users/user_main.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../style/staff/schedule.css">
+    <link rel="stylesheet" href="../../style/staff/patientslist.css">
+    <link rel="stylesheet" href="../../style/staff/mange_user_data.css">
+    <!-- <script src="../../js/login.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
+    <script src="../../js/staff.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="user_main.html">
+                <div class="sidebar-brand-text mx-3">คลินิกกำลังใจ</div>
+            </a>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Dashboard -->
+            <!-- <li class="nav-item">
+                <a class="nav-link" href="index.html">
+                    <i class="fa-regular fa-user"></i>
+                    <span>ข้อมูลส่วนตัว</span></a>
+            </li> -->
+            <li class="nav-item">
+                <a class="nav-link" href="">
+                    <i class="fa fa-folder"></i>
+                    <span>จัดการข้อมูลผู้ใช้</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <span>ข้อมูลการนัดพบแพทย์</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="">
+                    <i class="fa-solid fa-stethoscope"></i>
+                    <span>จัดการข้อมูลแพทย์</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>ผู้ป่วยที่อยู่ในการดูแล</span></a>
+            </li>
+            <!-- <li class="nav-item">
+                <a class="nav-link" href="index.html">
+                    <i class="fa-solid fa-lock"></i>
+                    <span>เปลี่ยนรหัสผ่าน</span></a>
+            </li> -->
+
+
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <!-- Sidebar Toggler (Sidebar) -->
+            <!-- <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div> -->
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-toggle="modal" data-target="#logoutModal">
+                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                    <span>ออกจากระบบ</span></a>
+            </li>
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Main Content -->
+            <div id="content">
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <!-- Topbar Search -->
+                    <h1 class="header-main">จัดการข้อมูลผู้ใช้</h1>
+
+                    <ul class="navbar-nav ml-auto">
+
+                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+                        <li class="nav-item dropdown no-arrow d-sm-none">
+                        </li>
+
+
+
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="fname mr-2 d-none d-lg-inline text-gray-600 small"></span>
+                                <span class="lname mr-2 d-none d-lg-inline text-gray-600 small"></span>
+                                <!-- <img src="../../image/user.png" style="height: 50%; wigth: 50px;"> -->
+                            </a>
+
+
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="userDropdown">
+
+                                <!-- <a class="dropdown-item" href="profile.html">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    ข้อมูลส่วนตัว
+                                </a> -->
+                                <a class="dropdown-item" href="changepass.html">
+                                    <i class="fas fa-lock fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    เปลี่ยนรหัสผ่าน
+                                </a>
+
+                            </div>
+                        </li>
+
+                        <!-- Make sure you load Bootstrap JS properly -->
+                        <script
+                            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+                    </ul>
+
+
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="content-main">
+
+                    <!-- Section: User Information -->
+                    <section class="card user-info">
+                        <h2>ข้อมูลผู้ใช้</h2>
+                        <div class="user-grid">
+                            <p><strong>รหัสประจำตัว:</strong> <span id="userid">1111111111</span></p>
+                            <p><strong>ชื่อ:</strong> <span id="user-name">นาย สมชาย ใจดี</span></p>
+                            <p><strong>เบอร์โทร:</strong> <span id="user-phone">081-234-5678</span></p>
+                            <p></p>
+                            <p><strong>คณะ:</strong> <span id="user-faculty">วิทยาศาสตร์</span></p>
+                            <p><strong>ชั้นปี:</strong> <span id="user-year">4</span></p>
+                            <p><strong>สถานะการนัด:</strong> <span id="latest-status">รอการยืนยัน</span></p>
+                            <p><strong>วันนัดล่าสุด:</strong> <span id="latest-date">15/12/2024</span></p>
+                        </div>
+                    </section>
+
+                    <div class="history-container">
+                        <!-- Section: Assessment History -->
+                        <section class="card assessment-history">
+                            <h2>ประวัติการทำแบบประเมิน</h2>
+                            <div class="filter-container">
+                                <select id="assessment-month" onchange="filterAssessmentHistory()">
+                                    <option value="all">เลือกเดือน</option>
+                                    <option value="12/2024">ธันวาคม</option>
+                                    <option value="11/2024">พฤศจิกายน</option>
+                                </select>
+                            </div>
+                            <table class="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>วันที่</th>
+                                        <th>ผลการประเมิน</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="assessment-history-body">
+                                    <tr>
+                                        <td>10/12/2024</td>
+                                        <td>ปกติ</td>
+                                    </tr>
+                                    <tr>
+                                        <td>05/11/2024</td>
+                                        <td>มีความเสี่ยง</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                        
+                        <!-- Section: Appointment History -->
+                        <section class="card appointment-history">
+                            <h2>ประวัติการนัดที่ผ่านมา</h2>
+                            <div class="filter-container">
+                                <select id="appointment-month" onchange="filterAppointmentHistory()">
+                                    <option value="all">เลือกเดือน</option>
+                                    <option value="10/2024">ตุลาคม</option>
+                                    <option value="08/2024">สิงหาคม</option>
+                                </select>
+                            </div>
+                            <table class="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>วันที่</th>
+                                        <th>สถานะ</th>
+                                     
+                                    </tr>
+                                </thead>
+                                <tbody id="appointment-history-body">
+                                    <tr>
+                                        <td>01/10/2024</td>
+                                        <td>ยืนยัน</td>
+                                    </tr>
+                                    <tr>
+                                        <td>20/08/2024</td>
+                                        <td>ยกเลิก</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                    </div>
+
+                     <!-- Editing Appointment แสดงแค่วันนัดล่าสุด -->
+                    <section class="card appointment-management">
+                        <h2>การจัดการวันนัด</h2>
+                        <table class="appointment-table">
+                          <thead>
+                            <tr>
+                              <th>วันที่</th>
+                              <th>สถานะ</th>
+                              <th>การดำเนินการ</th>
+                            </tr>
+                          </thead>
+                          <tbody id="appointment-list">
+                            <tr>
+                              <td>15/12/2024</td>
+                              <td>รอการยืนยัน</td>
+                              <td>
+                                <button class="btn-edit" onclick="editAppointment('15/12/2024')">แก้ไข</button>
+                                <button class="btn-cancel" onclick="cancelAppointment('15/12/2024')">ยกเลิก</button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </section>
+                      
+                      <!-- Modal for Editing Appointment -->
+                      <div id="editModal" class="modal">
+                        <div class="modal-content">
+                          <span class="close" onclick="closeModal()">&times;</span>
+                          <form id="edit-form">
+                            <label for="new-date">ลงวันนัดหมายใหม่:</label>
+                            <input type="date" id="new-date" required>
+                            <button type="submit">บันทึกการเปลี่ยนแปลง</button>
+                          </form>
+                        </div>
+                      </div>
+                      
+
+                    <!-- Section: Add Appointment -->
+                    <section class="card add-appointment">
+                        <h2>ลงวันนัดหมาย</h2>
+                        <form id="appointment-form">
+                            <label for="doctor">เลือกแพทย์:</label>
+                            <select id="doctor" required>
+                                <option value="">--เลือกแพทย์--</option>
+                                <option value="dr1">นพ. สมชาย หมอใจดี</option>
+                                <option value="dr2">นพ. สมหญิง หมอดูแล</option>
+                            </select>
+
+                            <label for="problem">ระบุปัญหาเบื่องต้น:</label>
+                            <textarea id="problem" rows="4" cols="50" required></textarea>
+
+
+                            <label for="date">วันที่นัด:</label>
+                            <input type="date" id="date" required>
+
+                            <button type="submit" class="btn-submit">บันทึก</button>
+                        </form>
+                    </section>
+
+                </div>
+                <!-- risk -->
+
+
+                <!-- End of Main Content -->
+
+
+
+
+            </div>
+            <!-- End of Content Wrapper -->
+
+        </div>
+        <!-- End of Page Wrapper -->
+
+        <!-- Scroll to Top Button-->
+        <a class="scroll-to-top rounded" href="#page-top">
+            <i class="fas fa-angle-up"></i>
+        </a>
+
+
+
+        <!-- <script>
+        const logout = async () => {
+            try {
+                await axios.post('http://localhost:8000/api/logout', {}, { withCredentials: true });
+                alert('You have been logged out successfully.');
+                window.location.href = '../view';
+            } catch (error) {
+                console.error('Logout failed:', error);
+                alert('Logout failed. Please try again.');
+            }
+        };
+    </script> -->
+
+        <script src="../../js/jquery.min.js"></script>
+        <!-- <script src="../../js/bootstrap.bundle.min.js"></script> -->
+
+
+</body>
+
+</html>

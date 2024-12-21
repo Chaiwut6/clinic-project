@@ -187,6 +187,33 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+// เปิด Modal สำหรับแก้ไขวันนัด
+function editAppointment(date) {
+  document.getElementById('editModal').style.display = 'block';
+  document.getElementById('edit-form').onsubmit = function (e) {
+    e.preventDefault();
+    const newDate = document.getElementById('new-date').value;
+    if (newDate) {
+      alert(`วันนัด ${date} ถูกเปลี่ยนเป็น ${newDate}`);
+      closeModal();
+    }
+  };
+}
+
+// ยกเลิกวันนัด
+function cancelAppointment(date) {
+  const confirmation = confirm(`คุณต้องการยกเลิกวันนัด ${date} ใช่หรือไม่?`);
+  if (confirmation) {
+    alert(`วันนัด ${date} ถูกยกเลิกเรียบร้อยแล้ว`);
+  }
+}
+
+// ปิด Modal
+function closeModal() {
+  document.getElementById('editModal').style.display = 'none';
+}
+
+
 function exportToExcel() {
   // ดึงตารางข้อมูล
   const table = document.getElementById("patientTable");

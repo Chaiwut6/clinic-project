@@ -1,0 +1,235 @@
+/* styles.css */
+.content-main{
+    width: 95%;
+    padding: 1rem;
+    margin: auto;
+  
+}
+.user-info {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.user-info h2 {
+  font-size: 30px;
+  color: #4a90e2;
+  border-bottom: 2px solid #f0f0f0;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+}
+
+.user-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 15px 10px; /
+}
+
+.user-grid p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.user-grid strong {
+  color: #333;
+  font-weight: bold;
+  font-size: 18px;
+  margin-right: 5px;
+}
+
+.user-grid span {
+  color: #555;
+  font-size: 18px;
+}
+
+  .card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .card h2 {
+    font-size: 18px;
+    color: #4a90e2;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .card p {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+  
+ /* ปรับให้ label และ select อยู่ในบรรทัดเดียวกัน */
+ .filter-container {
+    display: flex;
+    align-items: center;  
+    gap: 10px;  
+  }
+  
+  .filter-container label {
+    font-weight: bold;
+    margin: 0;
+    flex: 0 0 auto;  /* ปรับให้ label มีขนาดเท่าที่จำเป็น */
+  }
+  
+  .filter-container select {
+    flex: 1;  /* ให้ select ขยายเต็มที่ */
+    font-size: 14px;
+    padding: 8px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+  }
+
+/* กำหนดให้ทั้งสองส่วนอยู่ในแถวเดียวกัน */
+.history-container {
+    display: flex;
+    justify-content: space-between; /* จัดระยะห่างให้เหมาะสม */
+    gap: 20px; /* ระยะห่างระหว่างสองส่วน */
+    flex-wrap: wrap; /* หากพื้นที่ไม่พอให้แสดงในแถวถัดไป */
+  }
+  
+  /* ปรับขนาดของ card สำหรับประวัติการทำแบบประเมินและประวัติการนัดที่ผ่านมา */
+  .card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+  
+  /* กำหนดให้ประวัติการทำแบบประเมินมีขนาดเล็กกว่า */
+  .assessment-history {
+    flex: 1 1 40%; /* ใช้พื้นที่ 40% ของความกว้างรวม */
+  }
+  
+  .appointment-history {
+    flex: 1 1 55%; /* ใช้พื้นที่ 55% ของความกว้างรวม */
+  }
+  
+  /* ปรับสไตล์ตาราง */
+  .history-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .history-table th, .history-table td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  
+  .history-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+  
+  
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  form label {
+    font-weight: bold;
+    margin: 10px 0 5px;
+  }
+  
+  form input, form select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 15px;
+  }
+  
+  .btn-submit {
+    padding: 10px;
+    background-color: #4a90e2;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .btn-submit:hover {
+    background-color: #357ab8;
+  }
+  
+  /* Table and Buttons */
+.appointment-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .appointment-table th, .appointment-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .appointment-table th {
+    background-color: #f4f4f4;
+    color: #858796;
+  }
+  
+  .btn-edit, .btn-cancel {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .btn-edit {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  .btn-cancel {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  /* Modal */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  
+  .modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    width: 50%;
+    border-radius: 8px;
+  }
+  
+  .close {
+    position: absolute;  
+    top: 20px; 
+    right: 20px;  
+    font-size: 30px; 
+    font-weight: bold;
+    color: #aaa;  
+    cursor: pointer;  
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: black;  
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+
