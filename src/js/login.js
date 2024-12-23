@@ -146,11 +146,11 @@ const login = async () => {
         window.location.href = '/view/users/user_main.html';
 
       } else if (responseData.roles === 'doctor') {
-        // alert('Login success');
         window.location.href = '../view/doctor/doc_main.html';
+
       } else if (responseData.roles === 'employee') {
-        // alert('Login success');
-        window.location.href = '../view/staff/employee_main.html';
+       window.location.href = '/view/staff/manage_user.html'
+
       } else if (responseData.roles === 'manager') {
         // alert('Login success');
         window.location.href = '../view/manager/man_main.html';

@@ -161,29 +161,53 @@ app.post('/api/register-doctor', async (req, res) => {
 
 app.post('/api/register-employee', async (req, res) => {
   try {
-  const { employee_id, password, status} = req.body;
-  const passwordHash = await bcrypt.hash(password, 10);
-  const employeeData = {
-    employee_id, 
-    roles:'employee' 
-  };
-  const loginData = {
-    login_id: employee_id, 
-    password: passwordHash,
-    roles:'employee'  
-  };
-  const [results] = await conn.query('INSERT INTO employee SET ?', employeeData);
-  const [resultslogin] = await conn.query('INSERT INTO login SET ?', loginData);
-  res.json({
-    message: 'insert OK',
-    results
-  });   
-  } catch (error) {
-    console.log('error', error)
+    const { employee_id, password, status } = req.body;
+
+    // Hash the password
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    // Prepare the employee data and login data for insertion
+    const employeeData = {
+      employee_id,
+      roles: 'employee', // Default role is 'employee'
+    };
+
+    const loginData = {
+      login_id: employee_id,
+      password: passwordHash,
+      roles: 'employee', // Default role is 'employee'
+    };
+
+    // Insert employee data into the employee table
+    const [employeeResults] = await conn.query('INSERT INTO employee SET ?', employeeData);
+
+    // Insert login data into the login table
+    const [loginResults] = await conn.query('INSERT INTO login SET ?', loginData);
+
+    // Create a JWT token for the new employee (login_id as payload)
+    const token = jwt.sign({ login_id: employee_id }, secret, { expiresIn: '1h' });
+
+    // Set the token in a cookie for the employee (httpOnly for security)
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 3600000,
+      sameSite: 'Strict',
+    });
+
+    // Respond with success message and include token in the response
     res.json({
-      message: 'insert error',
-      error: error.message
-    })
+      message: 'Employee registered successfully',
+      employee_id,
+      token, // Send the token in the response
+    });
+
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({
+      message: 'Registration failed',
+      error: error.message,
+    });
   }
 });
 
@@ -215,49 +239,64 @@ app.post('/api/register-manager', async (req, res) => {
   }
 });
 
+
 app.post("/api/login", async (req, res) => {
   try {
     const { login_id, password } = req.body;
 
+    // ดึงข้อมูลจากตาราง login
     const [loginResults] = await conn.query("SELECT * FROM login WHERE login_id = ?", [login_id]);
     const userData = loginResults[0];
-    const [userResults] = await conn.query("SELECT * FROM users WHERE user_id = ?", [login_id]);
-    const [userAssess] = await conn.query("SELECT * FROM results WHERE user_id = ?", [login_id]);
-    const userInfo = userResults[0];
- 
-    
+
     if (!userData) {
-      return res.status(400).json({ message: 'Login failed (wrong userid)' });
+      return res.status(400).json({ message: 'Login failed (invalid user ID)' });
     }
 
     // ตรวจสอบรหัสผ่าน
     const match = await bcrypt.compare(password, userData.password);
     if (!match) {
-      return res.status(400).json({ message: 'Login failed (wrong password)' });
+      return res.status(400).json({ message: 'Login failed (invalid password)' });
+    }
+
+    // ดึงข้อมูลเพิ่มเติมตามบทบาทผู้ใช้
+    let userInfo = null;
+    let userAssess = null;
+
+    if (userData.roles === 'user') {
+      const [userResults] = await conn.query("SELECT * FROM users WHERE user_id = ?", [login_id]);
+      const [userAssessResults] = await conn.query("SELECT * FROM results WHERE user_id = ?", [login_id]);
+      userInfo = userResults[0];
+      userAssess = userAssessResults;
+    } else if (userData.roles === 'employee') {
+      const [employeeResults] = await conn.query("SELECT * FROM employee WHERE employee_id = ?", [login_id]);
+      userInfo = employeeResults[0]; // สำหรับ employee
     }
 
     // สร้าง token
-    const token = jwt.sign({ login_id }, secret, { expiresIn: '1h' });
-    const roles = userData.roles;
+    const token = jwt.sign({ login_id, roles: userData.roles }, secret, { expiresIn: '1h' });
 
+    // ตั้งค่า cookie
     res.cookie('token', token, {
-      httpOnly: true, 
-      secure: process.env.NODE_ENV === 'production', 
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
       maxAge: 3600000,
       sameSite: 'Strict',
     });
 
+    // ตอบกลับข้อมูลการเข้าสู่ระบบ
     res.json({
-      roles,
-      message: 'Login success',
-      user: userData,userInfo,
-      Assess:userAssess
+      roles: userData.roles,
+      message: 'Login successful',
+      user: userData,
+      userInfo,
+      Assess: userAssess,
     });
   } catch (error) {
     console.log('Error:', error);
-    res.status(401).json({ message: 'Login failed', error });
+    res.status(500).json({ message: 'Login failed', error: error.message });
   }
 });
+
 
 
 
@@ -377,6 +416,35 @@ app.post('/api/userinfo', verifyToken, async (req, res) => {
     res.status(500).json({ message: 'Error retrieving user data' });
   }
 });
+
+app.post('/api/employeeinfo', verifyToken, async (req, res) => {
+  const login_id = req.user.login_id; // ใช้ login_id จาก Token ที่ถูกยืนยัน
+
+  try {
+    // ดึงข้อมูล employee จากตาราง employee โดยใช้ login_id
+    const [employeeResults] = await conn.query("SELECT * FROM employee WHERE employee_id = ?", [login_id]);
+
+
+    const employeeInfo = employeeResults[0];  // ข้อมูลของ employee
+    
+
+    // หากไม่พบข้อมูล employee
+    if (!employeeInfo) {
+      return res.status(404).json({ message: 'Employee not found' });
+    }
+
+    // ส่งข้อมูล employee และการประเมินผลกลับ
+    res.json({
+      employee: employeeInfo,
+    });
+  } catch (error) {
+    // ถ้ามีข้อผิดพลาดในการดึงข้อมูล
+    res.status(500).json({ message: 'Error retrieving employee data', error: error.message });
+  }
+});
+
+
+
 
 app.post('/api/logout', (req, res) => {
   res.clearCookie('token', {
