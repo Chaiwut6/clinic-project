@@ -34,23 +34,23 @@
         <form action="http://localhost:8000/api/register" method="post">
             <div class="user-details">
             <div class="input-box">
-                <span class="details">ชื่อจริง</span>
+                <span class="details">ชื่อจริง <span style="color: red;">*</span></span>
                 <input id=user_fname type="text" required  required autocomplete="off">  
             </div>
             <div class="input-box">
-                <span class="details">นามสกุล</span>
+                <span class="details">นามสกุล <span style="color: red;">*</span></span>
                 <input id=user_lname type="text" required required autocomplete="off"> 
             </div>
             <div class="input-box">
-                <span class="details">ชื่อเล่น</span>
+                <span class="details">ชื่อเล่น <span style="color: red;">*</span></span>
                 <input id=nickname type="text" required required autocomplete="off">
             </div>
             <div class="input-box">
-                <span class="details">เบอร์โทร</span>
+                <span class="details">เบอร์โทร <span style="color: red;">*</span></span>
                 <input id=phone type="tel"  maxlength="10" required required autocomplete="off">
             </div>
             <div class="input-box">
-                <span class="details">คณะ</span>
+                <span class="details">คณะ <span style="color: red;">*</span></span>
                 <div class="select-box">
             <select id="faculty" name="faculty" >
                 <option value="บริหารธุรกิจ ">บริหารธุรกิจ</option>
@@ -70,7 +70,7 @@
             </div>
             
             <div class="input-box">
-                <span class="details" >ชั้นปี</span>
+                <span class="details" >ชั้นปี <span style="color: red;">*</span></span>
             <div class="select-box">
             <select id="year" name="year" required>
                 <option value="ปี 1">ปี 1</option>
@@ -86,7 +86,7 @@
                 <input id= user_id type="text"  maxlength="14" required required autocomplete="off">
             </div>
             <div class="input-box">
-                <span class="details">รหัสผ่าน</span>
+                <span class="details">รหัสผ่าน <span style="color: red;">*</span></span>
                 <input id="password" type="password" required >
             </div>
         

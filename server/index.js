@@ -70,6 +70,14 @@ app.post('/api/register-user', async (req, res) => {
   try {
     const { user_id, password, user_fname, user_lname, nickname, year, phone, faculty, role } = req.body;
 
+    // ตรวจสอบว่ามี user_id ซ้ำในฐานข้อมูลหรือไม่
+    const [existingUser] = await conn.query('SELECT user_id FROM users WHERE user_id = ?', [user_id]);
+    if (existingUser.length > 0) {
+      return res.status(400).json({
+        message: 'User ID already exists. Please use a different User ID.',
+      });
+    }
+
     // Hash the password
     const passwordHash = await bcrypt.hash(password, 10);
 
@@ -106,7 +114,6 @@ app.post('/api/register-user', async (req, res) => {
       secure: process.env.NODE_ENV === 'production',
       maxAge: 3600000,
       sameSite: 'Strict', 
-      
     });
 
     // Respond with success message and include token in the response
@@ -124,6 +131,7 @@ app.post('/api/register-user', async (req, res) => {
     });
   }
 });
+
 
 
 app.post('/api/register-doctor', async (req, res) => {
@@ -399,27 +407,34 @@ app.post('/api/save-result', async (req, res) => {
   try {
     const { user_id, totalScore, result, user_fname, user_lname } = req.body;
 
-
+    // ตรวจสอบว่า user_id ถูกส่งมาหรือไม่
     if (!user_id) {
       return res.status(400).json({ message: 'User ID is required' });
     }
 
- 
+    // สร้างข้อมูลใหม่สำหรับผลลัพธ์การประเมิน
     const userData = {
       user_id: user_id,
       total_score: totalScore,
       result: result,
       user_fname: user_fname,
-      user_lname: user_lname
+      user_lname: user_lname,
     };
 
-    // Insert data into the database
+    // แทรกข้อมูลใหม่เข้าไปในฐานข้อมูล
     const [results] = await conn.query('INSERT INTO results SET ?', userData);
 
-    res.json({
-      message: 'Result saved successfully',
-      results
-    });
+    // ตรวจสอบผลการแทรกข้อมูล
+    if (results.affectedRows > 0) {
+      res.json({
+        message: 'Result saved successfully',
+        result_id: results.insertId,  // คืนค่า ID ที่ถูกแทรกเข้าไปในฐานข้อมูล
+      });
+    } else {
+      res.status(500).json({
+        message: 'Failed to save result'
+      });
+    }
   } catch (error) {
     console.log('Error:', error);
     res.status(500).json({
@@ -428,6 +443,8 @@ app.post('/api/save-result', async (req, res) => {
     });
   }
 });
+
+
 
 app.post('/api/userinfo', verifyToken, async (req, res) => {
   const login_id = req.user.login_id;
@@ -450,6 +467,8 @@ app.post('/api/userinfo', verifyToken, async (req, res) => {
     res.status(500).json({ message: 'Error retrieving user data' });
   }
 });
+
+
 
 app.post('/api/employeeinfo', verifyToken, async (req, res) => {
   const login_id = req.user.login_id; // ใช้ login_id จาก Token ที่ถูกยืนยัน

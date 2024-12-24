@@ -24,19 +24,35 @@
             <button class="question" type="button" onclick="startSurvey()">เริ่มสำรวจความรู้สึกของคุณ</button>
         </div>
     </div>
-    <script>
-        
-        function startSurvey() {
+
+    <script>   
+        const startSurvey = () => {
+            // ตรวจสอบว่าข้อมูลของผู้ใช้ถูกเก็บใน sessionStorage หรือไม่
             const user_id = sessionStorage.getItem('user_id');
             const user_fname = sessionStorage.getItem('user_fname');
             const user_lname = sessionStorage.getItem('user_lname');
+            console.log(user_id)
         
+            // ถ้าไม่มีข้อมูลของผู้ใช้ให้แสดงข้อความแจ้งเตือน
+            if (!user_id || !user_fname || !user_lname) {
+                alert("โปรดเข้าสู่ระบบก่อนทำการสำรวจ");
+                return; // หยุดการทำงานถ้าไม่มีข้อมูลผู้ใช้
+            }
+        
+            // รีเซ็ตคะแนนและผลลัพธ์
+            sessionStorage.removeItem('totalScore');
+            sessionStorage.removeItem('result');
+        
+            // ตั้งค่าข้อมูลผู้ใช้ใหม่ใน sessionStorage
             sessionStorage.setItem('user_id', user_id);
             sessionStorage.setItem('user_fname', user_fname);
             sessionStorage.setItem('user_lname', user_lname);
         
+            // เปลี่ยนหน้าไปยังแบบทดสอบ
             window.location.href = '../users/user_test1.html';
-        }
+        };
+        
+        
         
     </script>
     

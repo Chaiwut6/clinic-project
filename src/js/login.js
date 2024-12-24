@@ -44,8 +44,18 @@ const register = async () => {
     const password = document.querySelector('#password').value;
     const confirm_password = document.querySelector('#confirm_password').value;
     const policyCheckbox = document.querySelector('#policy_checkbox');
+    const user_fname = document.querySelector('#user_fname').value;
+    const user_lname = document.querySelector('#user_lname').value;
+    const nickname = document.querySelector('#nickname').value;
+    const phone = document.querySelector('#phone').value;
+    const faculty = document.querySelector('#faculty').value;
+    const year = document.querySelector('#year').value;
+    const user_id = document.querySelector('#user_id').value;
 
-    // Validate the terms of service checkbox
+    if (!user_fname || !user_lname || !nickname || !phone || !faculty || !year || !user_id || !password || !confirm_password) {
+      alert('กรุณากรอกข้อมูลให้ครบทุกช่อง');
+      return;
+    }
     if (!policyCheckbox.checked) {
       alert('กรุณายอมรับนโยบายความเป็นส่วนตัว');
       return;
@@ -65,14 +75,7 @@ const register = async () => {
       return;
     }
 
-    // Collect other form data
-    const user_fname = document.querySelector('#user_fname').value;
-    const user_lname = document.querySelector('#user_lname').value;
-    const nickname = document.querySelector('#nickname').value;
-    const phone = document.querySelector('#phone').value;
-    const faculty = document.querySelector('#faculty').value;
-    const year = document.querySelector('#year').value;
-    const user_id = document.querySelector('#user_id').value;
+
 
     // Call the API to register the user
     const response = await axios.post('http://localhost:8000/api/register-user', {
@@ -116,6 +119,7 @@ const register = async () => {
     window.location.href = '/view/index.html';
   }
 };
+
 
 
 
