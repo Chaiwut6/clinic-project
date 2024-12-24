@@ -39,6 +39,7 @@
     
 
     <script src="../../js/staff.js"></script>
+    <script src="../../js/api/staff_api.js"></script>
 
 </head>
 
@@ -65,27 +66,22 @@
                     <span>ข้อมูลส่วนตัว</span></a>
             </li> -->
             <li class="nav-item">
-                <a class="nav-link" href="">
-                    <i class="fa fa-folder"></i>
-                    <span>จัดการข้อมูลผู้ใช้</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="">
-                    <i class="fa-solid fa-calendar-days"></i>
-                    <span>ข้อมูลการนัดพบแพทย์</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="">
-                    <i class="fa-solid fa-stethoscope"></i>
-                    <span>จัดการข้อมูลแพทย์</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="">
-                    <i class="fa-solid fa-user-plus"></i>
-                    <span>ผู้ป่วยที่อยู่ในการดูแล</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="">
+                <a class="nav-link" href="../staff/manage_user.html">
+                  <i class="fa fa-folder"></i>
+                  <span>จัดการข้อมูลผู้ใช้</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="../staff/schedule.html">
+                  <i class="fa-solid fa-stethoscope"></i>
+                  <span>จัดการข้อมูลแพทย์</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="../staff/patientslist.html">
+                  <i class="fa-solid fa-user-plus"></i>
+                  <span>ผู้ป่วยที่อยู่ในการดูแล</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="../staff/manage_admin.html">
                     <i class="fa fa-folder"></i>
                     <span>จัดการผู้ดูแลระบบ</span></a>
             </li>
@@ -223,8 +219,7 @@
 
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="fname mr-2 d-none d-lg-inline text-gray-600 small"></span>
-                                <span class="lname mr-2 d-none d-lg-inline text-gray-600 small"></span>
+                                <span class="employee_id mr-2 d-none d-lg-inline text-gray-600 small"></span>
                                 <!-- <img src="../../image/user.png" style="height: 50%; wigth: 50px;"> -->
                             </a>
 
@@ -289,10 +284,6 @@
                                                 <button class="actionBtn"><i class="fa-solid fa-grip-lines"></i></button>
                                                 <div class="dropdown-content">
                                                     <a href="#">
-                                                        <i class="fa-solid fa-calendar-days"></i>
-                                                        <span>การนัดพบแพทย์</span>
-                                                    </a>
-                                                    <a href="#">
                                                         <i class="fa-solid fa-user-plus"></i>
                                                         <span>ผู้ป่วยที่อยู่ในการดูแล</span>
                                                     </a>
@@ -309,35 +300,7 @@
                                             </div>
                                         </td>  
                                     </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Doctor dd</td>
-                                        <td>8888899999</td>
-                                        <td>
-                                            <div class="dropdown-doctor">
-                                                <button class="actionBtn"><i class="fa-solid fa-grip-lines"></i></button>
-                                                <div class="dropdown-content">
-                                                    <a href="#">
-                                                        <i class="fa-solid fa-calendar-days"></i>
-                                                        <span>การนัดพบแพทย์</span>
-                                                    </a>
-                                                    <a href="#">
-                                                        <i class="fa-solid fa-user-plus"></i>
-                                                        <span>ผู้ป่วยที่อยู่ในการดูแล</span>
-                                                    </a>
-                                                    <a href="#" class="editBtn">
-                                                        <i class="fa-solid fa-pen-to-square"></i>
-                                                        <span>แก้ไขข้อมูล</span>
-                                                    </a>
-                                                    <a href="#" class="delete-trigger">
-                                                        <i class="fa-solid fa-trash"></i>
-                                                        <span>ลบ</span>
-                                                    </a>
-                                                    
-                                                </div>
-                                            </div>
-                                        </td>  
-                                    </tr>
+               
                                     
                                 </tbody>
                             </table>
@@ -350,30 +313,34 @@
                 <!-- Popup Modal -->
                 <div id="addDoctorModal" class="modal">
                     <div class="modal-content">
-                    <div>
-                        <span class="close">&times;</span>     
-                     </div>
-                                             
-                        <form class="addDoctorForm">
-                            <label for="doctorName">ชื่อแพทย์</label>
-                            <input type="text" class="doctorName" />
-
-                            <label for="phoneNumber">เบอร์โทรศัพท์</label>
-                            <input type="text" class="phoneNumber"/>
-
-                            <label for="email">รหัสประจำตัว</label>
-                            <input type="email" class="email"/>
-<!-- 
-                            <label for="password">รหัสผ่าน</label>
-                            <input type="password" class="password"/>
-                            
-                            <label for="password">ยืนยันรหัสผ่าน</label>
-                            <input type="confirm-password" class="confirm-password"/> -->
-
-                            <button type="submit">Save</button>
-                        </form>
+                      <div>
+                        <span class="close">&times;</span>
+                      </div>
+                  
+                      <form id="addDoctorForm">
+                        <label for="doctorID">รหัสประจำตัว</label>
+                        <input type="text" id="doctorID" />
+                  
+                        <label for="doctorName">ชื่อแพทย์</label>
+                        <input type="text" id="doctorName" />
+                  
+                        <label for="phoneNumber">เบอร์โทรศัพท์</label>
+                        <input type="text" id="phoneNumber" />
+                  
+                        <!-- ปิดรหัสผ่านไว้ก่อน -->
+                        <!-- 
+                        <label for="password">รหัสผ่าน</label>
+                        <input type="password" id="password" />
+                  
+                        <label for="confirmPassword">ยืนยันรหัสผ่าน</label>
+                        <input type="password" id="confirmPassword" />
+                        -->
+                  
+                        <button type="submit">Save</button>
+                      </form>
                     </div>
-                </div>
+                  </div>
+                  
 
                 <!-- edit Modal -->
                 <div id="editModal" class="modal">

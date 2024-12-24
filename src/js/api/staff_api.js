@@ -1,4 +1,45 @@
 
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("addDoctorForm");
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault(); // ป้องกันการ refresh หน้า
+
+    // รับค่าจากฟอร์ม
+    const doctorID = document.getElementById("doctorID").value.trim();
+    const doctorName = document.getElementById("doctorName").value.trim();
+    const phoneNumber = document.getElementById("phoneNumber").value.trim();
+
+    // ตรวจสอบว่าข้อมูลครบถ้วน
+    if (!doctorID || !doctorName || !phoneNumber) {
+      alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+      return;
+    }
+
+    try {
+      // ส่งข้อมูลไปยัง API
+      const response = await axios.post("http://localhost:8000/api/register-doctor", {
+        doc_id: doctorID,
+        doc_name: doctorName,
+        phone: phoneNumber,
+        status: "active", // หรือสถานะเริ่มต้นที่คุณต้องการ
+      });
+
+      if (response.data && response.data.message === "Doctor registration successful") {
+        alert("เพิ่มข้อมูลแพทย์สำเร็จ");
+        // ปิด modal และ clear ฟอร์ม
+        document.getElementById("addDoctorModal").style.display = "none";
+        form.reset();
+      } else {
+        alert("เกิดข้อผิดพลาด: " + (response.data.message || "ไม่สามารถบันทึกข้อมูลได้"));
+      }
+    } catch (error) {
+      console.error("Error adding doctor:", error);
+      alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
+    }
+  });
+});
+
 
 const Logout = async () => {
     try {

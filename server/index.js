@@ -128,45 +128,79 @@ app.post('/api/register-user', async (req, res) => {
 
 app.post('/api/register-doctor', async (req, res) => {
   try {
-  const { doc_id, password, doc_name, status} = req.body;
-  const passwordHash = await bcrypt.hash(password, 10);
+    // รับข้อมูลจาก body ของคำขอ
+    const { doc_id, /* password, */ doc_name, phone, status } = req.body;
 
-  const loginData = {
-    login_id: doc_id, 
-    password: passwordHash,
-    roles: 'doctor' 
-  };
+    // // เข้ารหัสรหัสผ่าน (ปิดการใช้งานตอนนี้)
+    // const passwordHash = await bcrypt.hash(password, 10);
 
-  const doctorData = {
-    doc_id, 
-    doc_name, 
-    roles:'doctor' 
-  };
+    // สร้างข้อมูลที่จะใช้สำหรับการบันทึกในตาราง login
+    const loginData = {
+      login_id: doc_id, 
+      // password: passwordHash, // ปิดการใช้งานรหัสผ่าน
+      roles: 'doctor' 
+    };
 
-  const [results] = await conn.query('INSERT INTO doctor SET ?', doctorData);
-  const [resultslogin] = await conn.query('INSERT INTO login SET ?', loginData);
-  res.json({
-    message: 'insert OK',
-    results,
-    resultslogin
-  });   
-  } catch (error) {
-    console.log('error', error)
+    // สร้างข้อมูลที่จะใช้สำหรับการบันทึกในตาราง doctor
+    const doctorData = {
+      doc_id, 
+      doc_name,
+      phone,
+      roles: 'doctor'
+    };
+
+    // ใช้ transaction ในการบันทึกข้อมูลทั้งสองตาราง
+    await conn.beginTransaction();
+
+    // บันทึกข้อมูลในตาราง doctor
+    const [doctorResults] = await conn.query('INSERT INTO doctor SET ?', doctorData);
+
+    // บันทึกข้อมูลในตาราง login
+    // const [loginResults] = await conn.query('INSERT INTO login SET ?', loginData);
+
+    // ยืนยันการทำ transaction
+    await conn.commit();
+
+    // สร้าง JWT token
+    const token = jwt.sign({ login_id: doc_id }, secret, { expiresIn: '1h' });
+
+    // ตั้งค่า cookie สำหรับ token
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 3600000, // 1 ชั่วโมง
+      sameSite: 'Strict',
+    });
+
+    // ส่ง response กลับไปยัง client พร้อม token
     res.json({
-      message: 'insert error',
+      message: 'Doctor registration successful',
+      doctorResults,
+      // loginResults,
+      token, // ส่ง token ใน response
+    });
+
+  } catch (error) {
+    // ยกเลิก transaction ในกรณีเกิดข้อผิดพลาด
+    await conn.rollback();
+    console.error('Error during doctor registration:', error);
+
+    // ส่ง response ข้อผิดพลาดกลับไปยัง client
+    res.status(500).json({
+      message: 'Doctor registration failed',
       error: error.message
-    })
+    });
   }
 });
+
+
 
 app.post('/api/register-employee', async (req, res) => {
   try {
     const { employee_id, password, status } = req.body;
 
-    // Hash the password
     const passwordHash = await bcrypt.hash(password, 10);
 
-    // Prepare the employee data and login data for insertion
     const employeeData = {
       employee_id,
       roles: 'employee', // Default role is 'employee'
