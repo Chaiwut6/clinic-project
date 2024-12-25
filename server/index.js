@@ -90,7 +90,7 @@ app.post('/api/register-user', async (req, res) => {
       year,
       phone,
       faculty,
-      roles: 'user', // Default role is 'user'
+      // roles: 'user', // Default role is 'user'
     };
 
     const loginData = {
@@ -146,7 +146,7 @@ app.post('/api/register-doctor', async (req, res) => {
     const loginData = {
       login_id: doc_id, 
       // password: passwordHash, // ปิดการใช้งานรหัสผ่าน
-      roles: 'doctor' 
+      // roles: 'doctor' 
     };
 
     // สร้างข้อมูลที่จะใช้สำหรับการบันทึกในตาราง doctor
@@ -205,43 +205,50 @@ app.post('/api/register-doctor', async (req, res) => {
 
 app.post('/api/register-employee', async (req, res) => {
   try {
-    const { employee_id, password, status } = req.body;
+    const { employee_id, password, emp_fname, emp_lname, status } = req.body;
 
+    // สร้าง hash ของรหัสผ่าน
     const passwordHash = await bcrypt.hash(password, 10);
 
+    // ข้อมูลพนักงาน
     const employeeData = {
       employee_id,
-      roles: 'employee', // Default role is 'employee'
+      emp_fname,
+      emp_lname,
+     
     };
 
+    // ข้อมูลการล็อกอิน
     const loginData = {
       login_id: employee_id,
       password: passwordHash,
-      roles: 'employee', // Default role is 'employee'
+      roles: 'employee', // กำหนดบทบาทเป็น 'employee'
     };
 
-    // Insert employee data into the employee table
+    // Insert ข้อมูลพนักงานลงในตาราง employee
     const [employeeResults] = await conn.query('INSERT INTO employee SET ?', employeeData);
 
-    // Insert login data into the login table
+    // Insert ข้อมูลการล็อกอินลงในตาราง login
     const [loginResults] = await conn.query('INSERT INTO login SET ?', loginData);
 
-    // Create a JWT token for the new employee (login_id as payload)
+    // สร้าง JWT token สำหรับพนักงานใหม่
     const token = jwt.sign({ login_id: employee_id }, secret, { expiresIn: '1h' });
 
-    // Set the token in a cookie for the employee (httpOnly for security)
+    // ตั้งค่า token ลงใน cookie สำหรับพนักงาน (httpOnly สำหรับความปลอดภัย)
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 3600000,
+      maxAge: 3600000, // 1 ชั่วโมง
       sameSite: 'Strict',
     });
 
-    // Respond with success message and include token in the response
+    // ตอบกลับด้วยข้อความสำเร็จและส่ง token ในคำตอบ
     res.json({
       message: 'Employee registered successfully',
       employee_id,
-      token, // Send the token in the response
+      emp_fname,
+      emp_lname,
+      token, // ส่ง token ในคำตอบ
     });
 
   } catch (error) {
@@ -253,13 +260,14 @@ app.post('/api/register-employee', async (req, res) => {
   }
 });
 
+
 app.post('/api/register-manager', async (req, res) => {
   try {
   const { man_id, password, status} = req.body;
   const passwordHash = await bcrypt.hash(password, 10);
   const managerData = {
     man_id,  
-    roles:'manager'  
+    // roles:'manager'  
   };
   const loginData = {
     login_id: man_id, 
@@ -291,13 +299,13 @@ app.post("/api/login", async (req, res) => {
     const userData = loginResults[0];
 
     if (!userData) {
-      return res.status(400).json({ message: 'Login failed (invalid user ID)' });
+      return res.status(400).json({ message: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง' });
     }
 
     // ตรวจสอบรหัสผ่าน
     const match = await bcrypt.compare(password, userData.password);
     if (!match) {
-      return res.status(400).json({ message: 'Login failed (invalid password)' });
+      return res.status(400).json({ message: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง' });
     }
 
     // ดึงข้อมูลเพิ่มเติมตามบทบาทผู้ใช้
@@ -311,7 +319,7 @@ app.post("/api/login", async (req, res) => {
       userAssess = userAssessResults;
     } else if (userData.roles === 'employee') {
       const [employeeResults] = await conn.query("SELECT * FROM employee WHERE employee_id = ?", [login_id]);
-      userInfo = employeeResults[0]; // สำหรับ employee
+      userInfo = employeeResults[0]; 
     }
 
     // สร้าง token
@@ -328,14 +336,14 @@ app.post("/api/login", async (req, res) => {
     // ตอบกลับข้อมูลการเข้าสู่ระบบ
     res.json({
       roles: userData.roles,
-      message: 'Login successful',
+      message: 'เข้าสู่ระบบสำเร็จ',
       user: userData,
       userInfo,
       Assess: userAssess,
     });
   } catch (error) {
     console.log('Error:', error);
-    res.status(500).json({ message: 'Login failed', error: error.message });
+    res.status(500).json({ message: 'ไม่สามารถเข้าสู่ระบบได้', error: error.message });
   }
 });
 

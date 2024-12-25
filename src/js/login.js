@@ -126,46 +126,53 @@ const register = async () => {
 const login = async () => {
   const login_id = document.querySelector('input[name=user_id]').value;
   const password = document.querySelector('input[name=password]').value;
+
   try {
     if (login_id) {
       const response_user = await axios.post('http://localhost:8000/api/login', {
-        login_id, password
+        login_id,
+        password
       }, {
         withCredentials: true // รวมคุกกี้ไปในคำร้องขอ
       });
 
       const responseData = response_user.data;
-      console.log(responseData);
 
       // ไม่มีการเก็บ token ใน localStorage
       const userInfo = responseData.user;
       const userAssess = responseData.Assess;
-     
- 
+
       console.log(userAssess);
       console.log(userInfo);
 
       // เปลี่ยนเส้นทางตามบทบาทผู้ใช้
       if (responseData.roles === 'user') {
         window.location.href = '/view/users/user_main.html';
-
       } else if (responseData.roles === 'doctor') {
         window.location.href = '../view/doctor/doc_main.html';
-
       } else if (responseData.roles === 'employee') {
-       window.location.href = '/view/staff/manage_user.html'
-
+        window.location.href = '/view/staff/manage_user.html';
       } else if (responseData.roles === 'manager') {
-        // alert('Login success');
         window.location.href = '../view/manager/man_main.html';
       }
+    } else {
+      alert('กรุณากรอก ID ผู้ใช้');
     }
   } catch (error) {
     console.error('Error:', error);
-    // alert('Login fail');
+
+    // ตรวจสอบข้อความจาก Backend
+    if (error.response && error.response.data && error.response.data.message) {
+      alert(`เข้าสู่ระบบล้มเหลว: ${error.response.data.message}`);
+    } else {
+      alert('เกิดข้อผิดพลาด ไม่สามารถเข้าสู่ระบบได้');
+    }
+
+    // เปลี่ยนเส้นทางกลับไปหน้า Login
     window.location.href = '/view/index.html';
   }
 };
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const fetchUserInfo = async () => {

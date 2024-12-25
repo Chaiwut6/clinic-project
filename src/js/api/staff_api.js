@@ -93,10 +93,10 @@ const Logout = async () => {
         }
       };
   
-      // อัปเดตข้อมูลพนักงาน
       if (employeeInfo) {
         updateElements('.employee_id', employeeInfo.employee_id);
-        updateElements('.employee_roles', employeeInfo.roles);
+        updateElements('.emp_fname', employeeInfo.emp_fname);
+        updateElements('.emp_lname', employeeInfo.emp_lname);
       } else {
         console.warn("Employee info is missing");
       }

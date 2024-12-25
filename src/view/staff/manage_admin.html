@@ -70,7 +70,7 @@
                   <span>จัดการข้อมูลผู้ใช้</span></a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="../staff/schedule.html">
+                <a class="nav-link" href="../staff/manage_doctor.html">
                   <i class="fa-solid fa-stethoscope"></i>
                   <span>จัดการข้อมูลแพทย์</span></a>
               </li>
@@ -218,7 +218,8 @@
 
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="employee_id mr-2 d-none d-lg-inline text-gray-600 small"></span>
+                                <span class="emp_fname mr-2 d-none d-lg-inline text-gray-600 small"></span>
+                                <span class="emp_lname mr-2 d-none d-lg-inline text-gray-600 small"></span>
                                 <!-- <img src="../../image/user.png" style="height: 50%; wigth: 50px;"> -->
                             </a>
 
@@ -364,14 +365,12 @@
                      </div>
                                              
                         <form class="addAddminForm">
-                            <label for="addminName">ชื่อผู้ดูแล</label>
-                            <input type="text" class="addminName" />
-
-                            <label for="phoneNumber">เบอร์โทรศัพท์</label>
-                            <input type="text" class="phoneNumber"/>
-
-                            <label for="email">รหัสประจำตัว</label>
-                            <input type="email" class="email"/>
+                            <label for="employee_id">รหัสประจำตัว</label>
+                            <input type="employee_id" class="employee_id"/>
+                            <label for="addminfname">ชื่อจริง</label>
+                            <input type="text" class="addminfname" />
+                            <label for="addminlname">นามสกุล</label>
+                            <input type="text" class="addminlname" />
 
                             <button type="submit">Save</button>
                         </form>
