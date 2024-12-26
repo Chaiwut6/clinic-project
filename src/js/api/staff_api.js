@@ -18,11 +18,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       // ส่งข้อมูลไปยัง API
-      const response = await axios.post("http://localhost:8000/api/register-doctor", {
+      const response = await axios.post("http://localhost:8000/api/doctors/register-doctor", {
         doc_id: doctorID,
         doc_name: doctorName,
         phone: phoneNumber,
-        status: "active", // หรือสถานะเริ่มต้นที่คุณต้องการ
       });
 
       if (response.data && response.data.message === "Doctor registration successful") {
@@ -44,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const Logout = async () => {
     try {
       // เรียก API logout ไปที่เซิร์ฟเวอร์
-      const response = await axios.post('http://localhost:8000/api/logout', {}, { withCredentials: true });
+      const response = await axios.post('http://localhost:8000/api/users/logout', {}, { withCredentials: true });
   
       // ตรวจสอบผลลัพธ์จากการออกจากระบบ
       if (response.data.message === 'ออกจากระบบสำเร็จ') {
@@ -65,7 +64,7 @@ const Logout = async () => {
     const fetchEmployeeInfo = async () => {
       try {
         // ใช้ POST แทน GET ในการดึงข้อมูล employee
-        const response = await axios.post('http://localhost:8000/api/employeeinfo', {}, {
+        const response = await axios.post('http://localhost:8000/api/employees/employeeinfo', {}, {
           withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
         });
   

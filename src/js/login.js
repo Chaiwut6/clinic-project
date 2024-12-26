@@ -52,10 +52,13 @@ const register = async () => {
     const year = document.querySelector('#year').value;
     const user_id = document.querySelector('#user_id').value;
 
+    // Check if all required fields are filled
     if (!user_fname || !user_lname || !nickname || !phone || !faculty || !year || !user_id || !password || !confirm_password) {
       alert('กรุณากรอกข้อมูลให้ครบทุกช่อง');
       return;
     }
+
+    // Check if policy is accepted
     if (!policyCheckbox.checked) {
       alert('กรุณายอมรับนโยบายความเป็นส่วนตัว');
       return;
@@ -69,16 +72,14 @@ const register = async () => {
       return;
     }
 
-    // Check if password is provided
-    if (!password || password.length === 0) {
-      alert('กรุณากรอกรหัสผ่าน');
-      return;
-    }
+ 
 
+    // Define the API URL
+    const apiUrl = 'http://localhost:8000/api/users/register-user';
 
 
     // Call the API to register the user
-    const response = await axios.post('http://localhost:8000/api/register-user', {
+    const response = await axios.post(apiUrl, {
       user_fname,
       user_lname,
       nickname,
@@ -88,6 +89,8 @@ const register = async () => {
       user_id,
       password
     });
+    
+    console.log('API Response:', response.data); 
 
     // Check if the registration was successful
     if (response.data.message === 'User registered successfully') {
@@ -117,8 +120,9 @@ const register = async () => {
     console.error('Error:', error);
     alert('มีข้อผิดพลาดในการลงทะเบียน');
     window.location.href = '/view/index.html';
-  }
+  } 
 };
+
 
 
 
@@ -129,7 +133,7 @@ const login = async () => {
 
   try {
     if (login_id) {
-      const response_user = await axios.post('http://localhost:8000/api/login', {
+      const response_user = await axios.post('http://localhost:8000/api/users/login', {
         login_id,
         password
       }, {
@@ -178,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const fetchUserInfo = async () => {
     try {
       // ใช้ POST แทน GET ในการดึงข้อมูล
-      const response = await axios.post('http://localhost:8000/api/userinfo', {}, {
+      const response = await axios.post('http://localhost:8000/api/users/userinfo', {}, {
         withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
       });
 
@@ -280,7 +284,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const Logout = async () => {
   try {
     // เรียก API logout ไปที่เซิร์ฟเวอร์
-    const response = await axios.post('http://localhost:8000/api/logout', {}, { withCredentials: true });
+    const response = await axios.post('http://localhost:8000/api/users/logout', {}, { withCredentials: true });
 
     // ตรวจสอบผลลัพธ์จากการออกจากระบบ
     if (response.data.message === 'ออกจากระบบสำเร็จ') {
@@ -317,7 +321,7 @@ const changePassword = async () => {
     }
   
     try {
-      const response = await axios.post('http://localhost:8000/api/change-password', {
+      const response = await axios.post('http://localhost:8000/api/users/change-password', {
         oldPassword: currentPassword,
         newPassword: newPassword,
         confirmPassword: confirmPassword
@@ -341,10 +345,37 @@ const changePassword = async () => {
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("profileForm");
+  const fetchUserInfo = async () => {
+    try {
+      // ใช้ POST แทน GET ในการดึงข้อมูล
+      const response = await axios.post('http://localhost:8000/api/users/userinfo', {}, {
+        withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
+      });
 
+      if (response.data && response.data.user && response.data.Assess) {
+        const userInfo = response.data.user;
+        const userAssess = response.data.Assess;
+        console.log("userInfo:", userInfo);
+        console.log("userAssess:", userAssess);
+
+        sessionStorage.setItem('user_id', response.data.user.user_id);
+        sessionStorage.setItem('user_fname', response.data.user.user_fname);
+        sessionStorage.setItem('user_lname', response.data.user.user_lname);
+
+        // แสดงข้อมูลบนหน้า
+        populateAssessments(userAssess);
+        updatePageData(userInfo, userAssess);
+
+      } else {
+        console.error('Invalid data format received from API');
+      }
+    } catch (error) {
+      console.error('Error fetching user info:', error);
+    }
+  };
   const fetchUserUpdate = async () => {
     try {
-      const response = await axios.post('http://localhost:8000/api/userinfo', {}, { withCredentials: true });
+      const response = await axios.post('http://localhost:8000/api/users/userinfo', {}, { withCredentials: true });
       if (response.data && response.data.user) {
         const userInfo = response.data.user;
         populateForm(userInfo); // เติมข้อมูลลงในฟอร์ม
@@ -384,7 +415,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log(updatedData);
 
       try {
-        const response = await axios.post('http://localhost:8000/api/updateuser', updatedData, { withCredentials: true });
+        const response = await axios.post('http://localhost:8000/api/users/updateuser', updatedData, { withCredentials: true });
         if (response.data.success) {
           alert("ข้อมูลได้รับการอัปเดตเรียบร้อยแล้ว!");
           fetchUserInfo(); 
