@@ -40,7 +40,7 @@ router.post('/register-doctor', async (req, res) => {
       doc_id,
       doc_name,
       phone,
-      roles: 'doctor', // กำหนดบทบาทให้เป็น 'doctor'
+      // roles: 'doctor', // กำหนดบทบาทให้เป็น 'doctor'
     };
 
     // สร้างข้อมูล login
@@ -146,6 +146,36 @@ router.post('/register-doctor', async (req, res) => {
     }
   });
   
+  router.post('/doctorResult', async (req, res) => {
+    let conn = null;
+  
+    try {
+      conn = await initMySQL();
+  
+      // Query user information
+      const [doctorResults] = await conn.query("SELECT * FROM doctor ");
+    
+      
+      const doctorInfo = doctorResults;
+  
+  
+      if (!doctorInfo) {
+        return res.status(404).json({ message: 'doctor not found' });
+      }
+  
+      res.json({
+        doctor: doctorInfo,
+      });
+      
+    } catch (error) {
+      console.error('Error retrieving doctor data:', error);
+      res.status(500).json({ message: 'Error retrieving doctor data', error: error.message });
+    } finally {
+      if (conn) {
+        await conn.end();
+      }
+    }
+  });
   
 
 module.exports = router;

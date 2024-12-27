@@ -249,6 +249,7 @@ router.post('/userinfo', verifyToken, async (req, res) => {
     }
   }
 });
+
 router.post('/logout', (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,

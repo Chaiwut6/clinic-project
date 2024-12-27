@@ -269,44 +269,21 @@
                         <div >
                             <table>
                                 <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>ชื่อแพทย์</th>
-                                        <th>เบอร์โทรศัพท์</th>
-                                        <th>เพิ่มเติม</th>
-                                    </tr>
+                                  <tr>
+                                    <th>ID</th>
+                                    <th>ชื่อแพทย์</th>
+                                    <th>เบอร์โทรศัพท์</th>
+                                    <th>เพิ่มเติม</th>
+                                  </tr>
                                 </thead>
                                 <tbody id="doctorinTable">
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Doctor Om</td>
-                                        <td>8888899999</td>
-                                        <td>
-                                            <div class="dropdown-doctor">
-                                                <button class="actionBtn"><i class="fa-solid fa-grip-lines"></i></button>
-                                                <div class="dropdown-content">
-                                                    <a href="#">
-                                                        <i class="fa-solid fa-user-plus"></i>
-                                                        <span>ผู้ป่วยที่อยู่ในการดูแล</span>
-                                                    </a>
-                                                    <a href="#" class="editBtn">
-                                                        <i class="fa-solid fa-pen-to-square"></i>
-                                                        <span>แก้ไขข้อมูล</span>
-                                                    </a>
-                                                    <a href="#" class="delete-trigger">
-                                                        <i class="fa-solid fa-trash"></i>
-                                                        <span>ลบ</span>
-                                                    </a>
-                                                    
-                                                </div>
-                                            </div>
-                                        </td>  
-                                    </tr>
-               
-                                    
+                                  <!-- ข้อมูลจะถูกเพิ่มที่นี่ -->
+                                  
                                 </tbody>
-                            </table>
+                              </table>
+                              
                         </div>
+                        
                     
                     </div>
                     <!-- Display fname here -->
@@ -324,10 +301,10 @@
                         <input type="text" id="doctorID" />
                   
                         <label for="doctorName">ชื่อแพทย์</label>
-                        <input type="text" id="doctorName" />
+                        <input type="text" id="doctorName" pattern="^[a-zA-Zก-ฮะ-์]+$" title="กรุณากรอกตัวอักษรเท่านั้น" />
                   
                         <label for="phoneNumber">เบอร์โทรศัพท์</label>
-                        <input type="text" id="phoneNumber" />
+                        <input type="text" id="phoneNumber" pattern="^[a-zA-Zก-ฮะ-์]+$" title="กรุณากรอกตัวอักษรเท่านั้น" />
                   
                         <!-- ปิดรหัสผ่านไว้ก่อน -->
                         <!-- 
@@ -353,7 +330,7 @@
                                              
                         <form class="addDoctorForm">
                             <label for="doctorName">ชื่อแพทย์</label>
-                            <input type="text" class="doctorName" />
+                            <input type="text" class="doctorName" pattern="^[a-zA-Zก-ฮะ-์]+$" title="กรุณากรอกตัวอักษรเท่านั้น" />
 
                             <label for="phoneNumber">เบอร์โทรศัพท์</label>
                             <input type="text" class="phoneNumber"/>

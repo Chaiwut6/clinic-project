@@ -154,6 +154,36 @@ router.post('/employeeinfo', verifyToken, async (req, res) => {
   }
 });
 
+router.post('/employeeResult', async (req, res) => {
+  let conn = null;
+
+  try {
+    conn = await initMySQL();
+
+    // Query user information
+    const [employeeResult] = await conn.query("SELECT * FROM employee ");
+  
+    
+    const employeeinfo = employeeResult;
+
+
+    if (!employeeinfo) {
+      return res.status(404).json({ message: 'employee not found' });
+    }
+
+    res.json({
+      employee: employeeinfo,
+    });
+  } catch (error) {
+    console.error('Error retrieving employee data:', error);
+    res.status(500).json({ message: 'Error retrieving employee data', error: error.message });
+  } finally {
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
+
   
 
 module.exports = router;
