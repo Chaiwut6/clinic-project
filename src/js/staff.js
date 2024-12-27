@@ -27,34 +27,33 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-//เพิ่มaddmin
 document.addEventListener("DOMContentLoaded", () => {
   const addAddminBtn = document.getElementById('addAddminBtn');
-  const addAddminModal = document.getElementById('addAddminModal');
-  const closeBtn = document.querySelector('#addAddminModal .close');
+  const addAddminModal = document.getElementById('addEmployeeModal');
+  const closeBtn = document.querySelector('#addEmployeeModal .close');
 
   // Open the modal when "เพิ่มแพทย์" button is clicked
   if (addAddminBtn) { // ตรวจสอบว่าปุ่มมีอยู่จริง
     addAddminBtn.addEventListener('click', () => {
-        const addAddminModal = document.getElementById('addAddminModal');
-        addAddminModal.style.display = 'block';
+      addAddminModal.style.display = 'block'; // เปิด modal
     });
-}
+  }
 
   // Close the modal when "X" button is clicked
   if (closeBtn) { // ตรวจสอบว่าปุ่มมีอยู่จริง
     closeBtn.addEventListener('click', () => {
-      addAddminModal.style.display = 'none'; // Hide the modal
-  });
-}
+      addAddminModal.style.display = 'none'; // ปิด modal
+    });
+  }
 
   // Close the modal if the user clicks outside the modal content
   window.addEventListener('click', (event) => {
-      if (event.target === addAddminModal) {
-          addAddminModal.style.display = 'none'; // Hide the modal
-      }
+    if (event.target === addAddminModal) {
+      addAddminModal.style.display = 'none'; // ซ่อน modal เมื่อคลิกนอก modal
+    }
   });
 });
+
 
 //dropdown
 document.addEventListener('DOMContentLoaded', () => {

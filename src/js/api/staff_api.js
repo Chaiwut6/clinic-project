@@ -39,6 +39,56 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("addEmployeeForm");
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault(); // ป้องกันการ refresh หน้า
+
+    // รับค่าจากฟอร์ม
+    const employeeID = document.getElementById("employeeId").value;
+    const emp_fname = document.getElementById('emp_fname').value;
+    const emp_lname = document.getElementById('emp_lname').value;
+    const emp_password = document.getElementById('emp_password').value;
+    const emp_confirmPassword = document.getElementById('emp_confirmPassword').value;
+
+    // ตรวจสอบว่าข้อมูลครบถ้วน
+    if (!employeeID || !emp_fname || !emp_lname || !emp_password || !emp_confirmPassword) {
+      alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+      return;
+    }
+
+    if (emp_password !== emp_confirmPassword) {
+      alert('รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน');
+      return;
+    }
+
+    try {
+      // ส่งข้อมูลไปยัง API
+      const response = await axios.post("http://localhost:8000/api/employees/register-employee", {
+        employee_id: employeeID,
+        password: emp_password,  
+        emp_fname: emp_fname,
+        emp_lname: emp_lname
+      });
+
+      // เปลี่ยนข้อความในการตรวจสอบให้ตรงกับข้อความที่ API ส่งกลับ
+      if (response.data && response.data.message === "Employee registered successfully") {
+        alert("เพิ่มข้อมูลพนักงานสำเร็จ");
+        document.getElementById("addEmployeeModal").style.display = "none";
+        form.reset();
+      } else {
+        alert("เกิดข้อผิดพลาด: " + (response.data.message || "ไม่สามารถบันทึกข้อมูลได้"));
+      }
+    } catch (error) {
+      console.error("Error adding employee:", error);
+      alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
+    }
+  });
+});
+
+
+
 
 const Logout = async () => {
     try {
@@ -106,4 +156,4 @@ const Logout = async () => {
       fetchEmployeeInfo();
     }
   });
-  
+

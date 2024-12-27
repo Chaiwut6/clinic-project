@@ -36,9 +36,10 @@
     <link rel="stylesheet" href="../../style/staff/schedule.css">
     <!-- <script src="../../js/login.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
-    
+
 
     <script src="../../js/staff.js"></script>
+    <script src="../../js/api/staff_api.js"></script>
 
 </head>
 
@@ -66,20 +67,20 @@
             </li> -->
             <li class="nav-item">
                 <a class="nav-link" href="../staff/manage_user.html">
-                  <i class="fa fa-folder"></i>
-                  <span>จัดการข้อมูลผู้ใช้</span></a>
-              </li>
-              <li class="nav-item">
+                    <i class="fa fa-folder"></i>
+                    <span>จัดการข้อมูลผู้ใช้</span></a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="../staff/manage_doctor.html">
-                  <i class="fa-solid fa-stethoscope"></i>
-                  <span>จัดการข้อมูลแพทย์</span></a>
-              </li>
-              <li class="nav-item">
+                    <i class="fa-solid fa-stethoscope"></i>
+                    <span>จัดการข้อมูลแพทย์</span></a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="../staff/patientslist.html">
-                  <i class="fa-solid fa-user-plus"></i>
-                  <span>ผู้ป่วยที่อยู่ในการดูแล</span></a>
-              </li>
-              <li class="nav-item">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>ผู้ป่วยที่อยู่ในการดูแล</span></a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="../staff/manage_admin.html">
                     <i class="fa fa-folder"></i>
                     <span>จัดการผู้ดูแลระบบ</span></a>
@@ -259,12 +260,12 @@
                             <h1>รายชื่อผู้ดูแลระบบ</h1>
                             <div class="header-actions">
                                 <div class="search-box">
-                                    <input type="text" class="searchaddmin" placeholder="ค้นหา" >
-                                  </div>
+                                    <input type="text" class="searchaddmin" placeholder="ค้นหา">
+                                </div>
                                 <button id="addAddminBtn">เพิ่มผู้ดูแลระบบ</button>
                             </div>
                         </header>
-                        <div >
+                        <div>
                             <table>
                                 <thead>
                                     <tr>
@@ -275,7 +276,7 @@
                                         <th>เพิ่มเติม</th>
                                     </tr>
                                 </thead>
-                                <tbody id="addminTable"  >
+                                <tbody id="addminTable">
                                     <tr>
                                         <td>1</td>
                                         <td>emp_001</td>
@@ -283,7 +284,8 @@
                                         <td>8888899999</td>
                                         <td>
                                             <div class="dropdown-doctor">
-                                                <button class="actionBtn"><i class="fa-solid fa-grip-lines"></i></button>
+                                                <button class="actionBtn"><i
+                                                        class="fa-solid fa-grip-lines"></i></button>
                                                 <div class="dropdown-content">
                                                     <a href="#" class="editBtn">
                                                         <i class="fa-solid fa-pen-to-square"></i>
@@ -293,10 +295,10 @@
                                                         <i class="fa-solid fa-trash"></i>
                                                         <span>ลบ</span>
                                                     </a>
-                                                    
+
                                                 </div>
                                             </div>
-                                        </td>  
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>2</td>
@@ -305,7 +307,8 @@
                                         <td>8888899999</td>
                                         <td>
                                             <div class="dropdown-doctor">
-                                                <button class="actionBtn"><i class="fa-solid fa-grip-lines"></i></button>
+                                                <button class="actionBtn"><i
+                                                        class="fa-solid fa-grip-lines"></i></button>
                                                 <div class="dropdown-content">
                                                     <a href="#" class="editBtn">
                                                         <i class="fa-solid fa-pen-to-square"></i>
@@ -315,58 +318,58 @@
                                                         <i class="fa-solid fa-trash"></i>
                                                         <span>ลบ</span>
                                                     </a>
-                                                    
+
                                                 </div>
                                             </div>
-                                        </td>  
+                                        </td>
                                     </tr>
-                                    
+
                                 </tbody>
                             </table>
                         </div>
-                    
+
                     </div>
                     <!-- Display fname here -->
                 </div>
 
                 <!-- Popup Modal -->
-                <div id="addAddminModal" class="modal">
+                <div id="addEmployeeModal" class="modal">
                     <div class="modal-content">
-                    <div>
-                        <span class="close">&times;</span>     
-                     </div>
-                                             
-                        <form class="addAddminForm">
-                            <label for="addminName">ชื่อผู้ดูแล</label>
-                            <input type="text" class="addName" />
-
-                            <label for="phoneNumber">เบอร์โทรศัพท์</label>
-                            <input type="text" class="phoneNumber"/>
-
-                            <label for="email">รหัสประจำตัว</label>
-                            <input type="email" class="email"/>
-
+                        <div>
+                            <span class="close">&times;</span>     
+                        </div>
+                        <form id="addEmployeeForm">
+                            <label for="employeeId">รหัสพนักงาน</label>
+                            <input type="text" id="employeeId" class="form-control" required />
+                
+                            <label for="emp_fname">ชื่อ</label>
+                            <input type="text" id="emp_fname" class="form-control" required />
+                
+                            <label for="emp_lname">นามสกุล</label>
+                            <input type="text" id="emp_lname" class="form-control" required />
+                
                             <label for="password">รหัสผ่าน</label>
-                            <input type="password" class="password"/>
-                            
-                            <label for="password">ยืนยันรหัสผ่าน</label>
-                            <input type="confirm-password" class="confirm-password"/>
-
+                            <input type="password" id="emp_password" class="form-control" required />
+                
+                            <label for="confirmPassword">ยืนยันรหัสผ่าน</label>
+                            <input type="password" id="emp_confirmPassword" class="form-control" required />
+                
                             <button type="submit">Save</button>
                         </form>
                     </div>
                 </div>
+                
 
                 <!-- edit Modal -->
-                <div id="editModal" class="modal">
+                <!-- <div id="editModal" class="modal">
                     <div class="modal-content">
-                    <div>
-                        <span class="close">&times;</span>     
-                     </div>
-                                             
+                        <div>
+                            <span class="close">&times;</span>
+                        </div>
+
                         <form class="addAddminForm">
                             <label for="employee_id">รหัสประจำตัว</label>
-                            <input type="employee_id" class="employee_id"/>
+                            <input type="employee_id" class="employee_id" />
                             <label for="addminfname">ชื่อจริง</label>
                             <input type="text" class="addminfname" />
                             <label for="addminlname">นามสกุล</label>
@@ -375,7 +378,7 @@
                             <button type="submit">Save</button>
                         </form>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- /.container-fluid -->
 
@@ -397,22 +400,22 @@
         <i class="fas fa-angle-up"></i>
     </a>
 
-<!-- Delete Modal -->
-<div class="delete-popup">
-    <div class="delete-content">
-        <div class="delete-header">
-            <h5 class="delete-title">ยืนยันการลบ</h5>
-            <button class="close-delete-btn">&times;</button>
-        </div>
-        <div class="delete-body">
-            <p>คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้ การกระทำนี้ไม่สามารถย้อนกลับได้</p>
-        </div>
-        <div class="delete-footer">
-            <!-- <button class="btn cancel-btn close-delete-btn">ยกเลิก</button> -->
-            <a class="btn delete-btn" href="">ลบ</a>
+    <!-- Delete Modal -->
+    <div class="delete-popup">
+        <div class="delete-content">
+            <div class="delete-header">
+                <h5 class="delete-title">ยืนยันการลบ</h5>
+                <button class="close-delete-btn">&times;</button>
+            </div>
+            <div class="delete-body">
+                <p>คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้ การกระทำนี้ไม่สามารถย้อนกลับได้</p>
+            </div>
+            <div class="delete-footer">
+                <!-- <button class="btn cancel-btn close-delete-btn">ยกเลิก</button> -->
+                <a class="btn delete-btn" href="">ลบ</a>
+            </div>
         </div>
     </div>
-</div>
 
     <!-- <script>
         const logout = async () => {
