@@ -1,3 +1,5 @@
+const apiUrl = 'http://localhost:8000'; 
+
 document.addEventListener("DOMContentLoaded", function () {
     const user_id = sessionStorage.getItem('user_id');
     const user_fname = sessionStorage.getItem('user_fname');
@@ -84,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     async function saveResult(user_id, totalScore, result, user_fname, user_lname) {
         try {
-            const response = await axios.post('http://localhost:8000/api/users/save-result', {
+            const response = await axios.post(`${apiUrl}/api/users/save-result`, {
                 user_id: user_id,
                 totalScore: totalScore,
                 result: result,

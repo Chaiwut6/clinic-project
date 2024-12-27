@@ -1,3 +1,4 @@
+const apiUrl = 'http://localhost:8000'; 
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("addDoctorForm");
@@ -18,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       // ส่งข้อมูลไปยัง API
-      const response = await axios.post("http://localhost:8000/api/doctors/register-doctor", {
+      const response = await axios.post('http://localhost:8000/api/doctors/register-doctor', {
         doc_id: doctorID,
         doc_name: doctorName,
         phone: phoneNumber,
@@ -65,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       // ส่งข้อมูลไปยัง API
-      const response = await axios.post("http://localhost:8000/api/employees/register-employee", {
+      const response = await axios.post('http://localhost:8000/api/employees/register-employee', {
         employee_id: employeeID,
         password: emp_password,  
         emp_fname: emp_fname,
@@ -114,7 +115,7 @@ const Logout = async () => {
     const fetchEmployeeInfo = async () => {
       try {
         // ใช้ POST แทน GET ในการดึงข้อมูล employee
-        const response = await axios.post('http://localhost:8000/api/employees/employeeinfo', {}, {
+        const response = await axios.post(`${apiUrl}/api/employees/employeeinfo`, {}, {
           withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
         });
   
