@@ -95,7 +95,7 @@ const Logout = async () => {
     try {
       // เรียก API logout ไปที่เซิร์ฟเวอร์
       const response = await axios.post('http://localhost:8000/api/users/logout', {}, { withCredentials: true });
-  
+      sessionStorage.removeItem('employeeID');
       // ตรวจสอบผลลัพธ์จากการออกจากระบบ
       if (response.data.message === 'ออกจากระบบสำเร็จ') {
         console.log('คุณออกจากระบบเรียบร้อยแล้ว');
@@ -122,7 +122,8 @@ const Logout = async () => {
         if (response.data && response.data.employee) {
           const employeeInfo = response.data.employee;
           console.log("employeeInfo:", employeeInfo);
-  
+          sessionStorage.setItem('employeeID', employeeInfo.employee_id || '');
+          
   
           // แสดงข้อมูลบนหน้า
           updatePageData(employeeInfo);
@@ -251,6 +252,109 @@ const Logout = async () => {
       document.getElementById("doctorinTable").innerHTML = `<tr><td colspan="4">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
     }
   }
+
+  async function fetchEmployee() {
+    try {
+      const employeeID = sessionStorage.getItem('employeeID');
+
+      document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">กำลังโหลดข้อมูล...</td></tr>`;
+      
+      // ดึงข้อมูลจาก API
+      const response = await axios.post("http://localhost:8000/api/employees/employeeResult");
+      console.log(response);
+      
+      // ตรวจสอบและดึงข้อมูลพนักงานจาก response
+      const { employee } = response.data;
+      
+      // ตรวจสอบว่ามีข้อมูลพนักงานหรือไม่
+      if (!employee || employee.length === 0) {
+        document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">ไม่พบข้อมูลพนักงาน</td></tr>`;
+        return;
+      }
+      
+      // กรองข้อมูลพนักงานที่ไม่ตรงกับข้อมูลใน sessionStorage
+      const filteredEmployee = employee.filter(emp => {
+        return emp.employee_id !== employeeID; // กรองโดยใช้ employeeID
+      });
+      
+      // ตรวจสอบว่าหลังจากกรองข้อมูลแล้วมีพนักงานเหลือหรือไม่
+      if (filteredEmployee.length === 0) {
+        document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">ไม่พบข้อมูลพนักงานที่สามารถแสดงได้</td></tr>`;
+        return;
+      }
+      // แปลงข้อมูลเป็น HTML
+      const rows = filteredEmployee.map((emp) => {
+        return `
+          <tr>
+            <td>${emp.employee_id || "ไม่ระบุ"}</td>
+            <td>${emp.emp_fname || "ไม่ระบุ"}</td>
+            <td>${emp.emp_lname || "ไม่ระบุ"}</td>
+            <td>
+            <div class="dropdown-doctor">
+                <button class="actionBtn"><i
+                        class="fa-solid fa-grip-lines"></i></button>
+                <div class="dropdown-content">
+                    <a href="#" class="editBtn">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        <span>แก้ไขข้อมูล</span>
+                    </a>
+                    <a href="#" class="delete-trigger">
+                        <i class="fa-solid fa-trash"></i>
+                        <span>ลบ</span>
+                    </a>
+
+                </div>
+            </div>
+        </td>
+          </tr>
+        `;
+      });
+  
+      // แสดงผลใน <tbody>
+      document.getElementById("addminTable").innerHTML = rows.join("");
+      sessionStorage.removeItem('employeeID');
+      // Dropdown functionality: Toggle dropdown visibilit
+        const dropdownButtons = document.querySelectorAll('.actionBtn');
+      
+        dropdownButtons.forEach((button) => {
+          button.addEventListener('click', (e) => {
+            e.stopPropagation(); // หยุดการ propagate event ไปที่อื่น
+      
+            const dropdownContent = button.closest('.dropdown-doctor').querySelector('.dropdown-content');
+            const dropdown = dropdownContent.parentElement;
+      
+            // ปิด dropdown อื่นๆ ที่เปิดอยู่ก่อนหน้า
+            document.querySelectorAll('.dropdown-doctor.show').forEach((otherDropdown) => {
+              if (otherDropdown !== dropdown) {
+                otherDropdown.classList.remove('show');
+                otherDropdown.querySelector('.dropdown-content').style.cssText = ''; // ลบการตั้งค่า style ที่ปรับ
+              }
+            });
+      
+            // เปิดหรือลบสถานะการเปิดของ dropdown ปัจจุบัน
+            dropdown.classList.toggle('show');
+      
+            // ปรับตำแหน่งของ dropdown
+            const rect = dropdownContent.getBoundingClientRect();
+            dropdownContent.style.left = rect.right > window.innerWidth ? `${window.innerWidth - rect.right}px` : '';
+            dropdownContent.style.left = rect.left < 0 ? '1px' : dropdownContent.style.left;
+            dropdownContent.style.top = rect.bottom > window.innerHeight ? `${window.innerHeight - rect.bottom}px` : '';
+          });
+        });
+      
+        // ปิด dropdown เมื่อคลิกที่พื้นที่นอก dropdown
+        window.addEventListener('click', () => {
+          document.querySelectorAll('.dropdown-doctor').forEach((dropdown) => {
+            dropdown.classList.remove('show');
+            dropdown.querySelector('.dropdown-content').style.cssText = ''; // รีเซ็ตตำแหน่ง
+          });
+        });
+    
+    } catch (error) {
+      console.error("Error fetching employee data:", error);
+      document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
+    }
+  }
   
   
   
@@ -260,6 +364,9 @@ const Logout = async () => {
     const currentPage = window.location.pathname.split("/").pop(); // 
     if (currentPage === "manage_doctor.html") {
       fetchDoctors(); 
+    }
+    if (currentPage === "manage_admin.html") {
+      fetchEmployee()
     }
   });
   
