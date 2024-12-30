@@ -523,6 +523,51 @@ const Logout = async () => {
       document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
     }
   }
+
+  async function fetchUserlist() {
+    try {
+      // Show loading message while fetching
+      document.getElementById("UserTable").innerHTML = `<tr><td colspan="4">กำลังโหลดข้อมูล...</td></tr>`;
+      const response = await axios.post("http://localhost:8000/api/employees/userList");
+      console.log(response.data);
+      // ตรวจสอบและดึงข้อมูลแพทย์จาก response
+      const { user } = response.data;
+
+  
+      // ตรวจสอบว่ามีข้อมูลแพทย์หรือไม่
+      if (!user || user.length === 0) {
+        document.getElementById("UserTable").innerHTML = `<tr><td colspan="4">ไม่พบข้อมูลผู้ใช้</td></tr>`;
+        return;
+      }
+  
+      // แปลงข้อมูลเป็น HTML
+      const rows = user.map((user) => {
+        return `
+        <tr data-id="${user.user_id}" year="${user.year}">
+        <td>${user.user_id || "ไม่ระบุ"}</td>
+        <td>${(user.user_fname) + " " + (user.user_lname) || "ไม่ระบุ"}</td>
+        <td>${user.nickname || "ไม่ระบุ"}</td>
+        <td>${user.faculty || "ไม่ระบุ"}</td>
+        <td>${user.phone || "ไม่ระบุ"}</td>
+        <td>ไม่มีการนัด</td>
+        <td>ไม่มีการนัด</td>
+        <td>
+          <button class="action-btn" onclick="goToAppointmentPage('101')">จัดการข้อมูล</button>
+        </td>
+      </tr>
+        `;
+      });
+  
+      // แสดงผลใน <tbody>
+      document.getElementById("UserTable").innerHTML = rows.join("");
+  
+    
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      document.getElementById("UserTable").innerHTML = `<tr><td colspan="4">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
+    }
+  }
+
   
   
   
@@ -535,6 +580,9 @@ const Logout = async () => {
     }
     if (currentPage === "manage_admin.html") {
       fetchEmployee()
+    }
+    if (currentPage === "manage_user.html") {
+      fetchUserlist()
     }
   });
   

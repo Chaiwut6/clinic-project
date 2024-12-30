@@ -268,6 +268,36 @@ router.post('/employeeDelete', async (req, res) => {
   }
 });
 
+router.post('/userList', async (req, res) => {
+  let conn = null;
+
+  try {
+    conn = await initMySQL();
+
+    // Query user information
+    const [userResult] = await conn.query("SELECT * FROM users ");
+  
+    
+    const userList = userResult;
+
+
+    if (!userList) {
+      return res.status(404).json({ message: 'user not found' });
+    }
+
+    res.json({
+      user: userList,
+    });
+  } catch (error) {
+    console.error('Error retrieving user data:', error);
+    res.status(500).json({ message: 'Error retrieving user data', error: error.message });
+  } finally {
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
+
   
 
 module.exports = router;
