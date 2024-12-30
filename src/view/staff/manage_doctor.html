@@ -34,6 +34,7 @@
     <!-- Custom styles for this template-->
     <link href="../../style/users/user_main.css" rel="stylesheet">
     <link rel="stylesheet" href="../../style/staff/schedule.css">
+    <link rel="stylesheet" href="../../style/staff/mange_doctor.css">
     <!-- <script src="../../js/login.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
     
@@ -329,20 +330,14 @@
                      </div>
                                              
                         <form class="addDoctorForm">
+                            <label for="email">รหัสประจำตัว</label>
+                            <input type="email" class="email"/>
+
                             <label for="doctorName">ชื่อแพทย์</label>
                             <input type="text" class="doctorName" pattern="^[a-zA-Zก-ฮะ-์]+$" title="กรุณากรอกตัวอักษรเท่านั้น" />
 
                             <label for="phoneNumber">เบอร์โทรศัพท์</label>
                             <input type="text" class="phoneNumber"/>
-
-                            <label for="email">รหัสประจำตัว</label>
-                            <input type="email" class="email"/>
-
-                            <!-- <label for="password">รหัสผ่าน</label>
-                            <input type="password" class="password"/>
-                            
-                            <label for="password">ยืนยันรหัสผ่าน</label>
-                            <input type="confirm-password" class="confirm-password"/> -->
 
                             <button type="submit">Save</button>
                         </form>

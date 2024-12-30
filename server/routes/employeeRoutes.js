@@ -184,6 +184,90 @@ router.post('/employeeResult', async (req, res) => {
   }
 });
 
+router.post('/employeeUpdate', async (req, res) => {
+  let conn = null;
+  const { employee_id, emp_fname, emp_lname } = req.body;
+
+  try {
+    conn = await initMySQL();
+
+    if (!employee_id || !emp_fname || !emp_lname) {
+      return res.status(400).json({
+        success: false,
+        message: "กรุณากรอกข้อมูลให้ครบถ้วน ",
+      });
+    }
+
+    // คำสั่ง SQL ที่แก้ไข
+    const [result] = await conn.query(
+      "UPDATE employee SET emp_fname = ?, emp_lname = ? WHERE employee_id = ?",
+      [emp_fname, emp_lname, employee_id]
+    );
+
+    if (result.affectedRows > 0) {
+      res.status(200).json({ success: true, message: 'อัปเดตข้อมูลสำเร็จ' });
+    } else {
+      res.status(404).json({ success: false, message: 'ไม่พบผู้ใช้นี้ในระบบ' });
+    }
+  } catch (error) {
+    console.error('Error during doctor update:', error.message);
+    console.error('Stack trace:', error.stack);
+    res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดในระบบ', error: error.message });
+  } finally {
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
+
+router.post('/employeeDelete', async (req, res) => {
+  let conn = null;
+  const { employee_id } = req.body;
+
+  try {
+    conn = await initMySQL();
+
+    // ตรวจสอบว่ามี doc_id หรือไม่
+    if (!employee_id) {
+      return res.status(400).json({
+        success: false,
+        message: "กรุณากรอก employee_id เพื่อทำการลบข้อมูล"
+      });
+    }
+
+    // คำสั่ง SQL สำหรับลบข้อมูลแพทย์
+    const [result] = await conn.query(
+      "DELETE FROM employee WHERE employee_id = ?",
+      [employee_id]
+    );
+
+    // ตรวจสอบผลลัพธ์จากการลบ
+    if (result.affectedRows > 0) {
+      res.status(200).json({
+        success: true,
+        message: 'ลบข้อมูลพนักงานสำเร็จ'
+      });
+    } else {
+      res.status(404).json({
+        success: false,
+        message: 'ไม่พบข้อมูลพนักงานที่ต้องการลบ'
+      });
+    }
+  } catch (error) {
+    console.error('Error during employee delete:', error.message);
+    console.error('Stack trace:', error.stack);
+    res.status(500).json({
+      success: false,
+      message: 'เกิดข้อผิดพลาดในการลบข้อมูล',
+      error: error.message
+    });
+  } finally {
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
+
   
 
 module.exports = router;

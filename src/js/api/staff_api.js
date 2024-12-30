@@ -180,7 +180,7 @@ const Logout = async () => {
       // แปลงข้อมูลเป็น HTML
       const rows = doctor.map((doc) => {
         return `
-          <tr>
+          <tr data-id="${doc.doc_id}">
             <td>${doc.doc_id || "ไม่ระบุ"}</td>
             <td>${doc.doc_name || "ไม่ระบุ"}</td>
             <td>${doc.phone || "ไม่ระบุ"}</td>
@@ -192,14 +192,14 @@ const Logout = async () => {
                     <i class="fa-solid fa-user-plus"></i>
                     <span>ผู้ป่วยที่อยู่ในการดูแล</span>
                   </a>
-                  <a href="#" class="editBtn">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                    <span>แก้ไขข้อมูล</span>
-                  </a>
-                  <a href="#" class="delete-trigger">
-                    <i class="fa-solid fa-trash"></i>
-                    <span>ลบ</span>
-                  </a>
+                  <a href="#" class="editBtn" data-id="${doc.doc_id}" data-name="${doc.doc_name}" data-phone="${doc.phone}">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                  <span>แก้ไขข้อมูล</span>
+                </a>
+                <a href="#" class="delete-trigger" data-id="${doc.doc_id}">
+                  <i class="fa-solid fa-trash"></i>
+                  <span>ลบ</span>
+                </a>
                 </div>
               </div>
             </td>
@@ -210,6 +210,94 @@ const Logout = async () => {
       // แสดงผลใน <tbody>
       document.getElementById("doctorinTable").innerHTML = rows.join("");
   
+      const editButtons = document.querySelectorAll(".editBtn");
+      editButtons.forEach((button) => {
+        button.addEventListener("click", (e) => {
+          e.preventDefault();
+  
+          // ดึงข้อมูลจาก data-* attributes
+          const docId = button.getAttribute("data-id");
+          const docName = button.getAttribute("data-name");
+          const docPhone = button.getAttribute("data-phone");
+  
+          // เน้นแถวที่เลือก
+          document.querySelectorAll("#doctorinTable tr").forEach((row) => {
+            row.classList.remove("highlight");
+          });
+          const selectedRow = document.querySelector(`#doctorinTable tr[data-id="${docId}"]`);
+          selectedRow.classList.add("highlight");
+  
+          // สร้าง form สำหรับแก้ไขข้อมูล
+          const formHtml = `
+          <div class="popup-container">
+          <div class="popup-content">
+          <div>
+          <span class="close" id="cancelEdit">&times;</span>
+          </div>
+            <label for="editName">ชื่อแพทย์</label>
+            <input type="text" id="editName" value="${docName}" placeholder="ชื่อแพทย์..." required />
+            <label for="editPhone">เบอร์โทรศัพท์:</label>
+            <input type="text" id="editPhone" value="${docPhone}" placeholder="เบอร์โทรศัพท์..." pattern="^\\d{10}$" title="กรุณากรอกตัวเลข 10 หลัก" required />
+            <button id="saveEdit">บันทึก</button>
+          </div>
+        </div>
+          `;
+  
+          // แทรกฟอร์มไปยังหน้าจอ
+          document.body.insertAdjacentHTML("beforeend", formHtml);
+  
+          // การจัดการการบันทึกข้อมูล
+          document.getElementById("saveEdit").addEventListener("click", async () => {
+            const newName = document.getElementById("editName").value;
+            const newPhone = document.getElementById("editPhone").value;
+  
+            try {
+              // ส่งข้อมูลที่แก้ไขไปยัง API
+              await axios.post("http://localhost:8000/api/doctors/doctorUpdate", {
+                doc_id: docId,
+                doc_name: newName,
+                phone: newPhone,
+              });
+  
+              alert("แก้ไขข้อมูลสำเร็จ");
+              document.querySelector(".popup-container").remove();
+              fetchDoctors(); 
+            } catch (err) {
+              console.error("Error updating doctor data:", err);
+              alert("เกิดข้อผิดพลาดในการแก้ไขข้อมูล");
+            }
+          });
+  
+          // การจัดการการยกเลิก
+          document.getElementById("cancelEdit").addEventListener("click", () => {
+            document.querySelector(".popup-container").remove();
+            selectedRow.classList.remove("highlight");
+          });
+        });
+      });
+
+      const deleteButtons = document.querySelectorAll(".delete-trigger");
+      deleteButtons.forEach((button) => {
+        button.addEventListener("click", async (e) => {
+          e.preventDefault();
+          const docId = button.getAttribute("data-id");
+  
+          const confirmDelete = confirm("คุณต้องการลบข้อมูลแพทย์นี้หรือไม่?");
+          if (confirmDelete) {
+            try {
+              // ลบข้อมูลแพทย์จาก API
+              await axios.post("http://localhost:8000/api/doctors/doctorDelete", { doc_id: docId });
+              alert("ลบข้อมูลแพทย์สำเร็จ");
+              fetchDoctors();  // รีเฟรชข้อมูล
+            } catch (err) {
+              console.error("Error deleting doctor data:", err);
+              alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+            }
+          }
+        });
+      });
+
+
       // Dropdown functionality: Toggle dropdown visibilit
         const dropdownButtons = document.querySelectorAll('.actionBtn');
       
@@ -282,37 +370,35 @@ const Logout = async () => {
         document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">ไม่พบข้อมูลพนักงานที่สามารถแสดงได้</td></tr>`;
         return;
       }
+      // sessionStorage.removeItem('employeeID');
       // แปลงข้อมูลเป็น HTML
       const rows = filteredEmployee.map((emp) => {
-        return `
-          <tr>
-            <td>${emp.employee_id || "ไม่ระบุ"}</td>
-            <td>${emp.emp_fname || "ไม่ระบุ"}</td>
-            <td>${emp.emp_lname || "ไม่ระบุ"}</td>
-            <td>
+        return`
+        <tr data-id="${emp.employee_id}">
+          <td>${emp.employee_id || "ไม่ระบุ"}</td>
+          <td>${emp.emp_fname || "ไม่ระบุ"}</td>
+          <td>${emp.emp_lname || "ไม่ระบุ"}</td>
+          <td>
             <div class="dropdown-doctor">
-                <button class="actionBtn"><i
-                        class="fa-solid fa-grip-lines"></i></button>
+                <button class="actionBtn"><i class="fa-solid fa-grip-lines"></i></button>
                 <div class="dropdown-content">
-                    <a href="#" class="editBtn">
+                    <a href="#" class="editBtn" data-id="${emp.employee_id}" data-fname="${emp.emp_fname}" data-lname="${emp.emp_lname}">
                         <i class="fa-solid fa-pen-to-square"></i>
                         <span>แก้ไขข้อมูล</span>
                     </a>
-                    <a href="#" class="delete-trigger">
+                    <a href="#" class="delete-trigger" data-id="${emp.employee_id}">
                         <i class="fa-solid fa-trash"></i>
                         <span>ลบ</span>
                     </a>
-
                 </div>
             </div>
-        </td>
-          </tr>
-        `;
+          </td>
+        </tr>
+      `;
       });
   
       // แสดงผลใน <tbody>
       document.getElementById("addminTable").innerHTML = rows.join("");
-      sessionStorage.removeItem('employeeID');
       // Dropdown functionality: Toggle dropdown visibilit
         const dropdownButtons = document.querySelectorAll('.actionBtn');
       
@@ -349,6 +435,88 @@ const Logout = async () => {
             dropdown.querySelector('.dropdown-content').style.cssText = ''; // รีเซ็ตตำแหน่ง
           });
         });
+
+        const editButtons = document.querySelectorAll('.editBtn');
+        editButtons.forEach((button) => {
+          button.addEventListener('click', (e) => {
+            e.preventDefault();
+            const empId = button.getAttribute("data-id");
+            const empFname = button.getAttribute("data-fname");
+            const empLname = button.getAttribute("data-lname");
+        
+            // แสดงฟอร์มแก้ไข
+            const formHtml = `
+              <div class="popup-container">
+                <div class="popup-content">
+                  <div>
+                    <span class="close" id="cancelEdit">&times;</span>
+                  </div>
+                  <label for="editFname">ชื่อ:</label>
+                  <input type="text" id="editFname" value="${empFname}" placeholder="ชื่อพนักงาน..." required />
+                  <label for="editLname">นามสกุล:</label>
+                  <input type="text" id="editLname" value="${empLname}" placeholder="นามสกุล..." required />
+                  <button id="saveEdit">บันทึก</button>
+                </div>
+              </div>
+            `;
+        
+            // แสดงฟอร์มในหน้า
+            document.body.insertAdjacentHTML('beforeend', formHtml);
+        
+            // ปิดฟอร์มเมื่อคลิกที่ปุ่ม 'close'
+            const cancelEditButton = document.getElementById("cancelEdit");
+            cancelEditButton.addEventListener('click', () => {
+              document.querySelector('.popup-container').remove(); // ลบฟอร์มออกจากหน้า
+            });
+        
+            // การบันทึกข้อมูลการแก้ไข
+            const saveEditButton = document.getElementById("saveEdit");
+            saveEditButton.addEventListener('click', async () => {
+              const updatedFname = document.getElementById("editFname").value;
+              const updatedLname = document.getElementById("editLname").value;
+        
+              try {
+                // ส่งคำขออัปเดตข้อมูลพนักงาน
+                await axios.post("http://localhost:8000/api/employees/employeeUpdate", {
+                  employee_id: empId,
+                  emp_fname: updatedFname,
+                  emp_lname: updatedLname,
+                });
+        
+                alert("ข้อมูลพนักงานได้รับการอัปเดตเรียบร้อยแล้ว");
+                fetchEmployee(); // รีเฟรชข้อมูลพนักงาน
+                document.querySelector('.popup-container').remove(); // ปิดฟอร์ม
+              } catch (err) {
+                console.error("Error updating employee:", err);
+                alert("เกิดข้อผิดพลาดในการอัปเดตข้อมูล");
+              }
+            });
+          });
+        });
+
+        const deleteButtons = document.querySelectorAll('.delete-trigger');
+        deleteButtons.forEach((button) => {
+          button.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const empId = button.getAttribute("data-id");
+    
+            if (confirm("คุณต้องการลบข้อมูลพนักงานนี้หรือไม่?")) {
+              try {
+                // ส่งคำขอลบข้อมูลพนักงาน
+                await axios.post("http://localhost:8000/api/employees/employeeDelete", {
+                  employee_id: empId,
+                });
+    
+                alert("ลบข้อมูลพนักงานสำเร็จ");
+                fetchEmployee(); // รีเฟรชข้อมูล
+              } catch (err) {
+                console.error("Error deleting employee:", err);
+                alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+              }
+            }
+          });
+        });
+    
     
     } catch (error) {
       console.error("Error fetching employee data:", error);
