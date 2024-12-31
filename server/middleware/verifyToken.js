@@ -17,6 +17,8 @@ const verifyToken = (req, res, next) => {
 
       // บันทึกข้อมูลที่ถอดรหัสได้ใน req.user
       req.user = decoded;
+      req.employee = decoded;
+
       next(); // ส่งต่อการทำงานไปยัง middleware หรือ endpoint ถัดไป
     });
   } catch (error) {

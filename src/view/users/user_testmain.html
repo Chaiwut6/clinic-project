@@ -8,53 +8,54 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<link rel="stylesheet" href="../../style/users/user_testmain.css">
-<!-- <script src="../../js/user.js"></script> -->
+    <link rel="stylesheet" href="../../style/users/user_testmain.css">
+    <!-- เพิ่ม CDN ของ Axios ที่นี่ -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
     <div class="container">
         <img src="../../image/1_1.png" alt="logo">
         <h1>มาทำความเข้าใจความรู้สึกตัวเองกันเถอะ</h1>
         <p>ทุกปัญหามีทางออก</p>
-        <!-- <div class="input-box">
-            <span class="details">รหัสประจำตัว(มีขีด)</span>
-            <input id="user_id" type="text" maxlength="14" required autocomplete="off">
-        </div> -->
         <div class="btn">
             <button class="question" type="button" onclick="startSurvey()">เริ่มสำรวจความรู้สึกของคุณ</button>
         </div>
     </div>
 
     <script>   
-        const startSurvey = () => {
-            // ตรวจสอบว่าข้อมูลของผู้ใช้ถูกเก็บใน sessionStorage หรือไม่
-            const user_id = sessionStorage.getItem('user_id');
-            const user_fname = sessionStorage.getItem('user_fname');
-            const user_lname = sessionStorage.getItem('user_lname');
-            console.log(user_id)
+        const startSurvey = async () => {
+            try {
+                // ตรวจสอบว่าข้อมูลของผู้ใช้ถูกเก็บใน sessionStorage หรือไม่
+                const user_id = sessionStorage.getItem('user_id');
+                
+                // เรียก API เพื่อดึงข้อมูลของผู้ใช้
+                const response = await axios.post('http://localhost:8000/api/users/userinfo', {}, {
+                    withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
+                });
         
-            // ถ้าไม่มีข้อมูลของผู้ใช้ให้แสดงข้อความแจ้งเตือน
-            if (!user_id || !user_fname || !user_lname) {
-                alert("โปรดเข้าสู่ระบบก่อนทำการสำรวจ");
-                return; // หยุดการทำงานถ้าไม่มีข้อมูลผู้ใช้
+                const user_fname = response.data.user.user_fname;
+                const user_lname = response.data.user.user_lname;
+        
+                // ถ้าไม่มีข้อมูลของผู้ใช้ให้แสดงข้อความแจ้งเตือน
+                if (!user_id || !user_fname || !user_lname) {
+                    alert("โปรดเข้าสู่ระบบก่อนทำการสำรวจ");
+                    return; // หยุดการทำงานถ้าไม่มีข้อมูลผู้ใช้
+                }
+        
+                // รีเซ็ตคะแนนและผลลัพธ์
+                sessionStorage.removeItem('totalScore');
+                sessionStorage.removeItem('result');
+        
+                // ตั้งค่าข้อมูลผู้ใช้ใหม่ใน sessionStorage
+                sessionStorage.setItem('user_id', user_id);
+        
+                // เปลี่ยนหน้าไปยังแบบทดสอบ
+                window.location.href = '../users/user_test1.html';
+            } catch (error) {
+                console.error("เกิดข้อผิดพลาดในการดึงข้อมูลผู้ใช้:", error);
+                alert("ไม่สามารถดึงข้อมูลผู้ใช้ได้ โปรดลองอีกครั้ง");
             }
-        
-            // รีเซ็ตคะแนนและผลลัพธ์
-            sessionStorage.removeItem('totalScore');
-            sessionStorage.removeItem('result');
-        
-            // ตั้งค่าข้อมูลผู้ใช้ใหม่ใน sessionStorage
-            sessionStorage.setItem('user_id', user_id);
-            sessionStorage.setItem('user_fname', user_fname);
-            sessionStorage.setItem('user_lname', user_lname);
-        
-            // เปลี่ยนหน้าไปยังแบบทดสอบ
-            window.location.href = '../users/user_test1.html';
         };
-        
-        
-        
     </script>
-    
 </body>
 </html>

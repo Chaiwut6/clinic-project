@@ -98,8 +98,8 @@ const register = async () => {
 
       // Store user data in sessionStorage (optional)
       sessionStorage.setItem('user_id', user_id);
-      sessionStorage.setItem('user_fname', user_fname);
-      sessionStorage.setItem('user_lname', user_lname);
+      // sessionStorage.setItem('user_fname', user_fname);
+      // sessionStorage.setItem('user_lname', user_lname);
 
       // Store the token in cookies
       const token = response.data.token;
@@ -193,8 +193,8 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("userAssess:", userAssess);
 
         sessionStorage.setItem('user_id', response.data.user.user_id);
-        sessionStorage.setItem('user_fname', response.data.user.user_fname);
-        sessionStorage.setItem('user_lname', response.data.user.user_lname);
+        // sessionStorage.setItem('user_fname', response.data.user.user_fname);
+        // sessionStorage.setItem('user_lname', response.data.user.user_lname);
 
         // แสดงข้อมูลบนหน้า
         populateAssessments(userAssess);
@@ -359,8 +359,8 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("userAssess:", userAssess);
 
         sessionStorage.setItem('user_id', response.data.user.user_id);
-        sessionStorage.setItem('user_fname', response.data.user.user_fname);
-        sessionStorage.setItem('user_lname', response.data.user.user_lname);
+        // sessionStorage.setItem('user_fname', response.data.user.user_fname);
+        // sessionStorage.setItem('user_lname', response.data.user.user_lname);
 
         // แสดงข้อมูลบนหน้า
         populateAssessments(userAssess);

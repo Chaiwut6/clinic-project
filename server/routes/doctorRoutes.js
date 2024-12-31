@@ -228,15 +228,21 @@ router.post('/register-doctor', async (req, res) => {
           message: "กรุณากรอก doc_id เพื่อทำการลบข้อมูล"
         });
       }
-  
+      await conn.beginTransaction();
       // คำสั่ง SQL สำหรับลบข้อมูลแพทย์
       const [result] = await conn.query(
         "DELETE FROM doctor WHERE doc_id = ?",
         [doc_id]
       );
+
+      const [loginResult] = await conn.query(
+        "DELETE FROM login WHERE login_id = ?",
+        [doc_id]
+      );
   
       // ตรวจสอบผลลัพธ์จากการลบ
-      if (result.affectedRows > 0) {
+      if (result.affectedRows > 0 || loginResult.affectedRows > 0) {
+        await conn.commit();
         res.status(200).json({
           success: true,
           message: 'ลบข้อมูลแพทย์สำเร็จ'

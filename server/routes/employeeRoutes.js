@@ -227,7 +227,7 @@ router.post('/employeeDelete', async (req, res) => {
   try {
     conn = await initMySQL();
 
-    // ตรวจสอบว่ามี doc_id หรือไม่
+    // ตรวจสอบว่ามี employee_id หรือไม่
     if (!employee_id) {
       return res.status(400).json({
         success: false,
@@ -235,27 +235,45 @@ router.post('/employeeDelete', async (req, res) => {
       });
     }
 
-    // คำสั่ง SQL สำหรับลบข้อมูลแพทย์
-    const [result] = await conn.query(
+    // เริ่มต้น transaction
+    await conn.beginTransaction();
+
+    // ลบข้อมูลจากตาราง employee
+    const [employeeResult] = await conn.query(
       "DELETE FROM employee WHERE employee_id = ?",
       [employee_id]
     );
 
+    // ลบข้อมูลจากตาราง login
+    const [loginResult] = await conn.query(
+      "DELETE FROM login WHERE login_id = ?",
+      [employee_id]
+    );
+
     // ตรวจสอบผลลัพธ์จากการลบ
-    if (result.affectedRows > 0) {
+    if (employeeResult.affectedRows > 0 || loginResult.affectedRows > 0) {
+      await conn.commit(); // ยืนยัน transaction
+
       res.status(200).json({
         success: true,
-        message: 'ลบข้อมูลพนักงานสำเร็จ'
+        message: 'ลบข้อมูลพนักงานและข้อมูลเข้าสู่ระบบสำเร็จ'
       });
     } else {
+      await conn.rollback(); // ยกเลิก transaction
+
       res.status(404).json({
         success: false,
-        message: 'ไม่พบข้อมูลพนักงานที่ต้องการลบ'
+        message: 'ไม่พบข้อมูลพนักงานหรือข้อมูลเข้าสู่ระบบที่ต้องการลบ'
       });
     }
   } catch (error) {
     console.error('Error during employee delete:', error.message);
     console.error('Stack trace:', error.stack);
+
+    if (conn) {
+      await conn.rollback(); // ยกเลิก transaction ในกรณีเกิดข้อผิดพลาด
+    }
+
     res.status(500).json({
       success: false,
       message: 'เกิดข้อผิดพลาดในการลบข้อมูล',
@@ -267,6 +285,7 @@ router.post('/employeeDelete', async (req, res) => {
     }
   }
 });
+
 
 router.post('/userList', async (req, res) => {
   let conn = null;
@@ -297,6 +316,67 @@ router.post('/userList', async (req, res) => {
     }
   }
 });
+
+router.post('/change-password', async (req, res) => {
+  const { login_id,oldPassword, newPassword, confirmPassword } = req.body;
+  if (!oldPassword || !newPassword || !confirmPassword) {
+    return res.status(400).json({
+      success: false,
+      message: 'กรุณากรอกข้อมูลให้ครบถ้วน',
+    });
+  }
+
+  let conn = null;
+  try {
+    conn = await initMySQL();
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ message: 'รหัสผ่านใหม่และการยืนยันไม่ตรงกัน' });
+    }
+
+    // ค้นหาผู้ใช้จาก login_id
+    const [employeeLogin] = await conn.query("SELECT * FROM login WHERE login_id = ?", [login_id]);
+    if (!employeeLogin || employeeLogin.length === 0) {
+      return res.status(404).json({ message: 'ไม่พบผู้ใช้' });
+    }
+
+    const employeeInfo = employeeLogin[0];
+
+    // ตรวจสอบว่ารหัสผ่านเดิมถูกต้องหรือไม่
+    const isMatch = await bcrypt.compare(oldPassword, employeeInfo.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'รหัสผ่านเก่าไม่ถูกต้อง' });
+    }
+
+    // ตรวจสอบว่ารหัสผ่านใหม่ไม่เหมือนกับรหัสผ่านเก่า
+    const isSamePassword = await bcrypt.compare(newPassword, employeeInfo.password);
+    if (isSamePassword) {
+      return res.status(400).json({ message: 'รหัสผ่านใหม่ต้องไม่เหมือนกับรหัสผ่านเก่า' });
+    }
+
+    // เข้ารหัสรหัสผ่านใหม่
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // อัปเดตรหัสผ่านในฐานข้อมูล
+    const [result] = await conn.query("UPDATE login SET password = ? WHERE login_id = ?", [hashedPassword, login_id]);
+    if (result.affectedRows === 0) {
+      return res.status(400).json({ message: 'ไม่สามารถอัปเดตรหัสผ่านได้' });
+    }
+
+    // ส่งคำตอบสำเร็จ
+    res.status(200).json({ message: 'อัปเดตรหัสผ่านเรียบร้อยแล้ว' });
+
+  } catch (error) {
+    console.error('เกิดข้อผิดพลาดระหว่างการอัพเดตรหัสผ่าน:', error);
+    res.status(500).json({ message: 'Server error: ' + error.message });
+  } finally {
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
+
 
   
 
