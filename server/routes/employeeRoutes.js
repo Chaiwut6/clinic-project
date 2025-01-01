@@ -377,6 +377,41 @@ router.post('/change-password', async (req, res) => {
   }
 });
 
+router.post('/userdetails', async (req, res) => {
+  const { userId } = req.body;
+  let conn = null;
+
+  try {
+    conn = await initMySQL();
+
+    const [user] = await conn.query("SELECT * FROM users WHERE user_id = ?", [userId]);
+    const [Result] = await conn.query("SELECT * FROM results WHERE user_id = ?", [userId]);
+    const [Appointment] = await conn.query("SELECT * FROM Appointment WHERE Appointment_id = ?", [userId]);
+
+    const userinfo = user;
+    const userdetails = Result;
+    const userAppointment = Appointment.length > 0 ? Appointment : [{ message: "ยังไม่มีการนัดหมาย" }];
+
+    if (!userinfo) {
+      return res.status(404).json({ message: 'user not found' });
+    }
+
+    res.json({
+      user: userinfo,
+      results: userdetails,
+      appointments: userAppointment,
+    });
+  } catch (error) {
+    console.error('Error retrieving user data:', error);
+    res.status(500).json({ message: 'Error retrieving user data', error: error.message });
+  } finally {
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
+
+
 
   
 

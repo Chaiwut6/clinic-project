@@ -36,9 +36,9 @@
     <link rel="stylesheet" href="../../style/staff/schedule.css">
     <link rel="stylesheet" href="../../style/staff/patientslist.css">
     <link rel="stylesheet" href="../../style/staff/mange_user_data.css">
-    <script src="../../js/login.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
     <script src="../../js/staff.js"></script>
+    <script src="../../js/api/staff_api.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 
@@ -176,14 +176,15 @@
                     <section class="card user-info">
                         <h2>ข้อมูลผู้ใช้</h2>
                         <div class="user-grid">
-                            <p><strong>รหัสประจำตัว:</strong> <span id="userid">1111111111</span></p>
-                            <p><strong>ชื่อ:</strong> <span id="user-name">นาย สมชาย ใจดี</span></p>
-                            <p><strong>เบอร์โทร:</strong> <span id="user-phone">081-234-5678</span></p>
+                            <p><strong>รหัสประจำตัว:</strong> <span id="userid"></span></p>
+                            <p><strong>ชื่อ:</strong> <span id="user-fname"></span>&nbsp;<span id="user-lname"></span></p>
+
+                            <p><strong>เบอร์โทร:</strong> <span id="user-phone"></span></p>
                             <p></p>
-                            <p><strong>คณะ:</strong> <span id="user-faculty">วิทยาศาสตร์</span></p>
-                            <p><strong>ชั้นปี:</strong> <span id="user-year">4</span></p>
-                            <p><strong>สถานะการนัด:</strong> <span id="latest-status">รอการยืนยัน</span></p>
-                            <p><strong>วันนัดล่าสุด:</strong> <span id="latest-date">15/12/2024</span></p>
+                            <p><strong>คณะ:</strong> <span id="user-faculty"></span></p>
+                            <p><strong>ชั้นปี:</strong> <span id="user-year"></span></p>
+                            <p><strong>สถานะการนัด:</strong> <span id="latest-status"></span></p>
+                            <p><strong>วันนัดล่าสุด:</strong> <span id="latest-date"></span></p>
                         </div>
                     </section>
 
@@ -191,12 +192,8 @@
                         <!-- Section: Assessment History -->
                         <section class="card assessment-history">
                             <h2>ประวัติการทำแบบประเมิน</h2>
-                            <div class="filter-container">
-                                <select id="assessment-month" onchange="filterAssessmentHistory()">
-                                    <option value="all">เลือกเดือน</option>
-                                    <option value="12/2024">ธันวาคม</option>
-                                    <option value="11/2024">พฤศจิกายน</option>
-                                </select>
+                            <div class="filter-container" id="filter-container">
+                                <!-- select จะถูกสร้างใน JavaScript -->
                             </div>
                             <table class="history-table">
                                 <thead>
@@ -206,17 +203,12 @@
                                     </tr>
                                 </thead>
                                 <tbody id="assessment-history-body">
-                                    <tr>
-                                        <td>10/12/2024</td>
-                                        <td>ปกติ</td>
-                                    </tr>
-                                    <tr>
-                                        <td>05/11/2024</td>
-                                        <td>มีความเสี่ยง</td>
-                                    </tr>
+                                    <!-- ข้อมูลจะแสดงที่นี่ -->
                                 </tbody>
                             </table>
                         </section>
+                        
+                        
                         
                         <!-- Section: Appointment History -->
                         <section class="card appointment-history">
@@ -237,14 +229,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="appointment-history-body">
-                                    <tr>
-                                        <td>01/10/2024</td>
-                                        <td>ยืนยัน</td>
-                                    </tr>
-                                    <tr>
-                                        <td>20/08/2024</td>
-                                        <td>ยกเลิก</td>
-                                    </tr>
+                        
                                 </tbody>
                             </table>
                         </section>
@@ -262,14 +247,7 @@
                             </tr>
                           </thead>
                           <tbody id="appointment-list">
-                            <tr>
-                              <td>15/12/2024</td>
-                              <td>รอการยืนยัน</td>
-                              <td>
-                                <button class="btn-edit" onclick="editAppointment('15/12/2024')">แก้ไข</button>
-                                <button class="btn-cancel" onclick="cancelAppointment('15/12/2024')">ยกเลิก</button>
-                              </td>
-                            </tr>
+                       
                           </tbody>
                         </table>
                       </section>

@@ -96,6 +96,7 @@ const Logout = async () => {
       // เรียก API logout ไปที่เซิร์ฟเวอร์
       const response = await axios.post('http://localhost:8000/api/users/logout', {}, { withCredentials: true });
       sessionStorage.removeItem('employeeID');
+      sessionStorage.removeItem('user_id');
       // ตรวจสอบผลลัพธ์จากการออกจากระบบ
       if (response.data.message === 'ออกจากระบบสำเร็จ') {
         console.log('คุณออกจากระบบเรียบร้อยแล้ว');
@@ -552,8 +553,8 @@ const Logout = async () => {
         <td>ไม่มีการนัด</td>
         <td>ไม่มีการนัด</td>
         <td>
-          <button class="action-btn" onclick="goToAppointmentPage('101')">จัดการข้อมูล</button>
-        </td>
+        <button class="action-btn" onclick="goToAppointmentPage('${user.user_id}')">จัดการข้อมูล</button>
+      </td>
       </tr>
         `;
       });
@@ -568,6 +569,137 @@ const Logout = async () => {
     }
   }
 
+  async function fetchUserDataAndDisplay() {
+    try {
+        const user_id = sessionStorage.getItem('user_id');
+        if (!user_id) {
+            throw new Error('User ID is not available in session storage');
+        }
+
+        const response = await axios.post("http://localhost:8000/api/employees/userdetails", { userId: user_id });
+
+        if (response.status < 200 || response.status >= 300) {
+            throw new Error('Error fetching user data');
+        }
+
+        const data = response.data;
+        const user = data.user;
+
+        if (user) {
+            document.getElementById('userid').innerHTML = user[0].user_id;
+            document.getElementById('user-fname').innerHTML = user[0].user_fname;
+            document.getElementById('user-lname').innerHTML = user[0].user_lname;
+            document.getElementById('user-phone').innerHTML = user[0].phone;
+            document.getElementById('user-faculty').innerHTML = user[0].faculty;
+            document.getElementById('user-year').innerHTML = user[0].year;
+            document.getElementById('latest-status').innerHTML = user[0].status || 'ยังไม่มีการนัด';
+            document.getElementById('latest-date').innerHTML = user[0].latest_date || 'ยังไม่มีการนัด';
+        } else {
+            console.error('User data is undefined');
+        }
+
+        const filterContainer = document.getElementById('filter-container');
+    
+        // สร้าง <select> element
+        const select = document.createElement('select');
+        select.id = "assessment-month";
+        select.addEventListener("change", handleMonthSelection);
+
+        // รายการเดือนในรูปแบบ array
+        const months = [
+            { value: "all", text: "เลือกเดือน" },
+            { value: "01", text: "มกราคม" },
+            { value: "02", text: "กุมภาพันธ์" },
+            { value: "03", text: "มีนาคม" },
+            { value: "04", text: "เมษายน" },
+            { value: "05", text: "พฤษภาคม" },
+            { value: "06", text: "มิถุนายน" },
+            { value: "07", text: "กรกฎาคม" },
+            { value: "08", text: "สิงหาคม" },
+            { value: "09", text: "กันยายน" },
+            { value: "10", text: "ตุลาคม" },
+            { value: "11", text: "พฤศจิกายน" },
+            { value: "12", text: "ธันวาคม" }
+        ];
+
+        // สร้าง <option> สำหรับแต่ละเดือน
+        months.forEach(month => {
+            const option = document.createElement('option');
+            option.value = month.value;
+            option.textContent = month.text;
+            select.appendChild(option);
+        });
+
+        // เพิ่ม <select> ลงใน filter-container
+        filterContainer.appendChild(select);
+
+        // ฟังก์ชันสำหรับกรองข้อมูลการประเมินตามเดือน
+        function filterAssessmentHistory(selectedMonth) {
+            const assessmentBody = document.getElementById('assessment-history-body');
+            assessmentBody.innerHTML = ''; // เคลียร์ข้อมูลเก่าออก
+
+            const filteredResults = data.results.filter(result => {
+                const date = new Date(result.date);
+                const month = String(date.getMonth() + 1).padStart(2, '0'); // ใช้ padStart ให้เดือนเป็นสองหลัก
+                return selectedMonth === 'all' || month === selectedMonth; // กรองตามเดือนที่เลือก
+            });
+
+            if (filteredResults.length === 0) {
+                assessmentBody.innerHTML = '<tr><td colspan="2">ไม่มีข้อมูล</td></tr>';
+            } else {
+                filteredResults.forEach(result => {
+                    const date = new Date(result.date);
+                    const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td>${formattedDate}</td><td>${result.result}</td>`;
+                    assessmentBody.appendChild(row);
+                });
+            }
+        }
+
+        // ฟังก์ชันเมื่อเลือกเดือนจาก dropdown
+        function handleMonthSelection() {
+            const selectedMonth = document.getElementById('assessment-month').value;
+            filterAssessmentHistory(selectedMonth);
+        }
+
+        // เรียกใช้ฟังก์ชันเริ่มต้น
+        handleMonthSelection();
+
+        // แสดงประวัติการนัดหมาย
+        const appointmentBody = document.getElementById('appointment-history-body');
+        const appointmentList = document.getElementById('appointment-list');
+        
+        // เคลียร์ข้อมูลเก่าออกจากทั้งสอง container
+        appointmentBody.innerHTML = '';
+        appointmentList.innerHTML = '';
+        
+        if (data.appointments && data.appointments.length === 0) {
+            appointmentBody.innerHTML = '<tr><td colspan="2">ไม่มีข้อมูล</td></tr>';
+            appointmentList.innerHTML = '<tr><td colspan="2">ไม่มีข้อมูล</td></tr>';
+        } else {
+            data.appointments.forEach(appointment => {
+                // สร้างแถวสำหรับ appointment-history-body
+                const row1 = document.createElement('tr');
+                row1.innerHTML = `<td>${appointment.date || 'ยังไม่มีการนัด'}</td><td>${appointment.status || 'ยังไม่มีการนัด'}</td>`;
+                appointmentBody.appendChild(row1);
+        
+                // สร้างแถวสำหรับ appointment-list
+                const row2 = document.createElement('tr');
+                row2.innerHTML = `<td>${appointment.date || 'ยังไม่มีการนัด'}</td><td>${appointment.status || 'ยังไม่มีการนัด'}</td>`;
+                appointmentList.appendChild(row2);
+            });
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+        alert('เกิดข้อผิดพลาดในการดึงข้อมูลผู้ใช้');
+    }
+}
+
+  
+  
+  
   
   
   
@@ -583,6 +715,9 @@ const Logout = async () => {
     }
     if (currentPage === "manage_user.html") {
       fetchUserlist()
+    }
+    if (currentPage === "mange_user_data.html") {
+      fetchUserDataAndDisplay()
     }
   });
   

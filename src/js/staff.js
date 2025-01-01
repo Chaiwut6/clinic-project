@@ -266,40 +266,10 @@ function filterPatients() {
   }
 }
 
-function goToAppointmentPage(patientId) {
-  alert('ไปยังหน้าลงวันนัดสำหรับผู้ป่วย ID: ' + patientId);
-  // Add navigation logic here
-}
-
-// Open Risk
-function openRisk() {
-  document.getElementById("risk-popup").style.display = "flex";
-}
-
-// Close the popup
-function closerisk() {
-  document.getElementById("risk-popup").style.display = "none";
-}
-
-// Confirm assessment date and time
-function confirmAssessment() {
-  const startDate = document.getElementById("startDate").value;
-  const endDate = document.getElementById("endDate").value;
-
-
-  if (!startDate || !endDate) {
-    alert("กรุณาเลือกวันที่เริ่มต้นและวันที่สิ้นสุดให้ครบถ้วน!");
-    return;
-  }
-
-  if (new Date(startDate) > new Date(endDate)) {
-    alert("วันที่เริ่มต้นต้องไม่เกินวันที่สิ้นสุด!");
-    return;
-  }
-
-  alert(`ช่วงวันที่ที่กำหนด: \nเริ่มต้น: ${startDate}\nสิ้นสุด: ${endDate}`);
-  closerisk();
-}
+const goToAppointmentPage = (userId) => {
+  sessionStorage.setItem('user_id', userId);
+  window.location.href = 'mange_user_data.html';
+};
 
 
 
