@@ -377,6 +377,77 @@ router.post('/change-password', async (req, res) => {
   }
 });
 
+router.post('/appointments', async (req, res) => {
+  const { appointment_id, user_id, doc_id, date, problem, status } = req.body;
+  let conn = null;
+
+  try {
+    conn = await initMySQL();
+
+    // ตรวจสอบว่า req.body มีข้อมูลครบถ้วน
+    if (!appointment_id || !user_id || !doc_id || !date || !problem || !status) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    const appointmentData = {
+      appointment_id,
+      user_id,
+      doc_id,
+      date,
+      problem,
+      status,
+    };
+
+    // บันทึกข้อมูลลงในตาราง appointments
+    await conn.query('INSERT INTO Appointment SET ?', appointmentData);
+
+    // ส่ง response กลับไปยัง client
+    res.status(201).json({ message: 'Appointment created successfully' });
+  } catch (error) {
+    console.error('Error creating appointment:', error);
+    res.status(500).json({ message: 'Error creating appointment', error: error.message });
+  } finally {
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
+router.post('/appointmentscancel', async (req, res) => {
+  const { Appointment_id, status } = req.body;
+  let conn = null;
+
+  try {
+    conn = await initMySQL();
+
+    // ตรวจสอบว่า appointment_id และ status ถูกส่งเข้ามา
+    if (!Appointment_id || !status) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    // อัพเดตสถานะเป็น 'ยกเลิก'
+    const result = await conn.query(
+      'UPDATE Appointment SET status = ? WHERE Appointment_id = ?',
+      [status, Appointment_id]
+    );
+
+    // ตรวจสอบว่าแถวถูกอัพเดตหรือไม่
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Appointment not found' });
+    }
+
+    res.status(200).json({ message: 'Appointment status updated successfully' });
+  } catch (error) {
+    console.error('Error cancelling appointment:', error);
+    res.status(500).json({ message: 'Error cancelling appointment', error: error.message });
+  } finally {
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
+
+
+
 router.post('/userdetails', async (req, res) => {
   const { userId } = req.body;
   let conn = null;
@@ -386,7 +457,7 @@ router.post('/userdetails', async (req, res) => {
 
     const [user] = await conn.query("SELECT * FROM users WHERE user_id = ?", [userId]);
     const [Result] = await conn.query("SELECT * FROM results WHERE user_id = ?", [userId]);
-    const [Appointment] = await conn.query("SELECT * FROM Appointment WHERE Appointment_id = ?", [userId]);
+    const [Appointment] = await conn.query("SELECT * FROM Appointment WHERE user_id = ?", [userId]);
 
     const userinfo = user;
     const userdetails = Result;

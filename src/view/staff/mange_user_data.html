@@ -101,10 +101,11 @@
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div> -->
             <li class="nav-item">
-                <a class="nav-link" href="#" data-toggle="modal" data-target="#logoutModal">
-                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                    <span>ออกจากระบบ</span></a>
-            </li>
+                <a class="nav-link" href="#" onclick="Logout()">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  <span>ออกจากระบบ</span>
+                </a>
+              </li>
         </ul>
         <!-- End of Sidebar -->
 
@@ -183,8 +184,6 @@
                             <p></p>
                             <p><strong>คณะ:</strong> <span id="user-faculty"></span></p>
                             <p><strong>ชั้นปี:</strong> <span id="user-year"></span></p>
-                            <p><strong>สถานะการนัด:</strong> <span id="latest-status"></span></p>
-                            <p><strong>วันนัดล่าสุด:</strong> <span id="latest-date"></span></p>
                         </div>
                     </section>
 
@@ -214,10 +213,21 @@
                         <section class="card appointment-history">
                             <h2>ประวัติการนัดที่ผ่านมา</h2>
                             <div class="filter-container">
-                                <select id="appointment-month" onchange="filterAppointmentHistory()">
+                                <!-- select สำหรับเลือกเดือน -->
+                                <select id="appointment-month">
                                     <option value="all">เลือกเดือน</option>
-                                    <option value="10/2024">ตุลาคม</option>
-                                    <option value="08/2024">สิงหาคม</option>
+                                    <option value="01">มกราคม</option>
+                                    <option value="02">กุมภาพันธ์</option>
+                                    <option value="03">มีนาคม</option>
+                                    <option value="04">เมษายน</option>
+                                    <option value="05">พฤษภาคม</option>
+                                    <option value="06">มิถุนายน</option>
+                                    <option value="07">กรกฎาคม</option>
+                                    <option value="08">สิงหาคม</option>
+                                    <option value="09">กันยายน</option>
+                                    <option value="10">ตุลาคม</option>
+                                    <option value="11">พฤศจิกายน</option>
+                                    <option value="12">ธันวาคม</option>
                                 </select>
                             </div>
                             <table class="history-table">
@@ -225,14 +235,14 @@
                                     <tr>
                                         <th>วันที่</th>
                                         <th>สถานะ</th>
-                                     
                                     </tr>
                                 </thead>
                                 <tbody id="appointment-history-body">
-                        
+                                    <!-- ข้อมูลการนัดจะแสดงที่นี่ -->
                                 </tbody>
                             </table>
                         </section>
+                        
                     </div>
 
                      <!-- Editing Appointment แสดงแค่วันนัดล่าสุด -->
@@ -272,18 +282,15 @@
                             <label for="doctor">เลือกแพทย์:</label>
                             <select id="doctor" required>
                                 <option value="">--เลือกแพทย์--</option>
-                                <option value="dr1">นพ. สมชาย หมอใจดี</option>
-                                <option value="dr2">นพ. สมหญิง หมอดูแล</option>
                             </select>
 
-                            <label for="problem">ระบุปัญหาเบื่องต้น:</label>
+                            <label for="problem">ระบุปัญหาเบื้องต้น:</label>
                             <textarea id="problem" rows="4" cols="50" required></textarea>
-
-
+                            
                             <label for="date">วันที่นัด:</label>
                             <input type="date" id="date" required>
-
-                            <button type="submit" class="btn-submit">บันทึก</button>
+                            
+                            <button type="submit" class="btn-submit" id="save-appointment" onclick="saveAppointment()">บันทึก</button>
                         </form>
                     </section>
 
