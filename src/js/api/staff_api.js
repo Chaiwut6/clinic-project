@@ -815,11 +815,29 @@ const changePassword = async () => {
 
 
 let selectedDoctorId = null;
-let userId = sessionStorage.getItem('user_id');
+let selectedDoctorName = ''; 
+let userId = sessionStorage.getItem('user_id'); // ดึง user_id จาก sessionStorage
+let userFname = '';
+let userLname = '';
 
+// ดึงข้อมูลผู้ใช้
+async function fetchUserDetails() {
+  try {
+    const response = await axios.post("http://localhost:8000/api/employees/userdetails", { userId: userId });
+      const user = response.data.user;
+      userFname = user[0].user_fname;
+      userLname = user[0].user_lname;
+      // console.log("User details fetched successfully:", userFname, userLname);
+   
+  } catch (error) {
+    console.error("Error:", error);
+    alert("เกิดข้อผิดพลาดในการดึงข้อมูลผู้ใช้");
+  }
+}
+
+// ดึงข้อมูลแพทย์
 async function fetchAppointment() {
   try {
-    // เรียก API เพื่อดึงรายชื่อแพทย์จาก database
     const response = await axios.post("http://localhost:8000/api/doctors/doctorResult");
     if (response.status >= 200 && response.status < 300) {
       const doctors = response.data.doctor;
@@ -839,17 +857,20 @@ function populateDoctorDropdown(doctors) {
   // เติมตัวเลือกลงใน select
   doctors.forEach(doctor => {
     const option = document.createElement("option");
-    option.value = doctor.doc_id; // ใช้ `id` ของแพทย์เป็น value
-    option.textContent = doctor.doc_name; // ใช้ชื่อแพทย์สำหรับแสดงใน dropdown
+    option.value = doctor.doc_id; 
+    option.textContent = doctor.doc_name; 
     doctorSelect.appendChild(option);
   });
 
-  // เพิ่ม event listener เพื่ออัปเดตตัวแปร selectedDoctorId
+ 
   doctorSelect.addEventListener("change", () => {
     selectedDoctorId = doctorSelect.value || null; // ถ้าไม่ได้เลือกให้เป็น null
-    console.log("Selected Doctor ID:", selectedDoctorId); // ตรวจสอบค่าใน console
+    selectedDoctorName = doctors.find(doctor => doctor.doc_id === selectedDoctorId)?.doc_name || null; // ดึงชื่อแพทย์
+    // console.log("Selected Doctor ID:", selectedDoctorId);
+    // console.log("Selected Doctor Name:", selectedDoctorName);
   });
 }
+
 async function saveAppointment() {
   const problem = document.getElementById("problem").value.trim();
   const date = document.getElementById("date").value;
@@ -862,10 +883,14 @@ async function saveAppointment() {
   }
 
   const appointmentId = generateUniqueAppointmentId(userId, date);
+
   const appointmentData = {
     appointment_id: appointmentId,
     user_id: userId,
+    user_fname: userFname,
+    user_lname: userLname,
     doc_id: selectedDoctorId,
+    doc_name: selectedDoctorName,
     date,
     problem,
     status,
@@ -921,6 +946,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   if (currentPage === "mange_user_data.html") {
     fetchUserDataAndDisplay()
+    fetchUserDetails()
     fetchAppointment()
   }
 });

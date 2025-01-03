@@ -378,21 +378,24 @@ router.post('/change-password', async (req, res) => {
 });
 
 router.post('/appointments', async (req, res) => {
-  const { appointment_id, user_id, doc_id, date, problem, status } = req.body;
+  const { appointment_id, user_id, user_fname, user_lname, doc_id, doc_name, date, problem, status } = req.body;
   let conn = null;
 
   try {
     conn = await initMySQL();
 
     // ตรวจสอบว่า req.body มีข้อมูลครบถ้วน
-    if (!appointment_id || !user_id || !doc_id || !date || !problem || !status) {
+    if (!appointment_id || !user_id || !user_fname || !user_lname || !doc_id || !doc_name || !date || !problem || !status) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
     const appointmentData = {
       appointment_id,
       user_id,
+      user_fname,
+      user_lname,
       doc_id,
+      doc_name,
       date,
       problem,
       status,
@@ -412,6 +415,8 @@ router.post('/appointments', async (req, res) => {
     }
   }
 });
+
+
 router.post('/appointmentscancel', async (req, res) => {
   const { Appointment_id, status } = req.body;
   let conn = null;
@@ -471,6 +476,36 @@ router.post('/userdetails', async (req, res) => {
       user: userinfo,
       results: userdetails,
       appointments: userAppointment,
+    });
+  } catch (error) {
+    console.error('Error retrieving user data:', error);
+    res.status(500).json({ message: 'Error retrieving user data', error: error.message });
+  } finally {
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
+
+router.post('/userfetch', async (req, res) => {
+  const { user_id } = req.body;
+  let conn = null;
+
+  try {
+    conn = await initMySQL();
+
+    const [user] = await conn.query("SELECT * FROM users WHERE user_id = ?", [user_id]);
+
+
+    const userinfo = user;
+ 
+
+    if (!userinfo) {
+      return res.status(404).json({ message: 'user not found' });
+    }
+
+    res.json({
+      user: userinfo,
     });
   } catch (error) {
     console.error('Error retrieving user data:', error);
