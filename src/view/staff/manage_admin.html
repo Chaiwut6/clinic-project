@@ -35,6 +35,7 @@
     <link href="../../style/users/user_main.css" rel="stylesheet">
     <link rel="stylesheet" href="../../style/staff/schedule.css">
     <link rel="stylesheet" href="../../style/staff/mange_addmin.css">
+    <script src="../../js/api/staff_api.js"></script>
     <!-- <script src="../../js/login.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
 
@@ -101,10 +102,11 @@
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div> -->
             <li class="nav-item">
-                <a class="nav-link" href="#" data-toggle="modal" data-target="#logoutModal">
-                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                    <span>ออกจากระบบ</span></a>
-            </li>
+                <a class="nav-link" href="#" onclick="Logout()">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  <span>ออกจากระบบ</span>
+                </a>
+              </li>
         </ul>
         <!-- End of Sidebar -->
 
