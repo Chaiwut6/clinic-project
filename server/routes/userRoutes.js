@@ -176,7 +176,7 @@ router.post('/save-result', async (req, res) => {
     const { user_id, totalScore, result, user_fname, user_lname } = req.body;
 
     // ตรวจสอบว่า user_id ถูกส่งมาหรือไม่
-    if (!user_id || !totalScore || !result) {
+    if (!user_id || totalScore === undefined || result === undefined) {
       return res.status(400).json({ message: 'User ID, totalScore, and result are required' });
     }
 

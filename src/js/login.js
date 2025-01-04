@@ -216,7 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
     assessments.forEach((assessment) => {
       const row = document.createElement("tr");
       const date = formatDate(assessment.date); 
-      const totalScore = assessment.total_score || 'N/A'; 
+      const totalScore = assessment.total_score !== undefined ? assessment.total_score : 'N/A';
       const result = assessment.result || 'N/A'; 
 
       row.innerHTML = `

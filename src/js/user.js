@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         async function saveResult(user_id, totalScore, result, user_fname, user_lname) {
             try {
-                const response = await axios.post(`${apiUrl}/api/users/save-result`, {
+                const response = await axios.post("http://localhost:8000/api/users/save-result", {
                     user_id: user_id,
                     totalScore: totalScore,
                     result: result,
