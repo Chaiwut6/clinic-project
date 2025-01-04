@@ -242,7 +242,7 @@ function filterPatients() {
   // Function to filter patients based on input and dropdowns
   const nameFilter = document.getElementById('searchName').value.toLowerCase();
   const facultyFilter = document.getElementById('searchFaculty').value;
-  const yearFilter = document.getElementById('searchYear').value;
+  // const yearFilter = document.getElementById('searchYear').value;
   const table = document.getElementById('UserTable');
   const rows = table.getElementsByTagName('tr');
 
@@ -251,12 +251,12 @@ function filterPatients() {
     if (cells.length > 0) {
       const name = cells[1].textContent.toLowerCase();
       const faculty = cells[3].textContent;
-      const year = cells[0].textContent; // Adjust if you store year in a different column
+      // const year = cells[0].textContent; 
 
       if (
         (name.includes(nameFilter) || !nameFilter) &&
-        (faculty === facultyFilter || !facultyFilter) &&
-        (year.includes(yearFilter) || !yearFilter)
+        (faculty === facultyFilter || !facultyFilter) 
+        // (year.includes(yearFilter) || !yearFilter)
       ) {
         rows[i].style.display = '';
       } else {
