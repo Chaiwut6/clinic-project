@@ -249,13 +249,107 @@ function filterPatients() {
   for (let i = 0; i < rows.length; i++) {
     const cells = rows[i].getElementsByTagName('td');
     if (cells.length > 0) {
+      const ID = cells[0].textContent.toLowerCase();
       const name = cells[1].textContent.toLowerCase();
       const faculty = cells[3].textContent;
       // const year = cells[0].textContent; 
 
       if (
+        (ID.includes(nameFilter) || !nameFilter) &&
+        (faculty === facultyFilter || !facultyFilter) 
+        // (year.includes(yearFilter) || !yearFilter)
+      )  {
+        rows[i].style.display = '';
+      } else if (
         (name.includes(nameFilter) || !nameFilter) &&
         (faculty === facultyFilter || !facultyFilter) 
+        // (year.includes(yearFilter) || !yearFilter)
+      )  {
+        rows[i].style.display = '';
+      }
+      else {
+        rows[i].style.display = 'none';
+      }
+    }
+  }
+}
+
+function filterReceivecare() {
+  // Function to filter patients based on input and dropdowns
+  const nameFilter = document.getElementById('searchName').value.toLowerCase();
+  const doctorFilter = document.getElementById('doctorSelect').value;
+  // const dateFilter = document.getElementById('dateFilter').value;
+  // const yearFilter = document.getElementById('searchYear').value;
+  const table = document.getElementById('patientTable');
+  const rows = table.getElementsByTagName('tr');
+
+  for (let i = 0; i < rows.length; i++) {
+    const cells = rows[i].getElementsByTagName('td');
+    if (cells.length > 0) {
+      const name = cells[1].textContent.toLowerCase();
+      const doctor = cells[7].textContent;
+      // const date = cells[6].textContent;
+      // const year = cells[0].textContent; 
+
+      if (
+        (name.includes(nameFilter) || !nameFilter) &&
+        (doctor === doctorFilter || !doctorFilter) 
+        // (date === dateFilter || !dateFilter)
+        // (year.includes(yearFilter) || !yearFilter)
+      ) {
+        rows[i].style.display = '';
+      } else {
+        rows[i].style.display = 'none';
+      }
+    }
+  }
+}
+
+function filterDoctor() {
+  // Function to filter patients based on input and dropdowns
+  const nameFilter = document.getElementById('searchdoctor').value.toLowerCase();
+  const idFilter = document.getElementById('searchdoctor').value.toLowerCase();
+  const table = document.getElementById('doctorinTable');
+  const rows = table.getElementsByTagName('tr');
+
+  for (let i = 0; i < rows.length; i++) {
+    const cells = rows[i].getElementsByTagName('td');
+    if (cells.length > 0) {
+      const name = cells[1].textContent.toLowerCase();
+      const ID = cells[0].textContent.toLowerCase();
+    
+
+      if (
+        (name.includes(nameFilter) || !nameFilter) ||
+        (ID === idFilter || !idFilter)
+        // (year.includes(yearFilter) || !yearFilter)
+      ) {
+        rows[i].style.display = '';
+      } else {
+        rows[i].style.display = 'none';
+      }
+    }
+  }
+}
+
+function filterAddmin() {
+  // Function to filter patients based on input and dropdowns
+  const nameFilter = document.getElementById('searchaddmin').value.toLowerCase();
+  const idFilter = document.getElementById('searchaddmin').value.toLowerCase();
+  const table = document.getElementById('addminTable');
+  const rows = table.getElementsByTagName('tr');
+
+  for (let i = 0; i < rows.length; i++) {
+    const cells = rows[i].getElementsByTagName('td');
+    if (cells.length > 0) {
+      const name = (cells[1].textContent + " " + cells[2].textContent).toLowerCase();
+      const ID = cells[0].textContent.toLowerCase();
+    
+
+      if (
+        (name.includes(nameFilter) || !nameFilter) ||
+        (ID === idFilter || !idFilter)
+        // (date === dateFilter || !dateFilter)
         // (year.includes(yearFilter) || !yearFilter)
       ) {
         rows[i].style.display = '';

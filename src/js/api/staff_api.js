@@ -550,8 +550,6 @@ async function fetchUserlist() {
         <td>${user.nickname || "ไม่ระบุ"}</td>
         <td>${user.faculty || "ไม่ระบุ"}</td>
         <td>${user.phone || "ไม่ระบุ"}</td>
-        <td>ไม่มีการนัด</td>
-        <td>ไม่มีการนัด</td>
         <td>
         <button class="action-btn" onclick="goToAppointmentPage('${user.user_id}')">จัดการข้อมูล</button>
       </td>

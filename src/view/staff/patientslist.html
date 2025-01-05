@@ -39,6 +39,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
     <script src="../../js/staff.js"></script>
     <script src="../../js/api/staff_api.js"></script>
+    <script src="../../js/api/patientslist_api.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 
@@ -179,17 +180,12 @@
                         </h4>
 
                         <div class="filter-container">
+                          <input type="text" id="searchName" placeholder="ค้นหาชื่อ">
                           <select id="doctorSelect">
-                            <option value="Doctor Om">Doctor Om</option>
-                            <option value="Doctor Om">Doctor Om</option>
-                            <option value="Doctor Om">Doctor Om</option>
-                            <option value="Doctor Om">Doctor Om</option>
-                            <option value="Doctor Om">Doctor Om</option>
-                            <option value="Doctor Om">Doctor Om</option>
-                            <!-- Add more doctors here -->
+                            <option value="">--เลือกแพทย์--</option>
                           </select>
-                          <input type="date" class="dateFilter">
-                          <button class="filter-button">ค้นหา</button>
+                          <!-- <input type="date" id="dateFilter" class="dateFilter"> -->
+                          <button class="filter-button" onclick="filterReceivecare()">ค้นหา</button>
 
                           <button onclick="exportToExcel()" style="cursor: pointer;">
                             <i class="fa-solid fa-print" onclick="exportToExcel()"></i> 
@@ -201,11 +197,6 @@
                           <div class="table-options">
                             <label >
                                 รายชื่อผู้ป่วยในการดูแล</label>
-                            <div class="search-box">
-                              <label for="search">ค้นหา:</label>
-                              <input type="text" class="searchpatiet
-                              " >
-                            </div>
                           </div>
                     
                           <table>
@@ -218,30 +209,12 @@
                                 <th>เบอร์โทร</th>
                                 <th>ปัญหา</th>
                                 <th>วันนัด</th>
-                                <th>Action</th>
+                                <th>แพทย์</th>
+                                <th>ดำเนินการ</th>
                               </tr>
                             </thead>
-                                <tbody class="patientTable" >
-                                  <tr>
-                                    <td>ved prakash n</td>
-                                    <td>vedn@gmail.com</td>
-                                    <td>15</td>
-                                    <td>X</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td class="date-cell" >2024-08-24</td>
-                                    <td><button class="action-btn">ดูข้อมูลการนัด</button></td>
-                                  </tr>
-                                  <tr>
-                                    <td>Doctor Om</td>
-                                    <td>doctorom@gmail.com</td>
-                                    <td>20</td>
-                                    <td>8888899999</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td class="date-cell" >2024-08-25</td>
-                                    <td><button class="action-btn">View Appointments</button></td>
-                                  </tr>
+                                <tbody id="patientTable" >
+                  
                                 </tbody>
 
                           </table>

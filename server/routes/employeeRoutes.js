@@ -487,6 +487,44 @@ router.post('/userdetails', async (req, res) => {
   }
 });
 
+router.post('/receivecare', async (req, res) => {
+  let conn = null;
+
+  try {
+    conn = await initMySQL();
+
+    // ดึงข้อมูล Appointment โดยเรียงลำดับจากวันที่ล่าสุด
+    const [appointments] = await conn.query(`
+      SELECT * 
+      FROM Appointment 
+    `);
+
+    // ดึงเฉพาะ users ที่มีการนัดหมายใน Appointment
+    const [usersWithAppointments] = await conn.query(`
+      SELECT DISTINCT u.*
+      FROM users u
+      INNER JOIN Appointment a ON u.user_id = a.user_id
+    `);
+
+    // ตรวจสอบข้อมูล
+    const userinfo = usersWithAppointments.length > 0 ? usersWithAppointments : [{ message: "ไม่พบผู้ใช้งานที่มีการนัดหมาย" }];
+    const userAppointment = appointments.length > 0 ? appointments : [{ message: "ยังไม่มีการนัดหมาย" }];
+
+    res.json({
+      users: userinfo,
+      appointments: userAppointment,
+    });
+  } catch (error) {
+    console.error('Error retrieving user data:', error);
+    res.status(500).json({ message: 'Error retrieving user data', error: error.message });
+  } finally {
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
+
+
 router.post('/userfetch', async (req, res) => {
   const { user_id } = req.body;
   let conn = null;

@@ -16,7 +16,7 @@
     top: 0;
     background: #f4f4f4; /* เพิ่มสีพื้นหลังให้ Header */
     z-index: 100; /* ให้ Header อยู่ด้านบนสุด */
-    text-align: left;
+    text-align: center;
     padding: 10px;
     border: 1px solid #ddd;
   }
@@ -24,7 +24,7 @@
   tbody td {
     padding: 10px;
     border: 1px solid #ddd;
-    text-align: left;
+    text-align: center;
   }
 
   tbody tr:nth-child(even) {
@@ -49,7 +49,7 @@
   }
 
   .risk-btn {
-    width: 10px;
+    width: 400px;
     background-color: #28a745;
     color: white;
     border: none;
