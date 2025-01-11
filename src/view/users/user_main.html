@@ -34,6 +34,7 @@
     <!-- Custom styles for this template-->
     <link href="../../style/users/user_main.css" rel="stylesheet">
     <script src="../../js/login.js"></script>
+    <script src="../../js/api/user_api.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
 
 </head>
@@ -257,20 +258,11 @@
                           <tr>
                             <th>ชื่อแพทย์</th>
                             <th>วันที่นัด</th>
-                            <th>เวลาที่นัด</th>
                             <th class="text-center">การยืนยัน</th>
                           </tr>
                         </thead>
-                        <tbody>
-                          <tr>
-                            <td>ชัยวุฒิ อยู่โต</td>
-                            <td>4-01-2024</td>
-                            <td>10:00</td>
-                            <td class="text-center">
-                              <button class="btn btn-success btn-sm me-2">ยืนยัน</button>
-                              <button class="btn btn-danger btn-sm">ยกเลิก</button>
-                            </td>
-                          </tr>
+                        <tbody id="userAppointment">
+                          
                         </tbody>
                       </table>
                     <!-- Display fname here -->

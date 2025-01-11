@@ -356,5 +356,108 @@ router.post('/updateuser', verifyToken, async (req, res) => {
   }
 });
 
+router.post('/checkuser', async (req, res) => {
+  const { user_id } = req.body;
+  let conn = null;
+  
+  try {
+    // เริ่มการเชื่อมต่อกับ MySQL
+    conn = await initMySQL();
+
+    // ตรวจสอบว่า user_id มีอยู่ในฐานข้อมูลหรือไม่
+    const [checuser] = await conn.query("SELECT * FROM users WHERE user_id = ?", [user_id]);
+    
+    if (checuser.length > 0) {
+      // ถ้ามี user_id ซ้ำในฐานข้อมูล
+      return res.status(200).json({ success: false, message: 'User ID already exists' });
+    } else {
+      // ถ้าไม่มี user_id ในฐานข้อมูล
+      return res.status(200).json({ success: true, message: 'User ID is available' });
+    }
+  } catch (error) {
+    // แสดงข้อผิดพลาดในระบบ
+    console.error('Error during user check:', error.message);
+    console.error('Stack trace:', error.stack);
+    return res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดในระบบ', error: error.message });
+  } finally {
+    // ตรวจสอบให้แน่ใจว่าการเชื่อมต่อถูกปิด
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
+
+
+router.post('/appointment', async (req, res) => {
+  const { user_id } = req.body; // รับ user_id จาก Body ของ Request
+  let conn = null;
+
+  try {
+    // เริ่มการเชื่อมต่อกับ MySQL
+    conn = await initMySQL();
+
+    // ค้นหาข้อมูลการนัดหมายที่เกี่ยวข้องกับ user_id
+    const [appointments] = await conn.query(
+      "SELECT * FROM Appointment WHERE user_id = ?",
+      [user_id]
+    );
+
+    // ตรวจสอบว่ามีข้อมูลการนัดหมายหรือไม่
+    if (appointments.length === 0) {
+      return res.status(404).json({ success: false, message: 'ไม่พบข้อมูลการนัดหมาย' });
+    }
+
+    // ส่งข้อมูลกลับไปยัง Client
+    return res.status(200).json({
+      success: true,
+      message: 'ดึงข้อมูลการนัดหมายสำเร็จ',
+      appointments,
+    });
+  } catch (error) {
+    // แสดงข้อผิดพลาดในระบบ
+    console.error('Error during fetching appointments:', error.message);
+    console.error('Stack trace:', error.stack);
+    return res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดในระบบ', error: error.message });
+  } finally {
+    // ตรวจสอบให้แน่ใจว่าการเชื่อมต่อถูกปิด
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
+
+router.post('/update-appointment', async (req, res) => {
+  const { Appointment_id, status } = req.body;
+  let conn = null;
+
+  try {
+    // เชื่อมต่อกับฐานข้อมูล
+    conn = await initMySQL();
+
+    // อัปเดตสถานะของการนัดหมาย
+    const [result] = await conn.query(
+      "UPDATE Appointment SET status = ? WHERE Appointment_id = ?",
+      [status, Appointment_id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: 'ไม่พบการนัดหมายที่ต้องการอัปเดต' });
+    }
+
+    res.status(200).json({ success: true, message: `สถานะการนัดหมายถูกอัปเดตเป็น ${status}` });
+  } catch (error) {
+    console.error('Error updating status:', error.message);
+    return res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดในการอัปเดตสถานะ' });
+  } finally {
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
+
+
+
+
+
 
 module.exports = router;

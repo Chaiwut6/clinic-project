@@ -72,14 +72,20 @@ const register = async () => {
       return;
     }
 
- 
+    // Check if user_id already exists
+    const checkUserApiUrl = 'http://localhost:8000/api/users/checkuser';
+    const checkResponse = await axios.post(checkUserApiUrl, { user_id });
 
-    // Define the API URL
-    const apiUrl = 'http://localhost:8000/api/users/register-user';
+    if (!checkResponse.data.success) {
+      alert('มีการลงทะเบียนแล้ว');
+      window.location.href = '/view/index.html';
+    }
 
+    // Define the API URL for registration
+    const registerApiUrl = 'http://localhost:8000/api/users/register-user';
 
     // Call the API to register the user
-    const response = await axios.post(apiUrl, {
+    const response = await axios.post(registerApiUrl, {
       user_fname,
       user_lname,
       nickname,
@@ -89,8 +95,8 @@ const register = async () => {
       user_id,
       password
     });
-    
-    console.log('API Response:', response.data); 
+
+    console.log('API Response:', response.data);
 
     // Check if the registration was successful
     if (response.data.message === 'User registered successfully') {
@@ -98,8 +104,6 @@ const register = async () => {
 
       // Store user data in sessionStorage (optional)
       sessionStorage.setItem('user_id', user_id);
-      // sessionStorage.setItem('user_fname', user_fname);
-      // sessionStorage.setItem('user_lname', user_lname);
 
       // Store the token in cookies
       const token = response.data.token;
@@ -120,8 +124,9 @@ const register = async () => {
     console.error('Error:', error);
     alert('มีข้อผิดพลาดในการลงทะเบียน');
     window.location.href = '/view/index.html';
-  } 
+  }
 };
+
 
 
 

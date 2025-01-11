@@ -909,19 +909,28 @@ async function saveAppointment() {
 
 // ฟังก์ชันสร้าง appointment_id ไม่ซ้ำ
 function generateUniqueAppointmentId(userId, date) {
-  const shortUserId = userId.slice(-4);
-  const formattedDate = date.replace(/-/g, '').slice(0, 3);
+  // ตัดเครื่องหมาย "-" ออกจาก user_id
+  const cleanUserId = userId.replace(/-/g, '');
+  
+  // ดึง 4 ตัวท้ายจาก userId
+  const shortUserId = cleanUserId.slice(-4);
+  
+  // จัดรูปแบบวันที่ให้เป็น YYYYMM
+  const formattedDate = date.replace(/-/g, '').slice(2, 8);
 
-
+  // สร้าง ID เบื้องต้น
   const baseId = `${shortUserId}${formattedDate}`;
+
+  // สลับตัวอักษรใน ID แบบสุ่ม
   const shuffledId = baseId
     .split('')
-    .sort(() => Math.random() - 0.5) // สลับแบบสุ่ม
+    .sort(() => Math.random() - 0.5)
     .join('');
 
-
-  return `APPT-${shuffledId}`;
+  // สร้าง appointment ID แบบสวยงาม
+  return `APPT-${shuffledId.toUpperCase()}`;
 }
+
 
 
 // Event Listener เมื่อกดปุ่มบันทึก
