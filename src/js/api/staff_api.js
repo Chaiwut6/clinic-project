@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
-
+//เพิ่มaddmin
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("addEmployeeForm");
 
@@ -87,7 +87,54 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+//เพิ่มผู้บริหาร
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("addmangerForm");
 
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault(); // ป้องกันการ refresh หน้า
+
+    // รับค่าจากฟอร์ม
+    const mangerID = document.getElementById("mangerID").value;
+    const man_fname = document.getElementById('man_fname').value;
+    const man_lname = document.getElementById('man_lname').value;
+    const man_password = document.getElementById('man_password').value;
+    const man_confirmPassword = document.getElementById('man_confirmPassword').value;
+
+    // ตรวจสอบว่าข้อมูลครบถ้วน
+    if (!mangerID || !man_fname || !man_lname || !man_password || !man_confirmPassword) {
+      alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+      return;
+    }
+
+    if (man_password !== man_confirmPassword) {
+      alert('รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน');
+      return;
+    }
+
+    try {
+      // ส่งข้อมูลไปยัง API
+      const response = await axios.post('http://localhost:8000/api/manager/register-manger', {
+        man_id: mangerID,
+        password: man_password,
+        man_fname: man_fname,
+        man_lname: man_lname
+      });
+
+      // เปลี่ยนข้อความในการตรวจสอบให้ตรงกับข้อความที่ API ส่งกลับ
+      if (response.data && response.data.message === "Manager registered successfully") {
+        alert("เพิ่มข้อมูลพนักงานสำเร็จ");
+        document.getElementById("addMangerModal").style.display = "none";
+        form.reset();
+      } else {
+        alert("เกิดข้อผิดพลาด: " + (response.data.message || "ไม่สามารถบันทึกข้อมูลได้"));
+      }
+    } catch (error) {
+      console.error("Error adding Manger:", error);
+      alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
+    }
+  });
+});
 
 
 
@@ -933,11 +980,176 @@ function generateUniqueAppointmentId(userId, date) {
 
 
 
-// Event Listener เมื่อกดปุ่มบันทึก
-// document.getElementById("save-appointment").addEventListener("click", (e) => {
-//   e.preventDefault(); 
-//   saveAppointment();
-// });
+async function fetchManger() {
+  try {
+
+    document.getElementById("managerinTable").innerHTML = `<tr><td colspan="4">กำลังโหลดข้อมูล...</td></tr>`;
+
+    // ดึงข้อมูลจาก API
+    const response = await axios.post("http://localhost:8000/api/manager/managerResult");
+    console.log(response);
+
+    // ตรวจสอบและดึงข้อมูลพนักงานจาก response
+    const { manager } = response.data;
+
+    // ตรวจสอบว่ามีข้อมูลพนักงานหรือไม่
+    if (!manager || manager.length === 0) {
+      document.getElementById("managerinTable").innerHTML = `<tr><td colspan="4">ไม่พบข้อมูลพนักงาน</td></tr>`;
+      return;
+    }
+
+ 
+    const rows = manager.map((man) => {
+      return `
+        <tr data-id="${man.man_id}">
+          <td>${man.man_id || "ไม่ระบุ"}</td>
+          <td>${man.man_fname || "ไม่ระบุ"}</td>
+          <td>${man.man_lname || "ไม่ระบุ"}</td>
+          <td>
+            <div class="dropdown-doctor">
+                <button class="actionBtn"><i class="fa-solid fa-grip-lines"></i></button>
+                <div class="dropdown-content">
+                    <a href="#" class="editBtn" data-id="${man.man_id}" data-fname="${man.man_fname}" data-lname="${man.man_lname}">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        <span>แก้ไขข้อมูล</span>
+                    </a>
+                    <a href="#" class="delete-trigger" data-id="${man.man_id}">
+                        <i class="fa-solid fa-trash"></i>
+                        <span>ลบ</span>
+                    </a>
+                </div>
+            </div>
+          </td>
+        </tr>
+      `;
+    });
+
+    // แสดงผลใน <tbody>
+    document.getElementById("managerinTable").innerHTML = rows.join("");
+    // Dropdown functionality: Toggle dropdown visibilit
+    const dropdownButtons = document.querySelectorAll('.actionBtn');
+
+    dropdownButtons.forEach((button) => {
+      button.addEventListener('click', (e) => {
+        e.stopPropagation(); // หยุดการ propagate event ไปที่อื่น
+
+        const dropdownContent = button.closest('.dropdown-doctor').querySelector('.dropdown-content');
+        const dropdown = dropdownContent.parentElement;
+
+        // ปิด dropdown อื่นๆ ที่เปิดอยู่ก่อนหน้า
+        document.querySelectorAll('.dropdown-doctor.show').forEach((otherDropdown) => {
+          if (otherDropdown !== dropdown) {
+            otherDropdown.classList.remove('show');
+            otherDropdown.querySelector('.dropdown-content').style.cssText = ''; // ลบการตั้งค่า style ที่ปรับ
+          }
+        });
+
+        // เปิดหรือลบสถานะการเปิดของ dropdown ปัจจุบัน
+        dropdown.classList.toggle('show');
+
+        // ปรับตำแหน่งของ dropdown
+        const rect = dropdownContent.getBoundingClientRect();
+        dropdownContent.style.left = rect.right > window.innerWidth ? `${window.innerWidth - rect.right}px` : '';
+        dropdownContent.style.left = rect.left < 0 ? '1px' : dropdownContent.style.left;
+        dropdownContent.style.top = rect.bottom > window.innerHeight ? `${window.innerHeight - rect.bottom}px` : '';
+      });
+    });
+
+    // ปิด dropdown เมื่อคลิกที่พื้นที่นอก dropdown
+    window.addEventListener('click', () => {
+      document.querySelectorAll('.dropdown-doctor').forEach((dropdown) => {
+        dropdown.classList.remove('show');
+        dropdown.querySelector('.dropdown-content').style.cssText = ''; // รีเซ็ตตำแหน่ง
+      });
+    });
+
+    const editButtons = document.querySelectorAll('.editBtn');
+    editButtons.forEach((button) => {
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        const manId = button.getAttribute("data-id");
+        const manFname = button.getAttribute("data-fname");
+        const manLname = button.getAttribute("data-lname");
+
+        // แสดงฟอร์มแก้ไข
+        const formHtml = `
+              <div class="popup-container">
+                <div class="popup-content">
+                  <div>
+                    <span class="close" id="cancelEdit">&times;</span>
+                  </div>
+                  <label for="editFname">ชื่อ:</label>
+                  <input type="text" id="editFname" value="${manFname}" placeholder="ชื่อพนักงาน..." required />
+                  <label for="editLname">นามสกุล:</label>
+                  <input type="text" id="editLname" value="${manLname}" placeholder="นามสกุล..." required />
+                  <button id="saveEdit">บันทึก</button>
+                </div>
+              </div>
+            `;
+
+        // แสดงฟอร์มในหน้า
+        document.body.insertAdjacentHTML('beforeend', formHtml);
+
+        // ปิดฟอร์มเมื่อคลิกที่ปุ่ม 'close'
+        const cancelEditButton = document.getElementById("cancelEdit");
+        cancelEditButton.addEventListener('click', () => {
+          document.querySelector('.popup-container').remove(); // ลบฟอร์มออกจากหน้า
+        });
+
+        // การบันทึกข้อมูลการแก้ไข
+        const saveEditButton = document.getElementById("saveEdit");
+        saveEditButton.addEventListener('click', async () => {
+          const updatedFname = document.getElementById("editFname").value;
+          const updatedLname = document.getElementById("editLname").value;
+
+          try {
+            // ส่งคำขออัปเดตข้อมูลพนักงาน
+            await axios.post("http://localhost:8000/api/manager/managerUpdate", {
+              man_id: manId,
+              man_fname: updatedFname,
+              man_lname: updatedLname,
+            });
+
+            alert("ข้อมูลพนักงานได้รับการอัปเดตเรียบร้อยแล้ว");
+            fetchManger(); 
+            document.querySelector('.popup-container').remove();
+          } catch (err) {
+            console.error("Error updating employee:", err);
+            alert("เกิดข้อผิดพลาดในการอัปเดตข้อมูล");
+          }
+        });
+      });
+    });
+
+    const deleteButtons = document.querySelectorAll('.delete-trigger');
+    deleteButtons.forEach((button) => {
+      button.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const manId = button.getAttribute("data-id");
+
+        if (confirm("คุณต้องการลบข้อมูลพนักงานนี้หรือไม่?")) {
+          try {
+            // ส่งคำขอลบข้อมูลพนักงาน
+            await axios.post("http://localhost:8000/api/manager/managerDelete", {
+              man_id: manId,
+            });
+
+            alert("ลบข้อมูลพนักงานสำเร็จ");
+            fetchManger(); // รีเฟรชข้อมูล
+          } catch (err) {
+            console.error("Error deleting employee:", err);
+            alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+          }
+        }
+      });
+    });
+
+
+  } catch (error) {
+    console.error("Error fetching manager data:", error);
+    document.getElementById("managerinTable").innerHTML = `<tr><td colspan="4">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
+  }
+}
 
 // เรียกใช้ฟังก์ชันเมื่อโหลดหน้า
 document.addEventListener("DOMContentLoaded", () => {
@@ -955,5 +1167,8 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchUserDataAndDisplay()
     fetchUserDetails()
     fetchAppointment()
+  }
+  if (currentPage === "manage_man.html") {
+    fetchManger()
   }
 });

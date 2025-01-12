@@ -29,14 +29,17 @@
 
     <!-- Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
 
     <!-- Custom styles for this template-->
     <link href="../../style/users/user_main.css" rel="stylesheet">
-    <script src="../../js/api/staff_api.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
+    <link rel="stylesheet" href="../../style/staff/schedule.css">
+    <link rel="stylesheet" href="../../style/staff/mange_addmin.css">
     <script src="../../js/staff.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="../../js/api/staff_api.js"></script>
+    <!-- <script src="../../js/login.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
+
 
 </head>
 
@@ -64,20 +67,20 @@
             </li> -->
             <li class="nav-item">
                 <a class="nav-link" href="../staff/manage_user.html">
-                  <i class="fa fa-folder"></i>
-                  <span>จัดการข้อมูลผู้ใช้</span></a>
-              </li>
-              <li class="nav-item">
+                    <i class="fa fa-folder"></i>
+                    <span>จัดการข้อมูลผู้ใช้</span></a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="../staff/manage_doctor.html">
-                  <i class="fa-solid fa-stethoscope"></i>
-                  <span>จัดการข้อมูลแพทย์</span></a>
-              </li>
-              <li class="nav-item">
+                    <i class="fa-solid fa-stethoscope"></i>
+                    <span>จัดการข้อมูลแพทย์</span></a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="../staff/patientslist.html">
-                  <i class="fa-solid fa-user-plus"></i>
-                  <span>ผู้ป่วยที่อยู่ในการดูแล</span></a>
-              </li>
-              <li class="nav-item">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>ผู้ป่วยที่อยู่ในการดูแล</span></a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="../staff/manage_admin.html">
                     <i class="fa fa-folder"></i>
                     <span>จัดการผู้ดูแลระบบ</span></a>
@@ -87,7 +90,6 @@
                     <i class="fa fa-folder"></i>
                     <span>จัดการผู้บริหาร</span></a>
             </li>
-
             <!-- <li class="nav-item">
                 <a class="nav-link" href="index.html">
                     <i class="fa-solid fa-lock"></i>
@@ -97,17 +99,17 @@
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
+
+            <!-- Sidebar Toggler (Sidebar) -->
+            <!-- <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div> -->
             <li class="nav-item">
                 <a class="nav-link" href="#" onclick="Logout()">
                   <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                   <span>ออกจากระบบ</span>
                 </a>
               </li>
-            <!-- Sidebar Toggler (Sidebar) -->
-            <!-- <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div> -->
-
         </ul>
         <!-- End of Sidebar -->
 
@@ -124,7 +126,7 @@
                     </button>
 
                     <!-- Topbar Search -->
-                    <h1 class="header-main">เปลี่ยนรหัสผ่าน</h1>
+                    <h1 class="header-main">จัดการผู้บริหาร</h1>
                     <!-- <form
                         class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <div class="input-group">
@@ -143,8 +145,8 @@
                     <ul class="navbar-nav ml-auto">
 
                         <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                        <!-- <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
+                        <li class="nav-item dropdown no-arrow d-sm-none">
+                            <!-- <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-search fa-fw"></i>
                             </a> -->
@@ -167,15 +169,16 @@
                         </li>
 
                         <!-- Nav Item - Alerts -->
-                        <!-- <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                        <!-- <li class="nav-item dropdown no-arrow mx-1"> -->
+                        <!-- <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-bell fa-fw"></i> -->
+                                <i class="fas fa-bell fa-fw"></i>
                                 <!-- Counter - Alerts -->
-                                <!-- <span class="badge badge-danger badge-counter">3+</span>
-                            </a> -->
-                            <!-- Dropdown - Alerts -->
-                            <!-- <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                        <!-- <span class="badge badge-danger badge-counter">3+</span> -->
+                        <!-- </a> -->
+
+                        <!-- Dropdown - Alerts -->
+                        <!-- <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="alertsDropdown">
                                 <h6 class="dropdown-header">
                                     Alerts Center
@@ -214,11 +217,35 @@
                                     </div>
                                 </a>
                                 <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
-                            </div> -->
-                        </li>
+                            </div>
+                        </li> -->
 
                         <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
 
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="emp_fname mr-2 d-none d-lg-inline text-gray-600 small"></span>
+                                <span class="emp_lname mr-2 d-none d-lg-inline text-gray-600 small"></span>
+                                <!-- <img src="../../image/user.png" style="height: 50%; wigth: 50px;"> -->
+                            </a>
+
+
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="userDropdown">
+
+                                <!-- <a class="dropdown-item" href="profile.html">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    ข้อมูลส่วนตัว
+                                </a> -->
+                                <a class="dropdown-item" href="../staff/changepass.html">
+                                    <i class="fas fa-lock fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    เปลี่ยนรหัสผ่าน
+                                </a>
+
+                            </div>
+                        </li>
 
                         <!-- Make sure you load Bootstrap JS properly -->
                         <script
@@ -234,50 +261,63 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     <!-- Page Heading -->
-                    <form class="change-pass" id="change-password-form">
-                        <label for="current-password">รหัสผ่านเดิม</label>
-                        <div class="password-wrapper">
-                          <input type="password" id="current-password" name="current-password" class="password-input" required />
-                          <i class="bi bi-eye" onclick="togglePassword('current-password', this)"></i>
+                    <div>
+                        <header>
+                            <h1>รายชื่อผู้บริหาร</h1>
+                            <div class="header-actions">
+                              
+                                    <input type="text" id="searchmanager" placeholder="ค้นหา">
+                                    <button class="filter-button" onclick="filterManager()">ค้นหา</button>
+                                <button id="addMangerBtn">เพิ่มผู้บริหาร</button>
+                            </div>
+                        </header>
+                        <div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>รหัสประจำตัว</th>
+                                        <th>ชื่อจริง</th>
+                                        <th>นามสกุล</th>
+                                        <th>เพิ่มเติม</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="managerinTable">
+                                     <!-- ข้อมูลจะถูกเพิ่มที่นี่ -->
+                                </tbody>
+                            </table>
                         </div>
-                      
-                        <label for="new-password">รหัสผ่านใหม่</label>
-                        <div class="password-wrapper">
-                          <input type="password" id="new-password" name="new-password" class="password-input" required />
-                          <i class="bi bi-eye" onclick="togglePassword('new-password', this)"></i>
-                        </div>
-                      
-                        <label for="confirm-password">ยืนยันรหัสผ่านใหม่</label>
-                        <div class="password-wrapper">
-                          <input type="password" id="confirm-password" name="confirm-password" class="password-input" required />
-                          <i class="bi bi-eye" onclick="togglePassword('confirm-password', this)"></i>
-                        </div>
-                      
-                        <button type="submit" class="submit-btn" onclick="changePassword()">เปลี่ยนรหัสผ่าน</button>
-                      </form>
-                      
 
-
-                    <script>
-                        function togglePassword(inputId, iconElement) {
-                            const inputField = document.getElementById(inputId);
-                            const icon = iconElement;
-                        
-                            if (inputField.type === 'password') {
-                                inputField.type = 'text';
-                                inputField.classList.add('show-password'); // เพิ่ม class เมื่อแสดงรหัสผ่าน
-                                icon.classList.remove('bi-eye');
-                                icon.classList.add('bi-eye-slash');
-                            } else {
-                                inputField.type = 'password';
-                                inputField.classList.remove('show-password'); // ลบ class เมื่อซ่อนรหัสผ่าน
-                                icon.classList.remove('bi-eye-slash');
-                                icon.classList.add('bi-eye');
-                            }
-                        }
-                    </script>
+                    </div>
                     <!-- Display fname here -->
                 </div>
+
+                <!-- Popup Modal -->
+                <div id="addMangerModal" class="modal">
+                    <div class="modal-content">
+                        <div>
+                            <span class="close">&times;</span>     
+                        </div>
+                        <form id="addmangerForm">
+                            <label for="mangerID">รหัสผู้บริหาร</label>
+                            <input type="text" id="mangerID" class="form-control" required />
+                
+                            <label for="man_fname">ชื่อ</label>
+                            <input type="text" id="man_fname" class="form-control" required pattern="^[a-zA-Zก-ฮะ-์]+$" title="กรุณากรอกตัวอักษรเท่านั้น" />
+                
+                            <label for="man_lname">นามสกุล</label>
+                            <input type="text" id="man_lname" class="form-control" required pattern="^[a-zA-Zก-ฮะ-์]+$" title="กรุณากรอกตัวอักษรเท่านั้น" />
+                
+                            <label for="password">รหัสผ่าน</label>
+                            <input type="password" id="man_password" class="form-control" required />
+                
+                            <label for="confirmPassword">ยืนยันรหัสผ่าน</label>
+                            <input type="password" id="man_confirmPassword" class="form-control" required />
+                
+                            <button type="submit">Save</button>
+                        </form>
+                    </div>
+                </div>
+                
 
                 <!-- /.container-fluid -->
 
@@ -299,40 +339,25 @@
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">เลือก "ออกจากระบบ" ด้านล่างหากคุณพร้อมที่จะออกจากเว็บไซต์ปัจจุบันของคุณ</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">ยกเลิก</button>
-                    <a class="btn btn-primary" href="../index.html" onclick="Logout()">ออกจากระบบ</a>
-                </div>
+    <!-- Delete Modal -->
+    <div class="delete-popup">
+        <div class="delete-content">
+            <div class="delete-header">
+                <h5 class="delete-title">ยืนยันการลบ</h5>
+                <button class="close-delete-btn">&times;</button>
+            </div>
+            <div class="delete-body">
+                <p>คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้ การกระทำนี้ไม่สามารถย้อนกลับได้</p>
+            </div>
+            <div class="delete-footer">
+                <!-- <button class="btn cancel-btn close-delete-btn">ยกเลิก</button> -->
+                <a class="btn delete-btn" href="">ลบ</a>
             </div>
         </div>
     </div>
 
-    <!-- <script>
-        const logout = async () => {
-            try {
-                await axios.post('http://localhost:8000/api/logout', {}, { withCredentials: true });
-                alert('You have been logged out successfully.');
-                window.location.href = '../view';
-            } catch (error) {
-                console.error('Logout failed:', error);
-                alert('Logout failed. Please try again.');
-            }
-        };
-    </script> -->
-
     <script src="../../js/jquery.min.js"></script>
-    <!-- <script src="../../js/bootstrap.bundle.min.js"></script> -->
+    <!-- <script src="../../js/bootstrap.bundle.min.js"></scrip> -->
 
 
 </body>

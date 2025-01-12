@@ -103,6 +103,7 @@ router.post('/register-employee', async (req, res) => {
 });
 
 
+
 router.post('/employeeinfo', verifyToken, async (req, res) => {
   let conn;
 

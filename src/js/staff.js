@@ -32,7 +32,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const addAddminModal = document.getElementById('addEmployeeModal');
   const closeBtn = document.querySelector('#addEmployeeModal .close');
 
-  // Open the modal when "เพิ่มแพทย์" button is clicked
   if (addAddminBtn) { // ตรวจสอบว่าปุ่มมีอยู่จริง
     addAddminBtn.addEventListener('click', () => {
       addAddminModal.style.display = 'block'; // เปิด modal
@@ -50,6 +49,32 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener('click', (event) => {
     if (event.target === addAddminModal) {
       addAddminModal.style.display = 'none'; // ซ่อน modal เมื่อคลิกนอก modal
+    }
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const addMangerBtn = document.getElementById('addMangerBtn');
+  const addMangerModal = document.getElementById('addMangerModal');
+  const closeBtn = document.querySelector('#addMangerModal .close');
+
+  if (addMangerBtn) { // ตรวจสอบว่าปุ่มมีอยู่จริง
+    addMangerBtn.addEventListener('click', () => {
+      addMangerModal.style.display = 'block'; // เปิด modal
+    });
+  }
+
+  // Close the modal when "X" button is clicked
+  if (closeBtn) { // ตรวจสอบว่าปุ่มมีอยู่จริง
+    closeBtn.addEventListener('click', () => {
+      addMangerModal.style.display = 'none'; // ปิด modal
+    });
+  }
+
+  // Close the modal if the user clicks outside the modal content
+  window.addEventListener('click', (event) => {
+    if (event.target === addMangerModal) {
+      addMangerModal.style.display = 'none'; // ซ่อน modal เมื่อคลิกนอก modal
     }
   });
 });
@@ -337,6 +362,34 @@ function filterAddmin() {
   const nameFilter = document.getElementById('searchaddmin').value.toLowerCase();
   const idFilter = document.getElementById('searchaddmin').value.toLowerCase();
   const table = document.getElementById('addminTable');
+  const rows = table.getElementsByTagName('tr');
+
+  for (let i = 0; i < rows.length; i++) {
+    const cells = rows[i].getElementsByTagName('td');
+    if (cells.length > 0) {
+      const name = (cells[1].textContent + " " + cells[2].textContent).toLowerCase();
+      const ID = cells[0].textContent.toLowerCase();
+    
+
+      if (
+        (name.includes(nameFilter) || !nameFilter) ||
+        (ID === idFilter || !idFilter)
+        // (date === dateFilter || !dateFilter)
+        // (year.includes(yearFilter) || !yearFilter)
+      ) {
+        rows[i].style.display = '';
+      } else {
+        rows[i].style.display = 'none';
+      }
+    }
+  }
+}
+
+function filterManager() {
+  // Function to filter patients based on input and dropdowns
+  const nameFilter = document.getElementById('searchmanager').value.toLowerCase();
+  const idFilter = document.getElementById('searchmanager').value.toLowerCase();
+  const table = document.getElementById('managerinTable');
   const rows = table.getElementsByTagName('tr');
 
   for (let i = 0; i < rows.length; i++) {
