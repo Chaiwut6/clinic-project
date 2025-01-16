@@ -1539,6 +1539,7 @@
   .table-primary > td {
     background-color: #7FB0EE;
     color: #fff;
+    text-align: center;
   }
   
   .table-primary th,

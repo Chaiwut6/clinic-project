@@ -226,7 +226,6 @@ function exportToExcel() {
       
       // สร้างสำเนาของแถว
       const clonedRow = row.cloneNode(true);
-      clonedRow.deleteCell(8); // ลบเซลล์ที่ 8 (ข้อมูลที่ไม่ต้องการ)
       clonedRow.deleteCell(7); // ลบเซลล์ที่ 7 (ข้อมูลที่ไม่ต้องการ)
       groupedData[doctorName].push(clonedRow); // เพิ่มแถวลงในกลุ่มของแพทย์
     }

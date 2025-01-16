@@ -318,8 +318,9 @@ router.post('/userList', async (req, res) => {
   }
 });
 
-router.post('/change-password', async (req, res) => {
-  const { login_id,oldPassword, newPassword, confirmPassword } = req.body;
+router.post('/change-password', verifyToken , async (req, res) => {
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+  const login_id = req.user.login_id;
   if (!oldPassword || !newPassword || !confirmPassword) {
     return res.status(400).json({
       success: false,

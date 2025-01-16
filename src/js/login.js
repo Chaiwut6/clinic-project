@@ -103,7 +103,7 @@ const register = async () => {
       alert('ลงทะเบียนสำเร็จ');
 
       // Store user data in sessionStorage (optional)
-      sessionStorage.setItem('user_id', user_id);
+      // sessionStorage.setItem('user_id', user_id);
 
       // Store the token in cookies
       const token = response.data.token;
@@ -197,7 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("userInfo:", userInfo);
         console.log("userAssess:", userAssess);
 
-        sessionStorage.setItem('user_id', response.data.user.user_id);
+        // sessionStorage.setItem('user_id', response.data.user.user_id);
         // sessionStorage.setItem('user_fname', response.data.user.user_fname);
         // sessionStorage.setItem('user_lname', response.data.user.user_lname);
 

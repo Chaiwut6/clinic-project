@@ -92,9 +92,7 @@ async function fetchAppointment() {
             <td>${user.faculty}</td>
             <td>${user.phone}</td>
             ${appointmentDetails}
-            <td>
-              <button class="action-btn" onclick="">จัดการข้อมูล</button>
-            </td>
+           
           </tr>
         `;
       }).filter(row => row !== null); // กรองค่า null ออกจาก rows

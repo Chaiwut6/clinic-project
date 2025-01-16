@@ -813,18 +813,9 @@ async function fetchUserDataAndDisplay() {
   }
 }
 
-
-
-
-
-
-
-
-
 const changePassword = async () => {
   document.getElementById('change-password-form').addEventListener('submit', async (event) => {
     event.preventDefault();
-    const login_id = sessionStorage.getItem('employeeID');
     const currentPassword = document.getElementById('current-password').value;
     const newPassword = document.getElementById('new-password').value;
     const confirmPassword = document.getElementById('confirm-password').value;
@@ -836,7 +827,6 @@ const changePassword = async () => {
 
     try {
       const response = await axios.post('http://localhost:8000/api/employees/change-password', {
-        login_id: login_id,
         oldPassword: currentPassword,
         newPassword: newPassword,
         confirmPassword: confirmPassword

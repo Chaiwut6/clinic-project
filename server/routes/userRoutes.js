@@ -388,21 +388,17 @@ router.post('/checkuser', async (req, res) => {
 });
 
 
-router.post('/appointment', async (req, res) => {
-  const { user_id } = req.body; // รับ user_id จาก Body ของ Request
+router.post('/appointment', verifyToken, async (req, res) => {
   let conn = null;
-
+  const user_id = req.user.login_id;  
   try {
-    // เริ่มการเชื่อมต่อกับ MySQL
-    conn = await initMySQL();
+    const conn = await initMySQL();
 
-    // ค้นหาข้อมูลการนัดหมายที่เกี่ยวข้องกับ user_id
     const [appointments] = await conn.query(
       "SELECT * FROM Appointment WHERE user_id = ?",
       [user_id]
     );
 
-    // ตรวจสอบว่ามีข้อมูลการนัดหมายหรือไม่
     if (appointments.length === 0) {
       return res.status(404).json({ success: false, message: 'ไม่พบข้อมูลการนัดหมาย' });
     }
