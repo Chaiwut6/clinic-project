@@ -1,169 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kamlangjai</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../style/style.css">
     <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jwt-decode/3.1.2/jwt-decode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../js/login.js"></script>
-    
+
 </head>
+
 <body>
     <div class="container">
-    <img src="../image/273012312_332483798892801_8651670715699583586_n 1.png" alt="logo">
-    <p>สวัสดีค่ะ ยินดีต้อนรับเข้าสู่คลินิกกำลังใจ</p>
-    <div class="btn">
-        <button class="register" type="button" onclick="registerToggle()">ลงทะเบียน</button>
-        <button class="login" type="button"  onclick="loginToggle()">เข้าสู่ระบบ</button>
+        <img src="../image/273012312_332483798892801_8651670715699583586_n 1.png" alt="logo">
+        <p>สวัสดีค่ะ ยินดีต้อนรับเข้าสู่คลินิกกำลังใจ</p>
+        <div class="btn">
+            <button class="register" type="button" onclick="registerToggle()">ลงทะเบียน</button>
+            <button class="login" type="button" onclick="loginToggle()">เข้าสู่ระบบ</button>
+        </div>
     </div>
-    </div>  
 
-      <div class="register-form">
+    <div class="register-form">
         <div class="form">
-      <div class="close" onclick="registerToggle()"><i class="fa-regular fa-circle-xmark fa-lg" style="color: #f00000;"></i></div>
-        <div class="text">
-            <h1>ลงทะเบียน</h1>
+            <div class="close" onclick="registerToggle()"><i class="fa-regular fa-circle-xmark fa-lg"
+                    style="color: #f00000;"></i></div>
+            <div class="text">
+                <h1>ลงทะเบียน</h1>
+            </div>
+            <form action="http://localhost:8000/api/register" method="post">
+                <div class="user-details">
+                    <div class="input-box">
+                        <span class="details">ชื่อจริง <span style="color: red;">*</span></span>
+                        <input id=user_fname type="text" required required autocomplete="off"
+                            pattern="^[a-zA-Zก-ฮะ-์]+$" title="กรุณากรอกตัวอักษรเท่านั้น">
+                    </div>
+                    <div class="input-box">
+                        <span class="details">นามสกุล <span style="color: red;">*</span></span>
+                        <input id=user_lname type="text" required required autocomplete="off"
+                            pattern="^[a-zA-Zก-ฮะ-์]+$" title="กรุณากรอกตัวอักษรเท่านั้น">
+                    </div>
+                    <div class="input-box">
+                        <span class="details">ชื่อเล่น <span style="color: red;">*</span></span>
+                        <input id=nickname type="text" required required autocomplete="off" pattern="^[a-zA-Zก-ฮะ-์]+$"
+                            title="กรุณากรอกตัวอักษรเท่านั้น">
+                    </div>
+                    <div class="input-box">
+                        <span class="details">เบอร์โทร <span style="color: red;">*</span></span>
+                        <input id=phone type="tel" maxlength="10" required required autocomplete="off">
+                    </div>
+                    <div class="input-box">
+                        <span class="details">คณะ <span style="color: red;">*</span></span>
+                        <div class="select-box">
+                            <select id="faculty" name="faculty">
+                                <option value="บริหารธุรกิจ ">บริหารธุรกิจ</option>
+                                <option value="วิศวกรรมศาสตร์">วิศวกรรมศาสตร์</option>
+                                <option value="เทคโนโลยีคหกรรมศาสตร์">เทคโนโลยีคหกรรมศาสตร์</option>
+                                <option value="ศิลปกรรมศาสตร์">ศิลปกรรมศาสตร์</option>
+                                <option value="เทคโนโลยีการเกษตร">เทคโนโลยีการเกษตร</option>
+                                <option value="ครุศาสตร์อุตสาหกรรม">ครุศาสตร์อุตสาหกรรม</option>
+                                <option value="สถาปัตยกรรมศาสตร์">สถาปัตยกรรมศาสตร์</option>
+                                <option value="วิทยาศาสตร์และเทคโนโลยี">วิทยาศาสตร์และเทคโนโลยี</option>
+                                <option value="เทคโนโลยีสื่อสารมวลชน">เทคโนโลยีสื่อสารมวลชน</option>
+                                <option value="ศิลปศาสตร์">ศิลปศาสตร์</option>
+                                <option value="แพทย์บูรณาการ">แพทย์บูรณาการ</option>
+                                <option value="พยาบาลศาสตร์">พยาบาลศาสตร์</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-box">
+                        <span class="details">ชั้นปี <span style="color: red;">*</span></span>
+                        <div class="select-box">
+                            <select id="year" name="year" required>
+                                <option value="ปี 1">ปี 1</option>
+                                <option value="ปี 2">ปี 2</option>
+                                <option value="ปี 3">ปี 3</option>
+                                <option value="ปี 4">ปี 4</option>
+                                <option value="ปี 5">ปี 5</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-box">
+                        <span class="details">รหัสประจำตัว(มีขีด)</span>
+                        <input id=user_id type="text" maxlength="14" required required autocomplete="off">
+                    </div>
+                    <div class="input-box">
+                        <span class="details">รหัสผ่าน <span style="color: red;">*</span></span>
+                        <input id="password" type="password" required>
+                    </div>
+
+                    <div class="input-box">
+                        <span class="details">ยืนยันรหัสผ่าน</span>
+                        <input id="confirm_password" type="password" required>
+                    </div>
+                </div>
+                <div class="policy">
+                    <input type="checkbox" id="policy_checkbox" onclick="toggleLink()">
+                    <span>ยอมรับ</span>
+                    <a onclick="policyToggle()">นโยบายความเป็นส่วนตัว</a>
+                </div>
+                <div class="button">
+                    <button onclick="register();" type="button">ลงทะเบียน</button>
+                </div>
+            </form>
         </div>
-        <form action="http://localhost:8000/api/register" method="post">
-            <div class="user-details">
-            <div class="input-box">
-                <span class="details">ชื่อจริง <span style="color: red;">*</span></span>
-                <input id=user_fname type="text" required  required autocomplete="off" pattern="^[a-zA-Zก-ฮะ-์]+$" title="กรุณากรอกตัวอักษรเท่านั้น">  
-            </div>
-            <div class="input-box">
-                <span class="details">นามสกุล <span style="color: red;">*</span></span>
-                <input id=user_lname type="text" required required autocomplete="off" pattern="^[a-zA-Zก-ฮะ-์]+$" title="กรุณากรอกตัวอักษรเท่านั้น"> 
-            </div>
-            <div class="input-box">
-                <span class="details">ชื่อเล่น <span style="color: red;">*</span></span>
-                <input id=nickname type="text" required required autocomplete="off" pattern="^[a-zA-Zก-ฮะ-์]+$" title="กรุณากรอกตัวอักษรเท่านั้น">
-            </div>
-            <div class="input-box">
-                <span class="details">เบอร์โทร <span style="color: red;">*</span></span>
-                <input id=phone type="tel"  maxlength="10" required required autocomplete="off">
-            </div>
-            <div class="input-box">
-                <span class="details">คณะ <span style="color: red;">*</span></span>
-                <div class="select-box">
-            <select id="faculty" name="faculty" >
-                <option value="บริหารธุรกิจ ">บริหารธุรกิจ</option>
-                <option value="วิศวกรรมศาสตร์">วิศวกรรมศาสตร์</option>
-                <option value="เทคโนโลยีคหกรรมศาสตร์">เทคโนโลยีคหกรรมศาสตร์</option>
-                <option value="ศิลปกรรมศาสตร์">ศิลปกรรมศาสตร์</option>
-                <option value="เทคโนโลยีการเกษตร">เทคโนโลยีการเกษตร</option>
-                <option value="ครุศาสตร์อุตสาหกรรม">ครุศาสตร์อุตสาหกรรม</option>
-                <option value="สถาปัตยกรรมศาสตร์">สถาปัตยกรรมศาสตร์</option>
-                <option value="วิทยาศาสตร์และเทคโนโลยี">วิทยาศาสตร์และเทคโนโลยี</option>
-                <option value="เทคโนโลยีสื่อสารมวลชน">เทคโนโลยีสื่อสารมวลชน</option>
-                <option value="ศิลปศาสตร์">ศิลปศาสตร์</option>
-                <option value="แพทย์บูรณาการ">แพทย์บูรณาการ</option>
-                <option value="พยาบาลศาสตร์">พยาบาลศาสตร์</option>
-            </select>
-        </div>
-            </div>
-            
-            <div class="input-box">
-                <span class="details" >ชั้นปี <span style="color: red;">*</span></span>
-            <div class="select-box">
-            <select id="year" name="year" required>
-                <option value="ปี 1">ปี 1</option>
-                <option value="ปี 2">ปี 2</option>
-                <option value="ปี 3">ปี 3</option>
-                <option value="ปี 4">ปี 4</option>
-                <option value="ปี 5">ปี 5</option>
-            </select>
-            </div>
-            </div>
-            <div class="input-box">
-                <span class="details">รหัสประจำตัว(มีขีด)</span>
-                <input id= user_id type="text"  maxlength="14" required required autocomplete="off">
-            </div>
-            <div class="input-box">
-                <span class="details">รหัสผ่าน <span style="color: red;">*</span></span>
-                <input id="password" type="password" required >
-            </div>
-        
-            <div class="input-box">
-                <span class="details">ยืนยันรหัสผ่าน</span>
-                <input id="confirm_password" type="password" required>
-            </div>  
-        </div>
-        <div class="policy">
-            <input type="checkbox" id="policy_checkbox" onclick="toggleLink()">
-            <span>ยอมรับ</span> 
-            <a onclick="policyToggle()" >นโยบายความเป็นส่วนตัว</a>
-        </div>
-            <div class="button" >
-                <button onclick="register();"  type="button">ลงทะเบียน</button>
-            </div>   
-        </form>
-        </div>
-        
-      </div>
+
+    </div>
 
 
 
 
 
 
-      <div class="login-form">
+    <div class="login-form">
         <div class="form">
-            <div class="close" onclick="loginToggle()"><i class="fa-regular fa-circle-xmark fa-lg" style="color: #f00000;"></i></div>
-              <div class="text-login">
-                  <h1>เข้าสู่ระบบ</h1>
-              </div>
-              <form action="http://localhost:8000/api/login" method="post">
+            <div class="close" onclick="loginToggle()"><i class="fa-regular fa-circle-xmark fa-lg"
+                    style="color: #f00000;"></i></div>
+            <div class="text-login">
+                <h1>เข้าสู่ระบบ</h1>
+            </div>
+            <form action="http://localhost:8000/api/login" method="post">
                 <div class="login-details">
-                <div class="login-input-box">
-                    <span class="details">รหัสประจำตัว(มีขีด)</span>
-                    <input name="user_id" type="text"  maxlength="14" required>
-                </div>
-                <div class="login-input-box">
-                    <span class="details">รหัสผ่าน</span>
-                    <input name="password" type="password" required>
-                </div>
-                <!-- <div class="forgot-pass">
+                    <div class="login-input-box">
+                        <span class="details">รหัสประจำตัว(มีขีด)</span>
+                        <input name="user_id" type="text" maxlength="14" required>
+                    </div>
+                    <div class="login-input-box">
+                        <span class="details">รหัสผ่าน</span>
+                        <input name="password" type="password" required>
+                    </div>
+                    <!-- <div class="forgot-pass">
                     <a href="#" >ลืมรหัสผ่าน</a>
                 </div> -->
-            </div>
+                </div>
                 <div class="button">
                     <button onclick="login()" type="button">เข้าสู่ระบบ</button>
-                </div> 
+                </div>
                 <div id="status-message"></div>
-              </form>
-              </div>
-      </div>
-
-      <div class="policy-form">
-        <div class="form">
-          <div class="close" onclick="policyToggle()">
-            <i class="fa-regular fa-circle-xmark fa-lg" style="color: #f00000;"></i>
-          </div>
-          <div class="text-login">
-            <h1 class="title">นโยบายความเป็นส่วนตัว</h1>
-            <p class="intro">
-                ท่านสามารถขอใช้สิทธิต่าง ๆ ตามที่กฎหมายกำหนด และตามที่ระบุไว้ในประกาศฉบับนี้ได้ดังต่อไปนี้:
-            </p>
-            
-            <p class="content">
-                1. สิทธิในการขอเข้าถึงและขอรับสำเนาข้อมูลส่วนบุคคล<br><br>
-                2. สิทธิในการขอแก้ไขข้อมูลดังกล่าวให้เป็นปัจจุบันและถูกต้อง<br><br>
-                3. สิทธิในการขอรับข้อมูลส่วนบุคคลในกรณีที่บริษัทได้ทำให้ข้อมูลส่วนบุคคลนั้นอยู่ในรูปแบบที่สามารถอ่านหรือใช้งานได้ด้วยเครื่องมือหรืออุปกรณ์ที่ทำงานได้โดยอัตโนมัติและสามารถใช้หรือเปิดเผยข้อมูลส่วนบุคคลได้ด้วยวิธีการอัตโนมัติ<br><br>
-                4. สิทธิในการขอลบหรือทำลายหรือทำให้ข้อมูลส่วนบุคคลเป็นข้อมูลที่ไม่สามารถระบุตัวบุคคลได้ เมื่อข้อมูลนั้นหมดความจำเป็นหรือเมื่อเจ้าของข้อมูลส่วนบุคคลถอนความยินยอม<br><br>
-                5. สิทธิในการขอระงับการใช้ข้อมูลส่วนบุคคล ในกรณีเมื่อเป็นข้อมูลส่วนบุคคลที่ต้องลบหรือเมื่อข้อมูลดังกล่าวหมดความจำเป็น<br><br>
-                6. สิทธิในการถอนความยินยอมในการประมวลผลข้อมูลที่ผู้ใช้บริการเคยให้ไว้<br><br>
-                7. สิทธิในการขอคัดค้าน เจ้าของข้อมูลส่วนบุคคลมีสิทธิคัดค้านการเก็บรวบรวม ใช้ หรือเปิดเผยข้อมูลเมื่อใดก็ได้
-              </p>
-          </div>
+            </form>
         </div>
-      </div>
+    </div>
+
+    <div class="policy-form">
+        <div class="form">
+            <div class="close" onclick="policyToggle()">
+                <i class="fa-regular fa-circle-xmark fa-lg" style="color: #f00000;"></i>
+            </div>
+            <div class="text-login">
+                <h1 class="title">นโยบายความเป็นส่วนตัว</h1>
+                
+                <p class="intro">
+                  การคุ้มครองข้อมูลส่วนบุคคลของคุณเป็นสิ่งสำคัญ นโยบายนี้จัดทำขึ้นเพื่ออธิบายถึงการเก็บรวบรวม การใช้งาน 
+                  และการปกป้องข้อมูลส่วนบุคคลของผู้ใช้งาน ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA)
+                </p>
+                
+                <section>
+                  <h2>การใช้งานข้อมูลส่วนบุคคล</h2>
+                  <p>
+                    เว็บไซต์ของเราเคารพสิทธิความเป็นส่วนตัวของผู้ใช้ทุกคน จึงขอชี้แจงให้ทราบเกี่ยวกับการใช้งานข้อมูลส่วนบุคคล 
+                    โดยนโยบายนี้ใช้สำหรับ: ผู้เยี่ยมชมเว็บไซต์ที่เปิดดูหรืออ่านข้อมูลในหน้าเว็บไซต์
+                  </p>
+                  <p>
+                    นโยบายนี้จัดทำขึ้นเพื่อยกระดับมาตรฐานความปลอดภัยของข้อมูลส่วนบุคคล และให้สอดคล้องกับพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562
+                  </p>
+                </section>
+              
+                <section>
+                  <h2>ความปลอดภัยของข้อมูลส่วนบุคคล</h2>
+                  <p>
+                    เว็บไซต์ให้ความสำคัญกับการคุ้มครองข้อมูลส่วนตัว โดยใช้มาตรการที่มีประสิทธิภาพในการป้องกันข้อมูลจากการเข้าถึงโดยไม่ได้รับอนุญาต 
+                    และจากการนำข้อมูลไปใช้ในทางที่ไม่เหมาะสม
+                  </p>
+                  <p>
+                    เทคโนโลยีและนโยบายต่างๆ ถูกนำมาใช้เพื่อรักษาความปลอดภัยของข้อมูล และจะได้รับการปรับปรุงให้ทันสมัยอย่างต่อเนื่อง 
+                    เพื่อปกป้องข้อมูลของคุณในระดับสูงสุด
+                  </p>
+                </section>
+              
+              </div>
+              
+        </div>
+    </div>
 
 </body>
+
 </html>
