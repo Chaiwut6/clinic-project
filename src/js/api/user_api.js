@@ -4,6 +4,7 @@ const fetchAppointments = async () => {
     const response = await axios.post('http://localhost:8000/api/users/appointment', null, {
       withCredentials: true // ส่ง cookies
     });
+    console.log(response.data);
 
     // ตรวจสอบสถานะการตอบกลับ
     if (response.status === 200 && response.data.success) {
@@ -44,17 +45,18 @@ const fetchAppointments = async () => {
           } else if (appointment.status === 'ยืนยัน') {
             buttonHtml = `<button class="btn btn-secondary" disabled>ยืนยันแล้ว</button>`;
           }
-
+          console.log(appointment.doc_name);
+      
           // เพิ่มข้อมูลลงในตาราง
           const row = `
-            <tr data-id="${appointment.Appointment_id}">
-              <td>${appointment.doc_name}</td>
-              <td>${formattedDate}</td>
-              <td class="text-center">
-                ${buttonHtml}
-              </td>
-            </tr>
-          `;
+          <tr data-id="${appointment.Appointment_id}">
+            <td>${appointment.doc_name ? appointment.doc_name : "ยังไม่มีการนัด"}</td>
+            <td>${formattedDate ? formattedDate : "ยังไม่มีการนัด"}</td>
+            <td class="text-center">
+              ${buttonHtml ? buttonHtml : "ยังไม่มีการนัด"}
+            </td>
+          </tr>
+        `;
           appointmentTable.innerHTML += row;
         }
       });
@@ -64,12 +66,19 @@ const fetchAppointments = async () => {
         appointmentTable.innerHTML = '<tr><td colspan="3" class="text-center">ยังไม่มีการนัดหมายที่ไม่ถูกยกเลิก</td></tr>';
       }
 
+    } else if (response.status === 404) {
+      alert('ยังไม่มีการนัดหมาย');
     } else {
       alert('ไม่พบข้อมูลการนัดหมาย');
     }
   } catch (error) {
-    console.error('Error fetching appointments:', error);
-    alert('เกิดข้อผิดพลาดในการดึงข้อมูล');
+    // จัดการสถานะ 404 จากข้อผิดพลาด (เช่นเซิร์ฟเวอร์ตอบ 404)
+    if (error.response && error.response.status === 404) {
+      alert('ยังไม่มีการนัดหมาย');
+    } else {
+      console.error('Error fetching appointments:', error);
+      alert('เกิดข้อผิดพลาดในการดึงข้อมูล');
+    }
   }
 };
 

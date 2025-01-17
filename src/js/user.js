@@ -1,14 +1,14 @@
 const apiUrl = 'http://localhost:8000'; 
 
 document.addEventListener("DOMContentLoaded", async function () {
-    const user_id = sessionStorage.getItem('user_id');
+    // const user_id = sessionStorage.getItem('user_id');
     
     try {
         // ดึงข้อมูลผู้ใช้จาก API
         const response = await axios.post(`${apiUrl}/api/users/userinfo`, {}, {
             withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
         });
-
+        const user_id = response.data.user.user_id;
         const user_fname = response.data.user.user_fname;
         const user_lname = response.data.user.user_lname;
 
@@ -90,6 +90,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
 
         async function saveResult(user_id, totalScore, result, user_fname, user_lname) {
+
             try {
                 const response = await axios.post("http://localhost:8000/api/users/save-result", {
                     user_id: user_id,

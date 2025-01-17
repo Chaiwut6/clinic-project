@@ -25,17 +25,15 @@
     <script>   
         const startSurvey = async () => {
             try {
-                // ตรวจสอบว่าข้อมูลของผู้ใช้ถูกเก็บใน sessionStorage หรือไม่
-                const user_id = sessionStorage.getItem('user_id');
                 
                 // เรียก API เพื่อดึงข้อมูลของผู้ใช้
                 const response = await axios.post('http://localhost:8000/api/users/userinfo', {}, {
                     withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
                 });
-        
+                
+                const user_id = response.data.user.user_id;
                 const user_fname = response.data.user.user_fname;
                 const user_lname = response.data.user.user_lname;
-        
                 // ถ้าไม่มีข้อมูลของผู้ใช้ให้แสดงข้อความแจ้งเตือน
                 if (!user_id || !user_fname || !user_lname) {
                     alert("โปรดเข้าสู่ระบบก่อนทำการสำรวจ");
@@ -47,7 +45,7 @@
                 sessionStorage.removeItem('result');
         
                 // ตั้งค่าข้อมูลผู้ใช้ใหม่ใน sessionStorage
-                sessionStorage.setItem('user_id', user_id);
+               
         
                 // เปลี่ยนหน้าไปยังแบบทดสอบ
                 window.location.href = '../users/user_test1.html';
