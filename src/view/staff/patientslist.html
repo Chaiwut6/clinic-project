@@ -54,7 +54,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" >
+            <a class="sidebar-brand d-flex align-items-center justify-content-center">
                 <div class="sidebar-brand-text mx-3">คลินิกกำลังใจ</div>
             </a>
 
@@ -69,23 +69,23 @@
             </li> -->
             <li class="nav-item">
                 <a class="nav-link" href="../staff/manage_user.html">
-                  <i class="fa fa-folder"></i>
-                  <span>จัดการข้อมูลผู้ใช้</span></a>
-              </li>
-              <li class="nav-item">
+                    <i class="fa fa-folder"></i>
+                    <span>จัดการข้อมูลผู้ใช้</span></a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="../staff/manage_doctor.html">
-                  <i class="fa-solid fa-stethoscope"></i>
-                  <span>จัดการข้อมูลแพทย์</span></a>
-              </li>
-              <li class="nav-item">
+                    <i class="fa-solid fa-stethoscope"></i>
+                    <span>จัดการข้อมูลแพทย์</span></a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="../staff/patientslist.html">
-                  <i class="fa-solid fa-user-plus"></i>
-                  <span>ผู้ป่วยที่อยู่ในการดูแล</span></a>
-              </li>
-              <li class="nav-item">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>ผู้ป่วยที่อยู่ในการดูแล</span></a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="../staff/manage_admin.html">
                     <i class="fa fa-folder"></i>
-                    <span>จัดการผู้ดูแลระบบ</span></a>
+                    <span>จัดการเจ้าหน้าที่</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="../staff/manage_man.html">
@@ -101,18 +101,19 @@
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
-
             <!-- Sidebar Toggler (Sidebar) -->
             <!-- <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div> -->
             <li class="nav-item">
-                <a class="nav-link" href="#" onclick="Logout()">
-                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                  <span>ออกจากระบบ</span>
+                <a class="nav-link" href="#" onclick="openCustomModal()">
+                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                    <span>ออกจากระบบ</span>
                 </a>
-              </li>
+            </li>
+           
         </ul>
+
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -129,14 +130,14 @@
 
                     <!-- Topbar Search -->
                     <h1 class="header-main">ผู้ป่วยที่อยู่ในการดูแล</h1>
-           
+
                     <ul class="navbar-nav ml-auto">
 
                         <!-- Nav Item - Search Dropdown (Visible Only XS) -->
                         <li class="nav-item dropdown no-arrow d-sm-none">
                         </li>
 
-                        
+
 
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
@@ -179,57 +180,57 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     <!-- Page Heading -->
-                        <!-- Doctor Selection Filter -->
-                        <h4 for="doctorSelect">
-                            เลือกแพทย์เพื่อแสดงรายการผู้ป่วย
-                        </h4>
+                    <!-- Doctor Selection Filter -->
+                    <h4 for="doctorSelect">
+                        เลือกแพทย์เพื่อแสดงรายการผู้ป่วย
+                    </h4>
 
-                        <div class="filter-container">
-                          <input type="text" id="searchName" placeholder="ค้นหาชื่อ">
-                          <select id="doctorSelect">
+                    <div class="filter-container">
+                        <input type="text" id="searchName" placeholder="ค้นหาชื่อ">
+                        <select id="doctorSelect">
                             <option value="">--เลือกแพทย์--</option>
-                          </select>
-                          <!-- <input type="date" id="dateFilter" class="dateFilter"> -->
-                          <button class="filter-button" onclick="filterReceivecare()">ค้นหา</button>
+                        </select>
+                        <!-- <input type="date" id="dateFilter" class="dateFilter"> -->
+                        <button class="filter-button" onclick="filterReceivecare()">ค้นหา</button>
 
-                          <button onclick="exportToExcel()" style="cursor: pointer;">
-                            <i class="fa-solid fa-print" onclick="exportToExcel()"></i> 
-                          </button>
-                        </div>
-                    
-                        <!-- Table -->
-                        <div class="table-container">
-                          <div class="table-options">
-                            <label >
+                        <button onclick="exportToExcel()" style="cursor: pointer;">
+                            <i class="fa-solid fa-print" onclick="exportToExcel()"></i>
+                        </button>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-container">
+                        <div class="table-options">
+                            <label>
                                 รายชื่อผู้ป่วยในการดูแล</label>
-                          </div>
-                    
-                          <table>
-                            <thead>
-                              <tr>
-                                <th>รหัสประจำตัว</th>
-                                <th>ชื่อ-นามสกุล</th>
-                                <th>ชื่อเล่น</th>
-                                <th>คณะ</th>
-                                <th>เบอร์โทร</th>
-                                <th>ปัญหา</th>
-                                <th>วันนัด</th>
-                                <th>แพทย์</th>
-                                <!-- <th>ดำเนินการ</th> -->
-                              </tr>
-                            </thead>
-                                <tbody id="patientTable" >
-                  
-                                </tbody>
-
-                          </table>
-                    
                         </div>
-                        <!-- id="patientTable" border="1" -->
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>รหัสประจำตัว</th>
+                                    <th>ชื่อ-นามสกุล</th>
+                                    <th>ชื่อเล่น</th>
+                                    <th>คณะ</th>
+                                    <th>เบอร์โทร</th>
+                                    <th>ปัญหา</th>
+                                    <th>วันนัด</th>
+                                    <th>แพทย์</th>
+                                    <!-- <th>ดำเนินการ</th> -->
+                                </tr>
+                            </thead>
+                            <tbody id="patientTable">
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                    <!-- id="patientTable" border="1" -->
                     <!-- Display fname here -->
                 </div>
 
-               
+
 
                 <!-- /.container-fluid -->
 
@@ -247,9 +248,38 @@
     <!-- End of Page Wrapper -->
 
     <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
+    <!-- <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
-    </a>
+    </a> -->
+
+ <!-- Logout Modal-->
+ <div id="logoutModal" class="custom-modal">
+    <div class="custom-modal-dialog">
+        <div class="custom-modal-content">
+            <div class="custom-modal-header">
+                <button class="custom-close" onclick="closeCustomModal()">&times;</button>
+            </div>
+            <div class="custom-modal-body">
+                เลือก "ออกจากระบบ" ด้านล่างหากคุณพร้อมที่จะออกจากเว็บไซต์ปัจจุบันของคุณ
+            </div>
+            <div class="custom-modal-footer">
+                <button class="custom-btn custom-btn-secondary" onclick="closeCustomModal()">ยกเลิก</button>
+                <a class="custom-btn custom-btn-primary" href="../index.html" onclick="Logout()">ออกจากระบบ</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function openCustomModal() {
+    document.getElementById('logoutModal').style.display = 'flex';
+  }
+  
+  // ปิด Custom Modal
+  function closeCustomModal() {
+    document.getElementById('logoutModal').style.display = 'none';
+  }</script>
 
 
 
