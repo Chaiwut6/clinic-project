@@ -136,7 +136,17 @@ const login = async () => {
   const login_id = document.querySelector('input[name=user_id]').value;
   const password = document.querySelector('input[name=password]').value;
 
+
   try {
+    if (!login_id) {
+      alert('กรุณากรอก ID ผู้ใช้');
+      return;
+    }
+
+    if (!password) {
+      alert('กรุณากรอกรหัสผ่าน');
+      return;
+    }
     if (login_id) {
       const response_user = await axios.post('http://localhost:8000/api/users/login', {
         login_id,

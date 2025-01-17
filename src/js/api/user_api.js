@@ -4,7 +4,6 @@ const fetchAppointments = async () => {
     const response = await axios.post('http://localhost:8000/api/users/appointment', null, {
       withCredentials: true // ส่ง cookies
     });
-    console.log(response.data);
 
     // ตรวจสอบสถานะการตอบกลับ
     if (response.status === 200 && response.data.success) {
@@ -72,7 +71,6 @@ const fetchAppointments = async () => {
       alert('ไม่พบข้อมูลการนัดหมาย');
     }
   } catch (error) {
-    // จัดการสถานะ 404 จากข้อผิดพลาด (เช่นเซิร์ฟเวอร์ตอบ 404)
     if (error.response && error.response.status === 404) {
       alert('ยังไม่มีการนัดหมาย');
     } else {
