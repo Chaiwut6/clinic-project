@@ -317,34 +317,47 @@ router.post('/change-password', verifyToken, async (req, res) => {
 
 
 router.post('/updateuser', verifyToken, async (req, res) => {
-  const login_id = req.user.login_id;
+  const login_id = req.user.login_id; // ได้มาจาก verifyToken
   let conn = null;
   const {
-    user_id, user_fname, user_lname, nickname, faculty, year, phone
+    user_fname, user_lname, nickname, faculty, year, phone
   } = req.body;
 
   try {
     conn = await initMySQL();
     
     // ตรวจสอบข้อมูลที่จำเป็น
-    if (!user_id || !user_fname || !user_lname || !faculty || !year || !nickname || !phone) {
+    if (!user_fname || !user_lname || !faculty || !year || !nickname || !phone) {
       return res.status(400).json({ success: false, message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
     }
 
-    // รันคำสั่ง SQL อัปเดตข้อมูล
-    const [result] = await conn.query(
-      "UPDATE users SET user_id = ?, user_fname = ?, user_lname = ?, nickname = ?, faculty = ?, year = ?, phone = ? WHERE user_id = ?",
-      [user_id, user_fname, user_lname, nickname, faculty, year, phone, login_id]
+    // เริ่มต้นธุรกรรม
+    await conn.beginTransaction();
+
+    // อัปเดตในตาราง users
+    const [result1] = await conn.query(
+      "UPDATE users SET user_fname = ?, user_lname = ?, nickname = ?, faculty = ?, year = ?, phone = ? WHERE user_id = ?",
+      [user_fname, user_lname, nickname, faculty, year, phone, login_id]
     );
 
-    // ตรวจสอบว่ามีการอัปเดตข้อมูลหรือไม่
-    if (result.affectedRows > 0) {
+    // อัปเดตในตาราง results
+    const [result2] = await conn.query(
+      "UPDATE results SET user_fname = ?, user_lname = ? WHERE user_id = ?",
+      [user_fname, user_lname, login_id]
+    );
+
+    if (result1.affectedRows > 0 || result2.affectedRows > 0) {
+      await conn.commit();
       res.status(200).json({ success: true, message: 'อัปเดตข้อมูลสำเร็จ' });
     } else {
+      // ยกเลิกการเปลี่ยนแปลงหากไม่มีการอัปเดต
+      await conn.rollback();
       res.status(404).json({ success: false, message: 'ไม่พบผู้ใช้นี้ในระบบ' });
     }
   } catch (error) {
-    // แสดงข้อผิดพลาดในระบบ
+    // ยกเลิกการเปลี่ยนแปลงหากเกิดข้อผิดพลาด
+    if (conn) await conn.rollback();
+
     console.error('Error during user update:', error.message);
     console.error('Stack trace:', error.stack);
     res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดในระบบ', error: error.message });
@@ -355,6 +368,7 @@ router.post('/updateuser', verifyToken, async (req, res) => {
     }
   }
 });
+
 
 router.post('/checkuser', async (req, res) => {
   const { user_id } = req.body;

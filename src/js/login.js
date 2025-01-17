@@ -77,7 +77,7 @@ const register = async () => {
     const checkResponse = await axios.post(checkUserApiUrl, { user_id });
 
     if (!checkResponse.data.success) {
-      alert('มีการลงทะเบียนแล้ว');
+      alert('รหัสนักศึกษานี้มีการลงทะเบียนแล้ว');
       window.location.href = '/view/index.html';
     }
 
@@ -362,7 +362,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("profileForm");
   const fetchUserInfo = async () => {
     try {
-      // ใช้ POST แทน GET ในการดึงข้อมูล
       const response = await axios.post('http://localhost:8000/api/users/userinfo', {}, {
         withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
       });
@@ -373,7 +372,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("userInfo:", userInfo);
         console.log("userAssess:", userAssess);
 
-        sessionStorage.setItem('user_id', response.data.user.user_id);
+        // sessionStorage.setItem('user_id', response.data.user.user_id);
         // sessionStorage.setItem('user_fname', response.data.user.user_fname);
         // sessionStorage.setItem('user_lname', response.data.user.user_lname);
 
@@ -388,6 +387,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error('Error fetching user info:', error);
     }
   };
+
   const fetchUserUpdate = async () => {
     try {
       const response = await axios.post('http://localhost:8000/api/users/userinfo', {}, { withCredentials: true });
@@ -404,7 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ฟังก์ชันเติมข้อมูลในฟอร์ม
   const populateForm = (userInfo) => {
-    document.getElementById("student-id").value = userInfo.user_id || '';
+    // document.getElementById("student-id").value = userInfo.user_id || '';
     document.getElementById("first-name").value = userInfo.user_fname || '';
     document.getElementById("last-name").value = userInfo.user_lname || '';
     document.getElementById("nickname").value = userInfo.nickname || '';
@@ -418,7 +418,7 @@ document.addEventListener("DOMContentLoaded", () => {
     form.addEventListener("submit", async (event) => {
       event.preventDefault(); // ป้องกันการโหลดหน้าใหม่
       const updatedData = {
-        user_id: document.getElementById("student-id").value,
+        // user_id: document.getElementById("student-id").value,
         user_fname: document.getElementById("first-name").value,
         user_lname: document.getElementById("last-name").value,
         nickname: document.getElementById("nickname").value,

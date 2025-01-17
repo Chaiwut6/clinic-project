@@ -415,7 +415,7 @@ async function fetchEmployee() {
 
     // ตรวจสอบว่าหลังจากกรองข้อมูลแล้วมีพนักงานเหลือหรือไม่
     if (filteredEmployee.length === 0) {
-      document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">ไม่พบข้อมูลพนักงานที่สามารถแสดงได้</td></tr>`;
+      document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">ไม่พบข้อมูลเจ้าหน้าที่สามารถแสดงได้</td></tr>`;
       return;
     }
     // sessionStorage.removeItem('employeeID');
@@ -984,7 +984,7 @@ async function fetchManger() {
 
     // ตรวจสอบว่ามีข้อมูลพนักงานหรือไม่
     if (!manager || manager.length === 0) {
-      document.getElementById("managerinTable").innerHTML = `<tr><td colspan="4">ไม่พบข้อมูลพนักงาน</td></tr>`;
+      document.getElementById("managerinTable").innerHTML = `<tr><td colspan="4">ไม่พบข้อมูลผู้บริหาร</td></tr>`;
       return;
     }
 
