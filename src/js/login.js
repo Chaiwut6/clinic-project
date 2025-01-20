@@ -58,6 +58,19 @@ const register = async () => {
       return;
     }
 
+    // Validate phone number: must be exactly 10 digits and numbers only
+    if (!/^\d{10}$/.test(phone)) {
+      alert('กรุณากรอกเบอร์โทรที่ถูกต้อง (10 ตัวและเป็นเลขเท่านั้น)');
+      document.querySelector('#phone').focus();
+      return;
+    }
+
+    if (!/^\d{12}-\d{1}$/.test(user_id)) {
+      alert('กรุณากรอกรหัสประจำตัวให้ถูกต้อง เช่น 116510001001-2');
+      document.querySelector('#user_id').focus();
+      return;
+    }
+
     // Check if policy is accepted
     if (!policyCheckbox.checked) {
       alert('กรุณายอมรับนโยบายความเป็นส่วนตัว');
@@ -79,6 +92,7 @@ const register = async () => {
     if (!checkResponse.data.success) {
       alert('รหัสนักศึกษานี้มีการลงทะเบียนแล้ว');
       window.location.href = '/view/index.html';
+      return;
     }
 
     // Define the API URL for registration
@@ -101,9 +115,6 @@ const register = async () => {
     // Check if the registration was successful
     if (response.data.message === 'User registered successfully') {
       alert('ลงทะเบียนสำเร็จ');
-
-      // Store user data in sessionStorage (optional)
-      // sessionStorage.setItem('user_id', user_id);
 
       // Store the token in cookies
       const token = response.data.token;

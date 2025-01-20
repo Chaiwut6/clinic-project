@@ -10,19 +10,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const doctorID = document.getElementById("doctorID").value.trim();
     const doctorName = document.getElementById("doctorName").value.trim();
     const phoneNumber = document.getElementById("phoneNumber").value.trim();
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
 
     // ตรวจสอบว่าข้อมูลครบถ้วน
-    if (!doctorID || !doctorName || !phoneNumber) {
+    if (!doctorID || !doctorName || !phoneNumber|| !password || !confirmPassword) {
       alert("กรุณากรอกข้อมูลให้ครบถ้วน");
       return;
     }
 
+    if (password !== confirmPassword) {
+      alert('รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน');
+      return;
+    }
+
+    if (!/^\d{10}$/.test(phoneNumber)) {
+      alert('กรุณากรอกเบอร์โทรที่ถูกต้อง (10 ตัวและเป็นเลขเท่านั้น)');
+      document.getElementById('phoneNumber').focus();
+      return;
+    }
     try {
       // ส่งข้อมูลไปยัง API
       const response = await axios.post('http://localhost:8000/api/doctors/register-doctor', {
         doc_id: doctorID,
         doc_name: doctorName,
         phone: phoneNumber,
+        password: password,
       });
 
       if (response.data && response.data.message === "Doctor registration successful") {
@@ -236,10 +249,6 @@ async function fetchDoctors() {
               <div class="dropdown-doctor">
                 <button class="actionBtn"><i class="fa-solid fa-grip-lines"></i></button>
                 <div class="dropdown-content">
-                  <a href="#">
-                    <i class="fa-solid fa-user-plus"></i>
-                    <span>ผู้ป่วยที่อยู่ในการดูแล</span>
-                  </a>
                   <a href="#" class="editBtn" data-id="${doc.doc_id}" data-name="${doc.doc_name}" data-phone="${doc.phone}">
                   <i class="fa-solid fa-pen-to-square"></i>
                   <span>แก้ไขข้อมูล</span>

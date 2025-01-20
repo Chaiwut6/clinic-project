@@ -33,9 +33,10 @@
 
     <!-- Custom styles for this template-->
     <link href="../../style/users/user_main.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../style/doctor/doctor_availability.css">
+    <script src="../../js/api/doctor_api.js"></script>
     <!-- <script src="../../js/login.js"></script> -->
     <!-- <script src="../../js/api/user_api.js"></script> -->
-    <script src="../../js/api/doctor_api.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
 
 </head>
@@ -103,7 +104,7 @@
 
                     <!-- Topbar Search -->
 
-                    <h1 class="header-main">การนัดหมาย</h1>
+                    <h1 class="header-main">กำหนดวันและเวลาว่าง</h1>
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
@@ -224,13 +225,39 @@
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-                <div class="container-fluid">
+                <div class="container-fluid">    
+                    <div class="availability-form">
+                      <label for="date">เลือกวัน:</label>
+                      <input type="date" id="availableDate" required>
+                      
+                      <label for="timeStart">เวลาเริ่ม:</label>
+                      <input type="time" id="timeStart" required>
+                      
+                      <label for="timeEnd">เวลาสิ้นสุด:</label>
+                      <input type="time" id="timeEnd" required>
+                      
+                      <button class="save-button" onclick="saveAvailability()">บันทึกวันว่าง</button>
+                    </div>
                     
-        
-
-           
-
-                </div>
+                    <div class="availability-list">
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>วันที่</th>
+                            <th>เวลาเริ่ม</th>
+                            <th>เวลาสิ้นสุด</th>
+                            <th>ดำเนินการ</th>
+                          </tr>
+                        </thead>
+                        <tbody id="availabilityTable">
+                          <tr>
+                            <td colspan="4">ยังไม่มีข้อมูล</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  
                
                 <!-- /.container-fluid -->
 
