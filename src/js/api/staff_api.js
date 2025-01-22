@@ -7,35 +7,27 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault(); // ป้องกันการ refresh หน้า
 
     // รับค่าจากฟอร์ม
-    const doctorID = document.getElementById("doctorID").value.trim();
     const doctorName = document.getElementById("doctorName").value.trim();
     const phoneNumber = document.getElementById("phoneNumber").value.trim();
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
 
     // ตรวจสอบว่าข้อมูลครบถ้วน
-    if (!doctorID || !doctorName || !phoneNumber|| !password || !confirmPassword) {
+    if (!doctorName || !phoneNumber) {
       alert("กรุณากรอกข้อมูลให้ครบถ้วน");
       return;
     }
 
-    if (password !== confirmPassword) {
-      alert('รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน');
+    // ตรวจสอบเบอร์โทรศัพท์
+    if (!/^\d{10}$/.test(phoneNumber)) {
+      alert("กรุณากรอกเบอร์โทรที่ถูกต้อง (10 ตัวและเป็นเลขเท่านั้น)");
+      document.getElementById("phoneNumber").focus();
       return;
     }
 
-    if (!/^\d{10}$/.test(phoneNumber)) {
-      alert('กรุณากรอกเบอร์โทรที่ถูกต้อง (10 ตัวและเป็นเลขเท่านั้น)');
-      document.getElementById('phoneNumber').focus();
-      return;
-    }
     try {
       // ส่งข้อมูลไปยัง API
-      const response = await axios.post('http://localhost:8000/api/doctors/register-doctor', {
-        doc_id: doctorID,
+      const response = await axios.post("http://localhost:8000/api/doctors/register-doctor", {
         doc_name: doctorName,
         phone: phoneNumber,
-        password: password,
       });
 
       if (response.data && response.data.message === "Doctor registration successful") {
@@ -250,66 +242,56 @@ async function fetchDoctors() {
                 <button class="actionBtn"><i class="fa-solid fa-grip-lines"></i></button>
                 <div class="dropdown-content">
                   <a href="#" class="editBtn" data-id="${doc.doc_id}" data-name="${doc.doc_name}" data-phone="${doc.phone}">
-                  <i class="fa-solid fa-pen-to-square"></i>
-                  <span>แก้ไขข้อมูล</span>
-                </a>
-                <a href="#" class="delete-trigger" data-id="${doc.doc_id}">
-                  <i class="fa-solid fa-trash"></i>
-                  <span>ลบ</span>
-                </a>
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <span>แก้ไขข้อมูล</span>
+                  </a>
+                  <a href="#" class="delete-trigger" data-id="${doc.doc_id}">
+                    <i class="fa-solid fa-trash"></i>
+                    <span>ลบ</span>
+                  </a>
+                  <a href="#" class="manageAvailability" data-id="${doc.doc_id}" data-name="${doc.doc_name}">
+                    <i class="fa-solid fa-calendar"></i>
+                    <span>จัดการวันว่าง</span>
+                  </a>
                 </div>
               </div>
             </td>
           </tr>
         `;
     });
-
-    // แสดงผลใน <tbody>
     document.getElementById("doctorinTable").innerHTML = rows.join("");
 
+    // จัดการการแก้ไขข้อมูล
     const editButtons = document.querySelectorAll(".editBtn");
     editButtons.forEach((button) => {
       button.addEventListener("click", (e) => {
         e.preventDefault();
 
-        // ดึงข้อมูลจาก data-* attributes
         const docId = button.getAttribute("data-id");
         const docName = button.getAttribute("data-name");
         const docPhone = button.getAttribute("data-phone");
 
-        // เน้นแถวที่เลือก
-        document.querySelectorAll("#doctorinTable tr").forEach((row) => {
-          row.classList.remove("highlight");
-        });
-        const selectedRow = document.querySelector(`#doctorinTable tr[data-id="${docId}"]`);
-        selectedRow.classList.add("highlight");
-
-        // สร้าง form สำหรับแก้ไขข้อมูล
         const formHtml = `
           <div class="popup-container">
           <div class="popup-content">
-          <div>
-          <span class="close" id="cancelEdit">&times;</span>
-          </div>
+            <div>
+              <span class="close" id="cancelEdit">&times;</span>
+            </div>
             <label for="editName">ชื่อแพทย์</label>
-            <input type="text" id="editName" value="${docName}" placeholder="ชื่อแพทย์..." required />
-            <label for="editPhone">เบอร์โทรศัพท์:</label>
-            <input type="text" id="editPhone" value="${docPhone}" placeholder="เบอร์โทรศัพท์..." pattern="^\\d{10}$" title="กรุณากรอกตัวเลข 10 หลัก" required />
+            <input type="text" id="editName" value="${docName}" required />
+            <label for="editPhone">เบอร์โทรศัพท์</label>
+            <input type="text" id="editPhone" value="${docPhone}" pattern="^\\d{10}$" title="กรุณากรอกตัวเลข 10 หลัก" required />
             <button id="saveEdit">บันทึก</button>
           </div>
-        </div>
-          `;
+        </div>`;
 
-        // แทรกฟอร์มไปยังหน้าจอ
         document.body.insertAdjacentHTML("beforeend", formHtml);
 
-        // การจัดการการบันทึกข้อมูล
         document.getElementById("saveEdit").addEventListener("click", async () => {
           const newName = document.getElementById("editName").value;
           const newPhone = document.getElementById("editPhone").value;
 
           try {
-            // ส่งข้อมูลที่แก้ไขไปยัง API
             await axios.post("http://localhost:8000/api/doctors/doctorUpdate", {
               doc_id: docId,
               doc_name: newName,
@@ -325,27 +307,24 @@ async function fetchDoctors() {
           }
         });
 
-        // การจัดการการยกเลิก
         document.getElementById("cancelEdit").addEventListener("click", () => {
           document.querySelector(".popup-container").remove();
-          selectedRow.classList.remove("highlight");
         });
       });
     });
 
+    // จัดการการลบข้อมูล
     const deleteButtons = document.querySelectorAll(".delete-trigger");
     deleteButtons.forEach((button) => {
       button.addEventListener("click", async (e) => {
         e.preventDefault();
         const docId = button.getAttribute("data-id");
 
-        const confirmDelete = confirm("คุณต้องการลบข้อมูลแพทย์นี้หรือไม่?");
-        if (confirmDelete) {
+        if (confirm("คุณต้องการลบข้อมูลแพทย์นี้หรือไม่?")) {
           try {
-            // ลบข้อมูลแพทย์จาก API
             await axios.post("http://localhost:8000/api/doctors/doctorDelete", { doc_id: docId });
             alert("ลบข้อมูลแพทย์สำเร็จ");
-            fetchDoctors();  // รีเฟรชข้อมูล
+            fetchDoctors();
           } catch (err) {
             console.error("Error deleting doctor data:", err);
             alert("เกิดข้อผิดพลาดในการลบข้อมูล");
@@ -354,49 +333,174 @@ async function fetchDoctors() {
       });
     });
 
-
-    // Dropdown functionality: Toggle dropdown visibilit
-    const dropdownButtons = document.querySelectorAll('.actionBtn');
+    // Dropdown functionality
+    const dropdownButtons = document.querySelectorAll(".actionBtn");
 
     dropdownButtons.forEach((button) => {
-      button.addEventListener('click', (e) => {
-        e.stopPropagation(); // หยุดการ propagate event ไปที่อื่น
-
-        const dropdownContent = button.closest('.dropdown-doctor').querySelector('.dropdown-content');
+      button.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const dropdownContent = button.closest(".dropdown-doctor").querySelector(".dropdown-content");
         const dropdown = dropdownContent.parentElement;
 
-        // ปิด dropdown อื่นๆ ที่เปิดอยู่ก่อนหน้า
-        document.querySelectorAll('.dropdown-doctor.show').forEach((otherDropdown) => {
+        document.querySelectorAll(".dropdown-doctor.show").forEach((otherDropdown) => {
           if (otherDropdown !== dropdown) {
-            otherDropdown.classList.remove('show');
-            otherDropdown.querySelector('.dropdown-content').style.cssText = ''; // ลบการตั้งค่า style ที่ปรับ
+            otherDropdown.classList.remove("show");
+            otherDropdown.querySelector(".dropdown-content").style.cssText = "";
           }
         });
 
-        // เปิดหรือลบสถานะการเปิดของ dropdown ปัจจุบัน
-        dropdown.classList.toggle('show');
+        dropdown.classList.toggle("show");
 
-        // ปรับตำแหน่งของ dropdown
         const rect = dropdownContent.getBoundingClientRect();
-        dropdownContent.style.left = rect.right > window.innerWidth ? `${window.innerWidth - rect.right}px` : '';
-        dropdownContent.style.left = rect.left < 0 ? '1px' : dropdownContent.style.left;
-        dropdownContent.style.top = rect.bottom > window.innerHeight ? `${window.innerHeight - rect.bottom}px` : '';
+        dropdownContent.style.left = rect.right > window.innerWidth ? `${window.innerWidth - rect.right}px` : "";
+        dropdownContent.style.top = rect.bottom > window.innerHeight ? `${window.innerHeight - rect.bottom}px` : "";
       });
     });
 
-    // ปิด dropdown เมื่อคลิกที่พื้นที่นอก dropdown
-    window.addEventListener('click', () => {
-      document.querySelectorAll('.dropdown-doctor').forEach((dropdown) => {
-        dropdown.classList.remove('show');
-        dropdown.querySelector('.dropdown-content').style.cssText = ''; // รีเซ็ตตำแหน่ง
+    window.addEventListener("click", () => {
+      document.querySelectorAll(".dropdown-doctor").forEach((dropdown) => {
+        dropdown.classList.remove("show");
+        dropdown.querySelector(".dropdown-content").style.cssText = "";
       });
     });
+
+    // Add Availability
+    document.addEventListener("click", (event) => {
+      const manageAvailabilityButton = event.target.closest(".manageAvailability");
+      if (manageAvailabilityButton) {
+        const doctorID = manageAvailabilityButton.dataset.id;
+        const doctorName = manageAvailabilityButton.dataset.name;
+        openAvailabilityModal(doctorID, doctorName);
+      }
+    });
+
+    document.getElementById("addAvailabilityForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const modal = document.getElementById("availabilityModal");
+      const doctorID = modal.getAttribute("data-doctor-id");
+      const availableDate = document.getElementById("availableDate").value;
+      const startTime = document.getElementById("startTime").value;
+      const endTime = document.getElementById("endTime").value;
+
+      if (!doctorID || !availableDate || !startTime || !endTime) {
+        alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+        return;
+      }
+
+      const Availability_id = generateAvailabilityId(availableDate, startTime, endTime);
+
+      try {
+        const response = await axios.post("http://localhost:8000/api/doctors/add-availability", {
+          Availability_id,
+          doc_id: doctorID,
+          available_date: availableDate,
+          start_time: startTime,
+          end_time: endTime,
+        });
+
+        if (response.data.message === "Availability added successfully") {
+          alert("เพิ่มวันว่างสำเร็จ");
+          fetchAvailability(doctorID);
+        } else {
+          alert("เกิดข้อผิดพลาด: " + response.data.message);
+        }
+      } catch (error) {
+        console.error("Error adding availability:", error);
+        alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
+      }
+    });
+
+    async function fetchAvailability(doctorID) {
+      try {
+        const response = await axios.post("http://localhost:8000/api/doctors/get-availability", {
+          doc_id: doctorID,
+        });
+        const availability = response.data.availability;
+    
+        const rows = availability.map((item) => {
+          const formattedDate = new Date(item.available_date).toLocaleDateString('th-TH', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+          const formattedStartTime = item.start_time.slice(0, 5); // HH:mm
+          const formattedEndTime = item.end_time.slice(0, 5); // HH:mm
+    
+          return `
+          <tr>
+            <td>${formattedDate}</td>
+            <td>${formattedStartTime}</td>
+            <td>${formattedEndTime}</td>
+            <td>
+              <button class="delete-availability styled-delete-button" data-id="${item.Availability_id}">
+                 ลบ
+              </button>
+            </td>
+          </tr>
+        `;
+        });
+
+        document.getElementById("availabilityTable").innerHTML = rows.join("");
+    
+        // Add event listeners to delete buttons
+        const deleteButtons = document.querySelectorAll(".delete-availability");
+        deleteButtons.forEach((button) => {
+          button.addEventListener("click", async (event) => {
+            const availabilityId = event.target.dataset.id;
+            if (confirm("คุณต้องการลบรายการนี้หรือไม่?")) {
+              try {
+                await axios.post("http://localhost:8000/api/doctors/delete-availability", {
+                  Availability_id: availabilityId,
+                });
+                alert("ลบรายการสำเร็จ");
+                fetchAvailability(doctorID); // Refresh the table
+              } catch (error) {
+                console.error("Error deleting availability:", error);
+                alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+              }
+            }
+          });
+        });
+      } catch (error) {
+        console.error("Error fetching availability:", error);
+      }
+    }
+    
+
+    function openAvailabilityModal(doctorID, doctorName) {
+      const modal = document.getElementById("availabilityModal");
+      document.getElementById("doctorNameTitle").textContent = `${doctorName}`;
+      modal.setAttribute("data-doctor-id", doctorID);
+      modal.style.display = "block";
+      fetchAvailability(doctorID);
+    }
+
+    function closeAvailabilityModal() {
+      const modal = document.getElementById("availabilityModal");
+      modal.style.display = "none";
+    }
+
+    function generateAvailabilityId(date, time_start, time_end) {
+      const formattedTimeStart = time_start.replace(/:/g, '');
+      const formattedTimeEnd = time_end.replace(/:/g, '');
+      const formattedDate = date.replace(/-/g, '').slice(2);
+
+      const elements = [formattedDate, formattedTimeStart, formattedTimeEnd];
+
+      const shuffled = elements.sort(() => Math.random() - 0.5).join('');
+
+      return `Avail-${shuffled}`;
+    }
 
   } catch (error) {
     console.error("Error fetching doctor data:", error);
     document.getElementById("doctorinTable").innerHTML = `<tr><td colspan="4">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
   }
 }
+
+
+
 
 async function fetchEmployee() {
   try {
@@ -769,7 +873,7 @@ async function fetchUserDataAndDisplay() {
       data.appointments.forEach(appointment => {
         const row1 = document.createElement('tr');
         const appointmentDate = new Date(appointment.date);
-        const formattedDate = appointmentDate.toLocaleDateString('en-GB'); // Change to 'th-TH' for Thai format
+        const formattedDate = appointmentDate.toLocaleDateString('th-TH'); // Change to 'th-TH' for Thai format
         row1.innerHTML = `<td>${formattedDate ? formattedDate : 'ยังไม่มีการนัด'}</td><td>${appointment.status || 'ยังไม่มีการนัด'}</td>`;
         appointmentBody.appendChild(row1);
       });
@@ -781,7 +885,7 @@ async function fetchUserDataAndDisplay() {
       // Show only the most recent appointment in appointment-list
       const firstAppointment = sortedAppointments[0];; 
       const firstAppointmentDate = new Date(firstAppointment.date);
-      const formattedFirstDate = firstAppointmentDate.toLocaleDateString('en-GB');
+      const formattedFirstDate = firstAppointmentDate.toLocaleDateString('th-TH');
 
       const row2 = document.createElement('tr');
       row2.innerHTML = `
@@ -868,29 +972,33 @@ let userLname = '';
 async function fetchUserDetails() {
   try {
     const response = await axios.post("http://localhost:8000/api/employees/userdetails", { userId: userId });
-      const user = response.data.user;
+    const user = response.data.user;
+    if (user && user.length > 0) {
       userFname = user[0].user_fname;
       userLname = user[0].user_lname;
-      // console.log("User details fetched successfully:", userFname, userLname);
-   
+    } else {
+      console.error("User data not found.");
+    }
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error fetching user details:", error);
     alert("เกิดข้อผิดพลาดในการดึงข้อมูลผู้ใช้");
   }
 }
 
 // ดึงข้อมูลแพทย์
+let selectedAvailability = null;
+
 async function fetchAppointment() {
   try {
     const response = await axios.post("http://localhost:8000/api/doctors/doctorResult");
-    if (response.status >= 200 && response.status < 300) {
-      const doctors = response.data.doctor;
+    const doctors = response.data.doctor;
+    if (doctors && doctors.length > 0) {
       populateDoctorDropdown(doctors);
     } else {
-      throw new Error("Error fetching doctor data");
+      alert("ไม่พบข้อมูลแพทย์");
     }
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error fetching doctor data:", error);
     alert("เกิดข้อผิดพลาดในการดึงข้อมูลแพทย์");
   }
 }
@@ -898,84 +1006,276 @@ async function fetchAppointment() {
 function populateDoctorDropdown(doctors) {
   const doctorSelect = document.getElementById("doctor");
 
-  // เติมตัวเลือกลงใน select
+  if (!doctorSelect) {
+    console.error("Element with id 'doctor' not found.");
+    return;
+  }
+
+  doctorSelect.innerHTML = '<option value="">--เลือกแพทย์--</option>';
+
   doctors.forEach(doctor => {
     const option = document.createElement("option");
-    option.value = doctor.doc_id; 
-    option.textContent = doctor.doc_name; 
+    option.value = doctor.doc_id;
+    option.textContent = doctor.doc_name;
     doctorSelect.appendChild(option);
   });
 
- 
-  doctorSelect.addEventListener("change", () => {
-    selectedDoctorId = doctorSelect.value || null; // ถ้าไม่ได้เลือกให้เป็น null
-    selectedDoctorName = doctors.find(doctor => doctor.doc_id === selectedDoctorId)?.doc_name || null; // ดึงชื่อแพทย์
-    // console.log("Selected Doctor ID:", selectedDoctorId);
-    // console.log("Selected Doctor Name:", selectedDoctorName);
+  doctorSelect.addEventListener("change", async () => {
+    selectedDoctorId = doctorSelect.value || null;
+    selectedDoctorName = doctors.find(doctor => doctor.doc_id === selectedDoctorId)?.doc_name || null;
+
+    if (selectedDoctorId) {
+      await fetchAvailabilityList(selectedDoctorId);
+    }
   });
 }
 
+function populateMonthDropdown() {
+  const monthSelect = document.getElementById("monthFilter");
+
+  if (!monthSelect) {
+    console.error("Element with id 'monthFilter' not found.");
+    return; // หยุดทำงานหากไม่พบ element
+  }
+
+  const currentYear = new Date().getFullYear();
+
+  for (let month = 1; month <= 12; month++) {
+    const option = document.createElement("option");
+    option.value = `${currentYear}-${month.toString().padStart(2, "0")}`;
+    option.textContent = new Date(currentYear, month - 1).toLocaleString("th-TH", { month: "long" });
+    monthSelect.appendChild(option);
+  }
+
+  monthSelect.addEventListener("change", () => {
+    const selectedMonth = monthSelect.value;
+    filterAvailabilityByMonth(availability, selectedMonth);
+  });
+}
+
+let availability = [];
+
+async function fetchAvailabilityList(docId) {
+  try {
+    const response = await axios.post("http://localhost:8000/api/doctors/getAvailabilitytime", {
+      doc_id: docId,
+    });
+
+    availability = response.data?.availability || [];
+    populateMonthDropdown();
+    filterAvailabilityByMonth(availability);
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      alert(error.response.data.message || "ยังไม่มีการเพิ่มวันที่ว่าง"); 
+    } else {
+      console.error("Error fetching availability:", error);
+      alert("เกิดข้อผิดพลาดในการดึงข้อมูลวันเวลาที่ว่างของแพทย์");
+    }
+  }
+}
+
+
+function filterAvailabilityByMonth(availability, selectedMonth = "") {
+  const filteredAvailability = availability.filter(item => {
+    const itemDate = new Date(item.available_date);
+    const itemMonth = itemDate.getMonth() + 1; // ดึงเดือนจากวันที่ (0-indexed)
+    return selectedMonth ? itemMonth === parseInt(selectedMonth, 10) : true;
+  });
+
+  populateAvailabilityTable(filteredAvailability);
+}
+
+function populateAvailabilityTable(availability) {
+  const tableBody = document.getElementById("availabilityTable");
+  tableBody.innerHTML = "";
+
+  if (!Array.isArray(availability) ||availability.length === 0) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 3;
+    cell.textContent = "ไม่มีข้อมูลวันเวลาที่แพทย์ว่าง";
+    row.appendChild(cell);
+    tableBody.appendChild(row);
+    return;
+  }
+
+  availability.forEach(item => {
+    const row = document.createElement("tr");
+  
+    // ตรวจสอบและแปลงค่าของวันที่
+    const formattedDate = item.available_date
+      ? new Date(item.available_date).toLocaleDateString("th-TH", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+      : "Invalid Date";
+  
+    // ตรวจสอบและแปลงค่าของเวลา
+    const timeStart = item.start_time ? item.start_time.slice(0, 5) : "N/A";
+    const timeEnd = item.end_time ? item.end_time.slice(0, 5) : "N/A";
+  
+    row.innerHTML = `
+      <td>${formattedDate}</td>
+      <td>${timeStart}</td>
+      <td>${timeEnd}</td>
+    `;
+  
+    // เพิ่ม Event Listener ให้ทุกแถว
+    row.style.cursor = "pointer";
+    row.addEventListener("click", () => {
+      selectedAvailability = item;
+      alert(`เลือกวันและเวลานี้: ${formattedDate} (${timeStart} - ${timeEnd})`);
+    });
+  
+    tableBody.appendChild(row);
+  });
+}
+
+
 async function saveAppointment() {
   const problem = document.getElementById("problem").value.trim();
-  const date = document.getElementById("date").value;
-  const status = "รอการยืนยัน";
+  const available_date = document.getElementById("availableDate").value.trim();
+  const start_time = document.getElementById("timeStart").value.trim();
+  const end_time = document.getElementById("timeEnd").value.trim();
 
-  // ตรวจสอบว่า user_id, doc_id, date และ problem ถูกกรอกครบถ้วน
-  if (!userId || !selectedDoctorId || !date || !problem) {
+  // ตรวจสอบข้อมูลที่จำเป็น
+  if (!userId || !selectedDoctorId || !available_date || !problem || !start_time || !end_time) {
     alert("กรุณากรอกข้อมูลให้ครบถ้วน");
     return;
   }
 
-  const appointmentId = generateUniqueAppointmentId(userId, date);
+  const appointmentId = generateUniqueAppointmentId(userId, available_date);
 
   const appointmentData = {
-    appointment_id: appointmentId,
+    Appointment_id: appointmentId,
     user_id: userId,
     user_fname: userFname,
     user_lname: userLname,
     doc_id: selectedDoctorId,
     doc_name: selectedDoctorName,
-    date,
+    time_start: start_time,
+    time_end: end_time,
+    date: available_date,
     problem,
-    status,
+    status: "รอการยืนยัน",
   };
 
   try {
     const response = await axios.post("http://localhost:8000/api/employees/appointments", appointmentData);
-    if (response.status >= 200 && response.status < 300) {
-      alert("บันทึกข้อมูลการนัดหมายสำเร็จ");
+
+    if (response.status === 201) {
+      alert(response.data.message);
+      await populateAppointmentTable(selectedDoctorId, available_date);  
+      location.reload();
     } else {
-      throw new Error("Error saving appointment");
+      alert(response.data.message || "เกิดข้อผิดพลาด");
     }
   } catch (error) {
-    console.error("Error:", error);
-    alert("เกิดข้อผิดพลาดในการบันทึกข้อมูลการนัดหมาย");
+    console.log("Error:", error);
+
+    if (error.response && error.response.status === 400) {
+      console.log("Response Data:", error.response.data); // ตรวจสอบข้อความที่ส่งกลับ
+      alert(error.response.data?.message || "เวลานัดหมายซ้ำ กรุณาเลือกเวลาอื่น");
+    } else {
+      console.error("Error:", error.response ? error.response.data : error.message);
+      alert(error.response ? error.response.data.message : "เกิดข้อผิดพลาดในการบันทึกข้อมูลการนัดหมาย");
+    }
   }
 }
 
+async function fetchAppointments(doc_id, selectedDate) {
+  try {
+    const response = await axios.post("http://localhost:8000/api/employees/getAppointments", {
+      doc_id,
+      date: selectedDate,
+    });
+    return response.data.appointments || [];
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    return [];
+  }
+}
+
+async function populateAppointmentTable(doc_id, selectedDate) {
+  const appointmentTable = document.getElementById("appointmentTable");
+  appointmentTable.innerHTML = ""; // ล้างข้อมูลในตารางก่อน
+
+  const appointments = await fetchAppointments(doc_id, selectedDate);
+
+  if (appointments.length === 0) {
+    const row = document.createElement("tr");
+    row.innerHTML = `<td colspan="3">ไม่มีการนัดหมายในวันที่เลือก</td>`;
+    appointmentTable.appendChild(row);
+    return;
+  }
+
+  appointments.forEach((appointment) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${new Date(appointment.date).toLocaleDateString("th-TH", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })}</td>
+      <td>${appointment.time_start.slice(0, 5)}</td>
+      <td>${appointment.time_end.slice(0, 5)}</td>
+    `;
+    appointmentTable.appendChild(row);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("doctor").addEventListener("change", async () => {
+    const selectedDoctorId = document.getElementById("doctor").value;
+    const availableDateInput = document.getElementById("availableDate");
+
+    // รีเซ็ตค่าของ input[type="date"]
+    availableDateInput.value = "";
+
+    // ล้างตาราง
+    document.getElementById("availabilityTable").innerHTML = "";
+    document.getElementById("appointmentTable").innerHTML = "";
+
+    if (selectedDoctorId) {
+      await populateAvailabilityTable(selectedDoctorId);
+    }
+  });
+
+  document.getElementById("availableDate").addEventListener("change", async () => {
+    const selectedDoctorId = document.getElementById("doctor").value;
+    const selectedDate = document.getElementById("availableDate").value;
+
+    if (selectedDoctorId && selectedDate) {
+      await populateAppointmentTable(selectedDoctorId, selectedDate);
+    }
+  });
+});
+
+
+
+
+
 // ฟังก์ชันสร้าง appointment_id ไม่ซ้ำ
 function generateUniqueAppointmentId(userId, date) {
-  // ตัดเครื่องหมาย "-" ออกจาก user_id
   const cleanUserId = userId.replace(/-/g, '');
-  
-  // ดึง 4 ตัวท้ายจาก userId
   const shortUserId = cleanUserId.slice(-4);
-  
-  // จัดรูปแบบวันที่ให้เป็น YYYYMM
   const formattedDate = date.replace(/-/g, '').slice(2, 8);
-
-  // สร้าง ID เบื้องต้น
   const baseId = `${shortUserId}${formattedDate}`;
-
-  // สลับตัวอักษรใน ID แบบสุ่ม
   const shuffledId = baseId
     .split('')
     .sort(() => Math.random() - 0.5)
     .join('');
 
-  // สร้าง appointment ID แบบสวยงาม
   return `APPT-${shuffledId.toUpperCase()}`;
 }
+
+// เรียกข้อมูลเริ่มต้น
+(async function initialize() {
+  await fetchUserDetails();
+  await fetchAppointment();
+})();
+
 
 
 

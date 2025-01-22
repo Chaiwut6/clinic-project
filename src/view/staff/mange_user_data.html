@@ -53,7 +53,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" >
+            <a class="sidebar-brand d-flex align-items-center justify-content-center">
                 <div class="sidebar-brand-text mx-3">คลินิกกำลังใจ</div>
             </a>
 
@@ -68,20 +68,20 @@
             </li> -->
             <li class="nav-item">
                 <a class="nav-link" href="../staff/manage_user.html">
-                  <i class="fa fa-folder"></i>
-                  <span>จัดการข้อมูลผู้ใช้</span></a>
-              </li>
-              <li class="nav-item">
+                    <i class="fa fa-folder"></i>
+                    <span>จัดการข้อมูลผู้ใช้</span></a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="../staff/manage_doctor.html">
-                  <i class="fa-solid fa-stethoscope"></i>
-                  <span>จัดการข้อมูลแพทย์</span></a>
-              </li>
-              <li class="nav-item">
+                    <i class="fa-solid fa-stethoscope"></i>
+                    <span>จัดการข้อมูลแพทย์</span></a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="../staff/patientslist.html">
-                  <i class="fa-solid fa-user-plus"></i>
-                  <span>ผู้ป่วยที่อยู่ในการดูแล</span></a>
-              </li>
-              <li class="nav-item">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>ผู้ป่วยที่อยู่ในการดูแล</span></a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="../staff/manage_admin.html">
                     <i class="fa fa-folder"></i>
                     <span>จัดการเจ้าหน้าที่</span></a>
@@ -183,7 +183,8 @@
                         <h2>ข้อมูลผู้ใช้</h2>
                         <div class="user-grid">
                             <p><strong>รหัสประจำตัว:</strong> <span id="userid"></span></p>
-                            <p><strong>ชื่อ:</strong> <span id="user-fname"></span>&nbsp;<span id="user-lname"></span></p>
+                            <p><strong>ชื่อ:</strong> <span id="user-fname"></span>&nbsp;<span id="user-lname"></span>
+                            </p>
 
                             <p><strong>เบอร์โทร:</strong> <span id="user-phone"></span></p>
                             <p></p>
@@ -211,9 +212,9 @@
                                 </tbody>
                             </table>
                         </section>
-                        
-                        
-                        
+
+
+
                         <!-- Section: Appointment History -->
                         <section class="card appointment-history">
                             <h2>ประวัติการนัดที่ผ่านมา</h2>
@@ -247,38 +248,38 @@
                                 </tbody>
                             </table>
                         </section>
-                        
+
                     </div>
 
-                     <!-- Editing Appointment แสดงแค่วันนัดล่าสุด -->
+                    <!-- Editing Appointment แสดงแค่วันนัดล่าสุด -->
                     <section class="card appointment-management">
                         <h2>การจัดการวันนัดล่าสุด</h2>
                         <table class="appointment-table">
-                          <thead>
-                            <tr>
-                              <th>วันที่</th>
-                              <th>สถานะ</th>
-                              <th>การดำเนินการ</th>
-                            </tr>
-                          </thead>
-                          <tbody id="appointment-list">
-                       
-                          </tbody>
+                            <thead>
+                                <tr>
+                                    <th>วันที่</th>
+                                    <th>สถานะ</th>
+                                    <th>การดำเนินการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="appointment-list">
+
+                            </tbody>
                         </table>
-                      </section>
-                      
-                      <!-- Modal for Editing Appointment -->
-                      <div id="editModal" class="modal">
+                    </section>
+
+                    <!-- Modal for Editing Appointment -->
+                    <div id="editModal" class="modal">
                         <div class="modal-content">
-                          <span class="close" onclick="closeModal()">&times;</span>
-                          <form id="edit-form">
-                            <label for="new-date">ลงวันนัดหมายใหม่:</label>
-                            <input type="date" id="new-date" required>
-                            <button type="submit">บันทึกการเปลี่ยนแปลง</button>
-                          </form>
+                            <span class="close" onclick="closeModal()">&times;</span>
+                            <form id="edit-form">
+                                <label for="new-date">ลงวันนัดหมายใหม่:</label>
+                                <input type="date" id="new-date" required>
+                                <button type="submit">บันทึกการเปลี่ยนแปลง</button>
+                            </form>
                         </div>
-                      </div>
-                      
+                    </div>
+
 
                     <!-- Section: Add Appointment -->
                     <section class="card add-appointment">
@@ -291,11 +292,63 @@
 
                             <label for="problem">ระบุปัญหาเบื้องต้น:</label>
                             <textarea id="problem" rows="4" cols="50" required></textarea>
+                            <label for="availableDate">วันที่แพทย์ว่าง:</label>
+                            <select id="monthFilter">
+                                <option value="">เลือกเดือน</option>
+                                <option value="1">มกราคม</option>
+                                <option value="2">กุมภาพันธ์</option>
+                                <option value="3">มีนาคม</option>
+                                <option value="4">เมษายน</option>
+                                <option value="5">พฤษภาคม</option>
+                                <option value="6">มิถุนายน</option>
+                                <option value="7">กรกฎาคม</option>
+                                <option value="8">สิงหาคม</option>
+                                <option value="9">กันยายน</option>
+                                <option value="10">ตุลาคม</option>
+                                <option value="11">พฤศจิกายน</option>
+                                <option value="12">ธันวาคม</option>
+                              </select>
+                            <table>
+                            <thead>
+                                <tr>
+                                    <th>วันที่</th>
+                                    <th>เวลาเริ่ม</th>
+                                    <th>เวลาสิ้นสุด</th>
+                                </tr>
+                            </thead>
+                            <tbody id="availabilityTable">
+                                <tr>
+                                    <td colspan="4">ไม่ได้กำหนดวันเวลาที่ว่าง</td>
+                                </tr>
+                            </tbody>
+                            </table>
+
+                            <label for="availableDate">เลือกวันที่:</label>
+                            <input type="date" id="availableDate" required>
+
+                            <label for="timeStart">เวลาเริ่ม:</label>
+                            <input type="time" id="timeStart" required>
                             
-                            <label for="date">วันที่นัด:</label>
-                            <input type="date" id="date" required>
-                            
-                            <button type="submit" class="btn-submit" id="save-appointment" onclick="saveAppointment()">บันทึก</button>
+                            <label for="timeEnd">เวลาสิ้นสุด:</label>
+                            <input type="time" id="timeEnd" required>
+
+                            <label for="timeEnd">การนัดหมายในวันที่เลือก:</label>
+                            <table>
+                                <thead>
+                                  <tr>
+                                    <th>วันที่</th>
+                                    <th>เวลาเริ่ม</th>
+                                    <th>เวลาสิ้นสุด</th>
+                                  </tr>
+                                </thead>
+                                <tbody id="appointmentTable">
+                                  <tr>
+                                    <td colspan="3">ไม่มีการนัดหมายในวันที่เลือก</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+
+                            <button type="button" class="btn-submit" id="save-appointment" onclick="saveAppointment()">บันทึก</button>
                         </form>
                     </section>
 
@@ -319,34 +372,34 @@
             <i class="fas fa-angle-up"></i>
         </a>
 
-  <!-- Logout Modal-->
-  <div id="logoutModal" class="custom-modal">
-    <div class="custom-modal-dialog">
-        <div class="custom-modal-content">
-            <div class="custom-modal-header">
-                <button class="custom-close" onclick="closeCustomModal()">&times;</button>
-            </div>
-            <div class="custom-modal-body">
-                เลือก "ออกจากระบบ" ด้านล่างหากคุณพร้อมที่จะออกจากเว็บไซต์ปัจจุบันของคุณ
-            </div>
-            <div class="custom-modal-footer">
-                <button class="custom-btn custom-btn-secondary" onclick="closeCustomModal()">ยกเลิก</button>
-                <a class="custom-btn custom-btn-primary" href="../index.html" onclick="Logout()">ออกจากระบบ</a>
+        <!-- Logout Modal-->
+        <div id="logoutModal" class="custom-modal">
+            <div class="custom-modal-dialog">
+                <div class="custom-modal-content">
+                    <div class="custom-modal-header">
+                        <button class="custom-close" onclick="closeCustomModal()">&times;</button>
+                    </div>
+                    <div class="custom-modal-body">
+                        เลือก "ออกจากระบบ" ด้านล่างหากคุณพร้อมที่จะออกจากเว็บไซต์ปัจจุบันของคุณ
+                    </div>
+                    <div class="custom-modal-footer">
+                        <button class="custom-btn custom-btn-secondary" onclick="closeCustomModal()">ยกเลิก</button>
+                        <a class="custom-btn custom-btn-primary" href="../index.html" onclick="Logout()">ออกจากระบบ</a>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-  </div>
-  
-  
-  <script>
-    function openCustomModal() {
-    document.getElementById('logoutModal').style.display = 'flex';
-  }
-  
-  // ปิด Custom Modal
-  function closeCustomModal() {
-    document.getElementById('logoutModal').style.display = 'none';
-  }</script>
+
+
+        <script>
+            function openCustomModal() {
+                document.getElementById('logoutModal').style.display = 'flex';
+            }
+
+            // ปิด Custom Modal
+            function closeCustomModal() {
+                document.getElementById('logoutModal').style.display = 'none';
+            }</script>
 
         <!-- <script>
         const logout = async () => {

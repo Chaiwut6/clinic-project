@@ -275,7 +275,7 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
+                                        <th>รหัสประจำตัว</th>
                                         <th>ชื่อแพทย์</th>
                                         <th>เบอร์โทรศัพท์</th>
                                         <th>เพิ่มเติม</th>
@@ -302,8 +302,8 @@
                         </div>
 
                         <form id="addDoctorForm">
-                            <label for="doctorID">รหัสประจำตัว</label>
-                            <input type="text" id="doctorID" />
+                            <!-- <label for="doctorID">รหัสประจำตัว</label>
+                            <input type="text" id="doctorID" /> -->
 
                             <label for="doctorName">ชื่อแพทย์</label>
                             <input type="text" id="doctorName"/>
@@ -311,13 +311,6 @@
                             <label for="phoneNumber">เบอร์โทรศัพท์</label>
                             <input type="text" id="phoneNumber" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                 maxlength="10" />     
-                            <label for="password">รหัสผ่าน</label>
-                            <input type="password" id="password" />
-                  
-                            <label for="confirmPassword">ยืนยันรหัสผ่าน</label>
-                            <input type="password" id="confirmPassword" />
-                       
-
                             <button type="submit">บันทึก</button>
                         </form>
                     </div>
@@ -346,6 +339,46 @@
                         </form>
                     </div>
                 </div>
+                
+                
+                <div id="availabilityModal" class="modal">
+                    <div class="modal-content">
+                      <div>
+                        <span class="close" onclick="closeAvailabilityModal()">&times;</span>
+                      </div>
+                      <h3 id="doctorNameTitle"></h3>
+                  
+                      <!-- ปฏิทินแบบโต้ตอบ -->
+                      <div id="calendar"></div>
+                  
+                      <!-- ฟอร์มเพิ่มวันและเวลา -->
+                      <form id="addAvailabilityForm">
+                        <label for="availableDate">วันที่ว่าง</label>
+                        <input type="date" id="availableDate" />
+                  
+                        <label for="startTime">เวลาเริ่ม</label>
+                        <input type="time" id="startTime" />
+                  
+                        <label for="endTime">เวลาสิ้นสุด</label>
+                        <input type="time" id="endTime" />
+                  
+                        <button type="submit">เพิ่มวันว่าง</button>
+                      </form>
+                  
+                      <!-- ตารางแสดงวันและเวลาว่างที่เพิ่ม -->
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>วันที่</th>
+                            <th>เวลาเริ่ม</th>
+                            <th>เวลาสิ้นสุด</th>
+                            <th>การจัดการ</th>
+                          </tr>
+                        </thead>
+                        <tbody id="availabilityTable"></tbody>
+                      </table>
+                    </div>
+                  </div>
 
                 <!-- /.container-fluid -->
 

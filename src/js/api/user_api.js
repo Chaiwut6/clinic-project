@@ -28,9 +28,9 @@ const fetchAppointments = async () => {
           hasAppointments = true;
 
           // จัดรูปแบบวันที่
-          const formattedDate = new Intl.DateTimeFormat('en-GB', {
-            day: '2-digit',
-            month: '2-digit',
+          const formattedDate = new Intl.DateTimeFormat('th-TH', {
+            day: 'numeric',
+            month: 'long',
             year: 'numeric',
           }).format(new Date(appointment.date));
 

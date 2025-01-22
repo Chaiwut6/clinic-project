@@ -380,24 +380,61 @@ router.post('/change-password', verifyToken , async (req, res) => {
 });
 
 router.post('/appointments', async (req, res) => {
-  const { appointment_id, user_id, user_fname, user_lname, doc_id, doc_name, date, problem, status } = req.body;
+  const { Appointment_id, user_id, user_fname, user_lname, doc_id, doc_name, time_start, time_end, date, problem, status } = req.body;
   let conn = null;
 
   try {
     conn = await initMySQL();
 
     // ตรวจสอบว่า req.body มีข้อมูลครบถ้วน
-    if (!appointment_id || !user_id || !user_fname || !user_lname || !doc_id || !doc_name || !date || !problem || !status) {
-      return res.status(400).json({ message: 'Missing required fields' });
+    if (!Appointment_id || !user_id || !user_fname || !user_lname || !doc_id || !doc_name || !date || !problem || !status || !time_start || !time_end) {
+      return res.status(400).json({
+        message: 'กรุณากรอกข้อมูลให้ครบถ้วน' // ส่งข้อความแจ้งเตือน
+      });
     }
 
+    // ตรวจสอบการซ้ำของเวลานัดหมายสำหรับหมอคนเดียวกัน
+    const conflictCheckQuery = `
+      SELECT * FROM Appointment
+      WHERE doc_id = ?
+      AND date = ?
+      AND (
+        (time_start < ? AND time_end > ?) OR
+        (time_start < ? AND time_end > ?) OR
+        (time_start = ? AND time_end = ?)
+      )
+    `;
+
+    const [conflicts] = await conn.query(conflictCheckQuery, [
+      doc_id,
+      date,
+      time_end,
+      time_start,
+      time_start,
+      time_end,
+      time_start,
+      time_end,
+    ]);
+
+    console.log('Query Executed');
+    console.log('Conflicts:', conflicts); // ตรวจสอบค่าที่ได้จากฐานข้อมูล
+
+    if (conflicts.length > 0) {
+      return res.status(400).json({
+        message: 'เวลาที่เลือกมีการนัดหมายซ้ำ กรุณาเลือกเวลาอื่น' 
+      });
+    }
+
+    // ถ้าไม่มีการซ้ำ ให้บันทึกข้อมูล
     const appointmentData = {
-      appointment_id,
+      Appointment_id,
       user_id,
       user_fname,
       user_lname,
       doc_id,
       doc_name,
+      time_start,
+      time_end,
       date,
       problem,
       status,
@@ -407,16 +444,50 @@ router.post('/appointments', async (req, res) => {
     await conn.query('INSERT INTO Appointment SET ?', appointmentData);
 
     // ส่ง response กลับไปยัง client
-    res.status(201).json({ message: 'Appointment created successfully' });
+    res.status(201).json({
+      message: 'การนัดหมายถูกบันทึกเรียบร้อยแล้ว' // ส่งข้อความแจ้งเตือนการบันทึกสำเร็จ
+    });
   } catch (error) {
-    console.error('Error creating appointment:', error);
-    res.status(500).json({ message: 'Error creating appointment', error: error.message });
+    console.error('เกิดข้อผิดพลาดในการบันทึกการนัดหมาย:', error);
+    res.status(500).json({
+      message: 'เกิดข้อผิดพลาดในการบันทึกการนัดหมาย กรุณาลองใหม่อีกครั้ง',
+      error: error.message
+    });
   } finally {
     if (conn) {
       await conn.end();
     }
   }
 });
+
+router.post("/getAppointments", async (req, res) => {
+  const { doc_id, date } = req.body;
+  let conn = null;
+
+  try {
+    conn = await initMySQL();
+
+    const [appointments] = await conn.query(
+      "SELECT date, time_start, time_end FROM Appointment WHERE doc_id = ? AND date = ? ORDER BY time_start",
+      [doc_id, date]
+    );
+
+    res.json({ appointments });
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    res.status(500).json({
+      message: "เกิดข้อผิดพลาดในการดึงข้อมูลการนัดหมาย",
+      error: error.message,
+    });
+  } finally {
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
+
+
+
 
 
 router.post('/appointmentscancel', async (req, res) => {

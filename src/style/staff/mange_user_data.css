@@ -146,6 +146,7 @@
   }
   
   .btn-submit {
+    margin-top: 20px;
     padding: 10px;
     background-color: #4a90e2;
     color: #fff;
@@ -335,4 +336,24 @@
     background-color: #6c757d;
     color: #fff;
     border: none;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  th, td {
+    border: 1px solid #ddd;
+    text-align: center;
+    padding: 8px;
+  }
+  th {
+    background-color: #f2f2f2;
+  }
+  .filter {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
   }

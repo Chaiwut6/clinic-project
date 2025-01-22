@@ -7,7 +7,7 @@ const router = express.Router();
 const secret = 'mysecret';
 
 // Route: Register user
-router.post('/register-doctor', async (req, res) => {
+router.post("/register-doctor", async (req, res) => {
   let conn;
 
   try {
@@ -15,85 +15,70 @@ router.post('/register-doctor', async (req, res) => {
     conn = await initMySQL();
 
     // รับข้อมูลจาก request body
-    const { doc_id, password ,doc_name, phone, status } = req.body;
+    const { doc_name, phone } = req.body;
 
     // ตรวจสอบข้อมูล input ว่าครบถ้วน
-    if (!doc_id|| !password || !doc_name || !phone) {
+    if (!doc_name || !phone) {
       return res.status(400).json({
-        message: 'Missing required fields: doc_id,password, doc_name, and phone are required.',
+        message: "Missing required fields: doc_name and phone are required.",
       });
     }
 
-    // ตรวจสอบว่า doc_id มีอยู่ในฐานข้อมูลแล้วหรือไม่
-    const [existingDoctor] = await conn.query(
-      'SELECT doc_id FROM doctor WHERE doc_id = ?',
-      [doc_id]
-    );
-    if (existingDoctor.length > 0) {
-      return res.status(400).json({
-        message: 'Doctor ID already exists. Please use a different Doctor ID.',
-      });
+    // ฟังก์ชันสร้าง doc_id แบบไม่ซ้ำ
+    async function generateDoctorID() {
+      const [rows] = await conn.query(
+        "SELECT MAX(doc_id) AS maxID FROM doctor"
+      );
+
+      const maxID = rows[0].maxID;
+
+      if (!maxID) {
+        // ถ้าไม่มี ID ในระบบ ให้เริ่มต้นที่ 1
+        return `DOC001`;
+      }
+
+      // แยกรหัสลำดับที่ และเพิ่ม 1
+      const currentNumber = parseInt(maxID.slice(3)) + 1;
+      return `DOC${String(currentNumber).padStart(3, "0")}`;
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
+    // สร้าง doc_id ใหม่
+    const doc_id = await generateDoctorID();
 
     // สร้างข้อมูลสำหรับการบันทึกในตาราง doctor
     const doctorData = {
       doc_id,
       doc_name,
       phone,
-      // roles: 'doctor', // กำหนดบทบาทให้เป็น 'doctor'
     };
 
-  
-    const loginData = {
-      login_id: doc_id,
-      password: passwordHash,
-      roles: 'doctor',
-    };
-
-    // ใช้ transaction ในการบันทึกข้อมูลทั้งสองตาราง
+    // ใช้ transaction ในการบันทึกข้อมูล
     await conn.beginTransaction();
 
     // บันทึกข้อมูลในตาราง doctor
-    const [doctorResults] = await conn.query('INSERT INTO doctor SET ?', doctorData);
-
-    // บันทึกข้อมูลในตาราง login
-    const [loginResults] = await conn.query('INSERT INTO login SET ?', loginData);
+    const [doctorResults] = await conn.query("INSERT INTO doctor SET ?", doctorData);
 
     // ยืนยันการทำ transaction
     await conn.commit();
 
-    // สร้าง JWT token สำหรับแพทย์ใหม่
-    const token = jwt.sign({ login_id: doc_id }, secret, { expiresIn: '1h' });
-
-    // ตั้งค่า cookie สำหรับ JWT token
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 3600000, // อายุ cookie 1 ชั่วโมง
-      sameSite: 'Strict',
-    });
-
     // ส่ง response กลับไปยัง client
     res.json({
-      message: 'Doctor registration successful',
+      message: "Doctor registration successful",
       doctor: {
         doc_id,
         doc_name,
         phone,
       },
-      token, // ส่ง token ใน response
     });
   } catch (error) {
     // ยกเลิก transaction หากเกิดข้อผิดพลาด
     if (conn) await conn.rollback();
 
-    console.error('Error during doctor registration:', error);
+    console.error("Error during doctor registration:", error);
 
     // ส่ง response ข้อผิดพลาดกลับไปยัง client
     res.status(500).json({
-      message: 'Doctor registration failed',
+      message: "Doctor registration failed",
       error: error.message,
     });
   } finally {
@@ -105,49 +90,51 @@ router.post('/register-doctor', async (req, res) => {
 });
 
 
-  router.post("/login-doctor", async (req, res) => {
-    let conn;
-    try {
-      conn = await initMySQL(); // Connect to MySQL
-      const { doc_id, password } = req.body;
+
+
+  // router.post("/login-doctor", async (req, res) => {
+  //   let conn;
+  //   try {
+  //     conn = await initMySQL(); // Connect to MySQL
+  //     const { doc_id, password } = req.body;
   
-      // Query to check if the doctor exists in the database
-      const [results] = await conn.query("SELECT * FROM doctor WHERE doc_id = ?", [doc_id]);
-      const userData = results[0];
+  //     // Query to check if the doctor exists in the database
+  //     const [results] = await conn.query("SELECT * FROM doctor WHERE doc_id = ?", [doc_id]);
+  //     const userData = results[0];
   
-      if (!userData) {
-        return res.status(400).json({
-          message: 'Login failed (wrong userid)'
-        });
-      }
+  //     if (!userData) {
+  //       return res.status(400).json({
+  //         message: 'Login failed (wrong userid)'
+  //       });
+  //     }
   
-      // Verify password with bcrypt
-      const match = await bcrypt.compare(password, userData.password);
-      if (!match) {
-        return res.status(400).json({
-          message: 'Login failed (wrong password)'
-        });
-      }
+  //     // Verify password with bcrypt
+  //     const match = await bcrypt.compare(password, userData.password);
+  //     if (!match) {
+  //       return res.status(400).json({
+  //         message: 'Login failed (wrong password)'
+  //       });
+  //     }
   
-      // Create JWT token with expiration time of 1 hour
-      const token = jwt.sign({ doc_id, role: 'doctor' }, secret, { expiresIn: '1h' });
+  //     // Create JWT token with expiration time of 1 hour
+  //     const token = jwt.sign({ doc_id, role: 'doctor' }, secret, { expiresIn: '1h' });
   
-      // Send the token and role in the response
-      const roles = userData.roles;
-      res.json({
-        roles,
-        message: 'Login success',
-        token
-      });
+  //     // Send the token and role in the response
+  //     const roles = userData.roles;
+  //     res.json({
+  //       roles,
+  //       message: 'Login success',
+  //       token
+  //     });
   
-    } catch (error) {
-      console.log('Error:', error);
-      res.status(500).json({
-        message: 'Login failed',
-        error: error.message || error
-      });
-    }
-  });
+  //   } catch (error) {
+  //     console.log('Error:', error);
+  //     res.status(500).json({
+  //       message: 'Login failed',
+  //       error: error.message || error
+  //     });
+  //   }
+  // });
   
   router.post('/doctorUpdate', async (req, res) => {
     let conn = null;
@@ -321,74 +308,91 @@ router.post('/register-doctor', async (req, res) => {
     }
   });
 
-  router.post('/change-password', verifyToken , async (req, res) => {
-    const { oldPassword, newPassword, confirmPassword } = req.body;
-    const login_id = req.user.login_id;
-    if (!oldPassword || !newPassword || !confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        message: 'กรุณากรอกข้อมูลให้ครบถ้วน',
-      });
+
+  router.post("/add-availability", async (req, res) => {
+    let conn;
+    const { Availability_id, doc_id, available_date, start_time, end_time } = req.body;
+  
+    if (!Availability_id || !doc_id || !available_date || !start_time || !end_time) {
+      return res.status(400).json({ message: "Missing required fields" });
     }
   
-    let conn = null;
     try {
+
+      console.log("Request Payload:", { Availability_id, doc_id, available_date, start_time, end_time });
+
       conn = await initMySQL();
+
+      const query = `
+        INSERT INTO doctor_availability 
+        (Availability_id, doc_id, available_date, start_time, end_time) 
+        VALUES (?, ?, ?, ?, ?)
+      `;
+      await conn.query(query, [Availability_id, doc_id, available_date, start_time, end_time]);
   
-      if (newPassword !== confirmPassword) {
-        return res.status(400).json({ message: 'รหัสผ่านใหม่และการยืนยันไม่ตรงกัน' });
-      }
-  
-      // ค้นหาผู้ใช้จาก login_id
-      const [doctorLogin] = await conn.query("SELECT * FROM login WHERE login_id = ?", [login_id]);
-      if (!doctorLogin || doctorLogin.length === 0) {
-        return res.status(404).json({ message: 'ไม่พบผู้ใช้' });
-      }
-  
-      const doctorInfo = doctorLogin[0];
-  
-      // ตรวจสอบว่ารหัสผ่านเดิมถูกต้องหรือไม่
-      const isMatch = await bcrypt.compare(oldPassword, doctorInfo.password);
-      if (!isMatch) {
-        return res.status(400).json({ message: 'รหัสผ่านเก่าไม่ถูกต้อง' });
-      }
-  
-      // ตรวจสอบว่ารหัสผ่านใหม่ไม่เหมือนกับรหัสผ่านเก่า
-      const isSamePassword = await bcrypt.compare(newPassword, doctorInfo.password);
-      if (isSamePassword) {
-        return res.status(400).json({ message: 'รหัสผ่านใหม่ต้องไม่เหมือนกับรหัสผ่านเก่า' });
-      }
-  
-      // เข้ารหัสรหัสผ่านใหม่
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(newPassword, salt);
-  
-      // อัปเดตรหัสผ่านในฐานข้อมูล
-      const [result] = await conn.query("UPDATE login SET password = ? WHERE login_id = ?", [hashedPassword, login_id]);
-      if (result.affectedRows === 0) {
-        return res.status(400).json({ message: 'ไม่สามารถอัปเดตรหัสผ่านได้' });
-      }
-  
-      // ส่งคำตอบสำเร็จ
-      res.status(200).json({ message: 'อัปเดตรหัสผ่านเรียบร้อยแล้ว' });
-  
+      res.json({ message: "Availability added successfully" });
     } catch (error) {
-      console.error('เกิดข้อผิดพลาดระหว่างการอัพเดตรหัสผ่าน:', error);
-      res.status(500).json({ message: 'Server error: ' + error.message });
-    } finally {
-      if (conn) {
-        await conn.end();
-      }
+      console.error("Database Error:", error);
+      res.status(500).json({ message: "Failed to add availability", error: error.message });
     }
   });
+  
+  // ดึงวันว่าง
+  router.post("/get-availability", async (req, res) => {
+    const { doc_id } = req.body; // รับ doc_id ผ่าน body
+   let conn;
+    try {
+      conn = await initMySQL();
+      const [availability] = await conn.query(
+        "SELECT Availability_id, available_date, start_time, end_time FROM doctor_availability WHERE doc_id = ?",
+        [doc_id]
+      );
+      res.json({ availability });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch availability", error: error.message });
+    }
+  });
+
+  router.post("/delete-availability", async (req, res) => {
+    const { Availability_id } = req.body;
+  
+    // ตรวจสอบว่า Availability_id มีอยู่ในคำขอหรือไม่
+    if (!Availability_id) {
+      return res.status(400).json({ message: "Availability_id is required" });
+    }
+  
+    let conn;
+    try {
+      // สร้างการเชื่อมต่อกับฐานข้อมูล
+      conn = await initMySQL();
+  
+      // ลบข้อมูลจากตาราง doctor_availability
+      const query = "DELETE FROM doctor_availability WHERE Availability_id = ?";
+      const [result] = await conn.query(query, [Availability_id]);
+  
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Availability not found" });
+      }
+  
+      res.json({ message: "Availability deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting availability:", error);
+      res.status(500).json({ message: "Failed to delete availability", error: error.message });
+    } finally {
+      if (conn) await conn.end(); // ปิดการเชื่อมต่อฐานข้อมูล
+    }
+  });
+  
+
+
+
+
+
   router.post('/saveAvailability', verifyToken, async (req, res) => {
     let conn;
     try {
-      const login_id = req.user.login_id;
       const {Availability_id , date, time_start, time_end } = req.body;
-      if (!login_id) {
-        return res.status(400).json({ message: 'Invalid or missing login ID' });
-      }
+    
 
       if (!date || !time_start || !time_end) {
         return res.status(400).json({ message: 'Missing required fields' });
@@ -397,8 +401,8 @@ router.post('/register-doctor', async (req, res) => {
       conn = await initMySQL();
   
       await conn.query(
-        'INSERT INTO doctor_availability (Availability_id, doc_id, date, time_start, time_end) VALUES (?, ?, ?, ?, ?)',
-        [Availability_id, login_id, date, time_start, time_end]
+        'INSERT INTO doctor_availability (Availability_id, doc_id, date, time_start, time_end) VALUES (?, ?, ?, ?,)',
+        [Availability_id, date, time_start, time_end]
       );
   
       res.status(200).json({
@@ -465,6 +469,47 @@ router.post('/register-doctor', async (req, res) => {
       }
     }
   });
+
+  router.post('/getAvailabilitytime', async (req, res) => {
+    let conn;
+    try {
+      const { doc_id } = req.body;
+      if (!doc_id) {
+        return res.status(400).json({ message: 'Invalid or missing doctor ID' });
+      }
+  
+      conn = await initMySQL();
+  
+      const [availabilityResults] = await conn.query(
+        'SELECT * FROM doctor_availability WHERE doc_id = ?',
+        [doc_id]
+      );
+  
+      if (!availabilityResults || availabilityResults.length === 0) {
+        return res.status(404).json({ message: 'ยังไม่มีการเพิ่มวันที่ว่าง' }); 
+      }
+  
+      res.status(200).json({
+        message: 'Availability data retrieved successfully',
+        availability: availabilityResults,
+      });
+    } catch (error) {
+      console.error('Error retrieving availability data:', error);
+      res.status(500).json({
+        message: 'Error retrieving availability data',
+        error: error.message || 'Internal Server Error',
+      });
+    } finally {
+      if (conn) {
+        try {
+          await conn.end();
+        } catch (closeError) {
+          console.error('Error closing database connection:', closeError);
+        }
+      }
+    }
+  });
+  
   
   
 

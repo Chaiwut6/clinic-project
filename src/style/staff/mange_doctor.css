@@ -144,3 +144,22 @@
   color: #fff;
   border: none;
 }
+.styled-delete-button {
+  background-color: #ff4d4d; /* สีพื้นหลัง */
+  color: white; /* สีตัวอักษร */
+  border: none; /* ลบขอบปุ่ม */
+  padding: 8px 12px; /* ช่องว่างภายใน */
+  border-radius: 5px; /* มุมโค้งมน */
+  font-size: 14px; /* ขนาดตัวอักษร */
+  cursor: pointer; /* เปลี่ยน cursor เป็น pointer */
+  transition: background-color 0.3s ease; /* เพิ่มแอนิเมชัน */
+}
+
+.styled-delete-button:hover {
+  background-color: #e60000; /* สีเมื่อ hover */
+}
+
+.styled-delete-button i {
+  margin-right: 5px; /* เว้นระยะห่างไอคอนจากข้อความ */
+  font-size: 16px; /* ขนาดไอคอน */
+}

@@ -80,9 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-
-
-
 //ลบข้อมูล
 document.addEventListener("DOMContentLoaded", function () {
   // Open Popup เมื่อคลิกปุ่ม delete-trigger
@@ -486,6 +483,21 @@ function filterManager() {
     }
   }
 }
+
+function openAvailabilityModal(doctorID, doctorName) {
+  const modal = document.getElementById("availabilityModal");
+  document.getElementById("doctorNameTitle").textContent = `วันว่างของ ${doctorName}`;
+  modal.style.display = "block";
+
+  // ดึงข้อมูลวันว่างจาก Backend
+  fetchAvailability(doctorID);
+}
+
+function closeAvailabilityModal() {
+  const modal = document.getElementById("availabilityModal");
+  modal.style.display = "none";
+}
+
 
 const goToAppointmentPage = (userId) => {
   sessionStorage.setItem('user_id', userId);
