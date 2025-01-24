@@ -103,7 +103,7 @@ async function saveAvailability() {
     const today = new Date().toISOString().split('T')[0];  // วันที่ปัจจุบันในรูปแบบ YYYY-MM-DD
 
     if (date < today) {
-      alert("ไม่สามารถเลือกวันที่หลังจากวันปัจจุบันได้");
+      alert("ไม่สามารถเลือกวันที่ผ่านมาแล้วได้");
       return;
     }
 

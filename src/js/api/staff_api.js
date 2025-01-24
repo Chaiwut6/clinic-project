@@ -376,20 +376,31 @@ async function fetchDoctors() {
 
     document.getElementById("addAvailabilityForm").addEventListener("submit", async (event) => {
       event.preventDefault();
-
+    
       const modal = document.getElementById("availabilityModal");
       const doctorID = modal.getAttribute("data-doctor-id");
       const availableDate = document.getElementById("availableDate").value;
       const startTime = document.getElementById("startTime").value;
       const endTime = document.getElementById("endTime").value;
-
+    
+      // ตรวจสอบว่าข้อมูลครบถ้วน
       if (!doctorID || !availableDate || !startTime || !endTime) {
         alert("กรุณากรอกข้อมูลให้ครบถ้วน");
         return;
       }
-
+    
+      // ตรวจสอบว่าเลือกวันที่ในอดีตหรือไม่
+      const today = new Date();
+      const selectedDate = new Date(availableDate);
+      today.setHours(0, 0, 0, 0); // ตั้งเวลาเป็นเที่ยงคืน
+      if (selectedDate < today) {
+        alert("ไม่สามารถเลือกวันที่ผ่านมาแล้วได้");
+        return;
+      }
+    
+      // สร้าง Availability ID
       const Availability_id = generateAvailabilityId(availableDate, startTime, endTime);
-
+    
       try {
         const response = await axios.post("http://localhost:8000/api/doctors/add-availability", {
           Availability_id,
@@ -398,7 +409,7 @@ async function fetchDoctors() {
           start_time: startTime,
           end_time: endTime,
         });
-
+    
         if (response.data.message === "Availability added successfully") {
           alert("เพิ่มวันว่างสำเร็จ");
           fetchAvailability(doctorID);
@@ -410,6 +421,7 @@ async function fetchDoctors() {
         alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
       }
     });
+    
 
     async function fetchAvailability(doctorID) {
       try {
@@ -798,19 +810,23 @@ async function fetchUserDataAndDisplay() {
     function filterAssessmentHistory(selectedMonth) {
       const assessmentBody = document.getElementById('assessment-history-body');
       assessmentBody.innerHTML = ''; // Clear previous data
-
+    
       const filteredResults = data.results.filter(result => {
         const date = new Date(result.date);
         const month = String(date.getMonth() + 1).padStart(2, '0'); // Format month as two digits
         return selectedMonth === 'all' || month === selectedMonth;
       });
-
+    
       if (filteredResults.length === 0) {
         assessmentBody.innerHTML = '<tr><td colspan="2">ไม่มีข้อมูล</td></tr>';
       } else {
         filteredResults.forEach(result => {
           const date = new Date(result.date);
-          const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+          const formattedDate = date.toLocaleDateString('th-TH', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          }); // แปลงวันที่ให้แสดงในรูปแบบภาษาไทย
           const row = document.createElement('tr');
           row.innerHTML = `<td>${formattedDate}</td><td>${result.result}</td>`;
           assessmentBody.appendChild(row);
@@ -836,19 +852,23 @@ async function fetchUserDataAndDisplay() {
       const selectedMonth = appointmentMonthSelect.value;
       const appointmentBody = document.getElementById('appointment-history-body');
       appointmentBody.innerHTML = ''; // Clear previous data
-
+    
       const filteredAppointments = data.appointments.filter(appointment => {
         const appointmentDate = new Date(appointment.date);
         const appointmentMonth = String(appointmentDate.getMonth() + 1).padStart(2, '0'); // Format month as two digits
         return selectedMonth === 'all' || appointmentMonth === selectedMonth;
       });
-
+    
       if (filteredAppointments.length === 0) {
         appointmentBody.innerHTML = '<tr><td colspan="2">ไม่มีข้อมูล</td></tr>';
       } else {
         filteredAppointments.forEach(appointment => {
           const appointmentDate = new Date(appointment.date);
-          const formattedDate = `${appointmentDate.getDate()}/${appointmentDate.getMonth() + 1}/${appointmentDate.getFullYear()}`;
+          const formattedDate = appointmentDate.toLocaleDateString('th-TH', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          }); // แปลงวันที่ให้แสดงในรูปแบบภาษาไทย
           const row = document.createElement('tr');
           row.innerHTML = `<td>${formattedDate}</td><td>${appointment.status}</td>`;
           appointmentBody.appendChild(row);
@@ -862,64 +882,168 @@ async function fetchUserDataAndDisplay() {
     // Display appointment history
     const appointmentBody = document.getElementById('appointment-history-body');
     const appointmentList = document.getElementById('appointment-list');
-
+    
     // Clear old data before rendering new data
     appointmentBody.innerHTML = '';
     appointmentList.innerHTML = '';
-
+    
     if (!data.appointments || data.appointments.length === 0) {
+      // ไม่มีข้อมูลการนัดหมาย
       appointmentBody.innerHTML = '<tr><td colspan="2">ไม่มีข้อมูล</td></tr>';
+      appointmentList.innerHTML = '<tr><td colspan="3">ไม่มีการนัดล่าสุด</td></tr>';
     } else {
-      data.appointments.forEach(appointment => {
-        const row1 = document.createElement('tr');
+      // แสดงประวัติการนัดทั้งหมด
+      data.appointments.forEach((appointment) => {
         const appointmentDate = new Date(appointment.date);
-        const formattedDate = appointmentDate.toLocaleDateString('th-TH'); // Change to 'th-TH' for Thai format
-        row1.innerHTML = `<td>${formattedDate ? formattedDate : 'ยังไม่มีการนัด'}</td><td>${appointment.status || 'ยังไม่มีการนัด'}</td>`;
-        appointmentBody.appendChild(row1);
+        const formattedDate = appointmentDate.toLocaleDateString('th-TH', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+    
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${formattedDate || 'ยังไม่มีการนัด'}</td>
+          <td>${appointment.status || 'ไม่ระบุสถานะ'}</td>
+        `;
+        appointmentBody.appendChild(row);
       });
-      const sortedAppointments = data.appointments.sort((a, b) => {
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
-        return dateB - dateA; // เรียงจากวันที่ล่าสุด
-      });
-      // Show only the most recent appointment in appointment-list
-      const firstAppointment = sortedAppointments[0];; 
-      const firstAppointmentDate = new Date(firstAppointment.date);
-      const formattedFirstDate = firstAppointmentDate.toLocaleDateString('th-TH');
-
-      const row2 = document.createElement('tr');
-      row2.innerHTML = `
-        <td>${formattedFirstDate ? formattedFirstDate : 'ยังไม่มีการนัด'}</td>
-        <td>${firstAppointment.status || 'ยังไม่มีการนัด'}</td>
-        <td><button class="cancel-appointment" data-appointment-id="${firstAppointment.Appointment_id}">ยกเลิก</button></td>
-      `;
-      appointmentList.appendChild(row2);
-
-      const cancelButton = row2.querySelector('.cancel-appointment');
-      cancelButton.addEventListener('click', handleCancelAppointment);
-
-      async function handleCancelAppointment(event) {
-        const appointmentId = event.target.getAttribute('data-appointment-id');
-
-        try {
-          const response = await axios.post("http://localhost:8000/api/employees/appointmentscancel", {
-            Appointment_id: appointmentId,
-            status: 'ยกเลิก'
-          });
-
-          if (response.status === 200) {
-            alert('การนัดหมายถูกยกเลิกแล้ว');
-            event.target.textContent = 'ยกเลิกแล้ว';
-            event.target.disabled = true;
-          } else {
-            alert(response.data.message || 'ไม่สามารถยกเลิกการนัดหมายได้');
-          }
-        } catch (error) {
-          console.error('Error cancelling appointment:', error);
-          alert('เกิดข้อผิดพลาดในการยกเลิกการนัดหมาย');
-        }
+    
+      // กรองข้อมูล "รอการยืนยัน" สำหรับการนัดล่าสุด
+      const pendingAppointments = data.appointments.filter(
+        (appointment) => appointment.status === 'รอการยืนยัน'
+      );
+    
+      if (pendingAppointments.length === 0) {
+        // ไม่มีการนัดที่รอการยืนยัน
+        appointmentList.innerHTML = '<tr><td colspan="3">ไม่มีการนัดล่าสุด</td></tr>';
+      } else {
+        // เรียงข้อมูลตามวันที่ล่าสุด
+        const sortedAppointments = pendingAppointments.sort((a, b) => {
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
+          return dateB - dateA; // เรียงจากวันที่ล่าสุด
+        });
+    
+        // แสดงเฉพาะการนัดที่รอการยืนยันล่าสุด
+        const firstAppointment = sortedAppointments[0];
+        const firstAppointmentDate = new Date(firstAppointment.date);
+        const formattedFirstDate = firstAppointmentDate.toLocaleDateString('th-TH', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+    
+        const row2 = document.createElement('tr');
+        row2.innerHTML = `
+          <td>${formattedFirstDate || 'ยังไม่มีการนัด'}</td>
+          <td>${firstAppointment.status || 'ยังไม่มีการนัด'}</td>
+          <td><button class="cancel-appointment" data-appointment-id="${firstAppointment.Appointment_id}">ยกเลิก</button></td>
+        `;
+        appointmentList.appendChild(row2);
+    
+        // เพิ่ม Event Listener ให้กับปุ่ม "ยกเลิก"
+        const cancelButton = row2.querySelector('.cancel-appointment');
+        cancelButton.addEventListener('click', handleCancelAppointment);
       }
     }
+    
+    // ฟังก์ชันยกเลิกการนัด
+    async function handleCancelAppointment(event) {
+      const appointmentId = event.target.getAttribute('data-appointment-id');
+    
+      try {
+        const response = await axios.post("http://localhost:8000/api/employees/appointmentscancel", {
+          Appointment_id: appointmentId,
+          status: 'ยกเลิก'
+        });
+    
+        if (response.status === 200) {
+          alert('การนัดหมายถูกยกเลิกเรียบร้อยแล้ว');
+          // ดึงข้อมูลใหม่และอัปเดตตาราง
+          location.reload();
+          // fetchAppointmentsAndUpdateUI();
+        } else {
+          alert('ไม่สามารถยกเลิกการนัดหมายได้');
+        }
+      } catch (error) {
+        console.error('Error canceling appointment:', error);
+        alert('เกิดข้อผิดพลาดในการยกเลิกการนัดหมาย');
+      }
+    }
+    
+    // ฟังก์ชันดึงข้อมูลการนัดหมายและอัปเดต UI
+    // async function fetchAppointmentsAndUpdateUI() {
+    //   try {
+    //     const response = await axios.post("http://localhost:8000/api/employees/getAppointments");
+    //     const data = response.data;
+    
+    //     updateAppointmentUI(data);
+    //   } catch (error) {
+    //     console.error("Error fetching appointments:", error);
+    //     appointmentBody.innerHTML = '<tr><td colspan="2">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>';
+    //     appointmentList.innerHTML = '<tr><td colspan="3">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>';
+    //   }
+    // }
+    
+    // ฟังก์ชันอัปเดต UI
+    // function updateAppointmentUI(data) {
+    //   // Clear tables
+    //   appointmentBody.innerHTML = '';
+    //   appointmentList.innerHTML = '';
+    
+    //   if (!data.appointments || data.appointments.length === 0) {
+    //     appointmentBody.innerHTML = '<tr><td colspan="2">ไม่มีข้อมูล</td></tr>';
+    //     appointmentList.innerHTML = '<tr><td colspan="3">ไม่มีการนัดล่าสุด</td></tr>';
+    //     return;
+    //   }
+    
+    //   // ดึงข้อมูลประวัติทั้งหมด
+    //   data.appointments.forEach((appointment) => {
+    //     const appointmentDate = new Date(appointment.date);
+    //     const formattedDate = appointmentDate.toLocaleDateString('th-TH');
+    
+    //     const row = document.createElement('tr');
+    //     row.innerHTML = `
+    //       <td>${formattedDate || 'ยังไม่มีการนัด'}</td>
+    //       <td>${appointment.status || 'ไม่ระบุสถานะ'}</td>
+    //     `;
+    //     appointmentBody.appendChild(row);
+    //   });
+    
+    //   // ดึงข้อมูล "รอการยืนยัน"
+    //   const pendingAppointments = data.appointments.filter(
+    //     (appointment) => appointment.status === 'รอการยืนยัน'
+    //   );
+    
+    //   if (pendingAppointments.length === 0) {
+    //     appointmentList.innerHTML = '<tr><td colspan="3">ไม่มีการนัดล่าสุด</td></tr>';
+    //   } else {
+    //     const sortedAppointments = pendingAppointments.sort((a, b) => {
+    //       const dateA = new Date(a.date);
+    //       const dateB = new Date(b.date);
+    //       return dateB - dateA;
+    //     });
+    
+    //     const firstAppointment = sortedAppointments[0];
+    //     const firstAppointmentDate = new Date(firstAppointment.date);
+    //     const formattedFirstDate = firstAppointmentDate.toLocaleDateString('th-TH');
+    
+    //     const row2 = document.createElement('tr');
+    //     row2.innerHTML = `
+    //       <td>${formattedFirstDate || 'ยังไม่มีการนัด'}</td>
+    //       <td>${firstAppointment.status || 'ยังไม่มีการนัด'}</td>
+    //       <td><button class="cancel-appointment" data-appointment-id="${firstAppointment.Appointment_id}">ยกเลิก</button></td>
+    //     `;
+    //     appointmentList.appendChild(row2);
+    
+    //     const cancelButton = row2.querySelector('.cancel-appointment');
+    //     cancelButton.addEventListener('click', handleCancelAppointment);
+    //   }
+    // }
+    
+
+    
   } catch (error) {
     console.error('Error:', error);
     alert('เกิดข้อผิดพลาดในการดึงข้อมูลผู้ใช้');
@@ -1043,7 +1167,11 @@ function populateMonthDropdown() {
   for (let month = 1; month <= 12; month++) {
     const option = document.createElement("option");
     option.value = `${currentYear}-${month.toString().padStart(2, "0")}`;
-    option.textContent = new Date(currentYear, month - 1).toLocaleString("th-TH", { month: "long" });
+    option.textContent = new Date(currentYear, month - 1).toLocaleString("th-TH", {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
     monthSelect.appendChild(option);
   }
 
@@ -1145,6 +1273,15 @@ async function saveAppointment() {
     return;
   }
 
+  // ตรวจสอบว่าเลือกวันที่ในอดีตหรือไม่
+  const today = new Date();
+  const selectedDate = new Date(available_date);
+  today.setHours(0, 0, 0, 0); 
+  if (selectedDate < today) {
+    alert("ไม่สามารถเลือกวันที่ผ่านมาแล้วได้");
+    return;
+  }
+
   const appointmentId = generateUniqueAppointmentId(userId, available_date);
 
   const appointmentData = {
@@ -1183,6 +1320,7 @@ async function saveAppointment() {
     }
   }
 }
+
 
 async function fetchAppointments(doc_id, selectedDate) {
   try {
@@ -1464,6 +1602,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   if (currentPage === "mange_user_data.html") {
     fetchUserDataAndDisplay()
+    // fetchAppointmentsAndUpdateUI()
     fetchUserDetails()
     fetchAppointment()
   }
