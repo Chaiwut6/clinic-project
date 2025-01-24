@@ -143,6 +143,7 @@ router.post("/register-doctor", async (req, res) => {
     try {
       conn = await initMySQL();
   
+      // ตรวจสอบว่า `doc_id`, `doc_name`, และ `phone` ถูกส่งมาครบถ้วน
       if (!doc_id || !doc_name || !phone) {
         return res.status(400).json({
           success: false,
@@ -150,27 +151,51 @@ router.post("/register-doctor", async (req, res) => {
         });
       }
   
-      // คำสั่ง SQL ที่แก้ไข
-      const [result] = await conn.query(
+      // เริ่มต้น Transaction
+      await conn.beginTransaction();
+  
+      // อัปเดตข้อมูลในตาราง `doctor`
+      const [doctorResult] = await conn.query(
         "UPDATE doctor SET doc_name = ?, phone = ? WHERE doc_id = ?",
         [doc_name, phone, doc_id]
       );
   
-      if (result.affectedRows > 0) {
+      // อัปเดตข้อมูลในตาราง `Appointment`
+      const [appointmentResult] = await conn.query(
+        "UPDATE Appointment SET doc_name = ? WHERE doc_id = ?",
+        [doc_name, doc_id]
+      );
+  
+      // ตรวจสอบว่ามีการอัปเดตข้อมูลในทั้งสองตารางหรือไม่
+      if (doctorResult.affectedRows > 0) {
+        await conn.commit();
         res.status(200).json({ success: true, message: 'อัปเดตข้อมูลสำเร็จ' });
       } else {
-        res.status(404).json({ success: false, message: 'ไม่พบผู้ใช้นี้ในระบบ' });
+        // Rollback หากไม่มีข้อมูลในตาราง `doctor`
+        await conn.rollback();
+        res.status(404).json({ success: false, message: 'ไม่พบข้อมูลแพทย์ในระบบ' });
       }
     } catch (error) {
+      // Rollback ในกรณีที่เกิดข้อผิดพลาด
+      if (conn) {
+        await conn.rollback();
+      }
+  
       console.error('Error during doctor update:', error.message);
       console.error('Stack trace:', error.stack);
-      res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดในระบบ', error: error.message });
+      res.status(500).json({
+        success: false,
+        message: 'เกิดข้อผิดพลาดในระบบ',
+        error: error.message,
+      });
     } finally {
+      // ปิดการเชื่อมต่อฐานข้อมูล
       if (conn) {
         await conn.end();
       }
     }
   });
+  
   
 
   router.post('/doctorResult', async (req, res) => {

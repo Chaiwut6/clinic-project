@@ -1321,7 +1321,6 @@ async function saveAppointment() {
   }
 }
 
-
 async function fetchAppointments(doc_id, selectedDate) {
   try {
     const response = await axios.post("http://localhost:8000/api/employees/getAppointments", {
@@ -1348,7 +1347,19 @@ async function populateAppointmentTable(doc_id, selectedDate) {
     return;
   }
 
-  appointments.forEach((appointment) => {
+  // กรองข้อมูลเพิ่มเติมในกรณีที่ backend ส่งข้อมูลสถานะมา
+  const validAppointments = appointments.filter(
+    (appointment) => appointment.status !== "ยกเลิก"
+  );
+
+  if (validAppointments.length === 0) {
+    const row = document.createElement("tr");
+    row.innerHTML = `<td colspan="3">ไม่มีการนัดหมายในวันที่เลือก</td>`;
+    appointmentTable.appendChild(row);
+    return;
+  }
+
+  validAppointments.forEach((appointment) => {
     const row = document.createElement("tr");
     row.innerHTML = `
       <td>${new Date(appointment.date).toLocaleDateString("th-TH", {
@@ -1593,12 +1604,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const currentPage = window.location.pathname.split("/").pop(); // 
   if (currentPage === "manage_doctor.html") {
     fetchDoctors();
+    sessionStorage.removeItem("user_id");
   }
   if (currentPage === "manage_admin.html") {
     fetchEmployee()
+    sessionStorage.removeItem("user_id");
   }
   if (currentPage === "manage_user.html") {
     fetchUserlist()
+    sessionStorage.removeItem("user_id");
   }
   if (currentPage === "mange_user_data.html") {
     fetchUserDataAndDisplay()
@@ -1608,5 +1622,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   if (currentPage === "manage_man.html") {
     fetchManger()
+    sessionStorage.removeItem("user_id");
+  }
+  if (currentPage === "patientslist.html") {
+    sessionStorage.removeItem("user_id");
   }
 });

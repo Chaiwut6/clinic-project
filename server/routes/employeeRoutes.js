@@ -393,11 +393,12 @@ router.post('/appointments', async (req, res) => {
       });
     }
 
-    // ตรวจสอบการซ้ำของเวลานัดหมายสำหรับหมอคนเดียวกัน
+    // ตรวจสอบการซ้ำของเวลานัดหมายสำหรับหมอคนเดียวกัน (ยกเว้นสถานะ "ยกเลิก")
     const conflictCheckQuery = `
       SELECT * FROM Appointment
       WHERE doc_id = ?
       AND date = ?
+      AND status != 'ยกเลิก' 
       AND (
         (time_start < ? AND time_end > ?) OR
         (time_start < ? AND time_end > ?) OR
@@ -460,6 +461,7 @@ router.post('/appointments', async (req, res) => {
   }
 });
 
+
 router.post("/getAppointments", async (req, res) => {
   const { doc_id, date } = req.body;
   let conn = null;
@@ -468,7 +470,12 @@ router.post("/getAppointments", async (req, res) => {
     conn = await initMySQL();
 
     const [appointments] = await conn.query(
-      "SELECT date, time_start, time_end FROM Appointment WHERE doc_id = ? AND date = ? ORDER BY time_start",
+      `
+      SELECT date, time_start, time_end, status 
+      FROM Appointment 
+      WHERE doc_id = ? AND date = ? AND status != 'ยกเลิก'
+      ORDER BY time_start
+      `,
       [doc_id, date]
     );
 
