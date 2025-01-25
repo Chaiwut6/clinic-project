@@ -111,6 +111,16 @@
   }
   
   /* ปรับสไตล์ตาราง */
+  .history-table-container {
+    max-height: 300px; /* กำหนดความสูงสูงสุดของพื้นที่ตาราง */
+    overflow-y: auto; /* เพิ่ม Scrollbars แนวตั้งเมื่อข้อมูลเกินพื้นที่ */
+  }
+
+  .assessment-table-container {
+    max-height: 300px; /* กำหนดความสูงสูงสุดของพื้นที่ตาราง */
+    overflow-y: auto; /* เพิ่ม Scrollbars แนวตั้งเมื่อข้อมูลเกินพื้นที่ */
+  }
+  
   .history-table {
     width: 100%;
     border-collapse: collapse;
@@ -126,6 +136,7 @@
     background-color: #f4f4f4;
     font-weight: bold;
   }
+  
   
   
   form {
@@ -262,6 +273,36 @@
   background-color: #D3D3D3;  /* สีพื้นหลังเมื่อปุ่มถูก Disable */
   cursor: not-allowed;        /* เปลี่ยนเคอร์เซอร์เป็นรูปไม่สามารถคลิกได้ */
 }
+
+.confirm-appointment {
+  background-color: #32CD32;  /* สีพื้นหลังปุ่ม (สีเขียวอ่อน) */
+  color: white;               /* สีตัวอักษร */
+  border: none;               /* ลบเส้นขอบ */
+  border-radius: 5px;         /* ทำมุมปุ่มให้โค้งมน */
+  padding: 5px 10px;         /* ขนาดของปุ่ม */
+  font-size: 16px;            /* ขนาดตัวอักษร */
+  cursor: pointer;           /* เปลี่ยนเคอร์เซอร์เมื่อชี้ที่ปุ่ม */
+  transition: background-color 0.3s, transform 0.3s;  /* การเปลี่ยนแปลงเมื่อ Hover */
+}
+
+/* เมื่อ Hover */
+.confirm-appointment:hover {
+  background-color: #2E8B57;  /* เปลี่ยนสีพื้นหลังเมื่อ Hover */
+  transform: scale(1.1);       /* ขยายขนาดปุ่มเล็กน้อย */
+}
+
+/* เมื่อคลิกปุ่ม */
+.confirm-appointment:active {
+  background-color: #228B22;  /* เปลี่ยนสีเมื่อคลิก */
+  transform: scale(0.98);      /* ลดขนาดของปุ่มเล็กน้อยเมื่อคลิก */
+}
+
+/* เมื่อปุ่มถูก Disable */
+.confirm-appointment:disabled {
+  background-color: #D3D3D3;  /* สีพื้นหลังเมื่อปุ่มถูก Disable */
+  cursor: not-allowed;        /* เปลี่ยนเคอร์เซอร์เป็นรูปไม่สามารถคลิกได้ */
+}
+
    /* สไตล์พื้นฐานสำหรับ Custom Modal */
    .custom-modal {
     display: none; 
@@ -357,3 +398,25 @@
     gap: 10px;
     align-items: center;
   }
+
+  .close-case-btn {
+    background-color: #FF6347;  /* สีแดงส้ม */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.close-case-btn:hover {
+    background-color: #FF4500; /* สีแดงเข้ม */
+    
+}
+
+.close-case-btn:active {
+    background-color: #FF0000; /* สีแดง */
+}
+

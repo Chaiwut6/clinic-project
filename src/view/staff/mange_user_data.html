@@ -191,6 +191,7 @@
                             <p><strong>คณะ:</strong> <span id="user-faculty"></span></p>
                             <p><strong>ชั้นปี:</strong> <span id="user-year"></span></p>
                         </div>
+                        <button id="close-case-btn" class="close-case-btn">ปิดเคส</button>
                     </section>
 
                     <div class="history-container">
@@ -198,56 +199,60 @@
                         <section class="card assessment-history">
                             <h2>ประวัติการทำแบบประเมิน</h2>
                             <div class="filter-container" id="filter-container">
-                                <!-- select จะถูกสร้างใน JavaScript -->
+                              <!-- select จะถูกสร้างใน JavaScript -->
                             </div>
-                            <table class="history-table">
+                            <div class="assessment-table-container">
+                              <table class="history-table">
                                 <thead>
-                                    <tr>
-                                        <th>วันที่</th>
-                                        <th>ผลการประเมิน</th>
-                                    </tr>
+                                  <tr>
+                                    <th>วันที่</th>
+                                    <th>ผลการประเมิน</th>
+                                  </tr>
                                 </thead>
                                 <tbody id="assessment-history-body">
-                                    <!-- ข้อมูลจะแสดงที่นี่ -->
+                                  <!-- ข้อมูลจะแสดงที่นี่ -->
                                 </tbody>
-                            </table>
-                        </section>
-
+                              </table>
+                            </div>
+                          </section>
+                          
 
 
                         <!-- Section: Appointment History -->
                         <section class="card appointment-history">
                             <h2>ประวัติการนัดที่ผ่านมา</h2>
                             <div class="filter-container">
-                                <!-- select สำหรับเลือกเดือน -->
-                                <select id="appointment-month">
-                                    <option value="all">เลือกเดือน</option>
-                                    <option value="01">มกราคม</option>
-                                    <option value="02">กุมภาพันธ์</option>
-                                    <option value="03">มีนาคม</option>
-                                    <option value="04">เมษายน</option>
-                                    <option value="05">พฤษภาคม</option>
-                                    <option value="06">มิถุนายน</option>
-                                    <option value="07">กรกฎาคม</option>
-                                    <option value="08">สิงหาคม</option>
-                                    <option value="09">กันยายน</option>
-                                    <option value="10">ตุลาคม</option>
-                                    <option value="11">พฤศจิกายน</option>
-                                    <option value="12">ธันวาคม</option>
-                                </select>
+                              <!-- select สำหรับเลือกเดือน -->
+                              <select id="appointment-month">
+                                <option value="all">เลือกเดือน</option>
+                                <option value="01">มกราคม</option>
+                                <option value="02">กุมภาพันธ์</option>
+                                <option value="03">มีนาคม</option>
+                                <option value="04">เมษายน</option>
+                                <option value="05">พฤษภาคม</option>
+                                <option value="06">มิถุนายน</option>
+                                <option value="07">กรกฎาคม</option>
+                                <option value="08">สิงหาคม</option>
+                                <option value="09">กันยายน</option>
+                                <option value="10">ตุลาคม</option>
+                                <option value="11">พฤศจิกายน</option>
+                                <option value="12">ธันวาคม</option>
+                              </select>
                             </div>
-                            <table class="history-table">
+                            <div class="history-table-container">
+                              <table class="history-table">
                                 <thead>
-                                    <tr>
-                                        <th>วันที่</th>
-                                        <th>สถานะ</th>
-                                    </tr>
+                                  <tr>
+                                    <th>วันที่</th>
+                                    <th>สถานะ</th>
+                                  </tr>
                                 </thead>
                                 <tbody id="appointment-history-body">
-                                    <!-- ข้อมูลการนัดจะแสดงที่นี่ -->
+                                  <!-- ข้อมูลการนัดจะแสดงที่นี่ -->
                                 </tbody>
-                            </table>
-                        </section>
+                              </table>
+                            </div>
+                          </section>
 
                     </div>
 

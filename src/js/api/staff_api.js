@@ -938,13 +938,20 @@ async function fetchUserDataAndDisplay() {
         row2.innerHTML = `
           <td>${formattedFirstDate || 'ยังไม่มีการนัด'}</td>
           <td>${firstAppointment.status || 'ยังไม่มีการนัด'}</td>
-          <td><button class="cancel-appointment" data-appointment-id="${firstAppointment.Appointment_id}">ยกเลิก</button></td>
+          <td>
+            <button class="confirm-appointment" data-appointment-id="${firstAppointment.Appointment_id}">ยืนยัน</button>
+            <button class="cancel-appointment" data-appointment-id="${firstAppointment.Appointment_id}">ยกเลิก</button>
+          </td>
         `;
         appointmentList.appendChild(row2);
     
-        // เพิ่ม Event Listener ให้กับปุ่ม "ยกเลิก"
-        const cancelButton = row2.querySelector('.cancel-appointment');
-        cancelButton.addEventListener('click', handleCancelAppointment);
+       // เพิ่ม Event Listener ให้กับปุ่ม "ยกเลิก"
+    const cancelButton = row2.querySelector('.cancel-appointment');
+    cancelButton.addEventListener('click', handleCancelAppointment);
+
+    // เพิ่ม Event Listener ให้กับปุ่ม "ยืนยัน"
+    const confirmButton = row2.querySelector('.confirm-appointment');
+    confirmButton.addEventListener('click', handleConfirmAppointment);
       }
     }
     
@@ -953,7 +960,7 @@ async function fetchUserDataAndDisplay() {
       const appointmentId = event.target.getAttribute('data-appointment-id');
     
       try {
-        const response = await axios.post("http://localhost:8000/api/employees/appointmentscancel", {
+        const response = await axios.post("http://localhost:8000/api/employees/Statusappointments", {
           Appointment_id: appointmentId,
           status: 'ยกเลิก'
         });
@@ -969,6 +976,27 @@ async function fetchUserDataAndDisplay() {
       } catch (error) {
         console.error('Error canceling appointment:', error);
         alert('เกิดข้อผิดพลาดในการยกเลิกการนัดหมาย');
+      }
+    }
+
+    async function handleConfirmAppointment(event) {
+      const appointmentId = event.target.getAttribute('data-appointment-id');
+    
+      try {
+        const response = await axios.post("http://localhost:8000/api/employees/Statusappointments", {
+          Appointment_id: appointmentId,
+          status: 'ยืนยัน',
+        });
+    
+        if (response.status === 200) {
+          alert('การนัดหมายได้รับการยืนยันเรียบร้อยแล้ว');
+          location.reload();
+        } else {
+          alert('ไม่สามารถยืนยันการนัดหมายได้');
+        }
+      } catch (error) {
+        console.error('Error confirming appointment:', error);
+        alert('เกิดข้อผิดพลาดในการยืนยันการนัดหมาย');
       }
     }
     
@@ -1042,7 +1070,35 @@ async function fetchUserDataAndDisplay() {
     //   }
     // }
     
-
+    document.getElementById("close-case-btn").addEventListener("click", async () => {
+      const userId = document.getElementById("userid").textContent;
+    
+      if (!userId) {
+          alert("ไม่พบรหัสผู้ใช้งาน");
+          return;
+      }
+    
+      if (!confirm("คุณต้องการปิดเคสสำหรับผู้ใช้งานนี้หรือไม่?")) {
+          return; // หากผู้ใช้ยกเลิกการยืนยัน
+      }
+    
+      try {
+          const response = await axios.post("http://localhost:8000/api/employees/closeCase", {
+              user_id: userId,
+          });
+    
+          if (response.status === 200) {
+              alert("ปิดเคสสำเร็จ");
+              // รีเฟรชข้อมูลในหน้าปัจจุบัน
+              fetchUserDetails(userId); // เรียกฟังก์ชันสำหรับโหลดข้อมูลผู้ใช้อีกครั้ง
+          } else {
+              alert(response.data.message || "ไม่สามารถปิดเคสได้");
+          }
+      } catch (error) {
+          console.error("Error closing case:", error);
+          alert("เกิดข้อผิดพลาดในการปิดเคส");
+      }
+    });
     
   } catch (error) {
     console.error('Error:', error);
@@ -1598,6 +1654,8 @@ async function fetchManger() {
     document.getElementById("managerinTable").innerHTML = `<tr><td colspan="4">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
   }
 }
+
+
 
 // เรียกใช้ฟังก์ชันเมื่อโหลดหน้า
 document.addEventListener("DOMContentLoaded", () => {

@@ -19,13 +19,11 @@ async function fetchAppointment() {
     // เติมตัวเลือกลงใน select
     doctors.forEach(doctor => {
       const option = document.createElement("option");
-      option.value = doctor.doc_id; 
       option.value = doctor.doc_name; 
       option.textContent = doctor.doc_name; 
       doctorSelect.appendChild(option);
     });
   
-   
     doctorSelect.addEventListener("change", () => {
       selectedDoctorId = doctorSelect.value || null; // ถ้าไม่ได้เลือกให้เป็น null
       selectedDoctorName = doctors.find(doctor => doctor.doc_id === selectedDoctorId)?.doc_name || null; // ดึงชื่อแพทย์

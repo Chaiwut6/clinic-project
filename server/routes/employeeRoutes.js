@@ -395,7 +395,7 @@ router.post('/appointments', async (req, res) => {
 
     // ตรวจสอบการซ้ำของเวลานัดหมายสำหรับหมอคนเดียวกัน (ยกเว้นสถานะ "ยกเลิก")
     const conflictCheckQuery = `
-      SELECT * FROM Appointment
+      SELECT * FROM appointments
       WHERE doc_id = ?
       AND date = ?
       AND status != 'ยกเลิก' 
@@ -442,7 +442,7 @@ router.post('/appointments', async (req, res) => {
     };
 
     // บันทึกข้อมูลลงในตาราง appointments
-    await conn.query('INSERT INTO Appointment SET ?', appointmentData);
+    await conn.query('INSERT INTO appointments SET ?', appointmentData);
 
     // ส่ง response กลับไปยัง client
     res.status(201).json({
@@ -472,7 +472,7 @@ router.post("/getAppointments", async (req, res) => {
     const [appointments] = await conn.query(
       `
       SELECT date, time_start, time_end, status 
-      FROM Appointment 
+      FROM appointments
       WHERE doc_id = ? AND date = ? AND status != 'ยกเลิก'
       ORDER BY time_start
       `,
@@ -494,10 +494,7 @@ router.post("/getAppointments", async (req, res) => {
 });
 
 
-
-
-
-router.post('/appointmentscancel', async (req, res) => {
+router.post('/Statusappointments', async (req, res) => {
   const { Appointment_id, status } = req.body;
   let conn = null;
 
@@ -511,7 +508,7 @@ router.post('/appointmentscancel', async (req, res) => {
 
     // อัพเดตสถานะเป็น 'ยกเลิก'
     const result = await conn.query(
-      'UPDATE Appointment SET status = ? WHERE Appointment_id = ?',
+      'UPDATE appointments SET status = ? WHERE Appointment_id = ?',
       [status, Appointment_id]
     );
 
@@ -541,8 +538,8 @@ router.post('/userdetails', async (req, res) => {
     conn = await initMySQL();
 
     const [user] = await conn.query("SELECT * FROM users WHERE user_id = ?", [userId]);
-    const [Result] = await conn.query("SELECT * FROM results WHERE user_id = ?", [userId]);
-    const [Appointment] = await conn.query("SELECT * FROM Appointment WHERE user_id = ?", [userId]);
+    const [Result] = await conn.query("SELECT * FROM risk_results WHERE user_id = ?", [userId]);
+    const [Appointment] = await conn.query("SELECT * FROM appointments WHERE user_id = ?", [userId]);
 
     const userinfo = user;
     const userdetails = Result;
@@ -576,14 +573,14 @@ router.post('/receivecare', async (req, res) => {
     // ดึงข้อมูล Appointment โดยเรียงลำดับจากวันที่ล่าสุด
     const [appointments] = await conn.query(`
       SELECT * 
-      FROM Appointment 
+      FROM appointments
     `);
 
     // ดึงเฉพาะ users ที่มีการนัดหมายใน Appointment
     const [usersWithAppointments] = await conn.query(`
       SELECT DISTINCT u.*
       FROM users u
-      INNER JOIN Appointment a ON u.user_id = a.user_id
+      INNER JOIN appointments a ON u.user_id = a.user_id
     `);
 
     // ตรวจสอบข้อมูล
@@ -635,7 +632,58 @@ router.post('/userfetch', async (req, res) => {
   }
 });
 
+router.post("/closeCase", async (req, res) => {
+  const { user_id } = req.body;
+  let conn = null;
 
+  try {
+    conn = await initMySQL();
+
+    if (!user_id) {
+      return res.status(400).json({
+        success: false,
+        message: "กรุณาเลือกผู้ใช้งานที่ต้องการปิดเคส",
+      });
+    }
+
+    // ค้นหา Appointment ที่ยืนยันล่าสุด (ไม่ใช่ "ยกเลิก")
+    const [latestConfirmedAppointment] = await conn.query(
+      `SELECT Appointment_id 
+       FROM appointments 
+       WHERE user_id = ? AND status = 'ยืนยัน' 
+       ORDER BY date DESC, time_start DESC 
+       LIMIT 1`,
+      [user_id]
+    );
+
+    if (latestConfirmedAppointment.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "ไม่พบการนัดหมายที่ยืนยันล่าสุด",
+      });
+    }
+
+    // อัปเดตสถานะของการนัดหมายที่ยืนยันล่าสุดเป็น "ปิดเคส"
+    const appointmentId = latestConfirmedAppointment[0].Appointment_id;
+    const [updateResult] = await conn.query(
+      "UPDATE appointments SET status = 'ปิดเคส' WHERE Appointment_id = ?",
+      [appointmentId]
+    );
+
+    if (updateResult.affectedRows > 0) {
+      res.status(200).json({ success: true, message: "ปิดเคสสำเร็จ" });
+    } else {
+      res.status(500).json({ success: false, message: "ไม่สามารถปิดเคสได้" });
+    }
+  } catch (error) {
+    console.error("Error closing case:", error);
+    res.status(500).json({ success: false, message: "เกิดข้อผิดพลาดในระบบ", error: error.message });
+  } finally {
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
 
   
 

@@ -90,7 +90,7 @@ router.post("/login", async (req, res) => {
 
     if (userData.roles === 'user') {
       const [userResults] = await conn.query("SELECT * FROM users WHERE user_id = ?", [login_id]);
-      const [userAssessResults] = await conn.query("SELECT * FROM results WHERE user_id = ?", [login_id]);
+      const [userAssessResults] = await conn.query("SELECT * FROM risk_results WHERE user_id = ?", [login_id]);
       userInfo = userResults[0];
       userAssess = userAssessResults;
     } else if (userData.roles === 'employee') {
@@ -190,7 +190,7 @@ router.post('/save-result', async (req, res) => {
     };
 
     // แทรกข้อมูลใหม่เข้าไปในฐานข้อมูล
-    const [results] = await conn.query('INSERT INTO results SET ?', userData);
+    const [results] = await conn.query('INSERT INTO risk_results SET ?', userData);
 
     // ตรวจสอบผลการแทรกข้อมูล
     if (results.affectedRows > 0) {
@@ -226,7 +226,7 @@ router.post('/userinfo', verifyToken, async (req, res) => {
 
     // Query user information
     const [userResults] = await conn.query("SELECT * FROM users WHERE user_id = ?", [login_id]);
-    const [userAssess] = await conn.query("SELECT * FROM results WHERE user_id = ?", [login_id]);
+    const [userAssess] = await conn.query("SELECT * FROM risk_results WHERE user_id = ?", [login_id]);
     
     const userInfo = userResults[0];
     const userAssessInfo = userAssess;
@@ -409,7 +409,7 @@ router.post('/appointment', verifyToken, async (req, res) => {
     const conn = await initMySQL();
 
     const [appointments] = await conn.query(
-      "SELECT * FROM Appointment WHERE user_id = ?",
+      "SELECT * FROM appointments WHERE user_id = ?",
       [user_id]
     );
 
@@ -446,7 +446,7 @@ router.post('/update-appointment', async (req, res) => {
 
     // อัปเดตสถานะของการนัดหมาย
     const [result] = await conn.query(
-      "UPDATE Appointment SET status = ? WHERE Appointment_id = ?",
+      "UPDATE appointments SET status = ? WHERE Appointment_id = ?",
       [status, Appointment_id]
     );
 

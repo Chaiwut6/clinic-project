@@ -162,7 +162,7 @@ router.post("/register-doctor", async (req, res) => {
   
       // อัปเดตข้อมูลในตาราง `Appointment`
       const [appointmentResult] = await conn.query(
-        "UPDATE Appointment SET doc_name = ? WHERE doc_id = ?",
+        "UPDATE appointments SET doc_name = ? WHERE doc_id = ?",
         [doc_name, doc_id]
       );
   
