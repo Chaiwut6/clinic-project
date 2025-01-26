@@ -199,85 +199,47 @@ function closeModal() {
 }
 
 function exportToExcel() {
-  // ดึงข้อมูลจาก select box ที่เลือกชื่อแพทย์
   const doctorSelect = document.getElementById("doctorSelect");
-  const selectedDoctor = doctorSelect.value; // ค่าแพทย์ที่เลือกจาก dropdown
-  
-  // ดึงตารางข้อมูล
+  const selectedDoctor = doctorSelect.value;
+
   const table = document.getElementById("patientTable");
   const rows = Array.from(table.querySelectorAll("tr"));
 
-  // สร้าง object สำหรับจัดกลุ่มข้อมูลตามชื่อแพทย์
   const groupedData = {};
 
   rows.forEach((row) => {
-    // อ่านชื่อแพทย์จากเซลล์ที่ 7
     const doctorName = row.cells[7]?.innerText.trim().toLowerCase();
 
-    // หากเลือกทั้งหมดหรือชื่อแพทย์ที่ตรงกัน
     if (selectedDoctor === "all" || !selectedDoctor || doctorName === selectedDoctor.toLowerCase()) {
-      // ตรวจสอบว่าแพทย์นั้นมีข้อมูลในกลุ่มแล้วหรือไม่
       if (!groupedData[doctorName]) {
-        groupedData[doctorName] = []; // สร้าง array สำหรับชื่อแพทย์ใหม่
+        groupedData[doctorName] = [];
       }
-      
-      // สร้างสำเนาของแถว
-      const clonedRow = row.cloneNode(true);
-      clonedRow.deleteCell(7); // ลบเซลล์ที่ 7 (ข้อมูลที่ไม่ต้องการ)
-      groupedData[doctorName].push(clonedRow); // เพิ่มแถวลงในกลุ่มของแพทย์
+      groupedData[doctorName].push(row.cloneNode(true));
     }
   });
 
-  // สร้างตารางใหม่สำหรับแสดงข้อมูล
-  const newTable = document.createElement("table");
-  newTable.style.width = "100%"; // ทำให้ตารางขยายเต็มความกว้าง
-  newTable.style.borderCollapse = "collapse"; // ปรับขอบตารางให้เรียบ
-  newTable.style.fontFamily = "Arial, sans-serif"; // ใช้ฟอนต์ที่อ่านง่าย
+  const workbook = XLSX.utils.book_new();
 
-  // เพิ่มหัวข้อสำหรับแต่ละกลุ่มแพทย์
   Object.keys(groupedData).forEach((doctorName) => {
-    const originalDoctorName = doctorName.charAt(0).toUpperCase() + doctorName.slice(1); // เปลี่ยนตัวแรกเป็นตัวพิมพ์ใหญ่
+    const sheetData = [
+      ["รหัสประจำตัว", "ชื่อ-นามสกุล", "ชื่อเล่น", "คณะ", "เบอร์โทร", "ปัญหา", "วันนัดหมาย"], // เพิ่มหัวข้อ "ปัญหา"
+    ];
 
-    // สร้างแถวหัวข้อ
-    const doctorHeader = document.createElement("tr");
-    const doctorHeaderCell = document.createElement("td");
-    doctorHeaderCell.colSpan = 7; // ขยายเซลล์หัวข้อให้ครอบคลุม 7 คอลัมน์
-    doctorHeaderCell.innerText = `ชื่อแพทย์: ${originalDoctorName}`;
-    doctorHeaderCell.style.fontWeight = "bold";
-    doctorHeaderCell.style.textAlign = "center"; // จัดกึ่งกลางหัวข้อแพทย์
-    doctorHeaderCell.style.fontSize = "16px";
-    doctorHeaderCell.style.backgroundColor = "#f2f2f2"; // เพิ่มสีพื้นหลังให้หัวข้อ
-    doctorHeaderCell.style.padding = "10px";
-    doctorHeader.appendChild(doctorHeaderCell);
-    newTable.appendChild(doctorHeader);
-
-    // เพิ่มแถวข้อมูลผู้ป่วยทั้งหมดในแต่ละกลุ่ม
     groupedData[doctorName].forEach((row) => {
-      const patientRow = document.createElement("tr");
-
-      // สร้างแถวใหม่และเพิ่มข้อมูลผู้ป่วย
-      Array.from(row.cells).forEach((cell, index) => {
-        const newCell = document.createElement("td");
-        newCell.innerText = cell.innerText;
-        newCell.style.border = "1px solid #ddd"; // ขอบตารางของแต่ละเซลล์
-        newCell.style.padding = "8px";
-        newCell.style.textAlign = "center"; // จัดกึ่งกลางข้อมูลผู้ป่วย
-        patientRow.appendChild(newCell);
-      });
-
-      newTable.appendChild(patientRow);
+      const cells = Array.from(row.cells).slice(0, 7); // ดึงข้อมูลคอลัมน์ "ปัญหา" (คอลัมน์ที่ 7)
+      sheetData.push(cells.map((cell) => cell.innerText));
     });
+
+    const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+    const sheetName = doctorName.charAt(0).toUpperCase() + doctorName.slice(1) || "ทั้งหมด";
+    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
   });
 
-  // แปลงตารางใหม่เป็นไฟล์ Excel
-  const workbook = XLSX.utils.table_to_book(newTable, { sheet: "Appointments" });
+  const fileName =
+    selectedDoctor && selectedDoctor !== "all"
+      ? `${selectedDoctor}_การนัดหมาย.xlsx`
+      : "การนัดหมายทั้งหมด.xlsx";
 
-  // ตั้งชื่อไฟล์ตามการเลือกแพทย์
-  const fileName = selectedDoctor && selectedDoctor !== "all" 
-    ? `${selectedDoctor}_การนัดหมาย.xlsx` 
-    : "การนัดหมายทั้งหมด.xlsx";
-
-  // บันทึกไฟล์ Excel
   XLSX.writeFile(workbook, fileName);
 }
 

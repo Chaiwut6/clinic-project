@@ -1,34 +1,55 @@
 async function fetchAppointment() {
-    try {
-      const response = await axios.post("http://localhost:8000/api/doctors/doctorResult");
-      if (response.status >= 200 && response.status < 300) {
-        const doctors = response.data.doctor;
-        populateDoctorDropdown(doctors);
-      } else {
-        throw new Error("Error fetching doctor data");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("เกิดข้อผิดพลาดในการดึงข้อมูลแพทย์");
+  try {
+    const response = await axios.post("http://localhost:8000/api/doctors/doctorResult");
+    if (response.status >= 200 && response.status < 300) {
+      let doctors = response.data.doctor;
+      
+      // ลบรายการแพทย์ที่ซ้ำ
+      doctors = removeDuplicateDoctors(doctors);
+
+      // เติมตัวเลือกลงใน select
+      populateDoctorDropdown(doctors);
+    } else {
+      throw new Error("Error fetching doctor data");
     }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("เกิดข้อผิดพลาดในการดึงข้อมูลแพทย์");
   }
+}
   
+  function removeDuplicateDoctors(doctors) {
+    const uniqueDoctors = [];
+    const seen = new Set();
+  
+    doctors.forEach(doctor => {
+      if (!seen.has(doctor.doc_id)) {
+        uniqueDoctors.push(doctor);
+        seen.add(doctor.doc_id);
+      }
+    });
+  
+    return uniqueDoctors;
+  }
+
   function populateDoctorDropdown(doctors) {
     const doctorSelect = document.getElementById("doctorSelect");
+  
+    // ลบตัวเลือกเก่าที่อาจมีอยู่แล้วใน select
+    doctorSelect.innerHTML = `<option value="">--เลือกแพทย์--</option>`;
   
     // เติมตัวเลือกลงใน select
     doctors.forEach(doctor => {
       const option = document.createElement("option");
-      option.value = doctor.doc_name; 
-      option.textContent = doctor.doc_name; 
+      option.value = doctor.doc_name; // ใช้ doc_id เป็น value
+      option.textContent = doctor.doc_name; // ใช้ doc_name เป็นข้อความ
       doctorSelect.appendChild(option);
     });
   
     doctorSelect.addEventListener("change", () => {
-      selectedDoctorId = doctorSelect.value || null; // ถ้าไม่ได้เลือกให้เป็น null
-      selectedDoctorName = doctors.find(doctor => doctor.doc_id === selectedDoctorId)?.doc_name || null; // ดึงชื่อแพทย์
-      // console.log("Selected Doctor ID:", selectedDoctorId);
-      // console.log("Selected Doctor Name:", selectedDoctorName);
+      const selectedDoctorId = doctorSelect.value || null; // ถ้าไม่ได้เลือกให้เป็น null
+      const selectedDoctor = doctors.find(doctor => doctor.doc_id === selectedDoctorId);
+      const selectedDoctorName = selectedDoctor ? selectedDoctor.doc_name : null; // ดึงชื่อแพทย์
     });
   }
 
@@ -62,10 +83,10 @@ async function fetchAppointment() {
         }
   
         const appointmentDate = userAppointments[0]?.date
-          ? new Date(userAppointments[0].date).toLocaleDateString("en-GB", {
+          ? new Date(userAppointments[0].date).toLocaleDateString("th-TH", {
               year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
+              month: "long",
+              day: "numeric",
             })
           : "ไม่ระบุ";
   

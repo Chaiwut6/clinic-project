@@ -1,84 +1,72 @@
 const fetchAppointments = async () => {
   try {
-    // เรียก API พร้อมกับการส่ง cookies (รวมถึง token)
     const response = await axios.post('http://localhost:8000/api/users/appointment', null, {
-      withCredentials: true // ส่ง cookies
+      withCredentials: true,
     });
 
-    // ตรวจสอบสถานะการตอบกลับ
     if (response.status === 200 && response.data.success) {
-      const appointments = response.data.appointments;
+      const { pendingAppointment, confirmedAppointment } = response.data;
 
-      // ถ้าไม่มีข้อมูลการนัดหมาย
-      if (appointments.length === 0) {
-        alert('ยังไม่มีการนัดหมาย');
-        return;
-      }
-
-      // ดึง tbody element
       const appointmentTable = document.getElementById('userAppointment');
+      appointmentTable.innerHTML = ''; // ล้างข้อมูลเก่า
 
-      // ลบข้อมูลเก่าทั้งหมดในตาราง (กรณีที่มีการอัปเดต)
-      appointmentTable.innerHTML = '';
+      // ถ้ามีการนัดที่รอการยืนยัน
+      if (pendingAppointment) {
+        const formattedDate = new Intl.DateTimeFormat('th-TH', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        }).format(new Date(pendingAppointment.date));
 
-      // ตรวจสอบและแสดงแถวของข้อมูลที่มี status ไม่เป็น 'ยกเลิก'
-      let hasAppointments = false; // ตัวแปรเพื่อเช็คว่ามีการนัดหมายที่ไม่ถูกยกเลิกหรือไม่
-      appointments.forEach((appointment) => {
-        if (appointment.status !== 'ยกเลิก') {
-          hasAppointments = true;
-
-          // จัดรูปแบบวันที่
-          const formattedDate = new Intl.DateTimeFormat('th-TH', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-          }).format(new Date(appointment.date));
-
-          // กำหนดปุ่มที่จะแสดง
-          let buttonHtml = '';
-          if (appointment.status === 'รอการยืนยัน') {
-            buttonHtml = `
-              <button class="btn btn-success" onclick="updateStatus('${appointment.Appointment_id}', 'ยืนยัน')">ยืนยัน</button>
-              <button class="btn btn-danger" onclick="updateStatus('${appointment.Appointment_id}', 'ยกเลิก')">ยกเลิก</button>
-            `;
-          } else if (appointment.status === 'ยืนยัน') {
-            buttonHtml = `<button class="btn btn-secondary" disabled>ยืนยันแล้ว</button>`;
-          }
-          console.log(appointment.doc_name);
-      
-          // เพิ่มข้อมูลลงในตาราง
-          const row = `
-          <tr data-id="${appointment.Appointment_id}">
-            <td>${appointment.doc_name ? appointment.doc_name : "ยังไม่มีการนัด"}</td>
-            <td>${formattedDate ? formattedDate : "ยังไม่มีการนัด"}</td>
+        const row = `
+          <tr>
+            <td>${pendingAppointment.doc_name || 'ยังไม่มีการนัด'}</td>
+            <td>${formattedDate || 'ยังไม่มีการนัด'}</td>
+            <td>${pendingAppointment.time_start || 'ไม่ระบุ'}</td>
+            <td>${pendingAppointment.time_end || 'ไม่ระบุ'}</td>
             <td class="text-center">
-              ${buttonHtml ? buttonHtml : "ยังไม่มีการนัด"}
+              <button class="btn btn-success" onclick="updateStatus('${pendingAppointment.Appointment_id}', 'ยืนยัน')">ยืนยัน</button>
+              <button class="btn btn-danger" onclick="updateStatus('${pendingAppointment.Appointment_id}', 'ยกเลิก')">ยกเลิก</button>
             </td>
           </tr>
         `;
-          appointmentTable.innerHTML += row;
-        }
-      });
-
-      // ถ้าไม่มีการนัดหมายที่ไม่ถูกยกเลิก
-      if (!hasAppointments) {
-        appointmentTable.innerHTML = '<tr><td colspan="3" class="text-center">ยังไม่มีการนัดหมายที่ไม่ถูกยกเลิก</td></tr>';
+        appointmentTable.innerHTML = row;
       }
+      // ถ้าไม่มีการรอการยืนยัน ให้แสดงการยืนยันล่าสุด
+      else if (confirmedAppointment) {
+        const formattedDate = new Intl.DateTimeFormat('th-TH', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        }).format(new Date(confirmedAppointment.date));
 
-    } else if (response.status === 404) {
-      alert('ยังไม่มีการนัดหมาย');
+        const row = `
+          <tr>
+            <td>${confirmedAppointment.doc_name || 'ยังไม่มีการนัด'}</td>
+            <td>${formattedDate || 'ยังไม่มีการนัด'}</td>
+            <td>${confirmedAppointment.time_start || 'ไม่ระบุ'}</td>
+            <td>${confirmedAppointment.time_end || 'ไม่ระบุ'}</td>
+            <td class="text-center">
+              <button class="btn btn-secondary" disabled>ยืนยันแล้ว</button>
+            </td>
+          </tr>
+        `;
+        appointmentTable.innerHTML = row;
+      } else {
+        // ถ้าไม่มีข้อมูลทั้งสองแบบ
+        appointmentTable.innerHTML = '<tr><td colspan="5" class="text-center">ไม่มีการนัดหมาย</td></tr>';
+      }
     } else {
       alert('ไม่พบข้อมูลการนัดหมาย');
     }
   } catch (error) {
-    if (error.response && error.response.status === 404) {
-      alert('ยังไม่มีการนัดหมาย');
-    } else {
-      console.error('Error fetching appointments:', error);
-      alert('เกิดข้อผิดพลาดในการดึงข้อมูล');
-    }
+    console.error('Error fetching appointments:', error);
+    alert('เกิดข้อผิดพลาดในการดึงข้อมูล');
   }
 };
+
+
+
 
 
   const updateStatus = async (Appointment_id, status) => {

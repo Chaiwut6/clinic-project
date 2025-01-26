@@ -342,7 +342,12 @@ router.post('/updateuser', verifyToken, async (req, res) => {
 
     // อัปเดตในตาราง results
     const [result2] = await conn.query(
-      "UPDATE results SET user_fname = ?, user_lname = ? WHERE user_id = ?",
+      "UPDATE risk_results SET user_fname = ?, user_lname = ? WHERE user_id = ?",
+      [user_fname, user_lname, login_id]
+    );
+
+    const [result3] = await conn.query(
+      "UPDATE appointments SET user_fname = ?, user_lname = ? WHERE user_id = ?",
       [user_fname, user_lname, login_id]
     );
 
@@ -403,38 +408,56 @@ router.post('/checkuser', async (req, res) => {
 
 
 router.post('/appointment', verifyToken, async (req, res) => {
+  const user_id = req.user.login_id;
   let conn = null;
-  const user_id = req.user.login_id;  
-  try {
-    const conn = await initMySQL();
 
-    const [appointments] = await conn.query(
-      "SELECT * FROM appointments WHERE user_id = ?",
+  try {
+    conn = await initMySQL();
+
+    // ดึงการนัดที่รอการยืนยัน (ถ้ามี)
+    const [pendingAppointment] = await conn.query(
+      `
+      SELECT * 
+      FROM appointments 
+      WHERE user_id = ? AND status = 'รอการยืนยัน'
+      ORDER BY date ASC, time_start ASC
+      LIMIT 1
+      `,
       [user_id]
     );
 
-    if (appointments.length === 0) {
-      return res.status(404).json({ success: false, message: 'ไม่พบข้อมูลการนัดหมาย' });
+    // ถ้าไม่มีการนัดรอการยืนยัน ดึงการนัดที่ยืนยันล่าสุด
+    let confirmedAppointment = [];
+    if (pendingAppointment.length === 0) {
+      [confirmedAppointment] = await conn.query(
+        `
+        SELECT * 
+        FROM appointments 
+        WHERE user_id = ? AND status = 'ยืนยัน'
+        ORDER BY date DESC, time_start DESC
+        LIMIT 1
+        `,
+        [user_id]
+      );
     }
 
-    // ส่งข้อมูลกลับไปยัง Client
     return res.status(200).json({
       success: true,
-      message: 'ดึงข้อมูลการนัดหมายสำเร็จ',
-      appointments,
+      pendingAppointment: pendingAppointment[0] || null,
+      confirmedAppointment: confirmedAppointment[0] || null,
     });
   } catch (error) {
-    // แสดงข้อผิดพลาดในระบบ
-    console.error('Error during fetching appointments:', error.message);
-    console.error('Stack trace:', error.stack);
+    console.error('Error fetching appointment:', error.message);
     return res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดในระบบ', error: error.message });
   } finally {
-    // ตรวจสอบให้แน่ใจว่าการเชื่อมต่อถูกปิด
     if (conn) {
       await conn.end();
     }
   }
 });
+
+
+
 
 router.post('/update-appointment', async (req, res) => {
   const { Appointment_id, status } = req.body;
@@ -464,10 +487,5 @@ router.post('/update-appointment', async (req, res) => {
     }
   }
 });
-
-
-
-
-
 
 module.exports = router;

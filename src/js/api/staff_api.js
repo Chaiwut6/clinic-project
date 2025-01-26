@@ -1078,7 +1078,7 @@ async function fetchUserDataAndDisplay() {
           return;
       }
     
-      if (!confirm("คุณต้องการปิดเคสสำหรับผู้ใช้งานนี้หรือไม่?")) {
+      if (!confirm("คุณต้องการปิดเคสนี้หรือไม่?")) {
           return; // หากผู้ใช้ยกเลิกการยืนยัน
       }
     
