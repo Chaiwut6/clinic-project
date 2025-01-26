@@ -1,0 +1,64 @@
+.container-main {
+    max-width: 100%;
+}
+.container {
+    display: flex;
+    max-width: 150%;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+.container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    flex: 1;
+}
+section {
+    flex: 1;
+    min-width: 300px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+     margin-bottom: 15px;
+}
+
+section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    color: #7FB0EE;
+}
+
+section p {
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+.contact-info {
+    margin-top: 10px;
+}
+
+.contact-info span {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    
+}
+
+.contact-info i {
+    color: #7FB0EE;
+    margin-right: 10px;
+}
+
+.highlight {
+    font-weight: bold;
+    color: #000048;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+}

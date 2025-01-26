@@ -177,7 +177,7 @@ const login = async () => {
 
       // เปลี่ยนเส้นทางตามบทบาทผู้ใช้
       if (responseData.roles === 'user') {
-        window.location.href = '/view/users/user_main.html';
+        window.location.href = '/view/users/user_info.html';
       } else if (responseData.roles === 'doctor') {
         window.location.href = '../view/doctor/doc_main.html';
       } else if (responseData.roles === 'employee') {

@@ -172,50 +172,54 @@ router.post('/users', async (req, res) => {
 router.post('/save-result', async (req, res) => {
   let conn = null;
   try {
-    conn = await initMySQL();
-    const { user_id, totalScore, result, user_fname, user_lname } = req.body;
+      conn = await initMySQL();
+      const { result_id, user_id, totalScore, result, user_fname, user_lname } = req.body;
 
-    // ตรวจสอบว่า user_id ถูกส่งมาหรือไม่
-    if (!user_id || totalScore === undefined || result === undefined) {
-      return res.status(400).json({ message: 'User ID, totalScore, and result are required' });
-    }
+      // ตรวจสอบว่าข้อมูลครบถ้วน
+      if (!result_id || !user_id || totalScore === undefined || result === undefined) {
+          return res.status(400).json({ 
+              message: 'Result ID, User ID, totalScore, and result are required' 
+          });
+      }
 
-    // สร้างข้อมูลใหม่สำหรับผลลัพธ์การประเมิน
-    const userData = {
-      user_id: user_id,
-      total_score: totalScore,
-      result: result,
-      user_fname: user_fname,
-      user_lname: user_lname,
-    };
+      // สร้างข้อมูลใหม่สำหรับผลลัพธ์การประเมิน
+      const userData = {
+          result_id: result_id,
+          user_id: user_id,
+          total_score: totalScore,
+          result: result,
+          user_fname: user_fname,
+          user_lname: user_lname,
+      };
 
-    // แทรกข้อมูลใหม่เข้าไปในฐานข้อมูล
-    const [results] = await conn.query('INSERT INTO risk_results SET ?', userData);
+      // แทรกข้อมูลใหม่เข้าไปในฐานข้อมูล
+      const [results] = await conn.query('INSERT INTO risk_results SET ?', userData);
 
-    // ตรวจสอบผลการแทรกข้อมูล
-    if (results.affectedRows > 0) {
-      res.json({
-        message: 'Result saved successfully',
-        result_id: results.insertId,  // คืนค่า ID ที่ถูกแทรกเข้าไปในฐานข้อมูล
-      });
-    } else {
-      res.status(500).json({
-        message: 'Failed to save result'
-      });
-    }
+      // ตรวจสอบผลการแทรกข้อมูล
+      if (results.affectedRows > 0) {
+          res.json({
+              message: 'Result saved successfully',
+              result_id: result_id, // ส่ง result_id กลับไป
+          });
+      } else {
+          res.status(500).json({
+              message: 'Failed to save result'
+          });
+      }
   } catch (error) {
-    console.log('Error:', error);
-    res.status(500).json({
-      message: 'Error saving result',
-      error: error.message
-    });
+      console.log('Error:', error);
+      res.status(500).json({
+          message: 'Error saving result',
+          error: error.message
+      });
   } finally {
-    // Ensure the connection is closed
-    if (conn) {
-      await conn.end();
-    }
+      // Ensure the connection is closed
+      if (conn) {
+          await conn.end();
+      }
   }
 });
+
 
 router.post('/userinfo', verifyToken, async (req, res) => {
   const login_id = req.user.login_id;

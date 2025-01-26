@@ -90,9 +90,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
 
         async function saveResult(user_id, totalScore, result, user_fname, user_lname) {
-
+            const timestamp = Date.now().toString(); // เวลาปัจจุบันในรูปแบบ timestamp
+            const reversedTimestamp = timestamp.split("").reverse().join(""); // สลับตัวเลข
+            const resultId = `R${user_id.slice(-2)}${reversedTimestamp.slice(0, 7)}`; // ใช้ 2 ตัวท้ายของ user_id และ 7 ตัวแรกของ timestamp ที่สลับ
+        
             try {
                 const response = await axios.post("http://localhost:8000/api/users/save-result", {
+                    result_id: resultId, // ส่ง result_id ไปด้วย
                     user_id: user_id,
                     totalScore: totalScore,
                     result: result,

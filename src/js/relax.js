@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (nextContainer && nextContainer.classList.contains('container')) {
                     nextContainer.classList.add('active');
                 } else {
-                    window.location.href = '/view/users/user_main.html'; 
+                    window.location.href = '/view/users/user_info.html'; 
                 }
             }
         });
