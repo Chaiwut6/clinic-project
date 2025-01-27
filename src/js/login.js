@@ -181,7 +181,7 @@ const login = async () => {
       } else if (responseData.roles === 'doctor') {
         window.location.href = '../view/doctor/doc_main.html';
       } else if (responseData.roles === 'employee') {
-        window.location.href = '/view/staff/manage_user.html';
+        window.location.href = '/view/staff/dashboard.html';
       } else if (responseData.roles === 'manager') {
         window.location.href = '../view/manager/man_main.html';
       }

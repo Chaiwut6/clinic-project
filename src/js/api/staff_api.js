@@ -1,5 +1,3 @@
-const apiUrl = 'http://localhost:8000';
-
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("addDoctorForm");
 
@@ -168,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const fetchEmployeeInfo = async () => {
     try {
       // ใช้ POST แทน GET ในการดึงข้อมูล employee
-      const response = await axios.post(`${apiUrl}/api/employees/employeeinfo`, {}, {
+      const response = await axios.post("http://localhost:8000/api/employees/employeeinfo", {}, {
         withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
       });
 
@@ -1089,8 +1087,7 @@ async function fetchUserDataAndDisplay() {
     
           if (response.status === 200) {
               alert("ปิดเคสสำเร็จ");
-              // รีเฟรชข้อมูลในหน้าปัจจุบัน
-              fetchUserDetails(userId); // เรียกฟังก์ชันสำหรับโหลดข้อมูลผู้ใช้อีกครั้ง
+              fetchUserDetails(userId); 
           } else {
               alert(response.data.message || "ไม่สามารถปิดเคสได้");
           }
@@ -1156,8 +1153,6 @@ async function fetchUserDetails() {
     if (user && user.length > 0) {
       userFname = user[0].user_fname;
       userLname = user[0].user_lname;
-    } else {
-      console.error("User data not found.");
     }
   } catch (error) {
     console.error("Error fetching user details:", error);
@@ -1179,7 +1174,6 @@ async function fetchAppointment() {
     }
   } catch (error) {
     console.error("Error fetching doctor data:", error);
-    alert("เกิดข้อผิดพลาดในการดึงข้อมูลแพทย์");
   }
 }
 

@@ -33,9 +33,7 @@
 
   <!-- Custom styles for this template-->
   <link href="../../style/users/user_main.css" rel="stylesheet">
-  <link rel="stylesheet" href="../../style/staff/schedule.css">
   <link rel="stylesheet" href="../../style/staff/patientslist.css">
-  <link rel="stylesheet" href="../../style/staff/manage_user.css">
   <script src="../../js/api/staff_api.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
   <script src="../../js/staff.js"></script>
@@ -67,11 +65,11 @@
                     <span>ข้อมูลส่วนตัว</span></a>
             </li> -->
             <li class="nav-item">
-              <a class="nav-link" href="../staff/dashboard.html">
-                  <i class="fa-solid fa-chart-line"></i>
-                  <span>Dashboard</span>
-              </a>
-          </li>
+                <a class="nav-link" href="../staff/dashboard.html">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
       <li class="nav-item">
         <a class="nav-link" href="../staff/manage_user.html">
           <i class="fa fa-folder"></i>
@@ -97,11 +95,7 @@
           <i class="fa fa-folder"></i>
           <span>จัดการผู้บริหาร</span></a>
   </li>
-      <!-- <li class="nav-item">
-                <a class="nav-link" href="index.html">
-                    <i class="fa-solid fa-lock"></i>
-                    <span>เปลี่ยนรหัสผ่าน</span></a>
-            </li> -->
+     
 
 
       <!-- Divider -->
@@ -136,7 +130,7 @@
           </button>
 
           <!-- Topbar Search -->
-          <h1 class="header-main">จัดการข้อมูลผู้ใช้</h1>
+          <h1 class="header-main">Dashboard</h1>
 
           <ul class="navbar-nav ml-auto">
 
@@ -185,86 +179,167 @@
 
         <!-- Begin Page Content -->
         <div class="container-fluid">
-          <!-- Page Heading -->
-          <h4>รายชื่อผู้ใช้</h4>
 
-          <!-- Filter Section -->
-          <div class="filter-container">
-            <input type="text" id="searchName" placeholder="ค้นหาชื่อ">
-
-            <!-- Dropdown for Faculty -->
-            <select id="searchFaculty">
-              <option value="">เลือกคณะ</option>
-              <option value="บริหารธุรกิจ ">บริหารธุรกิจ</option>
-              <option value="วิศวกรรมศาสตร์">วิศวกรรมศาสตร์</option>
-              <option value="เทคโนโลยีคหกรรมศาสตร์">เทคโนโลยีคหกรรมศาสตร์</option>
-              <option value="ศิลปกรรมศาสตร์">ศิลปกรรมศาสตร์</option>
-              <option value="เทคโนโลยีการเกษตร">เทคโนโลยีการเกษตร</option>
-              <option value="ครุศาสตร์อุตสาหกรรม">ครุศาสตร์อุตสาหกรรม</option>
-              <option value="สถาปัตยกรรมศาสตร์">สถาปัตยกรรมศาสตร์</option>
-              <option value="วิทยาศาสตร์และเทคโนโลยี">วิทยาศาสตร์และเทคโนโลยี</option>
-              <option value="เทคโนโลยีสื่อสารมวลชน">เทคโนโลยีสื่อสารมวลชน</option>
-              <option value="ศิลปศาสตร์">ศิลปศาสตร์</option>
-              <option value="แพทย์บูรณาการ">แพทย์บูรณาการ</option>
-              <option value="พยาบาลศาสตร์">พยาบาลศาสตร์</option>
-            </select>
-
-            <!-- Dropdown for Year -->
-            <!-- <select id="searchYear">
-              <option value="">เลือกชั้นปี</option>
-              <option value="ปี 1">ปี 1</option>
-              <option value="ปี 2">ปี 2</option>
-              <option value="ปี 3">ปี 3</option>
-              <option value="ปี 4">ปี 4</option>
-              <option value="ปี 5">ปี 5</option>
-            </select> -->
-
-            <button class="filter-button" onclick="filterPatients()">ค้นหา</button>
-            <!-- <button class="risk-btn" onclick="openRisk()">กำหนดเวลาแบบประเมิน</button> -->
-          </div>
-
-          <!-- Table Section -->
-          <div class="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>รหัสประจำตัว</th>
-                  <th>ชื่อ-นามสกุล</th>
-                  <th>ชื่อเล่น</th>
-                  <th>คณะ</th>
-                  <th>เบอร์โทร</th>
-                  <th>ดำเนินการ</th>
-                </tr>
-              </thead>
-              <tbody id="UserTable">
-               
-                <!-- Add more patients here -->
-              </tbody>
-            </table>
-          </div>
-
-        </div>
-        <!-- risk -->
-        <!-- <div id="risk-popup" class="risk-popup">
-          <div class="risk-content">
-            <span class="close-risk" onclick="closerisk()">&times;</span>
-            <h4>กำหนดวันประเมิน</h4>
-
-            <label for="startDate">เลือกวันที่เริ่มต้น:</label>
-            <input type="date" id="startDate" />
-
-         
-            <label for="endDate">เลือกวันที่สิ้นสุด:</label>
-            <input type="date" id="endDate" />
-
-          
-            <div class="risk-buttons">
-              <button class="confirm-risk" onclick="confirmAssessment()">ยืนยัน</button>
-              <button class="cancel-risk" onclick="closerisk()">ยกเลิก</button>
+            <!-- Summary Row -->
+            <div class="row">
+        
+                <!-- Total Doctors Card -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">จำนวนแพทย์</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">25</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-user-md fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Total Patients Card -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">จำนวนผู้ใช้บริการ</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">120</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-users fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Total Appointments Card -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">นัดหมายทั้งหมด</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">45</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Confirmed Appointments Card -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">นัดหมายที่ยืนยันแล้ว</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">30</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Closed Cases Card -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-secondary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">จำนวนที่ปิดเคสแล้ว</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">20</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-folder fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
             </div>
-          </div>
-
-        </div> -->
+        
+            <!-- Charts Row -->
+            <div class="row">
+        
+                <!-- Appointments Overview Area Chart -->
+                <div class="col-xl-8 col-lg-7">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">ภาพรวมการนัดหมาย</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-area">
+                                <canvas id="appointmentsOverviewChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Appointments Breakdown Pie Chart -->
+                <div class="col-xl-4 col-lg-5">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">การแบ่งหมวดหมู่นัดหมาย</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-pie pt-4 pb-2">
+                                <canvas id="appointmentsBreakdownChart"></canvas>
+                            </div>
+                            <div class="mt-4 text-center small">
+                                <span class="mr-2">
+                                    <i class="fas fa-circle text-primary"></i> ยืนยันแล้ว
+                                </span>
+                                <span class="mr-2">
+                                    <i class="fas fa-circle text-danger"></i> ยกเลิก
+                                </span>
+                                <span class="mr-2">
+                                    <i class="fas fa-circle text-warning"></i> รอการยืนยัน
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+            </div>
+        
+            <!-- Lists Row -->
+            <div class="row">
+        
+                <!-- Doctor List -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">รายชื่อแพทย์</h6>
+                        </div>
+                        <div class="card-body">
+                            <ul>
+                                <li>ดร. สมชาย สุขสม</li>
+                                <li>ดร. สุนีย์ สร้างสุข</li>
+                                <li>ดร. วิไล สุขเกษม</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+        
+            </div>
+        
+        </div>
+        
+        
+        
+ 
 
         <!-- End of Main Content -->
 
