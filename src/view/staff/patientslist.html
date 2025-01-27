@@ -196,9 +196,22 @@
                         <select id="doctorSelect">
                             <option value="">--เลือกแพทย์--</option>
                         </select>
-                        <!-- <input type="date" id="dateFilter" class="dateFilter"> -->
+                        <select id="monthSelect">
+                            <option value="">--เลือกเดือน--</option>
+                            <option value="01">มกราคม</option>
+                            <option value="02">กุมภาพันธ์</option>
+                            <option value="03">มีนาคม</option>
+                            <option value="04">เมษายน</option>
+                            <option value="05">พฤษภาคม</option>
+                            <option value="06">มิถุนายน</option>
+                            <option value="07">กรกฎาคม</option>
+                            <option value="08">สิงหาคม</option>
+                            <option value="09">กันยายน</option>
+                            <option value="10">ตุลาคม</option>
+                            <option value="11">พฤศจิกายน</option>
+                            <option value="12">ธันวาคม</option>
+                        </select>
                         <button class="filter-button" onclick="filterReceivecare()">ค้นหา</button>
-
                         <button onclick="exportToExcel()" style="cursor: pointer;">
                             <i class="fa-solid fa-print" onclick="exportToExcel()"></i>
                         </button>

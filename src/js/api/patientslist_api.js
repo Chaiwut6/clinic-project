@@ -14,7 +14,7 @@ async function fetchAppointment() {
     }
   } catch (error) {
     console.error("Error:", error);
-    alert("เกิดข้อผิดพลาดในการดึงข้อมูลแพทย์");
+    // alert("เกิดข้อผิดพลาดในการดึงข้อมูลแพทย์");
   }
 }
   

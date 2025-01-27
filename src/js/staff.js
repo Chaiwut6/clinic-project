@@ -202,6 +202,9 @@ function exportToExcel() {
   const doctorSelect = document.getElementById("doctorSelect");
   const selectedDoctor = doctorSelect.value;
 
+  const monthSelect = document.getElementById("monthSelect");
+  const selectedMonth = monthSelect.value;
+
   const table = document.getElementById("patientTable");
   const rows = Array.from(table.querySelectorAll("tr"));
 
@@ -209,8 +212,34 @@ function exportToExcel() {
 
   rows.forEach((row) => {
     const doctorName = row.cells[7]?.innerText.trim().toLowerCase();
+    const dateText = row.cells[6]?.innerText.trim(); // คอลัมน์วันที่
+    let rowMonth = "";
 
-    if (selectedDoctor === "all" || !selectedDoctor || doctorName === selectedDoctor.toLowerCase()) {
+    // แปลงวันที่ในคอลัมน์ให้เป็นเดือน
+    if (dateText) {
+      const dateParts = dateText.split(" "); // สมมติรูปแบบ "2 กุมภาพันธ์ 2568"
+      const monthMap = {
+        "มกราคม": "01",
+        "กุมภาพันธ์": "02",
+        "มีนาคม": "03",
+        "เมษายน": "04",
+        "พฤษภาคม": "05",
+        "มิถุนายน": "06",
+        "กรกฎาคม": "07",
+        "สิงหาคม": "08",
+        "กันยายน": "09",
+        "ตุลาคม": "10",
+        "พฤศจิกายน": "11",
+        "ธันวาคม": "12",
+      };
+      rowMonth = monthMap[dateParts[1]] || ""; // ดึงค่าของเดือน
+    }
+
+    // ตรวจสอบเงื่อนไขการกรอง
+    if (
+      (selectedDoctor === "all" || !selectedDoctor || doctorName === selectedDoctor.toLowerCase()) &&
+      (selectedMonth === "" || rowMonth === selectedMonth)
+    ) {
       if (!groupedData[doctorName]) {
         groupedData[doctorName] = [];
       }
@@ -230,9 +259,8 @@ function exportToExcel() {
       sheetData.push(cells.map((cell) => cell.innerText));
     });
 
-    const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
     const sheetName = doctorName.charAt(0).toUpperCase() + doctorName.slice(1) || "ทั้งหมด";
-    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(sheetData), sheetName);
   });
 
   const fileName =
@@ -333,11 +361,11 @@ function filterPatients() {
 }
 
 function filterReceivecare() {
-  // Function to filter patients based on input and dropdowns
+  // ดึงค่าจาก input และ select
   const nameFilter = document.getElementById('searchName').value.toLowerCase();
   const doctorFilter = document.getElementById('doctorSelect').value;
-  // const dateFilter = document.getElementById('dateFilter').value;
-  // const yearFilter = document.getElementById('searchYear').value;
+  const monthFilter = document.getElementById('monthSelect').value;
+
   const table = document.getElementById('patientTable');
   const rows = table.getElementsByTagName('tr');
 
@@ -345,19 +373,40 @@ function filterReceivecare() {
     const cells = rows[i].getElementsByTagName('td');
     if (cells.length > 0) {
       const name = cells[1].textContent.toLowerCase();
-      const doctor = cells[7].textContent;
-      // const date = cells[6].textContent;
-      // const year = cells[0].textContent; 
+      const doctor = cells[7]?.textContent || '';
+      const date = cells[6]?.textContent || ''; // คอลัมน์วันที่
 
+      // แปลงวันที่เป็นเดือน
+      let formattedMonth = '';
+      if (date) {
+        // สมมติว่าข้อมูลวันที่อยู่ในรูปแบบ "2 กุมภาพันธ์ 2568"
+        const dateParts = date.split(' '); // แยกข้อมูลวันที่
+        const monthMap = {
+          'มกราคม': '01',
+          'กุมภาพันธ์': '02',
+          'มีนาคม': '03',
+          'เมษายน': '04',
+          'พฤษภาคม': '05',
+          'มิถุนายน': '06',
+          'กรกฎาคม': '07',
+          'สิงหาคม': '08',
+          'กันยายน': '09',
+          'ตุลาคม': '10',
+          'พฤศจิกายน': '11',
+          'ธันวาคม': '12'
+        };
+        formattedMonth = monthMap[dateParts[1]] || '';
+      }
+
+      // ตรวจสอบเงื่อนไขการกรอง
       if (
         (name.includes(nameFilter) || !nameFilter) &&
-        (doctor === doctorFilter || !doctorFilter) 
-        // (date === dateFilter || !dateFilter)
-        // (year.includes(yearFilter) || !yearFilter)
+        (doctor === doctorFilter || !doctorFilter) &&
+        (formattedMonth === monthFilter || !monthFilter)
       ) {
-        rows[i].style.display = '';
+        rows[i].style.display = ''; // แสดงแถว
       } else {
-        rows[i].style.display = 'none';
+        rows[i].style.display = 'none'; // ซ่อนแถว
       }
     }
   }
