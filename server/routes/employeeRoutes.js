@@ -685,6 +685,76 @@ router.post("/closeCase", async (req, res) => {
   }
 });
 
+router.post('/appointmentCount', async (req, res) => {
+  let conn = null;
+
+  try {
+    conn = await initMySQL();
+    const [result] = await conn.query("SELECT COUNT(*) AS count FROM appointments");
+
+    res.json({
+      success: true,
+      appointmentCount: result[0]?.count || 0, // ถ้าค่าเป็น null ให้แสดง 0
+    });
+
+  } catch (error) {
+    console.error('Error retrieving appointment count:', error);
+    res.status(500).json({ success: false, message: 'Error retrieving appointment count', error: error.message });
+
+  } finally {
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
+
+router.post('/confirmedAppointmentCount', async (req, res) => {
+  let conn = null;
+
+  try {
+    conn = await initMySQL();
+    const [result] = await conn.query("SELECT COUNT(*) AS count FROM appointments WHERE status = 'ยืนยัน'");
+
+    res.json({
+      success: true,
+      confirmedAppointmentCount: result[0]?.count || 0, // ถ้าค่าเป็น null ให้แสดง 0
+    });
+
+  } catch (error) {
+    console.error('Error retrieving confirmed appointment count:', error);
+    res.status(500).json({ success: false, message: 'Error retrieving confirmed appointment count', error: error.message });
+
+  } finally {
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
+
+router.post('/closedCasesCount', async (req, res) => {
+  let conn = null;
+
+  try {
+    conn = await initMySQL();
+    const [result] = await conn.query("SELECT COUNT(*) AS count FROM appointments WHERE status = 'ปิดเคส'");
+
+    res.json({
+      success: true,
+      closedCasesCount: result[0]?.count || 0, // ถ้าค่าเป็น null ให้แสดง 0
+    });
+
+  } catch (error) {
+    console.error('Error retrieving closed cases count:', error);
+    res.status(500).json({ success: false, message: 'Error retrieving closed cases count', error: error.message });
+
+  } finally {
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
+
+
   
 
 module.exports = router;

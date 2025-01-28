@@ -35,6 +35,7 @@
   <link href="../../style/users/user_main.css" rel="stylesheet">
   <link rel="stylesheet" href="../../style/staff/patientslist.css">
   <script src="../../js/api/staff_api.js"></script>
+  <script src="../../js/api/dashboard_api.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
   <script src="../../js/staff.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -186,19 +187,20 @@
                 <!-- Total Doctors Card -->
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-left-primary shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">จำนวนแพทย์</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">25</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-user-md fa-2x text-gray-300"></i>
-                                </div>
-                            </div>
+                      <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1" style="font-size: 18px;">จำนวนแพทย์</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="doctorCount">0</div>
+                          </div>
+                          <div class="col-auto">
+                            <i class="fas fa-user-md fa-2x text-gray-300"></i>
+                          </div>
                         </div>
+                      </div>
                     </div>
-                </div>
+                  </div>
+                  
         
                 <!-- Total Patients Card -->
                 <div class="col-xl-3 col-md-6 mb-4">
@@ -206,8 +208,10 @@
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">จำนวนผู้ใช้บริการ</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">120</div>
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1" style="font-size: 18px;">
+                                        จำนวนผู้ใช้บริการ
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="userCount">0</div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -223,8 +227,10 @@
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">นัดหมายทั้งหมด</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">45</div>
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1" style="font-size: 18px;">
+                                        นัดหมายทั้งหมด
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="appointmentCount">0</div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
@@ -240,8 +246,10 @@
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">นัดหมายที่ยืนยันแล้ว</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">30</div>
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1" style="font-size: 18px;">
+                                        นัดหมายที่ยืนยันแล้ว
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="confirmedAppointmentCount">0</div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-check-circle fa-2x text-gray-300"></i>
@@ -257,8 +265,10 @@
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">จำนวนที่ปิดเคสแล้ว</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">20</div>
+                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1" style="font-size: 18px;">
+                                        จำนวนที่ปิดเคสแล้ว
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="closedCasesCount">0</div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-folder fa-2x text-gray-300"></i>
@@ -267,6 +277,7 @@
                         </div>
                     </div>
                 </div>
+                
         
             </div>
         

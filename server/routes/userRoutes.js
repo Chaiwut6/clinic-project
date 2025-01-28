@@ -167,6 +167,29 @@ router.post('/users', async (req, res) => {
   }
 });
 
+router.post('/userCount', async (req, res) => {
+  let conn = null;
+
+  try {
+    conn = await initMySQL();
+    const [result] = await conn.query("SELECT COUNT(*) AS count FROM users");
+
+    res.json({
+      success: true,
+      userCount: result[0]?.count || 0, // ดึงค่าจากฐานข้อมูล
+    });
+
+  } catch (error) {
+    console.error('Error retrieving user count:', error);
+    res.status(500).json({ success: false, message: 'Error retrieving user count', error: error.message });
+
+  } finally {
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
+
 
 // เพิ่มสำหรับบันทึกผลลัพธ์
 router.post('/save-result', async (req, res) => {

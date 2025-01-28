@@ -172,8 +172,8 @@ const login = async () => {
       const userInfo = responseData.user;
       const userAssess = responseData.Assess;
 
-      console.log(userAssess);
-      console.log(userInfo);
+      // console.log(userAssess);
+      // console.log(userInfo);
 
       // เปลี่ยนเส้นทางตามบทบาทผู้ใช้
       if (responseData.roles === 'user') {

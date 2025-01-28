@@ -229,6 +229,29 @@ router.post("/register-doctor", async (req, res) => {
     }
   });
 
+  router.post('/doctorCount', async (req, res) => {
+    let conn = null;
+  
+    try {
+      conn = await initMySQL();
+  
+      const [doctorCountResult] = await conn.query("SELECT COUNT(*) AS doctorCount FROM doctor");
+  
+      const doctorCount = doctorCountResult[0]?.doctorCount || 0;
+  
+      res.json({
+        doctorCount: doctorCount,
+      });
+    } catch (error) {
+      console.error('Error retrieving doctor count:', error);
+      res.status(500).json({ message: 'Error retrieving doctor count', error: error.message });
+    } finally {
+      if (conn) {
+        await conn.end();
+      }
+    }
+  });
+
   router.post('/doctorDelete', async (req, res) => {
     let conn = null;
     const { doc_id } = req.body;
