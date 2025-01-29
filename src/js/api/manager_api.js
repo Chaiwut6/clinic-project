@@ -61,3 +61,38 @@ const Logout = async () => {
       console.error('Logout failed:', error);
     }
   };
+
+  const changePassword = async () => {
+    document.getElementById('change-password-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const currentPassword = document.getElementById('current-password').value;
+      const newPassword = document.getElementById('new-password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+  
+      if (newPassword !== confirmPassword) {
+        alert("รหัสผ่านใหม่และการยืนยันไม่ตรงกัน");
+        return;
+      }
+  
+      try {
+        const response = await axios.post('http://localhost:8000/api/manager/change-password', {
+          oldPassword: currentPassword,
+          newPassword: newPassword,
+          confirmPassword: confirmPassword
+        }, {
+          withCredentials: true
+        });
+  
+        if (response.status === 200) {
+          alert("อัปเดตรหัสผ่านเรียบร้อยแล้ว");
+          window.location.reload()
+          // window.location.href = 'profile.html'; 
+        } else {
+          alert(response.data.message || "An error occurred");
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert("ไม่สามารถอัปเดตรหัสผ่าน โปรดลองอีกครั้งในภายหลัง");
+      }
+    });
+  };

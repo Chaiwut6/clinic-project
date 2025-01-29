@@ -280,6 +280,66 @@ router.post('/managerinfo', verifyToken, async (req, res) => {
   }
 });
 
+router.post('/change-password', verifyToken , async (req, res) => {
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+  const login_id = req.user.login_id;
+  if (!oldPassword || !newPassword || !confirmPassword) {
+    return res.status(400).json({
+      success: false,
+      message: 'กรุณากรอกข้อมูลให้ครบถ้วน',
+    });
+  }
+
+  let conn = null;
+  try {
+    conn = await initMySQL();
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ message: 'รหัสผ่านใหม่และการยืนยันไม่ตรงกัน' });
+    }
+
+    // ค้นหาผู้ใช้จาก login_id
+    const [managerLogin] = await conn.query("SELECT * FROM login WHERE login_id = ?", [login_id]);
+    if (!managerLogin || managerLogin.length === 0) {
+      return res.status(404).json({ message: 'ไม่พบผู้ใช้' });
+    }
+
+    const managerInfo = managerLogin[0];
+
+    // ตรวจสอบว่ารหัสผ่านเดิมถูกต้องหรือไม่
+    const isMatch = await bcrypt.compare(oldPassword, managerInfo.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'รหัสผ่านเก่าไม่ถูกต้อง' });
+    }
+
+    // ตรวจสอบว่ารหัสผ่านใหม่ไม่เหมือนกับรหัสผ่านเก่า
+    const isSamePassword = await bcrypt.compare(newPassword, managerInfo.password);
+    if (isSamePassword) {
+      return res.status(400).json({ message: 'รหัสผ่านใหม่ต้องไม่เหมือนกับรหัสผ่านเก่า' });
+    }
+
+    // เข้ารหัสรหัสผ่านใหม่
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // อัปเดตรหัสผ่านในฐานข้อมูล
+    const [result] = await conn.query("UPDATE login SET password = ? WHERE login_id = ?", [hashedPassword, login_id]);
+    if (result.affectedRows === 0) {
+      return res.status(400).json({ message: 'ไม่สามารถอัปเดตรหัสผ่านได้' });
+    }
+
+    // ส่งคำตอบสำเร็จ
+    res.status(200).json({ message: 'อัปเดตรหัสผ่านเรียบร้อยแล้ว' });
+
+  } catch (error) {
+    console.error('เกิดข้อผิดพลาดระหว่างการอัพเดตรหัสผ่าน:', error);
+    res.status(500).json({ message: 'Server error: ' + error.message });
+  } finally {
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
 
 
 module.exports = router;
