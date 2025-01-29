@@ -239,21 +239,30 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!tableBody) {
       return;
     }
-    assessments.forEach((assessment) => {
+    function formatDateThai(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString("th-TH", {
+          year: "numeric",
+          month: "long",
+          day: "numeric"
+      });
+  }
+  
+  assessments.forEach((assessment) => {
       const row = document.createElement("tr");
-      const date = formatDate(assessment.date); 
+      const date = formatDateThai(assessment.date); 
       const totalScore = assessment.total_score !== undefined ? assessment.total_score : 'N/A';
       const result = assessment.result || 'N/A'; 
-
+  
       row.innerHTML = `
-        <td class="date">${date}</td>
-        <td class="total_score">${totalScore}</td>
-        <td class="result">${result}</td>
+          <td class="date">${date}</td>
+          <td class="total_score">${totalScore}</td>
+          <td class="result">${result}</td>
       `;
-      
+  
       // เพิ่มแถวในตาราง
       tableBody.appendChild(row);
-    });
+  });
   };
 
   const updatePageData = (userInfo, userAssess) => {

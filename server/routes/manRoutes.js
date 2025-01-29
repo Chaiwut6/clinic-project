@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const initMySQL = require('../database'); // Import database connection
-
+const verifyToken = require('../middleware/verifyToken');
 const router = express.Router();
 const secret = 'mysecret';
 
@@ -235,6 +235,50 @@ router.post('/managerDelete', async (req, res) => {
   }
 });
 
+
+router.post('/managerinfo', verifyToken, async (req, res) => {
+  let conn;
+
+  try {
+    const login_id = req.user?.login_id;
+    if (!login_id) {
+      return res.status(400).json({ message: 'Invalid or missing login ID' });
+    }
+
+    conn = await initMySQL();
+
+    const [managerResults] = await conn.query(
+      'SELECT * FROM manager WHERE man_id = ?',
+      [login_id]
+    );
+
+    if (managerResults.length === 0) {
+      return res.status(404).json({ message: 'Manager not found' });
+    }
+
+    const managerInfo = managerResults[0];
+
+    res.status(200).json({
+      message: 'Manager data retrieved successfully',
+      manager: managerInfo,
+    });
+  } catch (error) {
+    console.error('Error retrieving manager data:', error);
+
+    res.status(500).json({
+      message: 'Error retrieving manager data',
+      error: error.message || 'Internal Server Error',
+    });
+  } finally {
+    if (conn) {
+      try {
+        await conn.end();
+      } catch (closeError) {
+        console.error('Error closing database connection:', closeError);
+      }
+    }
+  }
+});
 
 
 

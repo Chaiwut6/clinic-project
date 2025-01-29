@@ -33,12 +33,15 @@
 
   <!-- Custom styles for this template-->
   <link href="../../style/users/user_main.css" rel="stylesheet">
+  <link rel="stylesheet" href="../../style/staff/">
+  <link rel="stylesheet" href="../../style/staff/dashboard.css">
   <link rel="stylesheet" href="../../style/staff/patientslist.css">
   <script src="../../js/api/staff_api.js"></script>
   <script src="../../js/api/dashboard_api.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
   <script src="../../js/staff.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
 </head>
@@ -209,7 +212,7 @@
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1" style="font-size: 18px;">
-                                        จำนวนผู้ใช้บริการ
+                                        จำนวนผู้ใช้
                                     </div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800" id="userCount">0</div>
                                 </div>
@@ -283,53 +286,78 @@
         
             <!-- Charts Row -->
             <div class="row">
-        
-                <!-- Appointments Overview Area Chart -->
-                <div class="col-xl-8 col-lg-7">
+                <!-- Bar Chart: ภาพรวมการนัดหมาย -->
+                <div class="col-xl-8">
                     <div class="card shadow mb-4">
-                        <div class="card-header py-3">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
                             <h6 class="m-0 font-weight-bold text-primary">ภาพรวมการนัดหมาย</h6>
+                            <div>
+                                <select id="yearFilterAppointments" class="form-select" onchange="loadAppointmentsOverviewChart()"></select>
+                                <select id="monthFilterAppointments" class="form-select" onchange="loadAppointmentsOverviewChart()">
+                                    <option value="">ทุกเดือน</option>
+                                    <option value="01">มกราคม</option>
+                                    <option value="02">กุมภาพันธ์</option>
+                                    <option value="03">มีนาคม</option>
+                                    <option value="04">เมษายน</option>
+                                    <option value="05">พฤษภาคม</option>
+                                    <option value="06">มิถุนายน</option>
+                                    <option value="07">กรกฎาคม</option>
+                                    <option value="08">สิงหาคม</option>
+                                    <option value="09">กันยายน</option>
+                                    <option value="10">ตุลาคม</option>
+                                    <option value="11">พฤศจิกายน</option>
+                                    <option value="12">ธันวาคม</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="card-body">
-                            <div class="chart-area">
+                            <div class="chart-container">
                                 <canvas id="appointmentsOverviewChart"></canvas>
                             </div>
                         </div>
                     </div>
                 </div>
-        
-                <!-- Appointments Breakdown Pie Chart -->
-                <div class="col-xl-4 col-lg-5">
+                
+                <div class="col-xl-4">
                     <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">การแบ่งหมวดหมู่นัดหมาย</h6>
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">จำนวนผู้ใช้บริการ</h6>
+                            <div>
+                                <select id="yearFilterUsers" class="form-select" onchange="loadAppointmentsBreakdownChart()"></select>
+                                <select id="monthFilterUsers" class="form-select" onchange="loadAppointmentsBreakdownChart()">
+                                    <option value="">ทุกเดือน</option>
+                                    <option value="01">มกราคม</option>
+                                    <option value="02">กุมภาพันธ์</option>
+                                    <option value="03">มีนาคม</option>
+                                    <option value="04">เมษายน</option>
+                                    <option value="05">พฤษภาคม</option>
+                                    <option value="06">มิถุนายน</option>
+                                    <option value="07">กรกฎาคม</option>
+                                    <option value="08">สิงหาคม</option>
+                                    <option value="09">กันยายน</option>
+                                    <option value="10">ตุลาคม</option>
+                                    <option value="11">พฤศจิกายน</option>
+                                    <option value="12">ธันวาคม</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="card-body">
-                            <div class="chart-pie pt-4 pb-2">
+                            <div class="chart-container">
                                 <canvas id="appointmentsBreakdownChart"></canvas>
                             </div>
-                            <div class="mt-4 text-center small">
-                                <span class="mr-2">
-                                    <i class="fas fa-circle text-primary"></i> ยืนยันแล้ว
-                                </span>
-                                <span class="mr-2">
-                                    <i class="fas fa-circle text-danger"></i> ยกเลิก
-                                </span>
-                                <span class="mr-2">
-                                    <i class="fas fa-circle text-warning"></i> รอการยืนยัน
-                                </span>
+                            <div class="mt-4 text-center">
+                                <strong id="totalAppointmentsCount" style="font-size: 18px; color: #2C3E50;">กำลังโหลด...</strong>
                             </div>
                         </div>
                     </div>
                 </div>
-        
+            
             </div>
-        
             <!-- Lists Row -->
             <div class="row">
         
                 <!-- Doctor List -->
-                <div class="col-lg-6 mb-4">
+                <!-- <div class="col-lg-6 mb-4">
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-primary">รายชื่อแพทย์</h6>
@@ -342,7 +370,7 @@
                             </ul>
                         </div>
                     </div>
-                </div>
+                </div> -->
         
             </div>
         

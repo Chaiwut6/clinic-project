@@ -108,10 +108,7 @@ router.post('/employeeinfo', verifyToken, async (req, res) => {
   let conn;
 
   try {
-
     const login_id = req.user?.login_id;
-
-
     if (!login_id) {
       return res.status(400).json({ message: 'Invalid or missing login ID' });
     }
@@ -753,6 +750,118 @@ router.post('/closedCasesCount', async (req, res) => {
     }
   }
 });
+
+router.post('/appointmentsOverview', async (req, res) => {
+  let conn = null;
+
+  try {
+      conn = await initMySQL();
+
+      const { year, month } = req.body;
+      const selectedYear = year || new Date().getFullYear();
+      const selectedMonth = month ? `AND MONTH(date) = ${month}` : ""; 
+
+      const [appointments] = await conn.query(`
+          SELECT 
+              DATE_FORMAT(date, '%Y-%m') AS month,
+              COUNT(*) AS total,
+              SUM(CASE WHEN status = 'ยืนยัน' THEN 1 ELSE 0 END) AS confirmed,
+              SUM(CASE WHEN status = 'ยกเลิก' THEN 1 ELSE 0 END) AS cancelled,
+              SUM(CASE WHEN status = 'ปิดเคส' THEN 1 ELSE 0 END) AS closedCases,
+              SUM(CASE WHEN status = 'รอการยืนยัน' THEN 1 ELSE 0 END) AS pending
+          FROM appointments
+          WHERE YEAR(date) = ? ${selectedMonth}
+          GROUP BY month
+          ORDER BY month;
+      `, [selectedYear]);
+
+      res.json({
+          success: true,
+          appointments,
+      });
+
+  } catch (error) {
+      console.error('Error fetching appointment overview:', error);
+      res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดในการดึงข้อมูล', error: error.message });
+  } finally {
+      if (conn) await conn.end();
+  }
+});
+
+
+
+
+router.post('/appointmentsByFaculty', async (req, res) => {
+  let conn = null;
+
+  try {
+      conn = await initMySQL();
+
+      const { year, month } = req.body; // รับค่าปีและเดือนจาก request
+      const selectedYear = year || new Date().getFullYear(); // ถ้าไม่มี ให้ใช้ปีปัจจุบัน
+      const selectedMonth = month || ""; // ถ้าไม่มี ให้ใช้ทั้งหมด
+
+      // รายชื่อคณะที่ต้องการแสดง (แม้ไม่มีข้อมูลก็ควรแสดงเป็น 0)
+      const allFaculties = [
+          "บริหารธุรกิจ", "วิศวกรรมศาสตร์", "เทคโนโลยีคหกรรมศาสตร์", "ศิลปกรรมศาสตร์",
+          "เทคโนโลยีการเกษตร", "ครุศาสตร์อุตสาหกรรม", "สถาปัตยกรรมศาสตร์",
+          "วิทยาศาสตร์และเทคโนโลยี", "เทคโนโลยีสื่อสารมวลชน", "ศิลปศาสตร์",
+          "แพทย์บูรณาการ", "พยาบาลศาสตร์"
+      ];
+
+      // เงื่อนไขสำหรับกรองตามปีและเดือน (หากเลือกเดือน จะกรองเพิ่ม)
+      let query = `
+          SELECT u.faculty, COUNT(a.appointment_id) AS total
+          FROM appointments a
+          JOIN users u ON a.user_id = u.user_id
+          WHERE a.status = 'ยืนยัน' 
+          AND YEAR(a.date) = ? ${selectedMonth ? "AND MONTH(a.date) = ?" : ""}
+          GROUP BY u.faculty
+      `;
+
+      // กำหนดพารามิเตอร์ SQL
+      let params = selectedMonth ? [selectedYear, selectedMonth] : [selectedYear];
+
+      const [facultyAppointments] = await conn.query(query, params);
+
+      // แปลงข้อมูลให้อยู่ในรูปแบบอ็อบเจกต์ { คณะ: จำนวน }
+      let facultyData = {};
+      facultyAppointments.forEach(row => {
+          facultyData[row.faculty] = row.total;
+      });
+
+      // เพิ่มคณะที่ไม่มีการนัดหมายให้เป็น 0
+      allFaculties.forEach(faculty => {
+          if (!facultyData[faculty]) {
+              facultyData[faculty] = 0;
+          }
+      });
+
+      // แปลงข้อมูลให้อยู่ในรูปแบบ Array
+      const formattedData = Object.keys(facultyData).map(faculty => ({
+          faculty: faculty,
+          total: facultyData[faculty]
+      }));
+
+      // นับจำนวนรวมของการนัดหมายที่ยืนยันแล้ว
+      const totalConfirmedAppointments = formattedData.reduce((sum, row) => sum + row.total, 0);
+
+      res.json({
+          success: true,
+          appointments: formattedData,
+          totalConfirmedAppointments: totalConfirmedAppointments
+      });
+
+  } catch (error) {
+      console.error('Error fetching confirmed appointments by faculty:', error);
+      res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูล' });
+  } finally {
+      if (conn) await conn.end();
+  }
+});
+
+
+
 
 
   

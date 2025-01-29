@@ -1,9 +1,10 @@
 const jwt = require('jsonwebtoken');
-const secret = 'mysecret'; 
+const secret = process.env.JWT_SECRET || 'mysecret';  // ควรใช้จาก .env
 
 const verifyToken = (req, res, next) => {
   try {
-    const token = req.cookies.token;  
+    let token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+
     if (!token) {
       return res.status(401).json({ message: 'Unauthorized. Token not found.' });
     }
@@ -13,7 +14,7 @@ const verifyToken = (req, res, next) => {
         return res.status(403).json({ message: 'Forbidden. Token invalid.' });
       }
 
-      req.user = decoded;
+      req.user = decoded;  // เพิ่ม user ลงใน req
       next();  
     });
   } catch (error) {

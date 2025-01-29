@@ -211,6 +211,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+
+
 async function fetchDoctors() {
   try {
     // Show loading message while fetching
