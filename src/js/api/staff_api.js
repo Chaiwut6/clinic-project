@@ -5,15 +5,21 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault(); // ป้องกันการ refresh หน้า
 
     // รับค่าจากฟอร์ม
+    const doctorID = document.getElementById("doctorID").value.trim();
     const doctorName = document.getElementById("doctorName").value.trim();
     const phoneNumber = document.getElementById("phoneNumber").value.trim();
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
 
     // ตรวจสอบว่าข้อมูลครบถ้วน
-    if (!doctorName || !phoneNumber) {
+      if (!doctorID || !doctorName || !phoneNumber|| !password || !confirmPassword) {
       alert("กรุณากรอกข้อมูลให้ครบถ้วน");
       return;
     }
-
+    if (password !== confirmPassword) {
+      alert('รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน');
+      return;
+    }
     // ตรวจสอบเบอร์โทรศัพท์
     if (!/^\d{10}$/.test(phoneNumber)) {
       alert("กรุณากรอกเบอร์โทรที่ถูกต้อง (10 ตัวและเป็นเลขเท่านั้น)");
@@ -21,11 +27,14 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+
     try {
       // ส่งข้อมูลไปยัง API
       const response = await axios.post("http://localhost:8000/api/doctors/register-doctor", {
+        doc_id: doctorID,
         doc_name: doctorName,
         phone: phoneNumber,
+        password: password,
       });
 
       if (response.data && response.data.message === "Doctor registration successful") {
@@ -210,415 +219,456 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-
-
+let currentDoctorPage = 1;
+let doctorData = [];
+let filteredDoctorData = [];
 
 async function fetchDoctors() {
   try {
-    // Show loading message while fetching
-    document.getElementById("doctorinTable").innerHTML = `<tr><td colspan="4">กำลังโหลดข้อมูล...</td></tr>`;
+    // แสดงข้อความโหลด
+    document.getElementById("doctorinTable").innerHTML = `<tr><td colspan="5">กำลังโหลดข้อมูล...</td></tr>`;
 
-    // ดึงข้อมูลจาก API
+    // ดึงข้อมูลแพทย์จาก API
     const response = await axios.post("http://localhost:8000/api/doctors/doctorResult");
+    doctorData = response.data?.doctor || [];
 
-    // ตรวจสอบและดึงข้อมูลแพทย์จาก response
-    const { doctor } = response.data;
-
-    // ตรวจสอบว่ามีข้อมูลแพทย์หรือไม่
-    if (!doctor || doctor.length === 0) {
-      document.getElementById("doctorinTable").innerHTML = `<tr><td colspan="4">ไม่พบข้อมูลแพทย์</td></tr>`;
+    if (doctorData.length === 0) {
+      document.getElementById("doctorinTable").innerHTML = `<tr><td colspan="5">ไม่พบข้อมูลแพทย์</td></tr>`;
+      document.getElementById("doctorPaginationControls").innerHTML = "";
       return;
     }
 
-    // แปลงข้อมูลเป็น HTML
-    const rows = doctor.map((doc) => {
-      return `
-          <tr data-id="${doc.doc_id}">
-            <td>${doc.doc_id || "ไม่ระบุ"}</td>
-            <td>${doc.doc_name || "ไม่ระบุ"}</td>
-            <td>${doc.phone || "ไม่ระบุ"}</td>
-            <td>
-              <div class="dropdown-doctor">
-                <button class="actionBtn"><i class="fa-solid fa-grip-lines"></i></button>
-                <div class="dropdown-content">
-                  <a href="#" class="editBtn" data-id="${doc.doc_id}" data-name="${doc.doc_name}" data-phone="${doc.phone}">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                    <span>แก้ไขข้อมูล</span>
-                  </a>
-                  <a href="#" class="delete-trigger" data-id="${doc.doc_id}">
-                    <i class="fa-solid fa-trash"></i>
-                    <span>ลบ</span>
-                  </a>
-                  <a href="#" class="manageAvailability" data-id="${doc.doc_id}" data-name="${doc.doc_name}">
-                    <i class="fa-solid fa-calendar"></i>
-                    <span>จัดการวันว่าง</span>
-                  </a>
-                </div>
-              </div>
-            </td>
-          </tr>
-        `;
-    });
-    document.getElementById("doctorinTable").innerHTML = rows.join("");
+    // ตั้งค่าเริ่มต้นสำหรับการกรอง
+    filteredDoctorData = [...doctorData];
 
-    // จัดการการแก้ไขข้อมูล
-    const editButtons = document.querySelectorAll(".editBtn");
-    editButtons.forEach((button) => {
-      button.addEventListener("click", (e) => {
-        e.preventDefault();
-
-        const docId = button.getAttribute("data-id");
-        const docName = button.getAttribute("data-name");
-        const docPhone = button.getAttribute("data-phone");
-
-        const formHtml = `
-          <div class="popup-container">
-          <div class="popup-content">
-            <div>
-              <span class="close" id="cancelEdit">&times;</span>
-            </div>
-            <label for="editName">ชื่อแพทย์</label>
-            <input type="text" id="editName" value="${docName}" required />
-            <label for="editPhone">เบอร์โทรศัพท์</label>
-            <input type="text" id="editPhone" value="${docPhone}" pattern="^\\d{10}$" title="กรุณากรอกตัวเลข 10 หลัก" required />
-            <button id="saveEdit">บันทึก</button>
-          </div>
-        </div>`;
-
-        document.body.insertAdjacentHTML("beforeend", formHtml);
-
-        document.getElementById("saveEdit").addEventListener("click", async () => {
-          const newName = document.getElementById("editName").value;
-          const newPhone = document.getElementById("editPhone").value;
-
-          try {
-            await axios.post("http://localhost:8000/api/doctors/doctorUpdate", {
-              doc_id: docId,
-              doc_name: newName,
-              phone: newPhone,
-            });
-
-            alert("แก้ไขข้อมูลสำเร็จ");
-            document.querySelector(".popup-container").remove();
-            fetchDoctors();
-          } catch (err) {
-            console.error("Error updating doctor data:", err);
-            alert("เกิดข้อผิดพลาดในการแก้ไขข้อมูล");
-          }
-        });
-
-        document.getElementById("cancelEdit").addEventListener("click", () => {
-          document.querySelector(".popup-container").remove();
-        });
-      });
-    });
-
-    // จัดการการลบข้อมูล
-    const deleteButtons = document.querySelectorAll(".delete-trigger");
-    deleteButtons.forEach((button) => {
-      button.addEventListener("click", async (e) => {
-        e.preventDefault();
-        const docId = button.getAttribute("data-id");
-
-        if (confirm("คุณต้องการลบข้อมูลแพทย์นี้หรือไม่?")) {
-          try {
-            await axios.post("http://localhost:8000/api/doctors/doctorDelete", { doc_id: docId });
-            alert("ลบข้อมูลแพทย์สำเร็จ");
-            fetchDoctors();
-          } catch (err) {
-            console.error("Error deleting doctor data:", err);
-            alert("เกิดข้อผิดพลาดในการลบข้อมูล");
-          }
-        }
-      });
-    });
-
-    // Dropdown functionality
-    const dropdownButtons = document.querySelectorAll(".actionBtn");
-
-    dropdownButtons.forEach((button) => {
-      button.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const dropdownContent = button.closest(".dropdown-doctor").querySelector(".dropdown-content");
-        const dropdown = dropdownContent.parentElement;
-
-        document.querySelectorAll(".dropdown-doctor.show").forEach((otherDropdown) => {
-          if (otherDropdown !== dropdown) {
-            otherDropdown.classList.remove("show");
-            otherDropdown.querySelector(".dropdown-content").style.cssText = "";
-          }
-        });
-
-        dropdown.classList.toggle("show");
-
-        const rect = dropdownContent.getBoundingClientRect();
-        dropdownContent.style.left = rect.right > window.innerWidth ? `${window.innerWidth - rect.right}px` : "";
-        dropdownContent.style.top = rect.bottom > window.innerHeight ? `${window.innerHeight - rect.bottom}px` : "";
-      });
-    });
-
-    window.addEventListener("click", () => {
-      document.querySelectorAll(".dropdown-doctor").forEach((dropdown) => {
-        dropdown.classList.remove("show");
-        dropdown.querySelector(".dropdown-content").style.cssText = "";
-      });
-    });
-
-    // Add Availability
-    document.addEventListener("click", (event) => {
-      const manageAvailabilityButton = event.target.closest(".manageAvailability");
-      if (manageAvailabilityButton) {
-        const doctorID = manageAvailabilityButton.dataset.id;
-        const doctorName = manageAvailabilityButton.dataset.name;
-        openAvailabilityModal(doctorID, doctorName);
-      }
-    });
-
-    document.getElementById("addAvailabilityForm").addEventListener("submit", async (event) => {
-      event.preventDefault();
-    
-      const modal = document.getElementById("availabilityModal");
-      const doctorID = modal.getAttribute("data-doctor-id");
-      const availableDate = document.getElementById("availableDate").value;
-      const startTime = document.getElementById("startTime").value;
-      const endTime = document.getElementById("endTime").value;
-    
-      // ตรวจสอบว่าข้อมูลครบถ้วน
-      if (!doctorID || !availableDate || !startTime || !endTime) {
-        alert("กรุณากรอกข้อมูลให้ครบถ้วน");
-        return;
-      }
-    
-      // ตรวจสอบว่าเลือกวันที่ในอดีตหรือไม่
-      const today = new Date();
-      const selectedDate = new Date(availableDate);
-      today.setHours(0, 0, 0, 0); // ตั้งเวลาเป็นเที่ยงคืน
-      if (selectedDate < today) {
-        alert("ไม่สามารถเลือกวันที่ผ่านมาแล้วได้");
-        return;
-      }
-    
-      // สร้าง Availability ID
-      const Availability_id = generateAvailabilityId(availableDate, startTime, endTime);
-    
-      try {
-        const response = await axios.post("http://localhost:8000/api/doctors/add-availability", {
-          Availability_id,
-          doc_id: doctorID,
-          available_date: availableDate,
-          start_time: startTime,
-          end_time: endTime,
-        });
-    
-        if (response.data.message === "Availability added successfully") {
-          alert("เพิ่มวันว่างสำเร็จ");
-          fetchAvailability(doctorID);
-        } else {
-          alert("เกิดข้อผิดพลาด: " + response.data.message);
-        }
-      } catch (error) {
-        console.error("Error adding availability:", error);
-        alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
-      }
-    });
-    
-
-    async function fetchAvailability(doctorID) {
-      try {
-        const response = await axios.post("http://localhost:8000/api/doctors/get-availability", {
-          doc_id: doctorID,
-        });
-        const availability = response.data.availability;
-    
-        const rows = availability.map((item) => {
-          const formattedDate = new Date(item.available_date).toLocaleDateString('th-TH', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          });
-          const formattedStartTime = item.start_time.slice(0, 5); // HH:mm
-          const formattedEndTime = item.end_time.slice(0, 5); // HH:mm
-    
-          return `
-          <tr>
-            <td>${formattedDate}</td>
-            <td>${formattedStartTime}</td>
-            <td>${formattedEndTime}</td>
-            <td>
-              <button class="delete-availability styled-delete-button" data-id="${item.Availability_id}">
-                 ลบ
-              </button>
-            </td>
-          </tr>
-        `;
-        });
-
-        document.getElementById("availabilityTable").innerHTML = rows.join("");
-    
-        // Add event listeners to delete buttons
-        const deleteButtons = document.querySelectorAll(".delete-availability");
-        deleteButtons.forEach((button) => {
-          button.addEventListener("click", async (event) => {
-            const availabilityId = event.target.dataset.id;
-            if (confirm("คุณต้องการลบรายการนี้หรือไม่?")) {
-              try {
-                await axios.post("http://localhost:8000/api/doctors/delete-availability", {
-                  Availability_id: availabilityId,
-                });
-                alert("ลบรายการสำเร็จ");
-                fetchAvailability(doctorID); // Refresh the table
-              } catch (error) {
-                console.error("Error deleting availability:", error);
-                alert("เกิดข้อผิดพลาดในการลบข้อมูล");
-              }
-            }
-          });
-        });
-      } catch (error) {
-        console.error("Error fetching availability:", error);
-      }
-    }
-    
-
-    function openAvailabilityModal(doctorID, doctorName) {
-      const modal = document.getElementById("availabilityModal");
-      document.getElementById("doctorNameTitle").textContent = `${doctorName}`;
-      modal.setAttribute("data-doctor-id", doctorID);
-      modal.style.display = "block";
-      fetchAvailability(doctorID);
-    }
-
-    function closeAvailabilityModal() {
-      const modal = document.getElementById("availabilityModal");
-      modal.style.display = "none";
-    }
-
-    function generateAvailabilityId(date, time_start, time_end) {
-      const formattedTimeStart = time_start.replace(/:/g, '');
-      const formattedTimeEnd = time_end.replace(/:/g, '');
-      const formattedDate = date.replace(/-/g, '').slice(2);
-
-      const elements = [formattedDate, formattedTimeStart, formattedTimeEnd];
-
-      const shuffled = elements.sort(() => Math.random() - 0.5).join('');
-
-      return `Avail-${shuffled}`;
-    }
-
+    // เรนเดอร์ตารางและปุ่มแบ่งหน้า
+    renderDoctorTable();
+    renderDoctorPaginationControls();
   } catch (error) {
     console.error("Error fetching doctor data:", error);
-    document.getElementById("doctorinTable").innerHTML = `<tr><td colspan="4">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
+    document.getElementById("doctorinTable").innerHTML = `<tr><td colspan="5">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
+    document.getElementById("doctorPaginationControls").innerHTML = "";
   }
 }
 
+// ✅ ฟังก์ชันกรองข้อมูลแพทย์
+function filterDoctor() {
+  const nameFilter = document.getElementById('searchdoctor').value.toLowerCase();
 
+  filteredDoctorData = doctorData.filter(doc => {
+    const ID = (doc.doc_id || "").toLowerCase();
+    const name = (doc.doc_name || "").toLowerCase();
 
+    return ID.includes(nameFilter) || name.includes(nameFilter) || !nameFilter;
+  });
 
-async function fetchEmployee() {
+  currentDoctorPage = 1; // รีเซ็ตไปหน้าที่ 1
+  renderDoctorTable();
+  renderDoctorPaginationControls();
+}
+
+// ✅ ฟังก์ชันเรนเดอร์ตารางแพทย์
+function renderDoctorTable() {
+  const startIndex = (currentDoctorPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const pageData = filteredDoctorData.slice(startIndex, endIndex);
+
+  const rows = pageData.map((doc, index) => {
+    const displayIndex = startIndex + index + 1; // คำนวณลำดับที่
+
+    return `
+    <tr data-id="${doc.doc_id}">
+      <td>${displayIndex}</td>
+      <td>${doc.doc_id || "ไม่ระบุ"}</td>
+      <td>${doc.doc_name || "ไม่ระบุ"}</td>
+      <td>${doc.phone || "ไม่ระบุ"}</td>
+      <td>
+        <div class="dropdown-doctor">
+          <button class="actionBtn"><i class="fa-solid fa-grip-lines"></i></button>
+          <div class="dropdown-content">
+            <a href="#" class="editBtn" onclick="editDoctor('${doc.doc_id}', '${doc.doc_name}', '${doc.phone}')">
+              <i class="fa-solid fa-pen-to-square"></i>
+              <span>แก้ไขข้อมูล</span>
+            </a>
+            <a href="#" class="delete-trigger" onclick="deleteDoctor('${doc.doc_id}')">
+              <i class="fa-solid fa-trash"></i>
+              <span>ลบ</span>
+            </a>
+            <a href="#" class="manageAvailability" onclick="openAvailabilityModal('${doc.doc_id}', '${doc.doc_name}')">
+              <i class="fa-solid fa-calendar"></i>
+              <span>จัดการวันว่าง</span>
+            </a>
+          </div>
+        </div>
+      </td>
+    </tr>
+    `;
+  }).join("");
+
+  document.getElementById("doctorinTable").innerHTML = rows || `<tr><td colspan="5">ไม่พบข้อมูล</td></tr>`;
+  
+  attachDropdownEventListeners(); 
+
+  
+}
+
+// ✅ ฟังก์ชันจัดการ Dropdown
+function attachDropdownEventListeners() {
+  document.querySelectorAll(".actionBtn").forEach(button => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation(); // ป้องกันการปิด dropdown ทันทีที่กด
+      const dropdown = button.closest(".dropdown-doctor");
+      const dropdownContent = dropdown.querySelector(".dropdown-content");
+
+      // ปิด dropdown อื่นๆ ก่อน
+      document.querySelectorAll(".dropdown-doctor.show").forEach(openDropdown => {
+        if (openDropdown !== dropdown) {
+          openDropdown.classList.remove("show");
+          openDropdown.querySelector(".dropdown-content").style.display = "none";
+        }
+      });
+
+      // เปิด/ปิด dropdown
+      if (dropdown.classList.contains("show")) {
+        dropdown.classList.remove("show");
+        dropdownContent.style.display = "none";
+      } else {
+        dropdown.classList.add("show");
+        dropdownContent.style.display = "block";
+      }
+    });
+  });
+
+  // ✅ ปิด dropdown เมื่อคลิกที่อื่น
+  document.addEventListener("click", (event) => {
+    document.querySelectorAll(".dropdown-doctor.show").forEach(openDropdown => {
+      openDropdown.classList.remove("show");
+      openDropdown.querySelector(".dropdown-content").style.display = "none";
+    });
+  });
+}
+
+// ✅ ฟังก์ชันสร้างปุ่มเปลี่ยนหน้า
+function renderDoctorPaginationControls() {
+  const paginationContainer = document.getElementById("doctorPaginationControls");
+  
+  if (!paginationContainer) {
+    console.warn("⚠️ ไม่พบ doctorPaginationControls ใน DOM");
+    return; // หยุดทำงานถ้าไม่พบ element
+  }
+
+  const totalPages = Math.ceil(filteredDoctorData.length / itemsPerPage);
+  let controlsHTML = "";
+
+  for (let i = 1; i <= totalPages; i++) {
+    controlsHTML += `<button class="page-btn ${i === currentDoctorPage ? 'active' : ''}" onclick="changeDoctorPage(${i})">${i}</button>`;
+  }
+
+  paginationContainer.innerHTML = totalPages > 1 ? controlsHTML : "";
+}
+
+function changeDoctorPage(page) {
+  currentDoctorPage = page;
+  renderDoctorTable();
+  renderDoctorPaginationControls();
+}
+
+function editDoctor(docId, docName, docPhone) {
+  const formHtml = `
+    <div class="popup-container">
+      <div class="popup-content">
+        <div>
+          <span class="close" id="cancelEdit">&times;</span>
+        </div>
+        <label for="editName">ชื่อแพทย์</label>
+        <input type="text" id="editName" value="${docName}" required />
+        <label for="editPhone">เบอร์โทรศัพท์</label>
+        <input type="text" id="editPhone" value="${docPhone}" pattern="^\\d{10}$" title="กรุณากรอกตัวเลข 10 หลัก" required />
+        <button id="saveEdit">บันทึก</button>
+      </div>
+    </div>`;
+
+  document.body.insertAdjacentHTML("beforeend", formHtml);
+
+  document.getElementById("saveEdit").addEventListener("click", async () => {
+    const newName = document.getElementById("editName").value;
+    const newPhone = document.getElementById("editPhone").value;
+
+    try {
+      await axios.post("http://localhost:8000/api/doctors/doctorUpdate", {
+        doc_id: docId,
+        doc_name: newName,
+        phone: newPhone,
+      });
+
+      alert("แก้ไขข้อมูลสำเร็จ");
+      document.querySelector(".popup-container").remove();
+      fetchDoctors();
+    } catch (err) {
+      console.error("Error updating doctor data:", err);
+      alert("เกิดข้อผิดพลาดในการแก้ไขข้อมูล");
+    }
+  });
+
+  document.getElementById("cancelEdit").addEventListener("click", () => {
+    document.querySelector(".popup-container").remove();
+  });
+}
+
+async function deleteDoctor(docId) {
+  if (!confirm("คุณต้องการลบข้อมูลแพทย์นี้หรือไม่?")) return;
+
   try {
-    const employeeID = sessionStorage.getItem('employeeID');
+    await axios.post("http://localhost:8000/api/doctors/doctorDelete", { doc_id: docId });
+    alert("ลบข้อมูลแพทย์สำเร็จ");
+    fetchDoctors();
+  } catch (err) {
+    console.error("Error deleting doctor data:", err);
+    alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+  }
+}
 
-    document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">กำลังโหลดข้อมูล...</td></tr>`;
+function openAvailabilityModal(doctorID, doctorName) {
+  const modal = document.getElementById("availabilityModal");
+  document.getElementById("doctorNameTitle").textContent = doctorName;
+  modal.setAttribute("data-doctor-id", doctorID);
+  modal.style.display = "block";
+  fetchAvailability(doctorID);
+}
 
-    // ดึงข้อมูลจาก API
-    const response = await axios.post("http://localhost:8000/api/employees/employeeResult");
-    console.log(response);
+function closeAvailabilityModal() {
+  const modal = document.getElementById("availabilityModal");
+  modal.style.display = "none";
+}
 
-    // ตรวจสอบและดึงข้อมูลพนักงานจาก response
-    const { employee } = response.data;
+let currentPage = 1;
+let availabilityData = []; // เก็บข้อมูลทั้งหมดหลังจากดึงจาก API
 
-    // ตรวจสอบว่ามีข้อมูลพนักงานหรือไม่
-    if (!employee || employee.length === 0) {
-      document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">ไม่พบข้อมูลพนักงาน</td></tr>`;
+
+async function fetchAvailability(doctorID) { 
+  try {
+    const response = await axios.post("http://localhost:8000/api/doctors/get-availability", { doc_id: doctorID });
+    availabilityData = response.data.availability || [];
+
+    // เรียงวันจากน้อยไปมาก
+    availabilityData.sort((a, b) => new Date(a.available_date) - new Date(b.available_date));
+
+    currentPage = 1; // รีเซ็ตหน้าปัจจุบัน
+    updateAvailabilityTable();
+  } catch (error) {
+    console.error("Error fetching availability:", error);
+    document.getElementById("availabilityTable").innerHTML = `<tr><td colspan="4">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
+  }
+}
+
+// ✅ อัปเดตตารางเมื่อเลือกเดือน
+function updateAvailabilityTable() {
+  const selectedMonth = document.getElementById("monthFilter").value;
+  
+  // กรองข้อมูลตามเดือนที่เลือก
+  filteredData = selectedMonth
+    ? availabilityData.filter(item => new Date(item.available_date).getMonth() + 1 == selectedMonth)
+    : [...availabilityData]; // ถ้าไม่เลือกเดือนให้แสดงทั้งหมด
+
+  renderAvailabilityTable();
+  renderPaginationControls();
+}
+
+function renderAvailabilityTable() {
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const pageData = filteredData.slice(startIndex, endIndex);
+
+  const rows = pageData.map((item) => {
+    const formattedDate = new Date(item.available_date).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
+    const formattedStartTime = item.start_time.slice(0, 5);
+    const formattedEndTime = item.end_time.slice(0, 5);
+
+    return `
+      <tr>
+        <td>${formattedDate}</td>
+        <td>${formattedStartTime}</td>
+        <td>${formattedEndTime}</td>
+        <td>
+          <button class="delete-availability" data-id="${item.Availability_id}">ลบ</button>
+        </td>
+      </tr>
+    `;
+  }).join("");
+
+  document.getElementById("availabilityTable").innerHTML = rows || `<tr><td colspan="4">ไม่มีข้อมูลวันว่าง</td></tr>`;
+  attachDeleteAvailabilityListeners();
+}
+
+// ✅ สร้างปุ่มเปลี่ยนหน้า
+function renderPaginationControls() {
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  let controlsHTML = "";
+
+  for (let i = 1; i <= totalPages; i++) {
+    controlsHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+  }
+
+  document.getElementById("paginationControls").innerHTML = totalPages > 1 ? controlsHTML : "";
+}
+
+// ✅ ฟังก์ชันเปลี่ยนหน้า
+function changePage(page) {
+  currentPage = page;
+  renderAvailabilityTable();
+  renderPaginationControls();
+}
+
+// ✅ ผูก Event Listener ให้ปุ่มลบ
+function attachDeleteAvailabilityListeners() {
+  document.querySelectorAll(".delete-availability").forEach(button => {
+    button.addEventListener("click", async (event) => {
+      const availabilityId = event.target.dataset.id;
+      if (confirm("คุณต้องการลบรายการนี้หรือไม่?")) {
+        try {
+          await axios.post("http://localhost:8000/api/doctors/delete-availability", { Availability_id: availabilityId });
+          alert("ลบรายการสำเร็จ");
+          fetchAvailability(sessionStorage.getItem("selectedDoctorID")); // รีโหลดตารางใหม่
+        } catch (error) {
+          console.error("Error deleting availability:", error);
+          alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+        }
+      }
+    });
+  });
+}
+
+function attachDeleteAvailabilityListeners(doctorID) {
+  document.querySelectorAll(".delete-availability").forEach((button) => {
+    button.addEventListener("click", async (event) => {
+      const availabilityId = event.target.dataset.id;
+      if (confirm("คุณต้องการลบรายการนี้หรือไม่?")) {
+        try {
+          await axios.post("http://localhost:8000/api/doctors/delete-availability", { Availability_id: availabilityId });
+          alert("ลบรายการสำเร็จ");
+          fetchAvailability(doctorID);
+        } catch (error) {
+          console.error("Error deleting availability:", error);
+          alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+        }
+      }
+    });
+  });
+}
+
+function addAvailabilityEventListener() {
+  const form = document.getElementById("addAvailabilityForm");
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const modal = document.getElementById("availabilityModal");
+    const doctorID = modal ? modal.getAttribute("data-doctor-id") : sessionStorage.getItem("selectedDoctorID");
+    const availableDate = document.getElementById("availableDate").value;
+    const startTime = document.getElementById("startTime").value;
+    const endTime = document.getElementById("endTime").value;
+
+    if (!doctorID || !availableDate || !startTime || !endTime) {
+      alert("กรุณากรอกข้อมูลให้ครบถ้วน");
       return;
     }
 
-    // กรองข้อมูลพนักงานที่ไม่ตรงกับข้อมูลใน sessionStorage
-    const filteredEmployee = employee.filter(emp => {
-      return emp.employee_id !== employeeID; // กรองโดยใช้ employeeID
-    });
+    try {
+      const response = await axios.post("http://localhost:8000/api/doctors/add-availability", {
+        doc_id: doctorID,
+        available_date: availableDate,
+        start_time: startTime,
+        end_time: endTime,
+      });
 
-    // ตรวจสอบว่าหลังจากกรองข้อมูลแล้วมีพนักงานเหลือหรือไม่
-    if (filteredEmployee.length === 0) {
-      document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">ไม่พบข้อมูลเจ้าหน้าที่สามารถแสดงได้</td></tr>`;
-      return;
+      if (response.data.message === "Availability added successfully") {
+        alert("เพิ่มวันว่างสำเร็จ");
+        fetchAvailability(doctorID);
+      } else {
+        alert("เกิดข้อผิดพลาด: " + response.data.message);
+      }
+    } catch (error) {
+      console.error("Error adding availability:", error);
+      alert("เกิดข้อผิดพลาด");
     }
-    // sessionStorage.removeItem('employeeID');
-    // แปลงข้อมูลเป็น HTML
-    const rows = filteredEmployee.map((emp) => {
-      return `
-        <tr data-id="${emp.employee_id}">
-          <td>${emp.employee_id || "ไม่ระบุ"}</td>
-          <td>${emp.emp_fname || "ไม่ระบุ"}</td>
-          <td>${emp.emp_lname || "ไม่ระบุ"}</td>
-          <td>
-            <div class="dropdown-doctor">
-                <button class="actionBtn"><i class="fa-solid fa-grip-lines"></i></button>
-                <div class="dropdown-content">
-                    <a href="#" class="editBtn" data-id="${emp.employee_id}" data-fname="${emp.emp_fname}" data-lname="${emp.emp_lname}">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                        <span>แก้ไขข้อมูล</span>
-                    </a>
-                    <a href="#" class="delete-trigger" data-id="${emp.employee_id}">
-                        <i class="fa-solid fa-trash"></i>
-                        <span>ลบ</span>
-                    </a>
-                </div>
-            </div>
-          </td>
-        </tr>
-      `;
-    });
+  });
+}
 
-    // แสดงผลใน <tbody>
-    document.getElementById("addminTable").innerHTML = rows.join("");
-    // Dropdown functionality: Toggle dropdown visibilit
-    const dropdownButtons = document.querySelectorAll('.actionBtn');
+let adminData = [];
+let filteredAdminData = [];
 
-    dropdownButtons.forEach((button) => {
-      button.addEventListener('click', (e) => {
-        e.stopPropagation(); // หยุดการ propagate event ไปที่อื่น
+// ✅ ฟังก์ชันโหลดข้อมูลเจ้าหน้าที่จาก API
+async function fetchEmployee(page = 1) {
+    currentPage = page;
+    try {
+        document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">กำลังโหลดข้อมูล...</td></tr>`;
 
-        const dropdownContent = button.closest('.dropdown-doctor').querySelector('.dropdown-content');
-        const dropdown = dropdownContent.parentElement;
+        const response = await axios.post("http://localhost:8000/api/employees/employeeResult");
+        const { employee } = response.data;
 
-        // ปิด dropdown อื่นๆ ที่เปิดอยู่ก่อนหน้า
-        document.querySelectorAll('.dropdown-doctor.show').forEach((otherDropdown) => {
-          if (otherDropdown !== dropdown) {
-            otherDropdown.classList.remove('show');
-            otherDropdown.querySelector('.dropdown-content').style.cssText = ''; // ลบการตั้งค่า style ที่ปรับ
-          }
-        });
+        if (!employee || employee.length === 0) {
+            document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">ไม่พบข้อมูลพนักงาน</td></tr>`;
+            document.getElementById("paginationControls").innerHTML = "";
+            return;
+        }
 
-        // เปิดหรือลบสถานะการเปิดของ dropdown ปัจจุบัน
-        dropdown.classList.toggle('show');
 
-        // ปรับตำแหน่งของ dropdown
-        const rect = dropdownContent.getBoundingClientRect();
-        dropdownContent.style.left = rect.right > window.innerWidth ? `${window.innerWidth - rect.right}px` : '';
-        dropdownContent.style.left = rect.left < 0 ? '1px' : dropdownContent.style.left;
-        dropdownContent.style.top = rect.bottom > window.innerHeight ? `${window.innerHeight - rect.bottom}px` : '';
-      });
-    });
+        adminData = [...employee];
+        filteredAdminData = [...adminData];
 
-    // ปิด dropdown เมื่อคลิกที่พื้นที่นอก dropdown
-    window.addEventListener('click', () => {
-      document.querySelectorAll('.dropdown-doctor').forEach((dropdown) => {
-        dropdown.classList.remove('show');
-        dropdown.querySelector('.dropdown-content').style.cssText = ''; // รีเซ็ตตำแหน่ง
-      });
-    });
+        renderAdminTable();
+        renderPaginationControls();
+       
+    } catch (error) {
+        console.error("Error fetching employee data:", error);
+        document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
+        document.getElementById("paginationControls").innerHTML = "";
+    }
+}
 
-    const editButtons = document.querySelectorAll('.editBtn');
-    editButtons.forEach((button) => {
-      button.addEventListener('click', (e) => {
-        e.preventDefault();
-        const empId = button.getAttribute("data-id");
-        const empFname = button.getAttribute("data-fname");
-        const empLname = button.getAttribute("data-lname");
 
-        // แสดงฟอร์มแก้ไข
-        const formHtml = `
+function renderAdminTable() {
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const pageData = filteredAdminData.slice(startIndex, endIndex);
+
+  const rows = pageData.map((emp) => `
+      <tr data-id="${emp.employee_id}">
+        <td>${emp.employee_id || "ไม่ระบุ"}</td>
+        <td>${emp.emp_fname || "ไม่ระบุ"}</td>
+        <td>${emp.emp_lname || "ไม่ระบุ"}</td>
+        <td>
+          <div class="dropdown-doctor">
+              <button class="actionBtn"><i class="fa-solid fa-grip-lines"></i></button>
+              <div class="dropdown-content">
+                  <a href="#" class="editBtn" data-id="${emp.employee_id}" data-fname="${emp.emp_fname}" data-lname="${emp.emp_lname}">
+                      <i class="fa-solid fa-pen-to-square"></i> <span>แก้ไขข้อมูล</span>
+                  </a>
+                  <a href="#" class="delete-trigger" data-id="${emp.employee_id}">
+                      <i class="fa-solid fa-trash"></i> <span>ลบ</span>
+                  </a>
+              </div>
+          </div>
+        </td>
+      </tr>
+  `).join("");
+
+  document.getElementById("addminTable").innerHTML = rows || `<tr><td colspan="4">ไม่มีข้อมูล</td></tr>`;
+  
+  attachDropdownEmployee();
+  attachEditAndDeleteEvents();
+}
+
+function attachEditAndDeleteEvents() {
+  // ✅ ปุ่มแก้ไข
+  document.querySelectorAll(".editBtn").forEach(button => {
+      button.addEventListener("click", (e) => {
+          e.preventDefault();
+          const empId = button.getAttribute("data-id");
+          const empFname = button.getAttribute("data-fname");
+          const empLname = button.getAttribute("data-lname");
+
+          const formHtml = `
               <div class="popup-container">
                 <div class="popup-content">
                   <div>
@@ -631,113 +681,236 @@ async function fetchEmployee() {
                   <button id="saveEdit">บันทึก</button>
                 </div>
               </div>
-            `;
+          `;
 
-        // แสดงฟอร์มในหน้า
-        document.body.insertAdjacentHTML('beforeend', formHtml);
+          document.body.insertAdjacentHTML("beforeend", formHtml);
+          
+          document.getElementById("cancelEdit").addEventListener("click", () => {
+              document.querySelector(".popup-container").remove();
+          });
 
-        // ปิดฟอร์มเมื่อคลิกที่ปุ่ม 'close'
-        const cancelEditButton = document.getElementById("cancelEdit");
-        cancelEditButton.addEventListener('click', () => {
-          document.querySelector('.popup-container').remove(); // ลบฟอร์มออกจากหน้า
-        });
+          document.getElementById("saveEdit").addEventListener("click", async () => {
+              try {
+                  await axios.post("http://localhost:8000/api/employees/employeeUpdate", {
+                      employee_id: empId,
+                      emp_fname: document.getElementById("editFname").value,
+                      emp_lname: document.getElementById("editLname").value,
+                  });
 
-        // การบันทึกข้อมูลการแก้ไข
-        const saveEditButton = document.getElementById("saveEdit");
-        saveEditButton.addEventListener('click', async () => {
-          const updatedFname = document.getElementById("editFname").value;
-          const updatedLname = document.getElementById("editLname").value;
-
-          try {
-            // ส่งคำขออัปเดตข้อมูลพนักงาน
-            await axios.post("http://localhost:8000/api/employees/employeeUpdate", {
-              employee_id: empId,
-              emp_fname: updatedFname,
-              emp_lname: updatedLname,
-            });
-
-            alert("ข้อมูลพนักงานได้รับการอัปเดตเรียบร้อยแล้ว");
-            fetchEmployee(); // รีเฟรชข้อมูลพนักงาน
-            document.querySelector('.popup-container').remove(); // ปิดฟอร์ม
-          } catch (err) {
-            console.error("Error updating employee:", err);
-            alert("เกิดข้อผิดพลาดในการอัปเดตข้อมูล");
-          }
-        });
+                  alert("ข้อมูลพนักงานได้รับการอัปเดตเรียบร้อยแล้ว");
+                  fetchEmployee();
+                  document.querySelector(".popup-container").remove();
+              } catch (err) {
+                  console.error("Error updating employee:", err);
+                  alert("เกิดข้อผิดพลาดในการอัปเดตข้อมูล");
+              }
+          });
       });
-    });
+  });
 
-    const deleteButtons = document.querySelectorAll('.delete-trigger');
-    deleteButtons.forEach((button) => {
-      button.addEventListener('click', async (e) => {
-        e.preventDefault();
-        const empId = button.getAttribute("data-id");
+  // ✅ ปุ่มลบ
+  document.querySelectorAll(".delete-trigger").forEach(button => {
+      button.addEventListener("click", async (e) => {
+          e.preventDefault();
+          const empId = button.getAttribute("data-id");
 
-        if (confirm("คุณต้องการลบข้อมูลพนักงานนี้หรือไม่?")) {
-          try {
-            // ส่งคำขอลบข้อมูลพนักงาน
-            await axios.post("http://localhost:8000/api/employees/employeeDelete", {
-              employee_id: empId,
-            });
+          if (confirm("คุณต้องการลบข้อมูลพนักงานนี้หรือไม่?")) {
+              try {
+                  await axios.post("http://localhost:8000/api/employees/employeeDelete", {
+                      employee_id: empId,
+                  });
 
-            alert("ลบข้อมูลพนักงานสำเร็จ");
-            fetchEmployee(); // รีเฟรชข้อมูล
-          } catch (err) {
-            console.error("Error deleting employee:", err);
-            alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+                  alert("ลบข้อมูลพนักงานสำเร็จ");
+                  fetchEmployee(); // รีเฟรชข้อมูล
+              } catch (err) {
+                  console.error("Error deleting employee:", err);
+                  alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+              }
           }
-        }
       });
-    });
-
-
-  } catch (error) {
-    console.error("Error fetching employee data:", error);
-    document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
-  }
+  });
 }
 
+function attachDropdownEmployee() {
+  document.querySelectorAll(".actionBtn").forEach(button => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation(); // ป้องกันการปิด dropdown ทันทีที่กด
+      const dropdown = button.closest(".dropdown-doctor");
+      const dropdownContent = dropdown.querySelector(".dropdown-content");
+
+      // ปิด dropdown อื่นๆ ก่อน
+      document.querySelectorAll(".dropdown-doctor.show").forEach(openDropdown => {
+        if (openDropdown !== dropdown) {
+          openDropdown.classList.remove("show");
+          openDropdown.querySelector(".dropdown-content").style.display = "none";
+        }
+      });
+
+      // เปิด/ปิด dropdown
+      if (dropdown.classList.contains("show")) {
+        dropdown.classList.remove("show");
+        dropdownContent.style.display = "none";
+      } else {
+        dropdown.classList.add("show");
+        dropdownContent.style.display = "block";
+      }
+    });
+  });
+
+  // ✅ ปิด dropdown เมื่อคลิกที่อื่น
+  document.addEventListener("click", (event) => {
+    document.querySelectorAll(".dropdown-doctor.show").forEach(openDropdown => {
+      openDropdown.classList.remove("show");
+      openDropdown.querySelector(".dropdown-content").style.display = "none";
+    });
+  });
+}
+
+
+function renderPaginationControls() {
+  const paginationContainer = document.getElementById("PaginationControls");
+
+  if (!paginationContainer) {
+      console.warn("⚠️ ไม่พบ PaginationControls ใน DOM");
+      return;
+  }
+
+  const totalPages = Math.ceil(filteredAdminData.length / itemsPerPage);
+  let controlsHTML = "";
+
+  for (let i = 1; i <= totalPages; i++) {
+      controlsHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+  }
+
+  paginationContainer.innerHTML = totalPages > 1 ? controlsHTML : "";
+}
+
+// ✅ ฟังก์ชันเปลี่ยนหน้า
+function changePage(page) {
+  currentPage = page;
+  renderAdminTable();
+  renderPaginationControls();
+}
+
+
+
+// ✅ ฟังก์ชันกรองข้อมูลเจ้าหน้าที่
+function filterAddmin() {
+    const nameFilter = document.getElementById('searchaddmin').value.trim().toLowerCase();
+    const idFilter = document.getElementById('searchaddmin').value.trim().toLowerCase();
+
+    filteredAdminData = adminData.filter(emp => {
+        const name = (emp.emp_fname + " " + emp.emp_lname).trim().toLowerCase();
+        const ID = (emp.employee_id || "").trim().toLowerCase();
+
+        return (
+            (!nameFilter || name.includes(nameFilter)) ||
+            (!idFilter || ID.includes(idFilter))
+        );
+    });
+
+    currentPage = 1;
+    renderAdminTable();
+    renderPaginationControls();
+}
+
+
+let currentUserPage = 1;
+const itemsPerPage = 12;
+let userData = []; // เก็บข้อมูลทั้งหมด
+let filteredData = []; // เก็บข้อมูลที่ถูกกรอง
+
+// ✅ ดึงข้อมูลผู้ใช้
 async function fetchUserlist() {
   try {
-    // Show loading message while fetching
-    document.getElementById("UserTable").innerHTML = `<tr><td colspan="4">กำลังโหลดข้อมูล...</td></tr>`;
+    document.getElementById("UserTable").innerHTML = `<tr><td colspan="7">กำลังโหลดข้อมูล...</td></tr>`;
+    
     const response = await axios.post("http://localhost:8000/api/employees/userList");
-    console.log(response.data);
-    // ตรวจสอบและดึงข้อมูลแพทย์จาก response
-    const { user } = response.data;
+    userData = response.data?.user || [];
+    filteredData = [...userData]; // เริ่มต้นกรองเป็นข้อมูลทั้งหมด
 
-
-    // ตรวจสอบว่ามีข้อมูลแพทย์หรือไม่
-    if (!user || user.length === 0) {
-      document.getElementById("UserTable").innerHTML = `<tr><td colspan="4">ไม่พบข้อมูลผู้ใช้</td></tr>`;
+    if (userData.length === 0) {
+      document.getElementById("UserTable").innerHTML = `<tr><td colspan="7">ไม่พบข้อมูลผู้ใช้</td></tr>`;
+      document.getElementById("userPaginationControls").innerHTML = "";
       return;
     }
 
-    // แปลงข้อมูลเป็น HTML
-    const rows = user.map((user) => {
-      return `
-        <tr data-id="${user.user_id}" year="${user.year}">
+    renderUserTable();
+    renderUserPaginationControls();
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    document.getElementById("UserTable").innerHTML = `<tr><td colspan="7">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
+    document.getElementById("userPaginationControls").innerHTML = "";
+  }
+}
+
+
+function filterPatients() {
+  const nameFilter = document.getElementById('searchName').value.toLowerCase();
+  const facultyFilter = document.getElementById('searchFaculty').value;
+
+  // กรองข้อมูลจาก userData ทั้งหมด
+  filteredData = userData.filter(user => {
+    const ID = (user.user_id || "").toLowerCase();
+    const name = `${user.user_fname} ${user.user_lname}`.toLowerCase();
+    const faculty = user.faculty?.trim() || "";
+
+    return (
+      (ID.includes(nameFilter) || name.includes(nameFilter) || !nameFilter) &&
+      (faculty === facultyFilter || !facultyFilter)
+    );
+  });
+
+  currentUserPage = 1; // รีเซ็ตไปหน้าที่ 1 หลังค้นหา
+  renderUserTable();
+  renderUserPaginationControls();
+}
+
+// ✅ ฟังก์ชันแบ่งหน้า
+function renderUserTable() {
+  const startIndex = (currentUserPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const pageData = filteredData.slice(startIndex, endIndex);
+
+  const rows = pageData.map((user, index) => {
+    const displayIndex = startIndex + index + 1; // คำนวณเลขลำดับที่แสดงในตาราง
+    return `
+      <tr data-id="${user.user_id}">
+        <td>${displayIndex}</td>  <!-- ✅ แสดงลำดับที่ -->
         <td>${user.user_id || "ไม่ระบุ"}</td>
-        <td>${(user.user_fname) + " " + (user.user_lname) || "ไม่ระบุ"}</td>
+        <td>${user.user_fname} ${user.user_lname || "ไม่ระบุ"}</td>
         <td>${user.nickname || "ไม่ระบุ"}</td>
         <td>${user.faculty || "ไม่ระบุ"}</td>
         <td>${user.phone || "ไม่ระบุ"}</td>
         <td>
-        <button class="action-btn" onclick="goToAppointmentPage('${user.user_id}')">จัดการข้อมูล</button>
-      </td>
+          <button class="action-btn" onclick="goToAppointmentPage('${user.user_id}')">จัดการข้อมูล</button>
+        </td>
       </tr>
-        `;
-    });
+    `;
+  }).join("");
 
-    // แสดงผลใน <tbody>
-    document.getElementById("UserTable").innerHTML = rows.join("");
-
-
-  } catch (error) {
-    console.error("Error fetching user data:", error);
-    document.getElementById("UserTable").innerHTML = `<tr><td colspan="4">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
-  }
+  document.getElementById("UserTable").innerHTML = rows || `<tr><td colspan="7">ไม่พบข้อมูล</td></tr>`;
 }
+
+
+function renderUserPaginationControls() {
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  let controlsHTML = "";
+
+  for (let i = 1; i <= totalPages; i++) {
+    controlsHTML += `<button class="page-btn ${i === currentUserPage ? 'active' : ''}" onclick="changeUserPage(${i})">${i}</button>`;
+  }
+
+  document.getElementById("userPaginationControls").innerHTML = totalPages > 1 ? controlsHTML : ""; 
+}
+
+function changeUserPage(page) {
+  currentUserPage = page;
+  renderUserTable();
+  renderUserPaginationControls();
+}
+
+
 
 async function fetchUserDataAndDisplay() {
   try {
@@ -1479,179 +1652,216 @@ function generateUniqueAppointmentId(userId, date) {
 
 
 
+let managerData = [];
+let filteredManagerData = [];
 
-async function fetchManger() {
+async function fetchManager(page = 1) {
+  currentPage = page;
   try {
+      document.getElementById("managerinTable").innerHTML = `<tr><td colspan="5">กำลังโหลดข้อมูล...</td></tr>`;
 
-    document.getElementById("managerinTable").innerHTML = `<tr><td colspan="4">กำลังโหลดข้อมูล...</td></tr>`;
+      const response = await axios.post("http://localhost:8000/api/manager/managerResult");
+      const { manager } = response.data;
 
-    // ดึงข้อมูลจาก API
-    const response = await axios.post("http://localhost:8000/api/manager/managerResult");
-    console.log(response);
+      if (!manager || manager.length === 0) {
+          document.getElementById("managerinTable").innerHTML = `<tr><td colspan="5">ไม่พบข้อมูลผู้บริหาร</td></tr>`;
+          document.getElementById("paginationControls").innerHTML = "";
+          return;
+      }
 
-    // ตรวจสอบและดึงข้อมูลพนักงานจาก response
-    const { manager } = response.data;
+      managerData = [...manager];
+      filteredManagerData = [...managerData];
 
-    // ตรวจสอบว่ามีข้อมูลพนักงานหรือไม่
-    if (!manager || manager.length === 0) {
-      document.getElementById("managerinTable").innerHTML = `<tr><td colspan="4">ไม่พบข้อมูลผู้บริหาร</td></tr>`;
+      renderManagerTable();
+      renderPaginationControls();
+  } catch (error) {
+      console.error("Error fetching manager data:", error);
+      document.getElementById("managerinTable").innerHTML = `<tr><td colspan="5">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
+      document.getElementById("paginationControls").innerHTML = "";
+  }
+}
+
+function renderManagerTable() {
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const pageData = filteredManagerData.slice(startIndex, endIndex);
+
+  const rows = pageData.map((man, index) => `
+      <tr data-id="${man.man_id}">
+        <td>${startIndex + index + 1} </td>
+        <td>${man.man_id || "ไม่ระบุ"}</td>
+        <td>${man.man_fname || "ไม่ระบุ"}</td>
+        <td>${man.man_lname || "ไม่ระบุ"}</td>
+        <td>
+          <div class="dropdown-doctor">
+              <button class="actionBtn"><i class="fa-solid fa-grip-lines"></i></button>
+              <div class="dropdown-content">
+                  <a href="#" class="editBtn" data-id="${man.man_id}" data-fname="${man.man_fname}" data-lname="${man.man_lname}">
+                      <i class="fa-solid fa-pen-to-square"></i> <span>แก้ไขข้อมูล</span>
+                  </a>
+                  <a href="#" class="delete-trigger" data-id="${man.man_id}">
+                      <i class="fa-solid fa-trash"></i> <span>ลบ</span>
+                  </a>
+              </div>
+          </div>
+        </td>
+      </tr>
+  `).join("");
+
+  document.getElementById("managerinTable").innerHTML = rows || `<tr><td colspan="5">ไม่มีข้อมูล</td></tr>`;
+  
+  attachDropdownManager();
+  attachEditAndDeleteEvents();
+}
+function attachDropdownManager() {
+  document.querySelectorAll(".actionBtn").forEach(button => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation(); // ป้องกันการปิด dropdown ทันทีที่กด
+      const dropdown = button.closest(".dropdown-doctor");
+      const dropdownContent = dropdown.querySelector(".dropdown-content");
+
+      // ปิด dropdown อื่นๆ ก่อน
+      document.querySelectorAll(".dropdown-doctor.show").forEach(openDropdown => {
+        if (openDropdown !== dropdown) {
+          openDropdown.classList.remove("show");
+          openDropdown.querySelector(".dropdown-content").style.display = "none";
+        }
+      });
+
+      // เปิด/ปิด dropdown
+      if (dropdown.classList.contains("show")) {
+        dropdown.classList.remove("show");
+        dropdownContent.style.display = "none";
+      } else {
+        dropdown.classList.add("show");
+        dropdownContent.style.display = "block";
+      }
+    });
+  });
+
+  // ✅ ปิด dropdown เมื่อคลิกที่อื่น
+  document.addEventListener("click", (event) => {
+    document.querySelectorAll(".dropdown-doctor.show").forEach(openDropdown => {
+      openDropdown.classList.remove("show");
+      openDropdown.querySelector(".dropdown-content").style.display = "none";
+    });
+  });
+}
+// ✅ ฟังก์ชันสร้างปุ่มเปลี่ยนหน้า
+function renderPaginationControls() {
+  const paginationContainer = document.getElementById("paginationControls");
+
+  if (!paginationContainer) {
+      console.warn("⚠️ ไม่พบ paginationControls ใน DOM");
       return;
-    }
+  }
 
- 
-    const rows = manager.map((man) => {
-      return `
-        <tr data-id="${man.man_id}">
-          <td>${man.man_id || "ไม่ระบุ"}</td>
-          <td>${man.man_fname || "ไม่ระบุ"}</td>
-          <td>${man.man_lname || "ไม่ระบุ"}</td>
-          <td>
-            <div class="dropdown-doctor">
-                <button class="actionBtn"><i class="fa-solid fa-grip-lines"></i></button>
-                <div class="dropdown-content">
-                    <a href="#" class="editBtn" data-id="${man.man_id}" data-fname="${man.man_fname}" data-lname="${man.man_lname}">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                        <span>แก้ไขข้อมูล</span>
-                    </a>
-                    <a href="#" class="delete-trigger" data-id="${man.man_id}">
-                        <i class="fa-solid fa-trash"></i>
-                        <span>ลบ</span>
-                    </a>
-                </div>
-            </div>
-          </td>
-        </tr>
-      `;
-    });
+  const totalPages = Math.ceil(filteredManagerData.length / itemsPerPage);
+  let controlsHTML = "";
 
-    // แสดงผลใน <tbody>
-    document.getElementById("managerinTable").innerHTML = rows.join("");
-    // Dropdown functionality: Toggle dropdown visibilit
-    const dropdownButtons = document.querySelectorAll('.actionBtn');
+  for (let i = 1; i <= totalPages; i++) {
+      controlsHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+  }
 
-    dropdownButtons.forEach((button) => {
-      button.addEventListener('click', (e) => {
-        e.stopPropagation(); // หยุดการ propagate event ไปที่อื่น
+  paginationContainer.innerHTML = totalPages > 1 ? controlsHTML : "";
+}
 
-        const dropdownContent = button.closest('.dropdown-doctor').querySelector('.dropdown-content');
-        const dropdown = dropdownContent.parentElement;
+// ✅ ฟังก์ชันเปลี่ยนหน้า
+function changePage(page) {
+  currentPage = page;
+  renderManagerTable();
+  renderPaginationControls();
+}
 
-        // ปิด dropdown อื่นๆ ที่เปิดอยู่ก่อนหน้า
-        document.querySelectorAll('.dropdown-doctor.show').forEach((otherDropdown) => {
-          if (otherDropdown !== dropdown) {
-            otherDropdown.classList.remove('show');
-            otherDropdown.querySelector('.dropdown-content').style.cssText = ''; // ลบการตั้งค่า style ที่ปรับ
-          }
-        });
+// ✅ ฟังก์ชันแนบ Event ให้ปุ่มแก้ไขและลบ
+function attachEditAndDeleteEvents() {
+  document.querySelectorAll(".editBtn").forEach(button => {
+      button.addEventListener("click", (e) => {
+          e.preventDefault();
+          const manId = button.getAttribute("data-id");
+          const manFname = button.getAttribute("data-fname");
+          const manLname = button.getAttribute("data-lname");
 
-        // เปิดหรือลบสถานะการเปิดของ dropdown ปัจจุบัน
-        dropdown.classList.toggle('show');
-
-        // ปรับตำแหน่งของ dropdown
-        const rect = dropdownContent.getBoundingClientRect();
-        dropdownContent.style.left = rect.right > window.innerWidth ? `${window.innerWidth - rect.right}px` : '';
-        dropdownContent.style.left = rect.left < 0 ? '1px' : dropdownContent.style.left;
-        dropdownContent.style.top = rect.bottom > window.innerHeight ? `${window.innerHeight - rect.bottom}px` : '';
-      });
-    });
-
-    // ปิด dropdown เมื่อคลิกที่พื้นที่นอก dropdown
-    window.addEventListener('click', () => {
-      document.querySelectorAll('.dropdown-doctor').forEach((dropdown) => {
-        dropdown.classList.remove('show');
-        dropdown.querySelector('.dropdown-content').style.cssText = ''; // รีเซ็ตตำแหน่ง
-      });
-    });
-
-    const editButtons = document.querySelectorAll('.editBtn');
-    editButtons.forEach((button) => {
-      button.addEventListener('click', (e) => {
-        e.preventDefault();
-        const manId = button.getAttribute("data-id");
-        const manFname = button.getAttribute("data-fname");
-        const manLname = button.getAttribute("data-lname");
-
-        // แสดงฟอร์มแก้ไข
-        const formHtml = `
+          const formHtml = `
               <div class="popup-container">
                 <div class="popup-content">
                   <div>
                     <span class="close" id="cancelEdit">&times;</span>
                   </div>
                   <label for="editFname">ชื่อ:</label>
-                  <input type="text" id="editFname" value="${manFname}" placeholder="ชื่อพนักงาน..." required />
+                  <input type="text" id="editFname" value="${manFname}" required />
                   <label for="editLname">นามสกุล:</label>
-                  <input type="text" id="editLname" value="${manLname}" placeholder="นามสกุล..." required />
+                  <input type="text" id="editLname" value="${manLname}" required />
                   <button id="saveEdit">บันทึก</button>
                 </div>
               </div>
-            `;
+          `;
 
-        // แสดงฟอร์มในหน้า
-        document.body.insertAdjacentHTML('beforeend', formHtml);
+          document.body.insertAdjacentHTML("beforeend", formHtml);
+          
+          document.getElementById("cancelEdit").addEventListener("click", () => {
+              document.querySelector(".popup-container").remove();
+          });
 
-        // ปิดฟอร์มเมื่อคลิกที่ปุ่ม 'close'
-        const cancelEditButton = document.getElementById("cancelEdit");
-        cancelEditButton.addEventListener('click', () => {
-          document.querySelector('.popup-container').remove(); // ลบฟอร์มออกจากหน้า
-        });
+          document.getElementById("saveEdit").addEventListener("click", async () => {
+              try {
+                  await axios.post("http://localhost:8000/api/manager/managerUpdate", {
+                      man_id: manId,
+                      man_fname: document.getElementById("editFname").value,
+                      man_lname: document.getElementById("editLname").value,
+                  });
 
-        // การบันทึกข้อมูลการแก้ไข
-        const saveEditButton = document.getElementById("saveEdit");
-        saveEditButton.addEventListener('click', async () => {
-          const updatedFname = document.getElementById("editFname").value;
-          const updatedLname = document.getElementById("editLname").value;
-
-          try {
-            // ส่งคำขออัปเดตข้อมูลพนักงาน
-            await axios.post("http://localhost:8000/api/manager/managerUpdate", {
-              man_id: manId,
-              man_fname: updatedFname,
-              man_lname: updatedLname,
-            });
-
-            alert("ข้อมูลพนักงานได้รับการอัปเดตเรียบร้อยแล้ว");
-            fetchManger(); 
-            document.querySelector('.popup-container').remove();
-          } catch (err) {
-            console.error("Error updating employee:", err);
-            alert("เกิดข้อผิดพลาดในการอัปเดตข้อมูล");
-          }
-        });
+                  alert("ข้อมูลผู้บริหารได้รับการอัปเดตเรียบร้อยแล้ว");
+                  fetchManager();
+                  document.querySelector(".popup-container").remove();
+              } catch (err) {
+                  console.error("Error updating manager:", err);
+                  alert("เกิดข้อผิดพลาดในการอัปเดตข้อมูล");
+              }
+          });
       });
-    });
+  });
 
-    const deleteButtons = document.querySelectorAll('.delete-trigger');
-    deleteButtons.forEach((button) => {
-      button.addEventListener('click', async (e) => {
-        e.preventDefault();
-        const manId = button.getAttribute("data-id");
+  document.querySelectorAll(".delete-trigger").forEach(button => {
+      button.addEventListener("click", async (e) => {
+          e.preventDefault();
+          const manId = button.getAttribute("data-id");
 
-        if (confirm("คุณต้องการลบข้อมูลพนักงานนี้หรือไม่?")) {
-          try {
-            // ส่งคำขอลบข้อมูลพนักงาน
-            await axios.post("http://localhost:8000/api/manager/managerDelete", {
-              man_id: manId,
-            });
+          if (confirm("คุณต้องการลบข้อมูลนี้หรือไม่?")) {
+              try {
+                  await axios.post("http://localhost:8000/api/manager/managerDelete", {
+                      man_id: manId,
+                  });
 
-            alert("ลบข้อมูลพนักงานสำเร็จ");
-            fetchManger(); // รีเฟรชข้อมูล
-          } catch (err) {
-            console.error("Error deleting employee:", err);
-            alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+                  alert("ลบข้อมูลสำเร็จ");
+                  fetchManager();
+              } catch (err) {
+                  console.error("Error deleting manager:", err);
+                  alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+              }
           }
-        }
       });
-    });
-
-
-  } catch (error) {
-    console.error("Error fetching manager data:", error);
-    document.getElementById("managerinTable").innerHTML = `<tr><td colspan="4">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
-  }
+  });
 }
 
+function filterManager() {
+  const nameFilter = document.getElementById('searchmanager').value.trim().toLowerCase();
+  const idFilter = document.getElementById('searchmanager').value.trim().toLowerCase();
 
+  filteredManagerData = managerData.filter(man => {
+      const name = (man.man_fname + " " + man.man_lname).trim().toLowerCase();
+      const ID = (man.man_id || "").trim().toLowerCase();
+
+      return (
+          (!nameFilter || name.includes(nameFilter)) ||
+          (!idFilter || ID.includes(idFilter))
+      );
+  });
+
+  currentPage = 1;
+  renderManagerTable();
+  renderPaginationControls();
+}
 
 // เรียกใช้ฟังก์ชันเมื่อโหลดหน้า
 document.addEventListener("DOMContentLoaded", () => {
@@ -1675,7 +1885,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchAppointment()
   }
   if (currentPage === "manage_man.html") {
-    fetchManger()
+    fetchManager()
     sessionStorage.removeItem("user_id");
   }
   if (currentPage === "patientslist.html") {

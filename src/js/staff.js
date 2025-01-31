@@ -324,176 +324,155 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-function filterPatients() {
-  // Function to filter patients based on input and dropdowns
-  const nameFilter = document.getElementById('searchName').value.toLowerCase();
-  const facultyFilter = document.getElementById('searchFaculty').value;
-  // const yearFilter = document.getElementById('searchYear').value;
-  const table = document.getElementById('UserTable');
-  const rows = table.getElementsByTagName('tr');
+// function filterPatients() {
+//   const nameFilter = document.getElementById('searchName').value.toLowerCase();
+//   const facultyFilter = document.getElementById('searchFaculty').value;
 
-  for (let i = 0; i < rows.length; i++) {
-    const cells = rows[i].getElementsByTagName('td');
-    if (cells.length > 0) {
-      const ID = cells[0].textContent.toLowerCase();
-      const name = cells[1].textContent.toLowerCase();
-      const faculty = cells[3].textContent;
-      // const year = cells[0].textContent; 
+//   // กรองข้อมูล
+//   filteredUserData = userData.filter(user => {
+//     const ID = user.user_id.toString().toLowerCase();
+//     const name = (user.user_fname + " " + user.user_lname).toLowerCase();
+//     const faculty = user.faculty;
 
-      if (
-        (ID.includes(nameFilter) || !nameFilter) &&
-        (faculty === facultyFilter || !facultyFilter) 
-        // (year.includes(yearFilter) || !yearFilter)
-      )  {
-        rows[i].style.display = '';
-      } else if (
-        (name.includes(nameFilter) || !nameFilter) &&
-        (faculty === facultyFilter || !facultyFilter) 
-        // (year.includes(yearFilter) || !yearFilter)
-      )  {
-        rows[i].style.display = '';
-      }
-      else {
-        rows[i].style.display = 'none';
-      }
-    }
-  }
-}
+//     return (
+//       (ID.includes(nameFilter) || name.includes(nameFilter) || !nameFilter) &&
+//       (faculty === facultyFilter || !facultyFilter)
+//     );
+//   });
 
-function filterReceivecare() {
-  // ดึงค่าจาก input และ select
-  const nameFilter = document.getElementById('searchName').value.toLowerCase();
-  const doctorFilter = document.getElementById('doctorSelect').value;
-  const monthFilter = document.getElementById('monthSelect').value;
+//   currentUserPage = 1; // รีเซ็ตหน้าแรกเมื่อกรอง
+//   renderUserTable();
+//   renderUserPaginationControls();
+// }
 
-  const table = document.getElementById('patientTable');
-  const rows = table.getElementsByTagName('tr');
 
-  for (let i = 0; i < rows.length; i++) {
-    const cells = rows[i].getElementsByTagName('td');
-    if (cells.length > 0) {
-      const name = cells[1].textContent.toLowerCase();
-      const doctor = cells[7]?.textContent || '';
-      const date = cells[6]?.textContent || ''; // คอลัมน์วันที่
+// function filterReceivecare() {
+//   // ดึงค่าจาก input และ select
+//   const nameFilter = document.getElementById('searchName').value.trim().toLowerCase();
+//   const doctorFilter = document.getElementById('doctorSelect').value.trim();
+//   const monthFilter = document.getElementById('monthSelect').value.trim();
 
-      // แปลงวันที่เป็นเดือน
-      let formattedMonth = '';
-      if (date) {
-        // สมมติว่าข้อมูลวันที่อยู่ในรูปแบบ "2 กุมภาพันธ์ 2568"
-        const dateParts = date.split(' '); // แยกข้อมูลวันที่
-        const monthMap = {
-          'มกราคม': '01',
-          'กุมภาพันธ์': '02',
-          'มีนาคม': '03',
-          'เมษายน': '04',
-          'พฤษภาคม': '05',
-          'มิถุนายน': '06',
-          'กรกฎาคม': '07',
-          'สิงหาคม': '08',
-          'กันยายน': '09',
-          'ตุลาคม': '10',
-          'พฤศจิกายน': '11',
-          'ธันวาคม': '12'
-        };
-        formattedMonth = monthMap[dateParts[1]] || '';
-      }
+//   const table = document.getElementById('patientTable');
+//   const rows = table.getElementsByTagName('tr');
 
-      // ตรวจสอบเงื่อนไขการกรอง
-      if (
-        (name.includes(nameFilter) || !nameFilter) &&
-        (doctor === doctorFilter || !doctorFilter) &&
-        (formattedMonth === monthFilter || !monthFilter)
-      ) {
-        rows[i].style.display = ''; // แสดงแถว
-      } else {
-        rows[i].style.display = 'none'; // ซ่อนแถว
-      }
-    }
-  }
-}
+//   const monthMap = {
+//     'มกราคม': '01', 'กุมภาพันธ์': '02', 'มีนาคม': '03', 'เมษายน': '04',
+//     'พฤษภาคม': '05', 'มิถุนายน': '06', 'กรกฎาคม': '07', 'สิงหาคม': '08',
+//     'กันยายน': '09', 'ตุลาคม': '10', 'พฤศจิกายน': '11', 'ธันวาคม': '12'
+//   };
 
-function filterDoctor() {
-  // Function to filter patients based on input and dropdowns
-  const nameFilter = document.getElementById('searchdoctor').value.toLowerCase();
-  const idFilter = document.getElementById('searchdoctor').value.toLowerCase();
-  const table = document.getElementById('doctorinTable');
-  const rows = table.getElementsByTagName('tr');
+//   for (let i = 0; i < rows.length; i++) {
+//     const cells = rows[i].getElementsByTagName('td');
+//     if (cells.length > 0) {
+//       const name = (cells[2]?.textContent || "").trim().toLowerCase();
+//       const doctor = (cells[8]?.textContent || "").trim();
+//       const dateText = (cells[7]?.textContent || "").trim(); // คอลัมน์วันที่
 
-  for (let i = 0; i < rows.length; i++) {
-    const cells = rows[i].getElementsByTagName('td');
-    if (cells.length > 0) {
-      const name = cells[1].textContent.toLowerCase();
-      const ID = cells[0].textContent.toLowerCase();
+//       // แปลงวันที่เป็นเดือน
+//       let formattedMonth = '';
+//       if (dateText) {
+//         const dateParts = dateText.split(' ');
+//         if (dateParts.length >= 2) {
+//           formattedMonth = monthMap[dateParts[1].trim()] || '';
+//         }
+//       }
+
+//       // ตรวจสอบเงื่อนไขการกรอง
+//       const matchesName = !nameFilter || name.includes(nameFilter);
+//       const matchesDoctor = !doctorFilter || doctor === doctorFilter;
+//       const matchesMonth = !monthFilter || formattedMonth === monthFilter;
+
+//       if (matchesName && matchesDoctor && matchesMonth) {
+//         rows[i].style.display = ''; // แสดงแถว
+//       } else {
+//         rows[i].style.display = 'none'; // ซ่อนแถว
+//       }
+//     }
+//   }
+// }
+
+// function filterDoctor() {
+//   // Function to filter patients based on input and dropdowns
+//   const nameFilter = document.getElementById('searchdoctor').value.toLowerCase();
+//   const idFilter = document.getElementById('searchdoctor').value.toLowerCase();
+//   const table = document.getElementById('doctorinTable');
+//   const rows = table.getElementsByTagName('tr');
+
+//   for (let i = 0; i < rows.length; i++) {
+//     const cells = rows[i].getElementsByTagName('td');
+//     if (cells.length > 0) {
+//       const name = cells[1].textContent.toLowerCase();
+//       const ID = cells[0].textContent.toLowerCase();
     
 
-      if (
-        (name.includes(nameFilter) || !nameFilter) ||
-        (ID === idFilter || !idFilter)
-        // (year.includes(yearFilter) || !yearFilter)
-      ) {
-        rows[i].style.display = '';
-      } else {
-        rows[i].style.display = 'none';
-      }
-    }
-  }
-}
+//       if (
+//         (name.includes(nameFilter) || !nameFilter) ||
+//         (ID === idFilter || !idFilter)
+//         // (year.includes(yearFilter) || !yearFilter)
+//       ) {
+//         rows[i].style.display = '';
+//       } else {
+//         rows[i].style.display = 'none';
+//       }
+//     }
+//   }
+// }
 
-function filterAddmin() {
-  // Function to filter patients based on input and dropdowns
-  const nameFilter = document.getElementById('searchaddmin').value.toLowerCase();
-  const idFilter = document.getElementById('searchaddmin').value.toLowerCase();
-  const table = document.getElementById('addminTable');
-  const rows = table.getElementsByTagName('tr');
+// function filterAddmin() {
+//   // Function to filter patients based on input and dropdowns
+//   const nameFilter = document.getElementById('searchaddmin').value.toLowerCase();
+//   const idFilter = document.getElementById('searchaddmin').value.toLowerCase();
+//   const table = document.getElementById('addminTable');
+//   const rows = table.getElementsByTagName('tr');
 
-  for (let i = 0; i < rows.length; i++) {
-    const cells = rows[i].getElementsByTagName('td');
-    if (cells.length > 0) {
-      const name = (cells[1].textContent + " " + cells[2].textContent).toLowerCase();
-      const ID = cells[0].textContent.toLowerCase();
+//   for (let i = 0; i < rows.length; i++) {
+//     const cells = rows[i].getElementsByTagName('td');
+//     if (cells.length > 0) {
+//       const name = (cells[1].textContent + " " + cells[2].textContent).toLowerCase();
+//       const ID = cells[0].textContent.toLowerCase();
     
 
-      if (
-        (name.includes(nameFilter) || !nameFilter) ||
-        (ID === idFilter || !idFilter)
-        // (date === dateFilter || !dateFilter)
-        // (year.includes(yearFilter) || !yearFilter)
-      ) {
-        rows[i].style.display = '';
-      } else {
-        rows[i].style.display = 'none';
-      }
-    }
-  }
-}
+//       if (
+//         (name.includes(nameFilter) || !nameFilter) ||
+//         (ID === idFilter || !idFilter)
+//         // (date === dateFilter || !dateFilter)
+//         // (year.includes(yearFilter) || !yearFilter)
+//       ) {
+//         rows[i].style.display = '';
+//       } else {
+//         rows[i].style.display = 'none';
+//       }
+//     }
+//   }
+// }
 
-function filterManager() {
-  // Function to filter patients based on input and dropdowns
-  const nameFilter = document.getElementById('searchmanager').value.toLowerCase();
-  const idFilter = document.getElementById('searchmanager').value.toLowerCase();
-  const table = document.getElementById('managerinTable');
-  const rows = table.getElementsByTagName('tr');
+// function filterManager() {
+//   // Function to filter patients based on input and dropdowns
+//   const nameFilter = document.getElementById('searchmanager').value.toLowerCase();
+//   const idFilter = document.getElementById('searchmanager').value.toLowerCase();
+//   const table = document.getElementById('managerinTable');
+//   const rows = table.getElementsByTagName('tr');
 
-  for (let i = 0; i < rows.length; i++) {
-    const cells = rows[i].getElementsByTagName('td');
-    if (cells.length > 0) {
-      const name = (cells[1].textContent + " " + cells[2].textContent).toLowerCase();
-      const ID = cells[0].textContent.toLowerCase();
+//   for (let i = 0; i < rows.length; i++) {
+//     const cells = rows[i].getElementsByTagName('td');
+//     if (cells.length > 0) {
+//       const name = (cells[1].textContent + " " + cells[2].textContent).toLowerCase();
+//       const ID = cells[0].textContent.toLowerCase();
     
 
-      if (
-        (name.includes(nameFilter) || !nameFilter) ||
-        (ID === idFilter || !idFilter)
-        // (date === dateFilter || !dateFilter)
-        // (year.includes(yearFilter) || !yearFilter)
-      ) {
-        rows[i].style.display = '';
-      } else {
-        rows[i].style.display = 'none';
-      }
-    }
-  }
-}
+//       if (
+//         (name.includes(nameFilter) || !nameFilter) ||
+//         (ID === idFilter || !idFilter)
+//         // (date === dateFilter || !dateFilter)
+//         // (year.includes(yearFilter) || !yearFilter)
+//       ) {
+//         rows[i].style.display = '';
+//       } else {
+//         rows[i].style.display = 'none';
+//       }
+//     }
+//   }
+// }
 
 function openAvailabilityModal(doctorID, doctorName) {
   const modal = document.getElementById("availabilityModal");

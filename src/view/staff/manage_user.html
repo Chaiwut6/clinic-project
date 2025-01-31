@@ -195,7 +195,7 @@
             <!-- Dropdown for Faculty -->
             <select id="searchFaculty">
               <option value="">เลือกคณะ</option>
-              <option value="บริหารธุรกิจ ">บริหารธุรกิจ</option>
+              <option value="บริหารธุรกิจ">บริหารธุรกิจ</option>
               <option value="วิศวกรรมศาสตร์">วิศวกรรมศาสตร์</option>
               <option value="เทคโนโลยีคหกรรมศาสตร์">เทคโนโลยีคหกรรมศาสตร์</option>
               <option value="ศิลปกรรมศาสตร์">ศิลปกรรมศาสตร์</option>
@@ -220,7 +220,7 @@
             </select> -->
 
             <button class="filter-button" onclick="filterPatients()">ค้นหา</button>
-            <!-- <button class="risk-btn" onclick="openRisk()">กำหนดเวลาแบบประเมิน</button> -->
+         
           </div>
 
           <!-- Table Section -->
@@ -228,6 +228,7 @@
             <table>
               <thead>
                 <tr>
+                  <th>ลำดับที่</th>
                   <th>รหัสประจำตัว</th>
                   <th>ชื่อ-นามสกุล</th>
                   <th>ชื่อเล่น</th>
@@ -241,6 +242,7 @@
                 <!-- Add more patients here -->
               </tbody>
             </table>
+            <div id="userPaginationControls" class="pagination-controls"></div>
           </div>
 
         </div>
