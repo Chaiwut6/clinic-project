@@ -419,4 +419,20 @@
 .close-case-btn:active {
     background-color: #FF0000; /* สีแดง */
 }
+.assessment-low {
+  background-color: #d4edda; /* สีเขียวอ่อน */
+  color: #155724;
+  font-weight: bold;
+}
 
+.assessment-medium {
+  background-color: #fff3cd; /* สีเหลือง */
+  color: #856404;
+  font-weight: bold;
+}
+
+.assessment-high {
+  background-color: #f8d7da; /* สีแดง */
+  color: #721c24;
+  font-weight: bold;
+}

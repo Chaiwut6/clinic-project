@@ -8,7 +8,7 @@ const fetchDoctorInfo = async () => {
     if (response.data && response.data.doctor) {
       const doctorInfo = response.data.doctor;
       console.log("doctorInfo:", doctorInfo);
-      sessionStorage.setItem('doctorID', doctorInfo.doc_id || '');
+      // sessionStorage.setItem('doctorID', doctorInfo.doc_id || '');
 
 
       // แสดงข้อมูลบนหน้า
@@ -110,11 +110,11 @@ async function saveAvailability() {
     const Availability_id = generateAvailabilityId(date, time_start, time_end);
 
     // ดึง doc_id จาก sessionStorage หรือ token
-    const doc_id = sessionStorage.getItem("doctorID") || null;
-    if (!doc_id) {
-      alert("เกิดข้อผิดพลาด: ไม่พบรหัสแพทย์");
-      return;
-    }
+    // const doc_id = sessionStorage.getItem("doctorID") || null;
+    // if (!doc_id) {
+    //   alert("เกิดข้อผิดพลาด: ไม่พบรหัสแพทย์");
+    //   return;
+    // }
 
     const response = await axios.post("http://localhost:8000/api/doctors/saveAvailability", {
       Availability_id,
@@ -269,6 +269,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (currentPage === "doctor_availability.html") {
     fetchDoctorInfo();
     fetchAvailabilityList();
+  }
+  if (currentPage === "doctormange_data.html") {
+    fetchDoctorInfo();
   }
 
 });

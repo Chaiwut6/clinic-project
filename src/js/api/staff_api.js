@@ -996,14 +996,25 @@ async function fetchUserDataAndDisplay() {
         filteredResults.forEach(result => {
           const date = new Date(result.date);
           const formattedDate = date.toLocaleDateString('th-TH', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          }); // แปลงวันที่ให้แสดงในรูปแบบภาษาไทย
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+          });
+
+          // ✅ ตรวจสอบระดับผลการประเมินและกำหนดสี
+          let assessmentClass = "";
+          if (result.result.includes("ระดับน้อย")) {
+              assessmentClass = "assessment-low";
+          } else if (result.result.includes("ระดับปานกลาง")) {
+              assessmentClass = "assessment-medium";
+          } else if (result.result.includes("ระดับรุนแรง")) {
+              assessmentClass = "assessment-high";
+          }
+
           const row = document.createElement('tr');
-          row.innerHTML = `<td>${formattedDate}</td><td>${result.result}</td>`;
+          row.innerHTML = `<td>${formattedDate}</td><td class="${assessmentClass}">${result.result}</td>`;
           assessmentBody.appendChild(row);
-        });
+      });
       }
     }
 

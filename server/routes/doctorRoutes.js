@@ -614,6 +614,52 @@ router.post('/getAvailabilitydoctor', verifyToken, async (req, res) => {
   }
 });
 
+router.post('/doctorappointments', verifyToken, async (req, res) => {
+  let conn;
+  try {
+    const login_id = req.user?.login_id; 
+
+    if (!login_id) {
+      return res.status(401).json({ message: "Unauthorized: Invalid token" });
+    }
+
+    conn = await initMySQL();
+
+    const [appointmentsResults] = await conn.query(
+      `SELECT a.*, u.user_fname, u.user_lname, u.nickname, u.faculty, u.phone
+       FROM appointments a 
+       JOIN users u ON a.user_id = u.user_id
+       WHERE a.doc_id = ? AND a.status = 'ยืนยัน'`,
+      [login_id]
+    );
+
+    if (!appointmentsResults || appointmentsResults.length === 0) {
+      return res.status(404).json({ message: "ยังไม่มีข้อมูล" });
+    }
+
+    res.status(200).json({
+      message: "Appointments retrieved successfully",
+      appointments: appointmentsResults,
+    });
+
+  } catch (error) {
+    console.error("Error retrieving appointments:", error);
+    res.status(500).json({ message: "Server Error", error: error.message });
+  } finally {
+    if (conn) {
+      try {
+        await conn.end();
+      } catch (closeError) {
+        console.error("Error closing database connection:", closeError);
+      }
+    }
+  }
+});
+
+
+
+
+
 router.post('/getAvailabilitytime', async (req, res) => {
   let conn;
   try {
