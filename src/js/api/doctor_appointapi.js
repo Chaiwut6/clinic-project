@@ -18,7 +18,24 @@ async function fetchPatientslist(page = 1) {
             return;
         }
 
-        patientsData = response.data.appointments.map(appointment => ({
+        let latestAppointments = {};
+
+        // ✅ คัดกรองเฉพาะวันนัดล่าสุดของแต่ละ user_id
+        response.data.appointments.forEach(appointment => {
+            const userId = appointment.user_id;
+            const appointmentDate = new Date(appointment.date);
+
+            if (
+                !latestAppointments[userId] || 
+                new Date(latestAppointments[userId].date) < appointmentDate
+            ) {
+                latestAppointments[userId] = appointment;
+            }
+        });
+
+        // ✅ แปลง Object กลับเป็น Array เพื่อใช้แสดงผล
+        patientsData = Object.values(latestAppointments).map(appointment => ({
+            Appointment_id: appointment.Appointment_id,
             user_id: appointment.user_id,
             user_fname: appointment.user_fname,
             user_lname: appointment.user_lname,
@@ -43,15 +60,16 @@ async function fetchPatientslist(page = 1) {
 
 
 
+
 // ✅ ฟังก์ชันเรนเดอร์ตารางผู้ป่วย
 function renderPatientsTable(page = 1) {
-    currentPage = page;  // ✅ อัปเดตค่าปัจจุบัน
-    const startIndex = (page - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
+    currentPages = page;  // ✅ อัปเดตค่าปัจจุบัน
+    const startIndex = (page - 1) * itemsPerPages;
+    const endIndex = startIndex + itemsPerPages;
     const pageData = filteredPatientsData.slice(startIndex, endIndex);
 
     const rows = pageData.map((patient, index) => `
-        <tr data-id="${patient.user_id}">
+        <tr data-id="${patient.Appointment_id}">
             <td>${startIndex + index + 1}</td> <!-- ✅ แสดงลำดับที่ -->
             <td>${patient.user_id}</td>
             <td>${patient.user_fname} ${patient.user_lname}</td>
@@ -61,7 +79,7 @@ function renderPatientsTable(page = 1) {
             <td>${patient.problem}</td>
             <td>${patient.appointmentDate}</td>
             <td>
-                <button class="action-btn" onclick="goToAppointmentPage('${patient.user_id}')">จัดการข้อมูล</button>
+                <button class="action-btn" onclick="goToAppointmentPage('${patient.user_id}', '${patient.Appointment_id}')">จัดการข้อมูล</button>
             </td>
         </tr>
     `).join("");
@@ -72,8 +90,12 @@ function renderPatientsTable(page = 1) {
     renderPaginationControls();
 }
 
-const goToAppointmentPage = (userId) => {
-    sessionStorage.setItem('user_id', userId);
+const goToAppointmentPage = (userId, appointmentId) => {
+
+    const encrypAppointment = btoa(appointmentId);
+    const encrypUser = btoa(userId);
+    sessionStorage.setItem("appointment_id", encrypAppointment);
+    sessionStorage.setItem('user_id', encrypUser);
     window.location.href = 'doctormange_data.html';
 };
   
@@ -97,13 +119,12 @@ function renderPaginationControls() {
 
     paginationContainer.innerHTML = totalPages > 1 ? controlsHTML : "";
 }
-// ✅ ฟังก์ชันเปลี่ยนหน้า
+
 function changePage(page) {
     currentPages = page;
     renderPatientsTable(page);
 }
 
-// ✅ ฟังก์ชันกรองข้อมูล
 function filterReceivecare() {
     const searchFilter = document.getElementById('searchName').value.trim().toLowerCase();
     const facultyFilter = document.getElementById('searchFaculty').value.trim();
@@ -115,13 +136,13 @@ function filterReceivecare() {
         'กันยายน': '09', 'ตุลาคม': '10', 'พฤศจิกายน': '11', 'ธันวาคม': '12'
     };
 
-    // ✅ กรองข้อมูลที่โหลดจาก API (`patientsData`)
     filteredPatientsData = patientsData.filter(patient => {
-        const name = (patient.user_fname + " " + patient.user_lname).trim().toLowerCase();
+        const fullName = (patient.user_fname + " " + patient.user_lname).trim().toLowerCase();
         const userID = (patient.user_id || "").trim().toLowerCase();
         const faculty = (patient.faculty || "").trim();
         const dateText = (patient.appointmentDate || "").trim();
 
+        // ✅ คำนวณเดือนที่ตรงกัน
         let formattedMonth = "";
         if (dateText) {
             const dateParts = dateText.split(' ');
@@ -131,16 +152,18 @@ function filterReceivecare() {
         }
 
         return (
-            (!searchFilter || name.includes(searchFilter) || userID.includes(searchFilter)) &&
+            // ✅ ค้นหาจาก ชื่อ-นามสกุล หรือ รหัสประจำตัว
+            (!searchFilter || fullName.includes(searchFilter) || userID.includes(searchFilter)) &&
             (!facultyFilter || faculty === facultyFilter) &&
             (!monthFilter || formattedMonth === monthFilter)
         );
     });
 
-    currentPage = 1; // ✅ รีเซ็ตหน้าแรกหลังจากกรองข้อมูล
+    currentPages = 1;  
     renderPatientsTable();
     renderPaginationControls();
 }
+
 
 
 

@@ -383,47 +383,11 @@ router.post('/appointments', async (req, res) => {
   try {
     conn = await initMySQL();
 
-    // ตรวจสอบว่า req.body มีข้อมูลครบถ้วน
     if (!Appointment_id || !user_id || !user_fname || !user_lname || !doc_id || !doc_name || !date || !problem || !status || !time_start || !time_end) {
-      return res.status(400).json({
-        message: 'กรุณากรอกข้อมูลให้ครบถ้วน' // ส่งข้อความแจ้งเตือน
-      });
+      return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
     }
 
-    // ตรวจสอบการซ้ำของเวลานัดหมายสำหรับหมอคนเดียวกัน (ยกเว้นสถานะ "ยกเลิก")
-    const conflictCheckQuery = `
-      SELECT * FROM appointments
-      WHERE doc_id = ?
-      AND date = ?
-      AND status != 'ยกเลิก' 
-      AND (
-        (time_start < ? AND time_end > ?) OR
-        (time_start < ? AND time_end > ?) OR
-        (time_start = ? AND time_end = ?)
-      )
-    `;
 
-    const [conflicts] = await conn.query(conflictCheckQuery, [
-      doc_id,
-      date,
-      time_end,
-      time_start,
-      time_start,
-      time_end,
-      time_start,
-      time_end,
-    ]);
-
-    console.log('Query Executed');
-    console.log('Conflicts:', conflicts); // ตรวจสอบค่าที่ได้จากฐานข้อมูล
-
-    if (conflicts.length > 0) {
-      return res.status(400).json({
-        message: 'เวลาที่เลือกมีการนัดหมายซ้ำ กรุณาเลือกเวลาอื่น' 
-      });
-    }
-
-    // ถ้าไม่มีการซ้ำ ให้บันทึกข้อมูล
     const appointmentData = {
       Appointment_id,
       user_id,
@@ -438,13 +402,9 @@ router.post('/appointments', async (req, res) => {
       status,
     };
 
-    // บันทึกข้อมูลลงในตาราง appointments
     await conn.query('INSERT INTO appointments SET ?', appointmentData);
 
-    // ส่ง response กลับไปยัง client
-    res.status(201).json({
-      message: 'การนัดหมายถูกบันทึกเรียบร้อยแล้ว' // ส่งข้อความแจ้งเตือนการบันทึกสำเร็จ
-    });
+    res.status(201).json({ message: 'การนัดหมายถูกบันทึกเรียบร้อยแล้ว' });
   } catch (error) {
     console.error('เกิดข้อผิดพลาดในการบันทึกการนัดหมาย:', error);
     res.status(500).json({
@@ -457,6 +417,7 @@ router.post('/appointments', async (req, res) => {
     }
   }
 });
+
 
 
 router.post("/getAppointments", async (req, res) => {

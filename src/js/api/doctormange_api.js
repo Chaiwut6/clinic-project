@@ -1,6 +1,7 @@
 async function fetchUserDataAndDisplay() {
+    const encrypUser = sessionStorage.getItem("user_id");
     try {
-      const user_id = sessionStorage.getItem('user_id');
+      const user_id = encrypUser ? atob(encrypUser) : null;
       if (!user_id) {
         throw new Error('User ID is not available in session storage');
       }
@@ -155,6 +156,52 @@ async function fetchUserDataAndDisplay() {
       alert('เกิดข้อผิดพลาดในการดึงข้อมูลผู้ใช้');
     }
   }
+  async function saveSymptoms() {
+    const encrypUser = sessionStorage.getItem("user_id");
+    const userId = encrypUser ? atob(encrypUser) : null;
+
+    const encrypAppointment = sessionStorage.getItem("appointment_id");
+    const appointmentId = encrypAppointment ? atob(encrypAppointment) : null;
+    
+    if (!userId || !appointmentId) {
+        alert("ไม่พบข้อมูลผู้ใช้หรือรหัสการนัดหมาย");
+        return;
+    }
+
+    // ✅ ดึงค่าที่เลือกจาก Checkbox
+    const selectedSymptoms = [...document.querySelectorAll("input[name='symptoms']:checked")]
+        .map(input => input.value);
+
+   
+    const additionalSymptom = document.getElementById("additional-symptom").value.trim();
+
+    if (selectedSymptoms.length === 0 && !additionalSymptom) {
+        alert("กรุณาเลือกหรือกรอกอาการ");
+        return;
+    }
+
+    const requestBody = {
+        user_id: userId,
+        appointment_id: appointmentId,
+        symptoms: selectedSymptoms,
+        ...(additionalSymptom && { additionalSymptom }) // ✅ ส่งไปเฉพาะถ้ามีข้อมูล
+    };
+
+    try {
+        const response = await axios.post("http://localhost:8000/api/doctors/saveSymptoms", requestBody);
+
+        if (response.status === 200) {
+            alert("บันทึกอาการสำเร็จ");
+            document.querySelectorAll("input[name='symptoms']").forEach(input => input.checked = false);
+            document.getElementById("additional-symptom").value = "";
+        }
+    } catch (error) {
+        console.error("Error saving symptoms:", error);
+        alert("เกิดข้อผิดพลาดในการบันทึกอาการ");
+    }
+}
+
+
 
   document.addEventListener("DOMContentLoaded", () => {
     const currentPage = window.location.pathname.split("/").pop(); // 

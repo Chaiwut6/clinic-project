@@ -914,7 +914,8 @@ function changeUserPage(page) {
 
 async function fetchUserDataAndDisplay() {
   try {
-    const user_id = sessionStorage.getItem('user_id');
+    const encrypUser = sessionStorage.getItem("user_id");
+    const user_id = encrypUser ? atob(encrypUser) : null;
     if (!user_id) {
       throw new Error('User ID is not available in session storage');
     }
@@ -1327,7 +1328,8 @@ const changePassword = async () => {
 
 let selectedDoctorId = null;
 let selectedDoctorName = ''; 
-let userId = sessionStorage.getItem('user_id'); // ดึง user_id จาก sessionStorage
+const encrypUser = sessionStorage.getItem("user_id");
+const userId = encrypUser ? atob(encrypUser) : null;
 let userFname = '';
 let userLname = '';
 

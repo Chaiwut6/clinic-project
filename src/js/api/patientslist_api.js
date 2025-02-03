@@ -60,66 +60,106 @@ let filteredPatientsData = [];
 
 // ✅ ฟังก์ชันโหลดข้อมูลผู้ป่วยจาก API
 async function fetchPatientslist(page = 1) {
-    currentPages = page; 
-    try {
-        document.getElementById("patientTable").innerHTML = `<tr><td colspan="9">กำลังโหลดข้อมูล...</td></tr>`;
+  currentPages = page;
+  try {
+      document.getElementById("patientTable").innerHTML = `<tr><td colspan="9">กำลังโหลดข้อมูล...</td></tr>`;
 
-        const response = await axios.post("http://localhost:8000/api/employees/receivecare");
-        const { users, appointments } = response.data;
+      const response = await axios.post("http://localhost:8000/api/employees/receivecare");
+      const { users, appointments } = response.data;
 
-        if (!users || users.length === 0) {
-            document.getElementById("patientTable").innerHTML = `<tr><td colspan="9">ไม่พบข้อมูลผู้ใช้</td></tr>`;
-            document.getElementById("paginationControls").innerHTML = "";
-            return;
-        }
+      if (!users || users.length === 0) {
+          document.getElementById("patientTable").innerHTML = `<tr><td colspan="9">ไม่พบข้อมูลผู้ใช้</td></tr>`;
+          document.getElementById("paginationControls").innerHTML = "";
+          return;
+      }
 
-        // ✅ รวมข้อมูลผู้ป่วยกับการนัดหมายที่ "ยืนยัน" แล้ว
-        patientsData = users.map(user => {
-            const userAppointments = appointments.filter(app => app.user_id === user.user_id && app.status === "ยืนยัน");
-            if (userAppointments.length === 0) return null;
+      let latestAppointments = {};
 
-            return {
-                ...user,
-                problem: userAppointments[0]?.problem || "ไม่ระบุ",
-                appointmentDate: userAppointments[0]?.date
-                    ? new Date(userAppointments[0].date).toLocaleDateString("th-TH", { year: "numeric", month: "long", day: "numeric" })
-                    : "ไม่ระบุ",
-                doctor: userAppointments[0]?.doc_name || "ไม่ระบุ"
-            };
-        }).filter(user => user !== null);
+      // ✅ เลือกเฉพาะวันนัดหมายล่าสุดของแต่ละ `user_id`
+      appointments.forEach(appointment => {
+          if (appointment.status !== "ยืนยัน") return;
 
-        filteredPatientsData = [...patientsData]; // ✅ สำเนาข้อมูลที่กรอง
-        renderPatientsTable();
-        renderPaginationControls();
-    } catch (error) {
-        console.error("Error fetching patient data:", error);
-        document.getElementById("patientTable").innerHTML = `<tr><td colspan="9">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
-        document.getElementById("paginationControls").innerHTML = "";
-    }
+          const userId = appointment.user_id;
+          const appointmentDate = new Date(appointment.date);
+
+          // ถ้า user_id ยังไม่มีข้อมูล หรือ ถ้าวันใหม่กว่า ให้เก็บไว้
+          if (!latestAppointments[userId] || new Date(latestAppointments[userId].date) < appointmentDate) {
+              latestAppointments[userId] = appointment;
+          }
+      });
+
+      // ✅ เปลี่ยนจาก Object เป็น Array เพื่อใช้ในการแสดงผล
+      patientsData = Object.values(latestAppointments).map(appointment => {
+          let symptomsData = appointment.symptoms || "[]"; 
+          let symptomsArray = [];
+
+          try {
+              if (typeof symptomsData === "string") {
+                  symptomsArray = JSON.parse(symptomsData);
+              } else if (Array.isArray(symptomsData)) {
+                  symptomsArray = symptomsData;
+              }
+          } catch (error) {
+              console.error("Error parsing symptoms:", error);
+              symptomsArray = [];
+          }
+
+          // ✅ ค้นหาข้อมูล `nickname`, `faculty`, `phone` จาก `users`
+          const userInfo = users.find(user => user.user_id === appointment.user_id) || {};
+
+          return {
+              user_id: appointment.user_id,
+              user_fname: appointment.user_fname,
+              user_lname: appointment.user_lname,
+              nickname: userInfo.nickname || "ไม่ระบุ",
+              faculty: userInfo.faculty || "ไม่ระบุ",
+              phone: userInfo.phone || "ไม่ระบุ",
+              problem: appointment.problem || "ไม่ระบุ",
+              symptoms: symptomsArray.join(" / ") || "ไม่ระบุ",  
+              appointmentDate: appointment.date
+                  ? new Date(appointment.date).toLocaleDateString("th-TH", { year: "numeric", month: "long", day: "numeric" })
+                  : "ไม่ระบุ",
+              doctor: appointment.doc_name || "ไม่ระบุ"
+          };
+      });
+
+      filteredPatientsData = [...patientsData];
+      renderPatientsTable();
+      renderPaginationControls();
+  } catch (error) {
+      console.error("Error fetching patient data:", error);
+      document.getElementById("patientTable").innerHTML = `<tr><td colspan="9">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
+      document.getElementById("paginationControls").innerHTML = "";
+  }
 }
+
+
 
 // ✅ ฟังก์ชันเรนเดอร์ตารางผู้ป่วย
 function renderPatientsTable() {
-    const startIndex = (currentPages - 1) * itemsPerPages;
-    const endIndex = startIndex + itemsPerPages;
-    const pageData = filteredPatientsData.slice(startIndex, endIndex);
+  const startIndex = (currentPages - 1) * itemsPerPages;
+  const endIndex = startIndex + itemsPerPages;
+  const pageData = filteredPatientsData.slice(startIndex, endIndex);
 
-    const rows = pageData.map((patient, index) => `
-        <tr>
-            <td>${startIndex + index + 1}</td> <!-- ✅ แสดงลำดับที่ -->
-            <td>${patient.user_id}</td>
-            <td>${patient.user_fname} ${patient.user_lname}</td>
-            <td>${patient.nickname}</td>
-            <td>${patient.faculty}</td>
-            <td>${patient.phone}</td>
-            <td>${patient.problem}</td>
-            <td>${patient.appointmentDate}</td>
-            <td>${patient.doctor}</td>
-        </tr>
-    `).join("");
+  const rows = pageData.map((patient, index) => `
+      <tr>
+          <td>${startIndex + index + 1}</td>
+          <td>${patient.user_id}</td>
+          <td>${patient.user_fname} ${patient.user_lname}</td>
+          <td>${patient.nickname}</td>
+          <td>${patient.faculty}</td>
+          <td>${patient.phone}</td>
+          <td>${patient.problem}</td>
+          <td>${patient.appointmentDate}</td>
+          <td>${patient.symptoms}</td>
+          <td>${patient.doctor}</td>
+      </tr>
+  `).join("");
 
-    document.getElementById("patientTable").innerHTML = rows || `<tr><td colspan="9">ไม่มีข้อมูล</td></tr>`;
+  document.getElementById("patientTable").innerHTML = rows || `<tr><td colspan="10">ไม่มีข้อมูล</td></tr>`;
 }
+
+
 
 // ✅ ฟังก์ชันสร้างปุ่มเปลี่ยนหน้า
 function renderPaginationControls() {
@@ -162,6 +202,7 @@ function filterReceivecare() {
     // ✅ ใช้ `patientsData` ที่โหลดจาก API
     filteredPatientsData = patientsData.filter(patient => {
         const name = (patient.user_fname + " " + patient.user_lname).trim().toLowerCase();
+        const userID = (patient.user_id || "").trim().toLowerCase();
         const doctor = (patient.doctor || "").trim();
         const dateText = (patient.appointmentDate || "").trim();
 
@@ -174,7 +215,7 @@ function filterReceivecare() {
         }
 
         return (
-            (!nameFilter || name.includes(nameFilter)) &&
+            (!nameFilter || name.includes(nameFilter) || userID.includes(nameFilter)) &&
             (!doctorFilter || doctor === doctorFilter) &&
             (!monthFilter || formattedMonth === monthFilter)
         );

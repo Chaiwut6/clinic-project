@@ -490,7 +490,8 @@ function closeAvailabilityModal() {
 
 
 const goToAppointmentPage = (userId) => {
-  sessionStorage.setItem('user_id', userId);
+  const encrypUser = btoa(userId);
+  sessionStorage.setItem('user_id', encrypUser);
   window.location.href = 'mange_user_data.html';
 };
 

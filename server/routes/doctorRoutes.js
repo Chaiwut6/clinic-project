@@ -748,6 +748,45 @@ router.delete('/deleteAvailability', async (req, res) => {
   }
 });
 
+router.post('/saveSymptoms', async (req, res) => {
+  let conn;
+  try {
+    const { user_id, appointment_id, symptoms, additionalSymptom } = req.body;
+
+    if (!user_id || !appointment_id || !symptoms) {
+        return res.status(400).json({ message: 'ข้อมูลไม่ครบถ้วน' });
+    }
+
+    conn = await initMySQL();
+
+    let allSymptoms = Array.isArray(symptoms) ? [...symptoms] : [];
+
+
+    if (additionalSymptom && additionalSymptom.trim() !== '') {
+        allSymptoms.push(additionalSymptom.trim());
+    }
+
+    await conn.query(
+        "UPDATE appointments SET symptoms = ? WHERE Appointment_id  = ?",
+        [JSON.stringify(allSymptoms), appointment_id]
+    );
+
+    res.status(200).json({ message: 'บันทึกอาการสำเร็จ' });
+
+  } catch (error) {
+    console.error("Error saving symptoms:", error);
+    res.status(500).json({ message: 'เกิดข้อผิดพลาด', error: error.message });
+  } finally {
+    if (conn) {
+      try {
+        await conn.end();
+      } catch (closeError) {
+        console.error('Error closing database connection:', closeError);
+      }
+    }
+  }
+});
+
 
 
 
