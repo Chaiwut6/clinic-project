@@ -291,29 +291,51 @@ router.post('/userList', async (req, res) => {
   try {
     conn = await initMySQL();
 
-    // Query user information
-    const [userResult] = await conn.query("SELECT * FROM users ");
-  
-    
-    const userList = userResult;
+    // ✅ ดึงข้อมูลผู้ใช้ทั้งหมด
+    const [userResult] = await conn.query("SELECT * FROM users");
 
-
-    if (!userList) {
-      return res.status(404).json({ message: 'user not found' });
+    if (!userResult || userResult.length === 0) {
+      return res.status(404).json({ message: 'ไม่พบข้อมูลผู้ใช้' });
     }
 
-    res.json({
-      user: userList,
+    // ✅ ดึงข้อมูลการนัดหมายทั้งหมด และเลือกเฉพาะอันล่าสุดของแต่ละ user_id
+    const [appointmentsResult] = await conn.query(`
+      SELECT a.user_id, a.status, a.date 
+      FROM appointments a
+      INNER JOIN (
+          SELECT user_id, MAX(date) AS latest_date
+          FROM appointments
+          GROUP BY user_id
+      ) latest ON a.user_id = latest.user_id AND a.date = latest.latest_date
+    `);
+
+    // ✅ สร้าง `Map` ของสถานะการนัดหมายล่าสุด
+    const appointmentMap = new Map();
+    appointmentsResult.forEach(app => {
+      appointmentMap.set(app.user_id, { status: app.status, date: app.date });
     });
+
+    // ✅ รวมข้อมูล `users` กับ `appointments`
+    const userList = userResult.map(user => ({
+      ...user,
+      latest_appointment_status: appointmentMap.get(user.user_id)?.status || "ไม่มีข้อมูล",
+      latest_appointment_date: appointmentMap.get(user.user_id)?.date || "ไม่มีข้อมูล",
+    }));
+
+    // ✅ ส่งผลลัพธ์กลับไปที่ Client
+    res.json({ users: userList });
+
   } catch (error) {
     console.error('Error retrieving user data:', error);
     res.status(500).json({ message: 'Error retrieving user data', error: error.message });
+
   } finally {
     if (conn) {
       await conn.end();
     }
   }
 });
+
 
 router.post('/change-password', verifyToken , async (req, res) => {
   const { oldPassword, newPassword, confirmPassword } = req.body;
@@ -821,6 +843,56 @@ router.post('/appointmentsByFaculty', async (req, res) => {
   }
 });
 
+router.post('/saveSymptoms', async (req, res) => {
+  let conn;
+  try {
+    const { user_id, symptoms, additionalSymptom } = req.body;
+
+    if (!user_id || !symptoms) {
+      return res.status(400).json({ message: 'ข้อมูลไม่ครบถ้วน' });
+    }
+
+    conn = await initMySQL();
+
+    // ✅ ดึง Appointment_id ล่าสุดของ user นี้
+    const [latestAppointment] = await conn.query(
+      "SELECT Appointment_id FROM appointments WHERE user_id = ? ORDER BY date DESC LIMIT 1",
+      [user_id]
+    );
+
+    if (!latestAppointment.length) {
+      return res.status(404).json({ message: "ไม่พบวันนัดล่าสุดของผู้ใช้" });
+    }
+
+    const appointment_id = latestAppointment[0].Appointment_id;
+
+    // ✅ รวมอาการเก่ากับอาการใหม่
+    let allSymptoms = Array.isArray(symptoms) ? [...symptoms] : [];
+    if (additionalSymptom && additionalSymptom.trim() !== '') {
+      allSymptoms.push(additionalSymptom.trim());
+    }
+
+    // ✅ อัปเดตอาการในวันนัดล่าสุด
+    await conn.query(
+      "UPDATE appointments SET symptoms = ? WHERE Appointment_id = ?",
+      [JSON.stringify(allSymptoms), appointment_id]
+    );
+
+    res.status(200).json({ message: 'บันทึกอาการสำเร็จ' });
+
+  } catch (error) {
+    console.error("Error saving symptoms:", error);
+    res.status(500).json({ message: 'เกิดข้อผิดพลาด', error: error.message });
+  } finally {
+    if (conn) {
+      try {
+        await conn.end();
+      } catch (closeError) {
+        console.error('Error closing database connection:', closeError);
+      }
+    }
+  }
+});
 
 
 

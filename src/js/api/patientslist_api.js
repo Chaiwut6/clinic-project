@@ -226,6 +226,81 @@ function filterReceivecare() {
     renderPaginationControls();
 }
 
+function exportToExcel() {
+  const doctorSelect = document.getElementById("doctorSelect");
+  const selectedDoctor = doctorSelect.value;
+
+  const monthSelect = document.getElementById("monthSelect");
+  const selectedMonth = monthSelect.value;
+
+  const groupedData = {};
+
+  // ✅ ใช้ patientsData เพื่อดึงข้อมูลทุกหน้า
+  patientsData.forEach((patient) => {
+      const doctorName = patient.doctor || "ไม่ระบุ";
+      const dateText = patient.appointmentDate || "";
+      let rowMonth = "";
+
+      // แปลงวันที่เป็นเดือน
+      if (dateText) {
+          const dateParts = dateText.split(" ");
+          const monthMap = {
+              "มกราคม": "01", "กุมภาพันธ์": "02", "มีนาคม": "03", "เมษายน": "04",
+              "พฤษภาคม": "05", "มิถุนายน": "06", "กรกฎาคม": "07", "สิงหาคม": "08",
+              "กันยายน": "09", "ตุลาคม": "10", "พฤศจิกายน": "11", "ธันวาคม": "12"
+          };
+          rowMonth = monthMap[dateParts[1]] || "";
+      }
+
+      // ✅ ตรวจสอบเงื่อนไขการกรอง
+      if (
+          (selectedDoctor === "" || doctorName === selectedDoctor) &&
+          (selectedMonth === "" || rowMonth === selectedMonth)
+      ) {
+          if (!groupedData[doctorName]) {
+              groupedData[doctorName] = [];
+          }
+          groupedData[doctorName].push([
+              patient.user_id,
+              `${patient.user_fname} ${patient.user_lname}`,
+              patient.nickname || "-",
+              patient.faculty || "-",
+              patient.phone || "-",
+              patient.problem || "-",
+              patient.appointmentDate || "-",
+              patient.symptoms || "-",
+              patient.doctor || "-"
+          ]);
+      }
+  });
+
+  const workbook = XLSX.utils.book_new();
+
+  Object.keys(groupedData).forEach((doctorName) => {
+      const sheetData = [
+          [`หมอที่ดูแล: ${doctorName}`],
+          ["รหัสประจำตัว", "ชื่อ-นามสกุล", "ชื่อเล่น", "คณะ", "เบอร์โทร", "ปัญหา", "วันนัด", "ประเภทโรค", "แพทย์"]
+      ];
+
+      sheetData.push(...groupedData[doctorName]);
+
+      const sheetName = doctorName || "ทั้งหมด";
+      const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+
+      // ✅ ปรับขนาดคอลัมน์ให้เหมาะสม
+      worksheet["!cols"] = [
+          { wch: 15 }, { wch: 25 }, { wch: 15 }, { wch: 20 },
+          { wch: 15 }, { wch: 20 }, { wch: 20 }, { wch: 30 },
+          { wch: 15 }
+      ];
+
+      XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+  });
+
+  const fileName = selectedDoctor ? `รายชื่อ_${selectedDoctor}.xlsx` : "รายชื่อผู้ป่วยทั้งหมด.xlsx";
+  XLSX.writeFile(workbook, fileName);
+}
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const currentPage = window.location.pathname.split("/").pop(); // 

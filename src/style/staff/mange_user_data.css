@@ -159,7 +159,7 @@
   .btn-submit {
     margin-top: 20px;
     padding: 10px;
-    background-color: #4a90e2;
+    background-color: #007bff;
     color: #fff;
     font-weight: bold;
     border: none;
@@ -168,7 +168,7 @@
   }
   
   .btn-submit:hover {
-    background-color: #357ab8;
+    background-color: #0056b3;
   }
   
   /* Table and Buttons */
@@ -436,3 +436,44 @@
   color: #721c24;
   font-weight: bold;
 }
+
+.symptoms-list {
+  display: grid;
+  gap: 10px; 
+  margin-top: 10px;
+  align-items: center;
+}
+
+.symptoms-list label {
+  align-items: center;  
+  font-size: 16px; 
+}
+
+.additional-symptoms {
+  margin-top: 20px;
+}
+
+.additional-symptoms input {
+  width: 100%;
+  padding: 5px;
+  margin-right: 5px;
+}
+.btn-show-form {
+  background-color: #007bff; 
+  color: white; 
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 8px; 
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  display: inline-block;
+  margin: 10px 0;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* 🔵 เพิ่มเงา */
+}
+
+.btn-show-form:hover {
+  background-color: #0056b3; 
+}
+

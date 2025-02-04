@@ -823,14 +823,15 @@ let filteredData = []; // เก็บข้อมูลที่ถูกกร
 // ✅ ดึงข้อมูลผู้ใช้
 async function fetchUserlist() {
   try {
-    document.getElementById("UserTable").innerHTML = `<tr><td colspan="7">กำลังโหลดข้อมูล...</td></tr>`;
-    
+    document.getElementById("UserTable").innerHTML = `<tr><td colspan="8">กำลังโหลดข้อมูล...</td></tr>`;
+
     const response = await axios.post("http://localhost:8000/api/employees/userList");
-    userData = response.data?.user || [];
-    filteredData = [...userData]; // เริ่มต้นกรองเป็นข้อมูลทั้งหมด
+    userData = response.data?.users || [];
+
+    filteredData = [...userData]; // ✅ สำเนาข้อมูลเพื่อใช้ในการกรอง
 
     if (userData.length === 0) {
-      document.getElementById("UserTable").innerHTML = `<tr><td colspan="7">ไม่พบข้อมูลผู้ใช้</td></tr>`;
+      document.getElementById("UserTable").innerHTML = `<tr><td colspan="8">ไม่พบข้อมูลผู้ใช้</td></tr>`;
       document.getElementById("userPaginationControls").innerHTML = "";
       return;
     }
@@ -839,7 +840,7 @@ async function fetchUserlist() {
     renderUserPaginationControls();
   } catch (error) {
     console.error("Error fetching user data:", error);
-    document.getElementById("UserTable").innerHTML = `<tr><td colspan="7">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
+    document.getElementById("UserTable").innerHTML = `<tr><td colspan="8">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
     document.getElementById("userPaginationControls").innerHTML = "";
   }
 }
@@ -849,7 +850,7 @@ function filterPatients() {
   const nameFilter = document.getElementById('searchName').value.toLowerCase();
   const facultyFilter = document.getElementById('searchFaculty').value;
 
-  // กรองข้อมูลจาก userData ทั้งหมด
+  // ✅ กรองข้อมูลจาก userData
   filteredData = userData.filter(user => {
     const ID = (user.user_id || "").toLowerCase();
     const name = `${user.user_fname} ${user.user_lname}`.toLowerCase();
@@ -861,7 +862,7 @@ function filterPatients() {
     );
   });
 
-  currentUserPage = 1; // รีเซ็ตไปหน้าที่ 1 หลังค้นหา
+  currentUserPage = 1; // ✅ รีเซ็ตไปหน้าที่ 1 หลังค้นหา
   renderUserTable();
   renderUserPaginationControls();
 }
@@ -873,15 +874,16 @@ function renderUserTable() {
   const pageData = filteredData.slice(startIndex, endIndex);
 
   const rows = pageData.map((user, index) => {
-    const displayIndex = startIndex + index + 1; // คำนวณเลขลำดับที่แสดงในตาราง
+    const displayIndex = startIndex + index + 1; // ✅ ลำดับแสดงในตาราง
     return `
       <tr data-id="${user.user_id}">
-        <td>${displayIndex}</td>  <!-- ✅ แสดงลำดับที่ -->
+        <td>${displayIndex}</td>  
         <td>${user.user_id || "ไม่ระบุ"}</td>
         <td>${user.user_fname} ${user.user_lname || "ไม่ระบุ"}</td>
         <td>${user.nickname || "ไม่ระบุ"}</td>
         <td>${user.faculty || "ไม่ระบุ"}</td>
         <td>${user.phone || "ไม่ระบุ"}</td>
+        <td>${user.latest_appointment_status || "ไม่มีข้อมูล"}</td>  <!-- ✅ แสดงสถานะนัดหมายล่าสุด -->
         <td>
           <button class="action-btn" onclick="goToAppointmentPage('${user.user_id}')">จัดการข้อมูล</button>
         </td>
@@ -889,7 +891,7 @@ function renderUserTable() {
     `;
   }).join("");
 
-  document.getElementById("UserTable").innerHTML = rows || `<tr><td colspan="7">ไม่พบข้อมูล</td></tr>`;
+  document.getElementById("UserTable").innerHTML = rows || `<tr><td colspan="8">ไม่พบข้อมูล</td></tr>`;
 }
 
 
@@ -1045,17 +1047,25 @@ async function fetchUserDataAndDisplay() {
       });
     
       if (filteredAppointments.length === 0) {
-        appointmentBody.innerHTML = '<tr><td colspan="2">ไม่มีข้อมูล</td></tr>';
+        appointmentBody.innerHTML = '<tr><td colspan="4">ไม่มีข้อมูล</td></tr>';
       } else {
-        filteredAppointments.forEach(appointment => {
+        filteredAppointments
+        .sort((a, b) => new Date(b.date) - new Date(a.date)) // ✅ เรียงจากวันล่าสุด -> วันเก่า
+        .forEach(appointment => {
           const appointmentDate = new Date(appointment.date);
           const formattedDate = appointmentDate.toLocaleDateString('th-TH', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
-          }); // แปลงวันที่ให้แสดงในรูปแบบภาษาไทย
+          }); // ✅ แปลงวันที่ให้แสดงในรูปแบบไทย
+      
           const row = document.createElement('tr');
-          row.innerHTML = `<td>${formattedDate}</td><td>${appointment.status}</td>`;
+          row.innerHTML = `
+            <td>${formattedDate || 'ยังไม่มีการนัด'}</td>
+            <td>${appointment.doc_name || 'ไม่ระบุ'}</td>
+            <td>${Array.isArray(appointment.symptoms) ? appointment.symptoms.join(" / ") : 'ไม่ระบุ'}</td>
+            <td>${appointment.status || 'ไม่ระบุ'}</td>
+          `;
           appointmentBody.appendChild(row);
         });
       }
@@ -1078,7 +1088,9 @@ async function fetchUserDataAndDisplay() {
       appointmentList.innerHTML = '<tr><td colspan="3">ไม่มีการนัดล่าสุด</td></tr>';
     } else {
       // แสดงประวัติการนัดทั้งหมด
-      data.appointments.forEach((appointment) => {
+      data.appointments
+      .sort((a, b) => new Date(b.date) - new Date(a.date)) 
+      .forEach((appointment) => {
         const appointmentDate = new Date(appointment.date);
         const formattedDate = appointmentDate.toLocaleDateString('th-TH', {
           year: 'numeric',
@@ -1089,7 +1101,9 @@ async function fetchUserDataAndDisplay() {
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${formattedDate || 'ยังไม่มีการนัด'}</td>
-          <td>${appointment.status || 'ไม่ระบุสถานะ'}</td>
+          <td>${appointment.doc_name || 'ไม่ระบุ'}</td>
+          <td>${Array.isArray(appointment.symptoms) ? appointment.symptoms.join(" / ") : 'ไม่ระบุ'}</td>
+          <td>${appointment.status || 'ไม่ระบุ'}</td>
         `;
         appointmentBody.appendChild(row);
       });

@@ -6,11 +6,19 @@ const fetchAppointments = async () => {
 
     if (response.status === 200 && response.data.success) {
       const { pendingAppointment, confirmedAppointment } = response.data;
-
       const appointmentTable = document.getElementById('userAppointment');
       appointmentTable.innerHTML = ''; // ล้างข้อมูลเก่า
 
-      // ถ้ามีการนัดที่รอการยืนยัน
+      const formatTime = (time) => {
+        if (!time) return 'ไม่ระบุ';
+        const [hours, minutes] = time.split(':').map(Number);
+        const date = new Date();
+        date.setHours(hours, minutes);
+        date.setMinutes(date.getMinutes() - 15); 
+        return date.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+      };
+
+      // 🔹 ถ้ามีการนัดที่รอการยืนยัน
       if (pendingAppointment) {
         const formattedDate = new Intl.DateTimeFormat('th-TH', {
           day: 'numeric',
@@ -22,7 +30,7 @@ const fetchAppointments = async () => {
           <tr>
             <td>${pendingAppointment.doc_name || 'ยังไม่มีการนัด'}</td>
             <td>${formattedDate || 'ยังไม่มีการนัด'}</td>
-            <td>${pendingAppointment.time_start || 'ไม่ระบุ'}</td>
+            <td>${formatTime(pendingAppointment.time_start)}</td>
             <td>${pendingAppointment.time_end || 'ไม่ระบุ'}</td>
             <td class="text-center">
               <button class="btn btn-success" onclick="updateStatus('${pendingAppointment.Appointment_id}', 'ยืนยัน')">ยืนยัน</button>
@@ -32,7 +40,7 @@ const fetchAppointments = async () => {
         `;
         appointmentTable.innerHTML = row;
       }
-      // ถ้าไม่มีการรอการยืนยัน ให้แสดงการยืนยันล่าสุด
+      // 🔹 ถ้าไม่มีการรอการยืนยัน ให้แสดงการยืนยันล่าสุด
       else if (confirmedAppointment) {
         const formattedDate = new Intl.DateTimeFormat('th-TH', {
           day: 'numeric',
@@ -44,8 +52,7 @@ const fetchAppointments = async () => {
           <tr>
             <td>${confirmedAppointment.doc_name || 'ยังไม่มีการนัด'}</td>
             <td>${formattedDate || 'ยังไม่มีการนัด'}</td>
-            <td>${confirmedAppointment.time_start || 'ไม่ระบุ'}</td>
-            <td>${confirmedAppointment.time_end || 'ไม่ระบุ'}</td>
+            <td>${formatTime(confirmedAppointment.time_start)}</td>
             <td class="text-center">
               <button class="btn btn-secondary" disabled>ยืนยันแล้ว</button>
             </td>
@@ -53,7 +60,7 @@ const fetchAppointments = async () => {
         `;
         appointmentTable.innerHTML = row;
       } else {
-        // ถ้าไม่มีข้อมูลทั้งสองแบบ
+        // 🔹 ถ้าไม่มีข้อมูลทั้งสองแบบ
         appointmentTable.innerHTML = '<tr><td colspan="5" class="text-center">ไม่มีการนัดหมาย</td></tr>';
       }
     } else {
@@ -64,6 +71,7 @@ const fetchAppointments = async () => {
     alert('เกิดข้อผิดพลาดในการดึงข้อมูล');
   }
 };
+
 
 
 

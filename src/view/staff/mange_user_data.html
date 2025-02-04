@@ -39,6 +39,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
     <script src="../../js/staff.js"></script>
     <script src="../../js/api/staff_api.js"></script>
+    <script src="../../js/api/mange_user_data.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 
@@ -250,6 +251,8 @@
                                 <thead>
                                   <tr>
                                     <th>วันที่</th>
+                                    <th>แพทย์</th>
+                                    <th>อาการ</th>
                                     <th>สถานะ</th>
                                   </tr>
                                 </thead>
@@ -277,6 +280,53 @@
 
                             </tbody>
                         </table>
+                    </section>
+
+                    <section class="card add-symptoms">
+                        <h2>อาการของผู้ป่วย</h2>
+                    
+                        <!-- ปุ่มกดแสดงฟอร์ม -->
+                        <button type="button" class="btn-show-form" onclick="toggleSymptomsForm()">เพิ่มอาการล่าสุด</button>
+                    
+                        <!-- ฟอร์มเพิ่มอาการ (เริ่มต้นซ่อน) -->
+                        <div id="symptoms-form-container" style="display: none;">
+                            <form id="symptoms-form">
+                                <label>เลือกอาการ:</label>
+                                <div class="symptoms-list">
+                                    <label><input type="checkbox" name="symptoms" value="MDD"> <span>MDD (โรคซึมเศร้า)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="Adjustment disorder"> <span>Adjustment disorder (ภาวะความผิดปกติของการปรับตัว)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="Dysthymia"> <span>Dysthymia (โรคซึมเศร้าชนิดเรื้อรัง)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="Anxiety disorder"> <span>Anxiety disorder (โรควิตกกังวล)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="Bipola disorder"> <span>Bipola disorder (โรคอารมณ์แปรปรวน 2 ขั้ว)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="GAD"> <span>GAD (ภาวะวิตกกังวล)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="ADHD"> <span>ADHD (โรคสมาธิสั้น)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="OCD c Psychosis"> <span>OCD c Psychosis (โรคย้ำคิดย้ำทำ)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="PD GAD"> <span>PD GAD (โรคตื่นตระหนก)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="cannabis dependence"> <span>Cannabis dependence (ความผิดปกติจากการใช้กัญชา)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="mix/dip"> <span>Mix/Dip (ชัก/พาร์กินสัน)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="mixed depression and anxiety disorder"> <span>Mixed depression and anxiety disorder (โรควิตกกังวลผสมซึมเศร้า)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="hypnic hallucination with anxiety syndrome"> <span>Hypnic hallucination with anxiety syndrome (ประสาทหลอน ผีอำ และวิตกกังวล)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="mixed Anxiety disorder panic attack"> <span>Mixed Anxiety disorder panic attack (โรควิตกกังวลผสมซึมเศร้า)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="Panic"> <span>Panic (ภาวะตื่นตระหนก วิตกกังวล หรือกลัวแบบกะทันหัน)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="PMDD"> <span>PMDD (อาการผิดปกติก่อนมีประจำเดือน หงุดหงิด เครียดรุนแรง)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="voyeurism"> <span>Voyeurism (โรคถ้ำมอง ชอบแอบดู มีพฤติกรรมทางเพศแอบดูคนอื่น)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="Mild depressive"> <span>Mild depressive (โรคซึมเศร้าระดับน้อย)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="personal disorder"> <span>Personal disorder (บุคลิกภาพแปรปรวน)</span></label>
+                                </div>
+                                <div class="additional-symptoms">
+                                    <label for="additional-symptom">อาการเพิ่มเติม (หากไม่มีในรายการ):</label>
+                                    <input type="text" id="additional-symptom" placeholder="กรอกอาการเพิ่มเติม">
+                                </div>
+                                
+                                <button type="button" class="btn-submit" id="save-symptoms" onclick="saveSymptoms()">บันทึกอาการ</button>
+                            </form>
+                        </div>
+                    
+                        <!-- แสดงอาการที่เลือกไว้ -->
+                        <div id="selected-symptoms-container" style="display: none;">
+                            <h3>อาการที่บันทึก:</h3>
+                            <ul id="selected-symptoms-list"></ul>
+                        </div>
                     </section>
 
                     <!-- Modal for Editing Appointment -->

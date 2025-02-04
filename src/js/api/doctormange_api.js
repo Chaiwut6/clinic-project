@@ -135,15 +135,22 @@ async function fetchUserDataAndDisplay() {
         if (filteredAppointments.length === 0) {
           appointmentBody.innerHTML = '<tr><td colspan="2">ไม่มีข้อมูล</td></tr>';
         } else {
-          filteredAppointments.forEach(appointment => {
+          filteredAppointments
+          .sort((a, b) => new Date(b.date) - new Date(a.date)) 
+          .forEach(appointment => {
             const appointmentDate = new Date(appointment.date);
             const formattedDate = appointmentDate.toLocaleDateString('th-TH', {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
-            }); // แปลงวันที่ให้แสดงในรูปแบบภาษาไทย
+            }); // ✅ แปลงวันที่ให้แสดงในรูปแบบไทย
+        
             const row = document.createElement('tr');
-            row.innerHTML = `<td>${formattedDate}</td><td>${appointment.status}</td>`;
+            row.innerHTML = `
+              <td>${formattedDate || 'ยังไม่มีการนัด'}</td>
+              <td>${Array.isArray(appointment.symptoms) ? appointment.symptoms.join(" / ") : 'ไม่ระบุ'}</td>
+              <td>${appointment.status || 'ไม่ระบุ'}</td>
+            `;
             appointmentBody.appendChild(row);
           });
         }

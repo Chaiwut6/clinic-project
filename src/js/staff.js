@@ -198,78 +198,8 @@ function closeModal() {
   document.getElementById('editModal').style.display = 'none';
 }
 
-function exportToExcel() {
-  const doctorSelect = document.getElementById("doctorSelect");
-  const selectedDoctor = doctorSelect.value;
 
-  const monthSelect = document.getElementById("monthSelect");
-  const selectedMonth = monthSelect.value;
 
-  const table = document.getElementById("patientTable");
-  const rows = Array.from(table.querySelectorAll("tr"));
-
-  const groupedData = {};
-
-  rows.forEach((row) => {
-    const doctorName = row.cells[7]?.innerText.trim().toLowerCase();
-    const dateText = row.cells[6]?.innerText.trim(); // คอลัมน์วันที่
-    let rowMonth = "";
-
-    // แปลงวันที่ในคอลัมน์ให้เป็นเดือน
-    if (dateText) {
-      const dateParts = dateText.split(" "); // สมมติรูปแบบ "2 กุมภาพันธ์ 2568"
-      const monthMap = {
-        "มกราคม": "01",
-        "กุมภาพันธ์": "02",
-        "มีนาคม": "03",
-        "เมษายน": "04",
-        "พฤษภาคม": "05",
-        "มิถุนายน": "06",
-        "กรกฎาคม": "07",
-        "สิงหาคม": "08",
-        "กันยายน": "09",
-        "ตุลาคม": "10",
-        "พฤศจิกายน": "11",
-        "ธันวาคม": "12",
-      };
-      rowMonth = monthMap[dateParts[1]] || ""; // ดึงค่าของเดือน
-    }
-
-    // ตรวจสอบเงื่อนไขการกรอง
-    if (
-      (selectedDoctor === "all" || !selectedDoctor || doctorName === selectedDoctor.toLowerCase()) &&
-      (selectedMonth === "" || rowMonth === selectedMonth)
-    ) {
-      if (!groupedData[doctorName]) {
-        groupedData[doctorName] = [];
-      }
-      groupedData[doctorName].push(row.cloneNode(true));
-    }
-  });
-
-  const workbook = XLSX.utils.book_new();
-
-  Object.keys(groupedData).forEach((doctorName) => {
-    const sheetData = [
-      ["รหัสประจำตัว", "ชื่อ-นามสกุล", "ชื่อเล่น", "คณะ", "เบอร์โทร", "ปัญหา", "วันนัดหมาย"], // เพิ่มหัวข้อ "ปัญหา"
-    ];
-
-    groupedData[doctorName].forEach((row) => {
-      const cells = Array.from(row.cells).slice(0, 7); // ดึงข้อมูลคอลัมน์ "ปัญหา" (คอลัมน์ที่ 7)
-      sheetData.push(cells.map((cell) => cell.innerText));
-    });
-
-    const sheetName = doctorName.charAt(0).toUpperCase() + doctorName.slice(1) || "ทั้งหมด";
-    XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(sheetData), sheetName);
-  });
-
-  const fileName =
-    selectedDoctor && selectedDoctor !== "all"
-      ? `${selectedDoctor}_การนัดหมาย.xlsx`
-      : "การนัดหมายทั้งหมด.xlsx";
-
-  XLSX.writeFile(workbook, fileName);
-}
 
 
 
@@ -324,155 +254,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-// function filterPatients() {
-//   const nameFilter = document.getElementById('searchName').value.toLowerCase();
-//   const facultyFilter = document.getElementById('searchFaculty').value;
 
-//   // กรองข้อมูล
-//   filteredUserData = userData.filter(user => {
-//     const ID = user.user_id.toString().toLowerCase();
-//     const name = (user.user_fname + " " + user.user_lname).toLowerCase();
-//     const faculty = user.faculty;
-
-//     return (
-//       (ID.includes(nameFilter) || name.includes(nameFilter) || !nameFilter) &&
-//       (faculty === facultyFilter || !facultyFilter)
-//     );
-//   });
-
-//   currentUserPage = 1; // รีเซ็ตหน้าแรกเมื่อกรอง
-//   renderUserTable();
-//   renderUserPaginationControls();
-// }
-
-
-// function filterReceivecare() {
-//   // ดึงค่าจาก input และ select
-//   const nameFilter = document.getElementById('searchName').value.trim().toLowerCase();
-//   const doctorFilter = document.getElementById('doctorSelect').value.trim();
-//   const monthFilter = document.getElementById('monthSelect').value.trim();
-
-//   const table = document.getElementById('patientTable');
-//   const rows = table.getElementsByTagName('tr');
-
-//   const monthMap = {
-//     'มกราคม': '01', 'กุมภาพันธ์': '02', 'มีนาคม': '03', 'เมษายน': '04',
-//     'พฤษภาคม': '05', 'มิถุนายน': '06', 'กรกฎาคม': '07', 'สิงหาคม': '08',
-//     'กันยายน': '09', 'ตุลาคม': '10', 'พฤศจิกายน': '11', 'ธันวาคม': '12'
-//   };
-
-//   for (let i = 0; i < rows.length; i++) {
-//     const cells = rows[i].getElementsByTagName('td');
-//     if (cells.length > 0) {
-//       const name = (cells[2]?.textContent || "").trim().toLowerCase();
-//       const doctor = (cells[8]?.textContent || "").trim();
-//       const dateText = (cells[7]?.textContent || "").trim(); // คอลัมน์วันที่
-
-//       // แปลงวันที่เป็นเดือน
-//       let formattedMonth = '';
-//       if (dateText) {
-//         const dateParts = dateText.split(' ');
-//         if (dateParts.length >= 2) {
-//           formattedMonth = monthMap[dateParts[1].trim()] || '';
-//         }
-//       }
-
-//       // ตรวจสอบเงื่อนไขการกรอง
-//       const matchesName = !nameFilter || name.includes(nameFilter);
-//       const matchesDoctor = !doctorFilter || doctor === doctorFilter;
-//       const matchesMonth = !monthFilter || formattedMonth === monthFilter;
-
-//       if (matchesName && matchesDoctor && matchesMonth) {
-//         rows[i].style.display = ''; // แสดงแถว
-//       } else {
-//         rows[i].style.display = 'none'; // ซ่อนแถว
-//       }
-//     }
-//   }
-// }
-
-// function filterDoctor() {
-//   // Function to filter patients based on input and dropdowns
-//   const nameFilter = document.getElementById('searchdoctor').value.toLowerCase();
-//   const idFilter = document.getElementById('searchdoctor').value.toLowerCase();
-//   const table = document.getElementById('doctorinTable');
-//   const rows = table.getElementsByTagName('tr');
-
-//   for (let i = 0; i < rows.length; i++) {
-//     const cells = rows[i].getElementsByTagName('td');
-//     if (cells.length > 0) {
-//       const name = cells[1].textContent.toLowerCase();
-//       const ID = cells[0].textContent.toLowerCase();
-    
-
-//       if (
-//         (name.includes(nameFilter) || !nameFilter) ||
-//         (ID === idFilter || !idFilter)
-//         // (year.includes(yearFilter) || !yearFilter)
-//       ) {
-//         rows[i].style.display = '';
-//       } else {
-//         rows[i].style.display = 'none';
-//       }
-//     }
-//   }
-// }
-
-// function filterAddmin() {
-//   // Function to filter patients based on input and dropdowns
-//   const nameFilter = document.getElementById('searchaddmin').value.toLowerCase();
-//   const idFilter = document.getElementById('searchaddmin').value.toLowerCase();
-//   const table = document.getElementById('addminTable');
-//   const rows = table.getElementsByTagName('tr');
-
-//   for (let i = 0; i < rows.length; i++) {
-//     const cells = rows[i].getElementsByTagName('td');
-//     if (cells.length > 0) {
-//       const name = (cells[1].textContent + " " + cells[2].textContent).toLowerCase();
-//       const ID = cells[0].textContent.toLowerCase();
-    
-
-//       if (
-//         (name.includes(nameFilter) || !nameFilter) ||
-//         (ID === idFilter || !idFilter)
-//         // (date === dateFilter || !dateFilter)
-//         // (year.includes(yearFilter) || !yearFilter)
-//       ) {
-//         rows[i].style.display = '';
-//       } else {
-//         rows[i].style.display = 'none';
-//       }
-//     }
-//   }
-// }
-
-// function filterManager() {
-//   // Function to filter patients based on input and dropdowns
-//   const nameFilter = document.getElementById('searchmanager').value.toLowerCase();
-//   const idFilter = document.getElementById('searchmanager').value.toLowerCase();
-//   const table = document.getElementById('managerinTable');
-//   const rows = table.getElementsByTagName('tr');
-
-//   for (let i = 0; i < rows.length; i++) {
-//     const cells = rows[i].getElementsByTagName('td');
-//     if (cells.length > 0) {
-//       const name = (cells[1].textContent + " " + cells[2].textContent).toLowerCase();
-//       const ID = cells[0].textContent.toLowerCase();
-    
-
-//       if (
-//         (name.includes(nameFilter) || !nameFilter) ||
-//         (ID === idFilter || !idFilter)
-//         // (date === dateFilter || !dateFilter)
-//         // (year.includes(yearFilter) || !yearFilter)
-//       ) {
-//         rows[i].style.display = '';
-//       } else {
-//         rows[i].style.display = 'none';
-//       }
-//     }
-//   }
-// }
 
 function openAvailabilityModal(doctorID, doctorName) {
   const modal = document.getElementById("availabilityModal");
@@ -486,6 +268,38 @@ function openAvailabilityModal(doctorID, doctorName) {
 function closeAvailabilityModal() {
   const modal = document.getElementById("availabilityModal");
   modal.style.display = "none";
+}
+
+
+
+function toggleSymptomsForm() {
+  const formContainer = document.getElementById("symptoms-form-container");
+  formContainer.style.display = (formContainer.style.display === "none") ? "block" : "none";
+}
+
+// ✅ ฟังก์ชันบันทึกอาการ
+function saveSymptoms() {
+  // ดึงค่าจาก Checkbox ที่ถูกเลือก
+  const selectedSymptoms = [...document.querySelectorAll("input[name='symptoms']:checked")]
+      .map(input => input.value);
+
+  // ดึงค่าจากช่องเพิ่มอาการเอง
+  const additionalSymptom = document.getElementById("additional-symptom").value.trim();
+  if (additionalSymptom) {
+      selectedSymptoms.push(additionalSymptom);
+  }
+
+  // แสดงอาการที่เลือก
+  if (selectedSymptoms.length > 0) {
+      const symptomsList = document.getElementById("selected-symptoms-list");
+      symptomsList.innerHTML = selectedSymptoms.map(symptom => `<li>${symptom}</li>`).join("");
+
+      // แสดง container ที่แสดงอาการที่บันทึก
+      document.getElementById("selected-symptoms-container").style.display = "block";
+  }
+
+  // ซ่อนฟอร์มหลังจากกดบันทึก
+  document.getElementById("symptoms-form-container").style.display = "none";
 }
 
 
