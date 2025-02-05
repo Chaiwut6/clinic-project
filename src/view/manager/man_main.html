@@ -37,6 +37,7 @@
     <script src="../../js/api/manager_api.js"></script>
     <script src="../../js/api/dashboard_api.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
@@ -58,6 +59,12 @@
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
+            <li class="nav-item">
+                <a class="nav-link" href="../manager/man_main.html">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
             <!-- <li class="nav-item">
                 <a class="nav-link" href="index.html">
                     <i class="fa-regular fa-user"></i>
@@ -236,32 +243,34 @@
 
                     <!-- Summary Row -->
                     <div class="row">
-                
+
                         <!-- Total Doctors Card -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-primary shadow h-100 py-2">
-                              <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                  <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1" style="font-size: 18px;">จำนวนแพทย์</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="doctorCount">0</div>
-                                  </div>
-                                  <div class="col-auto">
-                                    <i class="fas fa-user-md fa-2x text-gray-300"></i>
-                                  </div>
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                                                style="font-size: 18px;">จำนวนแพทย์</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="doctorCount">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-user-md fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
                                 </div>
-                              </div>
                             </div>
-                          </div>
-                          
-                
+                        </div>
+
+
                         <!-- Total Patients Card -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-success shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1" style="font-size: 18px;">
+                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1"
+                                                style="font-size: 18px;">
                                                 จำนวนผู้ใช้
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800" id="userCount">0</div>
@@ -273,17 +282,19 @@
                                 </div>
                             </div>
                         </div>
-                
+
                         <!-- Total Appointments Card -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-info shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1" style="font-size: 18px;">
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1"
+                                                style="font-size: 18px;">
                                                 นัดหมายทั้งหมด
                                             </div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="appointmentCount">0</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="appointmentCount">0
+                                            </div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
@@ -292,17 +303,19 @@
                                 </div>
                             </div>
                         </div>
-                
+
                         <!-- Confirmed Appointments Card -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-warning shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1" style="font-size: 18px;">
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1"
+                                                style="font-size: 18px;">
                                                 นัดหมายที่ยืนยันแล้ว
                                             </div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="confirmedAppointmentCount">0</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800"
+                                                id="confirmedAppointmentCount">0</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-check-circle fa-2x text-gray-300"></i>
@@ -311,17 +324,19 @@
                                 </div>
                             </div>
                         </div>
-                
+
                         <!-- Closed Cases Card -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-secondary shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1" style="font-size: 18px;">
+                                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1"
+                                                style="font-size: 18px;">
                                                 จำนวนที่ปิดเคสแล้ว
                                             </div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="closedCasesCount">0</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="closedCasesCount">0
+                                            </div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-folder fa-2x text-gray-300"></i>
@@ -330,10 +345,10 @@
                                 </div>
                             </div>
                         </div>
-                        
-                
+
+
                     </div>
-                
+
                     <!-- Charts Row -->
                     <div class="row">
                         <!-- Bar Chart: ภาพรวมการนัดหมาย -->
@@ -341,9 +356,15 @@
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
                                     <h6 class="m-0 font-weight-bold text-primary">ภาพรวมการนัดหมาย</h6>
+                                    
+                                    <button style="cursor: pointer; background: none; border: none;">
+                                        <i class="fa-solid fa-print" onclick="exportAppointmentsOverview()"></i>
+                                    </button>
                                     <div>
-                                        <select id="yearFilterAppointments" class="form-select" onchange="loadAppointmentsOverviewChart()"></select>
-                                        <select id="monthFilterAppointments" class="form-select" onchange="loadAppointmentsOverviewChart()">
+                                        <select id="yearFilterAppointments" class="form-select"
+                                            onchange="loadAppointmentsOverviewChart()"></select>
+                                        <select id="monthFilterAppointments" class="form-select"
+                                            onchange="loadAppointmentsOverviewChart()">
                                             <option value="">ทุกเดือน</option>
                                             <option value="01">มกราคม</option>
                                             <option value="02">กุมภาพันธ์</option>
@@ -367,27 +388,62 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="col-xl-4">
                             <div class="card shadow mb-4">
+                                <div class="d-flex align-items-center justify-content-between" style="margin: 15px;">
+                                    <h6 class="font-weight-bold text-primary m-0">จำนวนผู้ป่วยที่ระบุอาการ</h6> 
+                                    <button style="cursor: pointer; background: none; border: none;">
+                                        <i class="fa-solid fa-print" onclick="exportToExcel()"></i>
+                                    </button>
+                                </div>
+                                
+
                                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                                    <h6 class="m-0 font-weight-bold text-primary">จำนวนผู้ใช้บริการ</h6>
+                                  
                                     <div>
-                                        <select id="yearFilterUsers" class="form-select" onchange="loadAppointmentsBreakdownChart()"></select>
-                                        <select id="monthFilterUsers" class="form-select" onchange="loadAppointmentsBreakdownChart()">
-                                            <option value="">ทุกเดือน</option>
-                                            <option value="01">มกราคม</option>
-                                            <option value="02">กุมภาพันธ์</option>
-                                            <option value="03">มีนาคม</option>
-                                            <option value="04">เมษายน</option>
-                                            <option value="05">พฤษภาคม</option>
-                                            <option value="06">มิถุนายน</option>
-                                            <option value="07">กรกฎาคม</option>
-                                            <option value="08">สิงหาคม</option>
-                                            <option value="09">กันยายน</option>
-                                            <option value="10">ตุลาคม</option>
-                                            <option value="11">พฤศจิกายน</option>
-                                            <option value="12">ธันวาคม</option>
+                                        <!-- ✅ เลือกปี (default: ปีปัจจุบัน) -->
+                                        <select id="yearFilterUsers" class="form-select" onchange="loadAppointmentsBreakdownChart()">
+                                            <option value="">ทุกปี</option>
+                                        </select>
+                                        <select id="facultyFilterUsers" class="form-select" onchange="loadAppointmentsBreakdownChart()">
+                                            <option value="">ทุกคณะ</option>
+                                            <option value="บริหารธุรกิจ">บริหารธุรกิจ</option>
+                                            <option value="วิศวกรรมศาสตร์">วิศวกรรมศาสตร์</option>
+                                            <option value="เทคโนโลยีคหกรรมศาสตร์">เทคโนโลยีคหกรรมศาสตร์</option>
+                                            <option value="ศิลปกรรมศาสตร์">ศิลปกรรมศาสตร์</option>
+                                            <option value="เทคโนโลยีการเกษตร">เทคโนโลยีการเกษตร</option>
+                                            <option value="ครุศาสตร์อุตสาหกรรม">ครุศาสตร์อุตสาหกรรม</option>
+                                            <option value="สถาปัตยกรรมศาสตร์">สถาปัตยกรรมศาสตร์</option>
+                                            <option value="วิทยาศาสตร์และเทคโนโลยี">วิทยาศาสตร์และเทคโนโลยี</option>
+                                            <option value="เทคโนโลยีสื่อสารมวลชน">เทคโนโลยีสื่อสารมวลชน</option>
+                                            <option value="ศิลปศาสตร์">ศิลปศาสตร์</option>
+                                            <option value="แพทย์บูรณาการ">แพทย์บูรณาการ</option>
+                                            <option value="พยาบาลศาสตร์">พยาบาลศาสตร์</option>
+                                        </select>
+                        
+                                        <!-- ✅ เลือกอาการ (default: ทุกอาการ) -->
+                                        <select id="symptomFilterUsers" class="form-select" onchange="loadAppointmentsBreakdownChart()">
+                                            <option value="">ทุกอาการ</option>
+                                            <option value="MDD">MDD (โรคซึมเศร้า)</option>
+                                            <option value="Adjustment disorder">Adjustment disorder (ภาวะความผิดปกติของการปรับตัว)</option>
+                                            <option value="Dysthymia">Dysthymia (โรคซึมเศร้าชนิดเรื้อรัง)</option>
+                                            <option value="Anxiety disorder">Anxiety disorder (โรควิตกกังวล)</option>
+                                            <option value="Bipola disorder">Bipola disorder (โรคอารมณ์แปรปรวน 2 ขั้ว)</option>
+                                            <option value="GAD">GAD (ภาวะวิตกกังวล)</option>
+                                            <option value="ADHD">ADHD (โรคสมาธิสั้น)</option>
+                                            <option value="OCD c Psychosis">OCD c Psychosis (โรคย้ำคิดย้ำทำ)</option>
+                                            <option value="PD GAD">PD GAD (โรคตื่นตระหนก)</option>
+                                            <option value="cannabis dependence">Cannabis dependence (ความผิดปกติจากการใช้กัญชา)</option>
+                                            <option value="mix/dip">Mix/Dip (ชัก/พาร์กินสัน)</option>
+                                            <option value="mixed depression and anxiety disorder">Mixed depression and anxiety disorder (โรควิตกกังวลผสมซึมเศร้า)</option>
+                                            <option value="hypnic hallucination with anxiety syndrome">Hypnic hallucination with anxiety syndrome (ประสาทหลอน ผีอำ และวิตกกังวล)</option>
+                                            <option value="mixed Anxiety disorder panic attack">Mixed Anxiety disorder panic attack (โรควิตกกังวลผสมซึมเศร้า)</option>
+                                            <option value="Panic">Panic (ภาวะตื่นตระหนก วิตกกังวล หรือกลัวแบบกะทันหัน)</option>
+                                            <option value="PMDD">PMDD (อาการผิดปกติก่อนมีประจำเดือน หงุดหงิด เครียดรุนแรง)</option>
+                                            <option value="voyeurism">Voyeurism (โรคถ้ำมอง ชอบแอบดู มีพฤติกรรมทางเพศแอบดูคนอื่น)</option>
+                                            <option value="Mild depressive">Mild depressive (โรคซึมเศร้าระดับน้อย)</option>
+                                            <option value="personal disorder">Personal disorder (บุคลิกภาพแปรปรวน)</option>
                                         </select>
                                     </div>
                                 </div>
@@ -402,30 +458,34 @@
                             </div>
                         </div>
                         
-                    
+                        
+                        
+                        
+
                     </div>
                     <!-- Lists Row -->
                     <div class="row">
-                
+
                         <!-- Doctor List -->
                         <!-- <div class="col-lg-6 mb-4">
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">รายชื่อแพทย์</h6>
-                                </div>
-                                <div class="card-body">
-                                    <ul>
-                                        <li>ดร. สมชาย สุขสม</li>
-                                        <li>ดร. สุนีย์ สร้างสุข</li>
-                                        <li>ดร. วิไล สุขเกษม</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div> -->
-                
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">รายชื่อแพทย์</h6>
+                        </div>
+                        <div class="card-body">
+                            <ul>
+                                <li>ดร. สมชาย สุขสม</li>
+                                <li>ดร. สุนีย์ สร้างสุข</li>
+                                <li>ดร. วิไล สุขเกษม</li>
+                            </ul>
+                        </div>
                     </div>
-                
+                </div> -->
+
+                    </div>
+
                 </div>
+
 
                 </div>
                

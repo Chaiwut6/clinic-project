@@ -133,7 +133,7 @@ router.post('/employeeinfo', verifyToken, async (req, res) => {
       employee: employeeInfo,
     });
   } catch (error) {
- 
+
     console.error('Error retrieving employee data:', error);
 
     res.status(500).json({
@@ -141,7 +141,7 @@ router.post('/employeeinfo', verifyToken, async (req, res) => {
       error: error.message || 'Internal Server Error',
     });
   } finally {
- 
+
     if (conn) {
       try {
         await conn.end();
@@ -160,8 +160,8 @@ router.post('/employeeResult', async (req, res) => {
 
     // Query user information
     const [employeeResult] = await conn.query("SELECT * FROM employee ");
-  
-    
+
+
     const employeeinfo = employeeResult;
 
 
@@ -337,7 +337,7 @@ router.post('/userList', async (req, res) => {
 });
 
 
-router.post('/change-password', verifyToken , async (req, res) => {
+router.post('/change-password', verifyToken, async (req, res) => {
   const { oldPassword, newPassword, confirmPassword } = req.body;
   const login_id = req.user.login_id;
   if (!oldPassword || !newPassword || !confirmPassword) {
@@ -593,7 +593,7 @@ router.post('/userfetch', async (req, res) => {
 
 
     const userinfo = user;
- 
+
 
     if (!userinfo) {
       return res.status(404).json({ message: 'user not found' });
@@ -738,13 +738,13 @@ router.post('/appointmentsOverview', async (req, res) => {
   let conn = null;
 
   try {
-      conn = await initMySQL();
+    conn = await initMySQL();
 
-      const { year, month } = req.body;
-      const selectedYear = year || new Date().getFullYear();
-      const selectedMonth = month ? `AND MONTH(date) = ${month}` : ""; 
+    const { year, month } = req.body;
+    const selectedYear = year || new Date().getFullYear();
+    const selectedMonth = month ? `AND MONTH(date) = ${month}` : "";
 
-      const [appointments] = await conn.query(`
+    const [appointments] = await conn.query(`
           SELECT 
               DATE_FORMAT(date, '%Y-%m') AS month,
               COUNT(*) AS total,
@@ -758,90 +758,102 @@ router.post('/appointmentsOverview', async (req, res) => {
           ORDER BY month;
       `, [selectedYear]);
 
-      res.json({
-          success: true,
-          appointments,
-      });
+    res.json({
+      success: true,
+      appointments,
+    });
 
   } catch (error) {
-      console.error('Error fetching appointment overview:', error);
-      res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดในการดึงข้อมูล', error: error.message });
+    console.error('Error fetching appointment overview:', error);
+    res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดในการดึงข้อมูล', error: error.message });
   } finally {
-      if (conn) await conn.end();
+    if (conn) await conn.end();
   }
 });
+
+
 
 
 
 
 router.post('/appointmentsByFaculty', async (req, res) => {
   let conn = null;
-
   try {
-      conn = await initMySQL();
+    conn = await initMySQL();
+    const { year, symptom, faculty } = req.body;
 
-      const { year, month } = req.body; // รับค่าปีและเดือนจาก request
-      const selectedYear = year || new Date().getFullYear(); // ถ้าไม่มี ให้ใช้ปีปัจจุบัน
-      const selectedMonth = month || ""; // ถ้าไม่มี ให้ใช้ทั้งหมด
+    const selectedYear = year || new Date().getFullYear();
 
-      // รายชื่อคณะที่ต้องการแสดง (แม้ไม่มีข้อมูลก็ควรแสดงเป็น 0)
-      const allFaculties = [
-          "บริหารธุรกิจ", "วิศวกรรมศาสตร์", "เทคโนโลยีคหกรรมศาสตร์", "ศิลปกรรมศาสตร์",
-          "เทคโนโลยีการเกษตร", "ครุศาสตร์อุตสาหกรรม", "สถาปัตยกรรมศาสตร์",
-          "วิทยาศาสตร์และเทคโนโลยี", "เทคโนโลยีสื่อสารมวลชน", "ศิลปศาสตร์",
-          "แพทย์บูรณาการ", "พยาบาลศาสตร์"
-      ];
+    let query = `
+    SELECT u.faculty, COUNT(DISTINCT a.user_id) AS total, JSON_UNQUOTE(JSON_EXTRACT(a.symptoms, '$')) AS symptoms
+    FROM appointments a
+    JOIN users u ON a.user_id = u.user_id
+    WHERE a.status = 'ยืนยัน' 
+    AND YEAR(a.date) = ?
+    AND a.date = (
+        SELECT MAX(a2.date) FROM appointments a2
+        WHERE a2.user_id = a.user_id
+        AND a2.status = 'ยืนยัน'
+    )
+    AND a.symptoms IS NOT NULL 
+    AND a.symptoms != '[]' 
+    ${faculty ? "AND u.faculty = ?" : ""}
+    GROUP BY u.faculty, a.symptoms
+    `;
 
-      // เงื่อนไขสำหรับกรองตามปีและเดือน (หากเลือกเดือน จะกรองเพิ่ม)
-      let query = `
-          SELECT u.faculty, COUNT(a.appointment_id) AS total
-          FROM appointments a
-          JOIN users u ON a.user_id = u.user_id
-          WHERE a.status = 'ยืนยัน' 
-          AND YEAR(a.date) = ? ${selectedMonth ? "AND MONTH(a.date) = ?" : ""}
-          GROUP BY u.faculty
-      `;
+    let params = faculty ? [selectedYear, faculty] : [selectedYear];
+    const [facultyAppointments] = await conn.query(query, params);
 
-      // กำหนดพารามิเตอร์ SQL
-      let params = selectedMonth ? [selectedYear, selectedMonth] : [selectedYear];
+    // ✅ แปลงข้อมูล JSON อาการให้ถูกต้อง
+    let facultyData = {};
+    facultyAppointments.forEach(row => {
+      let symptomsArray = [];
+      try {
+        symptomsArray = JSON.parse(row.symptoms || "[]");
+      } catch (error) {
+        symptomsArray = [];
+      }
 
-      const [facultyAppointments] = await conn.query(query, params);
+      if (!facultyData[row.faculty]) {
+        facultyData[row.faculty] = { total: 0, symptoms: {} };
+      }
 
-      // แปลงข้อมูลให้อยู่ในรูปแบบอ็อบเจกต์ { คณะ: จำนวน }
-      let facultyData = {};
-      facultyAppointments.forEach(row => {
-          facultyData[row.faculty] = row.total;
-      });
+      // ✅ กรองตามอาการที่เลือก และป้องกันการนับซ้ำ
+      if (!symptom || symptomsArray.includes(symptom)) {
+        facultyData[row.faculty].total += row.total;
 
-      // เพิ่มคณะที่ไม่มีการนัดหมายให้เป็น 0
-      allFaculties.forEach(faculty => {
-          if (!facultyData[faculty]) {
-              facultyData[faculty] = 0;
+        symptomsArray.forEach(symptomName => {
+          if (!facultyData[row.faculty].symptoms[symptomName]) {
+            facultyData[row.faculty].symptoms[symptomName] = 0;
           }
-      });
+          facultyData[row.faculty].symptoms[symptomName] += row.total;
+        });
+      }
+    });
 
-      // แปลงข้อมูลให้อยู่ในรูปแบบ Array
-      const formattedData = Object.keys(facultyData).map(faculty => ({
-          faculty: faculty,
-          total: facultyData[faculty]
-      }));
+    // ✅ แปลงข้อมูลให้อยู่ในรูปแบบ Array
+    const formattedData = Object.keys(facultyData).map(faculty => ({
+      faculty,
+      total: facultyData[faculty].total,
+      symptoms: facultyData[faculty].symptoms
+    }));
 
-      // นับจำนวนรวมของการนัดหมายที่ยืนยันแล้ว
-      const totalConfirmedAppointments = formattedData.reduce((sum, row) => sum + row.total, 0);
-
-      res.json({
-          success: true,
-          appointments: formattedData,
-          totalConfirmedAppointments: totalConfirmedAppointments
-      });
+    res.json({
+      success: true,
+      appointments: formattedData,
+      totalConfirmedAppointments: formattedData.reduce((sum, row) => sum + row.total, 0)
+    });
 
   } catch (error) {
-      console.error('Error fetching confirmed appointments by faculty:', error);
-      res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูล' });
+    console.error('Error fetching confirmed appointments by faculty:', error);
+    res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูล', error: error.message });
   } finally {
-      if (conn) await conn.end();
+    if (conn) await conn.end();
   }
 });
+
+
+
 
 router.post('/saveSymptoms', async (req, res) => {
   let conn;
@@ -897,6 +909,6 @@ router.post('/saveSymptoms', async (req, res) => {
 
 
 
-  
+
 
 module.exports = router;

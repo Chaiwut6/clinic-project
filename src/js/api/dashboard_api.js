@@ -1,3 +1,4 @@
+
 async function fetchDoctorCount() {
     try {
       const response = await axios.post("http://localhost:8000/api/doctors/doctorCount");
@@ -170,12 +171,6 @@ async function fetchDoctorCount() {
     }
 }
 
-
-
-
-
-
-
 function populateYearFilter(filterId) {
   const yearSelect = document.getElementById(filterId);
   if (!yearSelect) {
@@ -215,12 +210,14 @@ function convertToThaiDate(isoString) {
 async function loadAppointmentsBreakdownChart() {
   try {
       const selectedYear = document.getElementById("yearFilterUsers").value;
-      const selectedMonth = document.getElementById("monthFilterUsers").value;
+      const selectedSymptom = document.getElementById("symptomFilterUsers").value;
+      const selectedFaculty = document.getElementById("facultyFilterUsers").value;
 
-      // ส่งค่าปีและเดือนไปยัง API
+      // ✅ ส่งค่าปี, อาการ และ คณะ ไปยัง API
       const response = await axios.post("http://localhost:8000/api/employees/appointmentsByFaculty", {
           year: selectedYear,
-          month: selectedMonth
+          symptom: selectedSymptom || null,  // ถ้าไม่เลือกอาการ ให้ส่งค่า null ไป
+          faculty: selectedFaculty || null  // ถ้าไม่เลือกคณะ ให้ส่งค่า null ไป
       });
 
       const data = response.data;
@@ -230,11 +227,29 @@ async function loadAppointmentsBreakdownChart() {
       const totalAppointments = data.appointments.map(a => a.total) || [];
       const totalAll = data.totalConfirmedAppointments || 0;
 
-      // ลบกราฟเก่าเพื่อป้องกันการซ้อนทับ
+      // ✅ ดึง <select> อาการที่มีอยู่
+      const symptomFilter = document.getElementById("symptomFilterUsers");
+      const existingSymptoms = new Set(Array.from(symptomFilter.options).map(opt => opt.value));
+
+      // ✅ ตรวจจับอาการใหม่ที่ไม่อยู่ใน `<select>` แล้วเพิ่มเข้าไป
+      data.appointments.forEach(appointment => {
+          Object.keys(appointment.symptoms).forEach(symptom => {
+              if (!existingSymptoms.has(symptom)) {
+                  // ✅ เพิ่มอาการใหม่เข้าไปใน dropdown
+                  const newOption = document.createElement("option");
+                  newOption.value = symptom;
+                  newOption.textContent = `${symptom}`;
+                  symptomFilter.appendChild(newOption);
+                  existingSymptoms.add(symptom); // ✅ ป้องกันการเพิ่มซ้ำ
+              }
+          });
+      });
+
+      // ✅ ลบกราฟเก่าเพื่อป้องกันการซ้อนทับ
       const existingChart = Chart.getChart("appointmentsBreakdownChart");
       if (existingChart) existingChart.destroy();
 
-      // ถ้าไม่มีข้อมูลให้แสดงข้อความแทนกราฟ
+      // ✅ ถ้าไม่มีข้อมูลให้แสดงข้อความแทนกราฟ
       if (totalAll === 0) {
           document.getElementById("appointmentsBreakdownChart").style.display = "none";
           document.getElementById("totalAppointmentsCount").innerText = "ไม่มีข้อมูล";
@@ -243,22 +258,24 @@ async function loadAppointmentsBreakdownChart() {
           document.getElementById("appointmentsBreakdownChart").style.display = "block";
       }
 
-      // กำหนดสีให้กับแต่ละคณะ
+      // ✅ กำหนดสีให้แต่ละคณะ
       const colors = [
           '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
           '#FF9F40', '#FFCD56', '#C9CBCF', '#A3E4D7', '#F1948A',
-          '#8E44AD', '#1ABC9C'
+          '#8E44AD', '#1ABC9C', '#D35400', '#E67E22', '#C0392B'
       ];
 
       const ctx = document.getElementById('appointmentsBreakdownChart').getContext('2d');
       new Chart(ctx, {
-          type: 'pie',
+          type: 'pie', // ✅ ใช้ Pie Chart
           data: {
               labels: labels,
               datasets: [{
-                  label: 'จำนวนการนัดหมายแยกตามคณะ',
+                  label: selectedSymptom 
+                        ? `จำนวนผู้ป่วยที่มีอาการ ${selectedSymptom} ในแต่ละคณะ` 
+                        : "จำนวนผู้ป่วยทั้งหมดในแต่ละคณะ",
                   data: totalAppointments,
-                  backgroundColor: colors,
+                  backgroundColor: colors.slice(0, labels.length),
                   hoverOffset: 10
               }]
           },
@@ -268,18 +285,14 @@ async function loadAppointmentsBreakdownChart() {
               plugins: {
                   legend: {
                       display: true,
-                      position: 'right',
-                      labels: {
-                          font: { size: 14 },
-                          padding: 20
-                      }
+                      position: 'right'
                   },
                   tooltip: {
                       callbacks: {
                           label: function(tooltipItem) {
                               let faculty = labels[tooltipItem.dataIndex];
                               let count = totalAppointments[tooltipItem.dataIndex];
-                              return `${faculty}: ${count}`;
+                              return `${faculty}: ${count} คน`;
                           }
                       }
                   }
@@ -287,13 +300,195 @@ async function loadAppointmentsBreakdownChart() {
           }
       });
 
-      // อัปเดตจำนวนรวมของผู้ใช้บริการ
-      document.getElementById('totalAppointmentsCount').innerText = `รวมจำนวนผู้ใช้บริการ: ${totalAll}`;
+      // ✅ อัปเดตจำนวนรวมของผู้ใช้บริการ
+      document.getElementById('totalAppointmentsCount').innerText = selectedSymptom
+          ? `รวมจำนวนผู้ป่วยที่มีอาการ ${selectedSymptom}: ${totalAll} คน`
+          : `รวมจำนวนผู้ป่วยทั้งหมด: ${totalAll} คน`;
 
   } catch (error) {
       console.error("Error loading appointment breakdown chart:", error);
   }
 }
+
+
+
+async function exportToExcel() {
+  try {
+      // ✅ ดึงค่าปีที่เลือก และแปลงเป็น พ.ศ.
+      const selectedYear = parseInt(document.getElementById("yearFilterUsers").value) || new Date().getFullYear();
+      const thaiYear = selectedYear + 543; // แปลงเป็นปี พ.ศ.
+
+      const response = await axios.post("http://localhost:8000/api/employees/appointmentsByFaculty", {
+          year: selectedYear
+      });
+
+      const data = response.data;
+
+      if (!data.success || !data.appointments || data.appointments.length === 0) {
+          alert("ไม่มีข้อมูลสำหรับปีที่เลือก");
+          return;
+      }
+
+      let symptomCounts = {};
+
+      data.appointments.forEach(appointment => {
+          Object.entries(appointment.symptoms).forEach(([symptom, count]) => {
+              symptomCounts[symptom] = (symptomCounts[symptom] || 0) + count;
+          });
+      });
+
+      // ✅ จัดรูปแบบข้อมูลให้เหมือนในภาพ
+      const sheetData = [
+          ["", `ประเภทโรค ปี ${thaiYear}`, ""],  // เปลี่ยนปีให้เป็น พ.ศ.
+          ["ลำดับที่", "ประเภทของโรค", "จำนวน"]   // หัวตาราง
+      ];
+
+      let totalPatients = 0;
+      let index = 1;
+
+      Object.entries(symptomCounts).forEach(([symptom, count]) => {
+          sheetData.push([index++, symptom, count]);
+          totalPatients += count;
+      });
+
+      // ✅ เพิ่มแถวสรุปผลรวม
+      sheetData.push(["", "รวมจำนวน", totalPatients]);
+
+      // ✅ สร้างไฟล์ Excel และตั้งค่าการจัดรูปแบบ
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+
+      // ✅ เพิ่ม sheet ลง workbook
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Disease Report");
+
+      // ✅ บันทึกไฟล์ Excel พร้อมปี พ.ศ.
+      const fileName = `จำนวนผู้ป่วยที่ระบุอาการ_${thaiYear}.xlsx`;
+      XLSX.writeFile(workbook, fileName);
+
+  } catch (error) {
+      console.error("Error exporting Excel:", error);
+      alert("เกิดข้อผิดพลาดในการสร้างไฟล์ Excel");
+  }
+}
+
+async function exportAppointmentsOverview() {
+
+  try {
+    
+      const selectedYear = document.getElementById("yearFilterAppointments").value || new Date().getFullYear();
+      const selectedMonth = document.getElementById("monthFilterAppointments").value || "";
+
+      const thaiYear = parseInt(selectedYear) + 543; // แปลง ค.ศ. เป็น พ.ศ.
+
+      
+      function convertMonthToThai(month) {
+          const thaiMonths = [
+              "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+              "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+          ];
+          return thaiMonths[parseInt(month) - 1] || "";
+      }
+
+   
+      let fileMonthName = selectedMonth ? `_${convertMonthToThai(selectedMonth)}` : "";
+      let fileName = `ภาพรวมการนัดหมาย${fileMonthName}_${thaiYear}.xlsx`;
+
+     
+      const response = await axios.post("http://localhost:8000/api/employees/appointmentsOverview", {
+        year: selectedYear,
+        month: selectedMonth
+      });
+
+      const data = response.data;
+
+      if (!data.success || !data.appointments || data.appointments.length === 0) {
+          alert("ไม่มีข้อมูลสำหรับช่วงเวลาที่เลือก");
+          return;
+      }
+
+      // ✅ จัดรูปแบบข้อมูล
+      const sheetData = [
+          ["", `ภาพรวมการนัดหมาย ปี ${thaiYear}`, ""],  // เปลี่ยนปีให้เป็น พ.ศ.
+          ["เดือน", "นัดหมายทั้งหมด", "ยืนยันแล้ว", "ยกเลิก", "ปิดเคส", "รอการยืนยัน"] // หัวตาราง
+      ];
+
+      let totalAppointments = 0;
+      let totalConfirmed = 0;
+      let totalCancelled = 0;
+      let totalClosedCases = 0;
+      let totalPending = 0;
+
+      data.appointments.forEach(appointment => {
+          let thaiMonth = convertMonthToThai(appointment.month.split("-")[1]); // ✅ ใช้เดือนภาษาไทย
+          let monthDisplay = selectedMonth ? thaiMonth : `${thaiMonth} ${thaiYear}`; 
+
+          sheetData.push([
+              monthDisplay, 
+              Number(appointment.total), 
+              Number(appointment.confirmed), 
+              Number(appointment.cancelled), 
+              Number(appointment.closedCases), 
+              Number(appointment.pending)
+          ]);
+
+          totalAppointments += Number(appointment.total);
+          totalConfirmed += Number(appointment.confirmed);
+          totalCancelled += Number(appointment.cancelled);
+          totalClosedCases += Number(appointment.closedCases);
+          totalPending += Number(appointment.pending);
+      });
+
+      sheetData.push([
+          "รวม", 
+          totalAppointments, 
+          totalConfirmed, 
+          totalCancelled, 
+          totalClosedCases, 
+          totalPending
+      ]);
+
+
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+
+
+      const range = XLSX.utils.decode_range(worksheet["!ref"]);
+      for (let C = range.s.c; C <= range.e.c; ++C) {
+          for (let R = range.s.r; R <= range.e.r; ++R) {
+              const cell_address = { c: C, r: R };
+              const cell_ref = XLSX.utils.encode_cell(cell_address);
+              if (!worksheet[cell_ref]) continue;
+
+              worksheet[cell_ref].s = {
+                  alignment: { horizontal: "center", vertical: "center" },
+                  border: {
+                      top: { style: "thin" },
+                      bottom: { style: "thin" },
+                      left: { style: "thin" },
+                      right: { style: "thin" }
+                  }
+              };
+
+              if (R === 1 || R === 2) {
+                  worksheet[cell_ref].s.fill = { fgColor: { rgb: "FFCC99" } };
+              }
+          }
+      }
+
+      XLSX.utils.book_append_sheet(workbook, worksheet, "ภาพรวมการนัดหมาย");
+
+      XLSX.writeFile(workbook, fileName);
+
+
+  } catch (error) {
+      console.error("Error exporting Excel:", error);
+      alert("เกิดข้อผิดพลาดในการสร้างไฟล์ Excel");
+  } 
+}
+
+
+
+
 
 
 
