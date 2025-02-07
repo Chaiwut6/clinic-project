@@ -553,6 +553,33 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     } else {
         console.log("ไม่ใช่หน้า Dashboard, ข้ามการโหลดข้อมูล...");
+    } if (currentPage === "admin_main.html") {
+
+
+        await Promise.all([
+            fetchDoctorCount(),
+            fetchUserCount(),
+            fetchAppointmentCount(),
+            fetchConfirmedAppointmentCount(),
+            fetchClosedCasesCount()
+        ]);
+
+      
+        loadAppointmentsOverviewChart();
+        loadAppointmentsBreakdownChart();
+
+       
+        if (document.getElementById("yearFilterAppointments")) {
+            populateYearFilter("yearFilterAppointments");
+        }
+        if (document.getElementById("yearFilterUsers")) {
+            populateYearFilter("yearFilterUsers");
+        }
+
+        console.log("Dashboard โหลดข้อมูลเสร็จแล้ว!");
+
+    } else {
+        console.log("ไม่ใช่หน้า Dashboard, ข้ามการโหลดข้อมูล...");
     }
   } catch (error) {
       console.error("เกิดข้อผิดพลาดขณะโหลด Dashboard:", error);

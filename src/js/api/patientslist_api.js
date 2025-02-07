@@ -60,78 +60,100 @@ let filteredPatientsData = [];
 
 // ✅ ฟังก์ชันโหลดข้อมูลผู้ป่วยจาก API
 async function fetchPatientslist(page = 1) {
-  currentPages = page;
-  try {
-      document.getElementById("patientTable").innerHTML = `<tr><td colspan="9">กำลังโหลดข้อมูล...</td></tr>`;
+    currentPages = page;
+    try {
+        document.getElementById("patientTable").innerHTML = `<tr><td colspan="9">กำลังโหลดข้อมูล...</td></tr>`;
 
-      const response = await axios.post("http://localhost:8000/api/employees/receivecare");
-      const { users, appointments } = response.data;
+        const response = await axios.post("http://localhost:8000/api/employees/receivecare");
+        const { users, appointments } = response.data;
 
-      if (!users || users.length === 0) {
-          document.getElementById("patientTable").innerHTML = `<tr><td colspan="9">ไม่พบข้อมูลผู้ใช้</td></tr>`;
-          document.getElementById("paginationControls").innerHTML = "";
-          return;
-      }
+        if (!users || users.length === 0) {
+            document.getElementById("patientTable").innerHTML = `<tr><td colspan="9">ไม่พบข้อมูลผู้ใช้</td></tr>`;
+            document.getElementById("paginationControls").innerHTML = "";
+            return;
+        }
 
-      let latestAppointments = {};
+        let latestAppointments = {};
 
-      // ✅ เลือกเฉพาะวันนัดหมายล่าสุดของแต่ละ `user_id`
-      appointments.forEach(appointment => {
-          if (appointment.status !== "ยืนยัน") return;
+        // ✅ เลือกเฉพาะวันนัดหมายล่าสุดของแต่ละ `user_id`
+        appointments.forEach(appointment => {
+            if (appointment.status !== "ยืนยัน") return;
 
-          const userId = appointment.user_id;
-          const appointmentDate = new Date(appointment.date);
+            const userId = appointment.user_id;
+            const appointmentDate = new Date(appointment.date);
 
-          // ถ้า user_id ยังไม่มีข้อมูล หรือ ถ้าวันใหม่กว่า ให้เก็บไว้
-          if (!latestAppointments[userId] || new Date(latestAppointments[userId].date) < appointmentDate) {
-              latestAppointments[userId] = appointment;
-          }
-      });
+            // ถ้า user_id ยังไม่มีข้อมูล หรือ ถ้าวันใหม่กว่า ให้เก็บไว้
+            if (!latestAppointments[userId] || new Date(latestAppointments[userId].date) > appointmentDate) {
+                latestAppointments[userId] = appointment;
+            }
+        });
 
-      // ✅ เปลี่ยนจาก Object เป็น Array เพื่อใช้ในการแสดงผล
-      patientsData = Object.values(latestAppointments).map(appointment => {
-          let symptomsData = appointment.symptoms || "[]"; 
-          let symptomsArray = [];
+        // ✅ แปลง Object เป็น Array เพื่อใช้แสดงผล
+        patientsData = Object.values(latestAppointments).map(appointment => {
+            let symptomsData = appointment.symptoms || "[]";
+            let symptomsArray = [];
 
-          try {
-              if (typeof symptomsData === "string") {
-                  symptomsArray = JSON.parse(symptomsData);
-              } else if (Array.isArray(symptomsData)) {
-                  symptomsArray = symptomsData;
-              }
-          } catch (error) {
-              console.error("Error parsing symptoms:", error);
-              symptomsArray = [];
-          }
+            try {
+                if (typeof symptomsData === "string") {
+                    symptomsArray = JSON.parse(symptomsData);
+                } else if (Array.isArray(symptomsData)) {
+                    symptomsArray = symptomsData;
+                }
+            } catch (error) {
+                console.error("Error parsing symptoms:", error);
+                symptomsArray = [];
+            }
 
-          // ✅ ค้นหาข้อมูล `nickname`, `faculty`, `phone` จาก `users`
-          const userInfo = users.find(user => user.user_id === appointment.user_id) || {};
+            // ✅ ค้นหาข้อมูล `nickname`, `faculty`, `phone` จาก `users`
+            const userInfo = users.find(user => user.user_id === appointment.user_id) || {};
 
-          return {
-              user_id: appointment.user_id,
-              user_fname: appointment.user_fname,
-              user_lname: appointment.user_lname,
-              nickname: userInfo.nickname || "ไม่ระบุ",
-              faculty: userInfo.faculty || "ไม่ระบุ",
-              phone: userInfo.phone || "ไม่ระบุ",
-              problem: appointment.problem || "ไม่ระบุ",
-              symptoms: symptomsArray.join(" / ") || "ไม่ระบุ",  
-              appointmentDate: appointment.date
-                  ? new Date(appointment.date).toLocaleDateString("th-TH", { year: "numeric", month: "long", day: "numeric" })
-                  : "ไม่ระบุ",
-              doctor: appointment.doc_name || "ไม่ระบุ"
-          };
-      });
+            const appointmentDate = new Date(appointment.date);
+            const formattedDate = appointmentDate.toLocaleDateString("th-TH", { 
+                year: "numeric", month: "long", day: "numeric" 
+            });
 
-      filteredPatientsData = [...patientsData];
-      renderPatientsTable();
-      renderPaginationControls();
-  } catch (error) {
-      console.error("Error fetching patient data:", error);
-      document.getElementById("patientTable").innerHTML = `<tr><td colspan="9">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
-      document.getElementById("paginationControls").innerHTML = "";
-  }
+            return {
+                user_id: appointment.user_id,
+                user_fname: appointment.user_fname,
+                user_lname: appointment.user_lname,
+                nickname: userInfo.nickname || "ไม่ระบุ",
+                faculty: userInfo.faculty || "ไม่ระบุ",
+                phone: userInfo.phone || "ไม่ระบุ",
+                problem: appointment.problem || "ไม่ระบุ",
+                symptoms: symptomsArray.join(" / ") || "ไม่ระบุ",
+                appointmentDate: formattedDate,
+                rawMonth: appointmentDate.getMonth(), // ✅ ใช้เก็บค่าของเดือน (0-11)
+                rawDay: appointmentDate.getDate(), // ✅ ใช้เก็บค่าของวัน (1-31)
+                rawDate: appointmentDate,
+                doctor: appointment.doc_name || "ไม่ระบุ"
+            };
+        });
+
+        // ✅ ลำดับของเดือนภาษาไทย
+        const thaiMonths = [
+            "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", 
+            "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+        ];
+
+        // ✅ เรียงลำดับวันนัดหมายตาม **เดือนก่อน** และ **วันถัดมา**
+        patientsData.sort((a, b) => {
+            if (a.rawMonth === b.rawMonth) {
+                return a.rawDay - b.rawDay; // ✅ เรียงลำดับตามวัน (1 → 31)
+            }
+            return a.rawMonth - b.rawMonth; // ✅ เรียงลำดับตามเดือน (มกราคม → ธันวาคม)
+        });
+
+        filteredPatientsData = [...patientsData];
+        renderPatientsTable();
+        renderPaginationControls();
+    } catch (error) {
+        console.error("Error fetching patient data:", error);
+        document.getElementById("patientTable").innerHTML = `<tr><td colspan="9">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
+        document.getElementById("paginationControls").innerHTML = "";
+    }
 }
+
+  
 
 
 

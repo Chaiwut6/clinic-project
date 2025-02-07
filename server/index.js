@@ -5,6 +5,7 @@ const userRoutes = require('./routes/userRoutes');
 const doctorRoutes = require('./routes/doctorRoutes');
 const employeeRoutes = require('./routes/employeeRoutes');
 const mangerRoutes = require('./routes/manRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 const port = 8000;
@@ -22,6 +23,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/employees', employeeRoutes);
 app.use('/api/manager', mangerRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Start server
 app.listen(port, () => {

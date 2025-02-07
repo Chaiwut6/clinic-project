@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
-const secret = process.env.JWT_SECRET || 'mysecret';  // ควรใช้จาก .env
+require('dotenv').config();
+const secret = process.env.JWT_SECRET ;  // ควรใช้จาก .env
 
 const verifyToken = (req, res, next) => {
   try {

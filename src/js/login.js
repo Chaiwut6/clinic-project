@@ -163,7 +163,7 @@ const login = async () => {
         login_id,
         password
       }, {
-        withCredentials: true // รวมคุกกี้ไปในคำร้องขอ
+        withCredentials: true 
       });
 
       const responseData = response_user.data;
@@ -172,10 +172,7 @@ const login = async () => {
       const userInfo = responseData.user;
       const userAssess = responseData.Assess;
 
-      // console.log(userAssess);
-      // console.log(userInfo);
-
-      // เปลี่ยนเส้นทางตามบทบาทผู้ใช้
+  
       if (responseData.roles === 'user') {
         window.location.href = '/view/users/user_info.html';
       } else if (responseData.roles === 'doctor') {
@@ -184,6 +181,8 @@ const login = async () => {
         window.location.href = '/view/staff/dashboard.html';
       } else if (responseData.roles === 'manager') {
         window.location.href = '../view/manager/man_main.html';
+      }else if (responseData.roles === 'admin') {
+        window.location.href = '../view/admin/admin_main.html';
       }
     } else {
       alert('กรุณากรอก ID ผู้ใช้');
@@ -191,13 +190,11 @@ const login = async () => {
   } catch (error) {
     console.error('Error:', error);
 
-    // ตรวจสอบข้อความจาก Backend
     if (error.response && error.response.data && error.response.data.message) {
       alert(`เข้าสู่ระบบล้มเหลว: ${error.response.data.message}`);
     } else {
       alert('เกิดข้อผิดพลาด ไม่สามารถเข้าสู่ระบบได้');
     }
-
     // เปลี่ยนเส้นทางกลับไปหน้า Login
     window.location.href = '/view/index.html';
   }

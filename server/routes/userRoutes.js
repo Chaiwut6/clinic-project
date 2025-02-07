@@ -3,9 +3,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const initMySQL = require('../database');
 const verifyToken = require('../middleware/verifyToken');
-
+require('dotenv').config();
 const router = express.Router();
-const secret = 'mysecret';
+const secret = process.env.JWT_SECRET;
 
 // Route: Register user
 router.post('/register-user', async (req, res) => {
@@ -27,7 +27,7 @@ router.post('/register-user', async (req, res) => {
     }
 
     // Hash password
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, 12);
 
     // Insert user and login data
     const userData = { user_id, user_fname, user_lname, nickname, year, phone, faculty };
@@ -103,12 +103,11 @@ router.post("/login", async (req, res) => {
 
     // ตั้งค่า cookie
     res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 3600000,
-      sameSite: 'Strict',
-    });
-
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === 'production', 
+      maxAge: 3600000, 
+      sameSite: 'Strict' 
+  });
     // ตอบกลับข้อมูลการเข้าสู่ระบบ
     res.json({
       roles: userData.roles,

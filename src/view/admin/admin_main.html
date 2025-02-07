@@ -36,10 +36,10 @@
     <link rel="stylesheet" href="../../style/staff/">
     <link rel="stylesheet" href="../../style/staff/dashboard.css">
     <link rel="stylesheet" href="../../style/staff/patientslist.css">
-    <script src="../../js/api/staff_api.js"></script>
     <script src="../../js/api/dashboard_api.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
+    <script src="../../js/api/admin_api.js"></script>
     <script src="../../js/staff.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -69,42 +69,37 @@
                     <span>ข้อมูลส่วนตัว</span></a>
             </li> -->
             <li class="nav-item">
-                <a class="nav-link" href="../staff/dashboard.html">
+                <a class="nav-link" href="../admin/admin_main.html">
                     <i class="fa-solid fa-chart-line"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link" href="../staff/manage_user.html">
-                  <i class="fa fa-folder"></i>
-                  <span>จัดการข้อมูลผู้ใช้</span></a>
-              </li>
-              <!-- <li class="nav-item">
-                <a class="nav-link" href="../staff/manage_doctor.html">
-                  <i class="fa-solid fa-stethoscope"></i>
-                  <span>จัดการข้อมูลแพทย์</span></a>
-              </li> -->
-              <li class="nav-item">
-                <a class="nav-link" href="../staff/patientslist.html">
-                  <i class="fa-solid fa-user-plus"></i>
-                  <span>ผู้ป่วยที่อยู่ในการดูแล</span></a>
-              </li>
-              <!-- <li class="nav-item">
-                <a class="nav-link" href="../staff/manage_employee.html">
+                    <i class="fa fa-folder"></i>
+                    <span>จัดการข้อมูลผู้ใช้</span></a>
+            </li> -->
+            <li class="nav-item">
+                <a class="nav-link" href="../admin/manage_doctor.html">
+                    <i class="fa-solid fa-stethoscope"></i>
+                    <span>จัดการข้อมูลแพทย์</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="../admin/patientslist.html">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>ผู้ป่วยที่อยู่ในการดูแล</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="../admin/manage_employee.html">
                     <i class="fa fa-folder"></i>
                     <span>จัดการเจ้าหน้าที่</span></a>
-            </li> -->
-            <!-- <li class="nav-item">
-                <a class="nav-link" href="../staff/manage_man.html">
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="../admin/manage_man.html">
                     <i class="fa fa-folder"></i>
                     <span>จัดการผู้บริหาร</span></a>
-            </li> -->
+            </li>
 
-            <!-- <li class="nav-item">
-                <a class="nav-link" href="index.html">
-                    <i class="fa-solid fa-lock"></i>
-                    <span>เปลี่ยนรหัสผ่าน</span></a>
-            </li> -->
 
 
 
@@ -155,8 +150,8 @@
 
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="emp_fname mr-2 d-none d-lg-inline text-gray-600 small"></span>
-                                <span class="emp_lname mr-2 d-none d-lg-inline text-gray-600 small"></span>
+                                <span class="adm_fname mr-2 d-none d-lg-inline text-gray-600 small"></span>
+                                <span class="adm_lname mr-2 d-none d-lg-inline text-gray-600 small"></span>
 
                                 <!-- <img src="../../image/user.png" style="height: 50%; wigth: 50px;"> -->
                             </a>
@@ -170,7 +165,7 @@
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     ข้อมูลส่วนตัว
                                 </a> -->
-                                <a class="dropdown-item" href="../staff/changepass.html">
+                                <a class="dropdown-item" href="../admin/changepass.html">
                                     <i class="fas fa-lock fa-sm fa-fw mr-2 text-gray-400"></i>
                                     เปลี่ยนรหัสผ่าน
                                 </a>
@@ -334,7 +329,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                
                                 <div class="card-body">
                                     <div class="chart-container">
                                         <canvas id="appointmentsOverviewChart"></canvas>

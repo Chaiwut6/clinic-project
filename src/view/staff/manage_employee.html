@@ -34,7 +34,8 @@
     <!-- Custom styles for this template-->
     <link href="../../style/users/user_main.css" rel="stylesheet">
     <link rel="stylesheet" href="../../style/staff/schedule.css">
-    <link rel="stylesheet" href="../../style/staff/mange_doctor.css">
+    <link rel="stylesheet" href="../../style/staff/mange_addmin.css">
+    <script src="../../js/api/staff_api.js"></script>
     <!-- <script src="../../js/login.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
 
@@ -53,7 +54,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" >
                 <div class="sidebar-brand-text mx-3">คลินิกกำลังใจ</div>
             </a>
 
@@ -97,6 +98,7 @@
                     <i class="fa fa-folder"></i>
                     <span>จัดการผู้บริหาร</span></a>
             </li>
+
             <!-- <li class="nav-item">
                 <a class="nav-link" href="index.html">
                     <i class="fa-solid fa-lock"></i>
@@ -133,7 +135,7 @@
                     </button>
 
                     <!-- Topbar Search -->
-                    <h1 class="header-main">จัดการข้อมูลแพทย์</h1>
+                    <h1 class="header-main">จัดการเจ้าหน้าที่</h1>
                     <!-- <form
                         class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <div class="input-group">
@@ -270,146 +272,81 @@
                     <!-- Page Heading -->
                     <div>
                         <header>
-                            <h1>รายชื่อแพทย์</h1>
+                            <h1>รายชื่อเจ้าหน้าที่</h1>
                             <div class="header-actions">
-                                <input type="text" id="searchdoctor" placeholder="ค้นหา">
-                                <button class="filter-button" onclick="filterDoctor()">ค้นหา</button>
-                                <button id="addDoctorBtn">เพิ่มแพทย์</button>
+                              
+                                    <input type="text" id="searchaddmin" placeholder="ค้นหา">
+                                    <button class="filter-button" onclick="filterAddmin()">ค้นหา</button>
+                                <button id="addAddminBtn">เพิ่มเจ้าหน้าที่</button>
                             </div>
                         </header>
                         <div>
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>ลำดับที่</th>
                                         <th>รหัสประจำตัว</th>
-                                        <th>ชื่อแพทย์</th>
-                                        <th>เบอร์โทรศัพท์</th>
+                                        <th>ชื่อจริง</th>
+                                        <th>นามสกุล</th>
                                         <th>เพิ่มเติม</th>
                                     </tr>
                                 </thead>
-                                <tbody id="doctorinTable">
-                                    <!-- ข้อมูลจะถูกเพิ่มที่นี่ -->
+                                <tbody id="addminTable">
+                                     <!-- ข้อมูลจะถูกเพิ่มที่นี่ -->
                                 </tbody>
                             </table>
                         </div>
-                        
-                        <!-- ปุ่มเปลี่ยนหน้า -->
-                        <div id="doctorPaginationControls" class="pagination-controls"></div>
-
-
+                        <div id="PaginationControls" class="pagination-controls"></div>
                     </div>
                     <!-- Display fname here -->
                 </div>
 
                 <!-- Popup Modal -->
-                <div id="addDoctorModal" class="modal">
+                <div id="addEmployeeModal" class="modal">
                     <div class="modal-content">
                         <div>
-                            <span class="close">&times;</span>
+                            <span class="close">&times;</span>     
                         </div>
-
-                        <form id="addDoctorForm">
-                            <!-- <label for="doctorID">รหัสประจำตัว</label>
-                            <input type="text" id="doctorID" /> -->
-                            <label for="doctorID">รหัสประจำตัว</label>
-                            <input type="text" id="doctorID" />
-                            <label for="doctorName">ชื่อแพทย์</label>
-                            <input type="text" id="doctorName" />
-                            <label for="phoneNumber">เบอร์โทรศัพท์</label>
-                            <input type="text" id="phoneNumber" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                maxlength="10" />
+                        <form id="addEmployeeForm">
+                            <label for="employeeId">รหัสประจำตัว</label>
+                            <input type="text" id="employeeId" class="form-control" required />
+                
+                            <label for="emp_fname">ชื่อ</label>
+                            <input type="text" id="emp_fname" class="form-control" required pattern="^[a-zA-Zก-ฮะ-์]+$" title="กรุณากรอกตัวอักษรเท่านั้น" />
+                
+                            <label for="emp_lname">นามสกุล</label>
+                            <input type="text" id="emp_lname" class="form-control" required pattern="^[a-zA-Zก-ฮะ-์]+$" title="กรุณากรอกตัวอักษรเท่านั้น" />
+                
                             <label for="password">รหัสผ่าน</label>
-                            <input type="password" id="password" />
+                            <input type="password" id="emp_password" class="form-control" required />
+                
                             <label for="confirmPassword">ยืนยันรหัสผ่าน</label>
-                            <input type="password" id="confirmPassword" />
+                            <input type="password" id="emp_confirmPassword" class="form-control" required />
+                
                             <button type="submit">บันทึก</button>
                         </form>
                     </div>
                 </div>
-
+                
 
                 <!-- edit Modal -->
-                <div id="editModal" class="modal">
+                <!-- <div id="editModal" class="modal">
                     <div class="modal-content">
                         <div>
                             <span class="close">&times;</span>
                         </div>
 
-                        <form class="addDoctorForm">
-                            <label for="email">รหัสประจำตัว</label>
-                            <input type="email" class="email" />
-
-                            <label for="doctorName">ชื่อแพทย์</label>
-                            <input type="text" class="doctorName" pattern="^[a-zA-Zก-ฮะ-์]+$"
-                                title="กรุณากรอกตัวอักษรเท่านั้น" />
-
-                            <label for="phoneNumber">เบอร์โทรศัพท์</label>
-                            <input type="text" class="phoneNumber" />
+                        <form class="addAddminForm">
+                            <label for="employee_id">รหัสประจำตัว</label>
+                            <input type="employee_id" class="employee_id" />
+                            <label for="addminfname">ชื่อจริง</label>
+                            <input type="text" class="addminfname" />
+                            <label for="addminlname">นามสกุล</label>
+                            <input type="text" class="addminlname" />
 
                             <button type="submit">Save</button>
                         </form>
                     </div>
-                </div>
-
-
-                <div id="availabilityModal" class="modal">
-                    <div class="modal-content">
-                        <div>
-                            <span class="close" onclick="closeAvailabilityModal()">&times;</span>
-                        </div>
-                        <h3 id="doctorNameTitle"></h3>
-
-                        <!-- ปฏิทินแบบโต้ตอบ -->
-                        <div id="calendar"></div>
-
-                        <!-- ฟอร์มเพิ่มวันและเวลา -->
-                        <form id="addAvailabilityForm">
-                            <label for="availableDate">วันที่ว่าง</label>
-                            <input type="date" id="availableDate" />
-
-                            <label for="startTime">เวลาเริ่ม</label>
-                            <input type="time" id="startTime" />
-
-                            <label for="endTime">เวลาสิ้นสุด</label>
-                            <input type="time" id="endTime" />
-
-                            <button type="submit" onclick="addAvailabilityEventListener()">เพิ่มวันว่าง</button>
-                        </form>
-
-                        <!-- ตารางแสดงวันและเวลาว่างที่เพิ่ม -->
-                        <label for="monthFilter">เลือกเดือน:</label>
-                        <select id="monthFilter" onchange="updateAvailabilityTable()">
-                            <option value="">ทุกเดือน</option>
-                            <option value="1">มกราคม</option>
-                            <option value="2">กุมภาพันธ์</option>
-                            <option value="3">มีนาคม</option>
-                            <option value="4">เมษายน</option>
-                            <option value="5">พฤษภาคม</option>
-                            <option value="6">มิถุนายน</option>
-                            <option value="7">กรกฎาคม</option>
-                            <option value="8">สิงหาคม</option>
-                            <option value="9">กันยายน</option>
-                            <option value="10">ตุลาคม</option>
-                            <option value="11">พฤศจิกายน</option>
-                            <option value="12">ธันวาคม</option>
-                        </select>
-                        
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>วันที่</th>
-                                    <th>เวลาเริ่ม</th>
-                                    <th>เวลาสิ้นสุด</th>
-                                    <th>การจัดการ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="availabilityTable"></tbody>
-                        </table>
-                        
-                        <div id="paginationControls" class="pagination-controls"></div>
-                    </div>
-                </div>
+                </div> -->
 
                 <!-- /.container-fluid -->
 
@@ -447,35 +384,35 @@
             </div>
         </div>
     </div>
-    <!-- Logout Modal-->
-    <div id="logoutModal" class="custom-modal">
-        <div class="custom-modal-dialog">
-            <div class="custom-modal-content">
-                <div class="custom-modal-header">
-                    <button class="custom-close" onclick="closeCustomModal()">&times;</button>
-                </div>
-                <div class="custom-modal-body">
-                    เลือก "ออกจากระบบ" ด้านล่างหากคุณพร้อมที่จะออกจากเว็บไซต์ปัจจุบันของคุณ
-                </div>
-                <div class="custom-modal-footer">
-                    <button class="custom-btn custom-btn-secondary" onclick="closeCustomModal()">ยกเลิก</button>
-                    <a class="custom-btn custom-btn-primary" href="../index.html" onclick="Logout()">ออกจากระบบ</a>
+        <!-- Logout Modal-->
+        <div id="logoutModal" class="custom-modal">
+            <div class="custom-modal-dialog">
+                <div class="custom-modal-content">
+                    <div class="custom-modal-header">
+                        <button class="custom-close" onclick="closeCustomModal()">&times;</button>
+                    </div>
+                    <div class="custom-modal-body">
+                        เลือก "ออกจากระบบ" ด้านล่างหากคุณพร้อมที่จะออกจากเว็บไซต์ปัจจุบันของคุณ
+                    </div>
+                    <div class="custom-modal-footer">
+                        <button class="custom-btn custom-btn-secondary" onclick="closeCustomModal()">ยกเลิก</button>
+                        <a class="custom-btn custom-btn-primary" href="../index.html" onclick="Logout()">ออกจากระบบ</a>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-
-    <script>
-        function openCustomModal() {
+          </div>
+          
+          
+          <script>
+            function openCustomModal() {
             document.getElementById('logoutModal').style.display = 'flex';
-        }
-
-        // ปิด Custom Modal
-        function closeCustomModal() {
+          }
+          
+          // ปิด Custom Modal
+          function closeCustomModal() {
             document.getElementById('logoutModal').style.display = 'none';
-        }</script>
-
+          }</script>
+          
     <!-- <script>
         const logout = async () => {
             try {

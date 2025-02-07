@@ -1,4 +1,29 @@
-document.addEventListener("DOMContentLoaded", () => {
+const fetchAdminInfo = async () => {
+    try {
+      // ใช้ POST แทน GET ในการดึงข้อมูล employee
+      const response = await axios.post(`http://localhost:8000/api/admin/admininfo`, {}, {
+        withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
+      });
+      console.log(response);
+  
+      if (response.data && response.data.admin) {
+        const adminInfo = response.data.admin;
+        console.log("adminInfo:", adminInfo);
+
+  
+  
+        // แสดงข้อมูลบนหน้า
+        updatePageData(adminInfo);
+  
+      } else {
+        console.error('Invalid data format received from API');
+      }
+    } catch (error) {
+      console.error('Error fetching admin info:', error);
+    }
+  };
+
+  document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("addDoctorForm");
 
   form.addEventListener("submit", async (event) => {
@@ -51,192 +76,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
-
-//เพิ่มaddmin
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("addEmployeeForm");
-
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault(); // ป้องกันการ refresh หน้า
-
-    // รับค่าจากฟอร์ม
-    const employeeID = document.getElementById("employeeId").value;
-    const emp_fname = document.getElementById('emp_fname').value;
-    const emp_lname = document.getElementById('emp_lname').value;
-    const emp_password = document.getElementById('emp_password').value;
-    const emp_confirmPassword = document.getElementById('emp_confirmPassword').value;
-
-    // ตรวจสอบว่าข้อมูลครบถ้วน
-    if (!employeeID || !emp_fname || !emp_lname || !emp_password || !emp_confirmPassword) {
-      alert("กรุณากรอกข้อมูลให้ครบถ้วน");
-      return;
-    }
-
-    if (emp_password !== emp_confirmPassword) {
-      alert('รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน');
-      return;
-    }
-
-    try {
-      // ส่งข้อมูลไปยัง API
-      const response = await axios.post('http://localhost:8000/api/employees/register-employee', {
-        employee_id: employeeID,
-        password: emp_password,
-        emp_fname: emp_fname,
-        emp_lname: emp_lname
-      });
-
-      // เปลี่ยนข้อความในการตรวจสอบให้ตรงกับข้อความที่ API ส่งกลับ
-      if (response.data && response.data.message === "Employee registered successfully") {
-        alert("เพิ่มข้อมูลพนักงานสำเร็จ");
-        document.getElementById("addEmployeeModal").style.display = "none";
-        form.reset();
-      } else {
-        alert("เกิดข้อผิดพลาด: " + (response.data.message || "ไม่สามารถบันทึกข้อมูลได้"));
-      }
-    } catch (error) {
-      console.error("Error adding employee:", error);
-      alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
-    }
-  });
-});
-//เพิ่มผู้บริหาร
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("addmangerForm");
-
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault(); // ป้องกันการ refresh หน้า
-
-    // รับค่าจากฟอร์ม
-    const mangerID = document.getElementById("mangerID").value;
-    const man_fname = document.getElementById('man_fname').value;
-    const man_lname = document.getElementById('man_lname').value;
-    const man_password = document.getElementById('man_password').value;
-    const man_confirmPassword = document.getElementById('man_confirmPassword').value;
-
-    // ตรวจสอบว่าข้อมูลครบถ้วน
-    if (!mangerID || !man_fname || !man_lname || !man_password || !man_confirmPassword) {
-      alert("กรุณากรอกข้อมูลให้ครบถ้วน");
-      return;
-    }
-
-    if (man_password !== man_confirmPassword) {
-      alert('รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน');
-      return;
-    }
-
-    try {
-      // ส่งข้อมูลไปยัง API
-      const response = await axios.post('http://localhost:8000/api/manager/register-manger', {
-        man_id: mangerID,
-        password: man_password,
-        man_fname: man_fname,
-        man_lname: man_lname
-      });
-
-      // เปลี่ยนข้อความในการตรวจสอบให้ตรงกับข้อความที่ API ส่งกลับ
-      if (response.data && response.data.message === "Manager registered successfully") {
-        alert("เพิ่มข้อมูลพนักงานสำเร็จ");
-        document.getElementById("addMangerModal").style.display = "none";
-        form.reset();
-      } else {
-        alert("เกิดข้อผิดพลาด: " + (response.data.message || "ไม่สามารถบันทึกข้อมูลได้"));
-      }
-    } catch (error) {
-      console.error("Error adding Manger:", error);
-      alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
-    }
-  });
-});
-
-
-
-const Logout = async () => {
-  try {
-    // เรียก API logout ไปที่เซิร์ฟเวอร์
-    const response = await axios.post('http://localhost:8000/api/users/logout', {}, { withCredentials: true });
-    sessionStorage.removeItem('employeeID');
-    sessionStorage.removeItem('user_id');
-    // ตรวจสอบผลลัพธ์จากการออกจากระบบ
-    if (response.data.message === 'ออกจากระบบสำเร็จ') {
-      console.log('คุณออกจากระบบเรียบร้อยแล้ว');
-
-      // เปลี่ยนเส้นทางไปยังหน้าเข้าสู่ระบบ
-      window.location.href = '/view/index.html'; // 
-      // หรือหน้าอื่นที่คุณต้องการ
-    } else {
-      console.error('การออกจากระบบล้มเหลว');
-    }
-  } catch (error) {
-    console.error('Logout failed:', error);
-  }
-};
-
-  const fetchEmployeeInfo = async () => {
-    try {
-      // ใช้ POST แทน GET ในการดึงข้อมูล employee
-      const response = await axios.post("http://localhost:8000/api/employees/employeeinfo", {}, {
-        withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
-      });
-      
-
-      if (response.data && response.data.employee) {
-        const employeeInfo = response.data.employee;
-        console.log("employeeInfo:", employeeInfo);
-        sessionStorage.setItem('employeeID', employeeInfo.employee_id || '');
-
-
-        // แสดงข้อมูลบนหน้า
-        updatePageData(employeeInfo);
-
-      } else {
-        console.error('Invalid data format received from API');
-      }
-    } catch (error) {
-      console.error('Error fetching employee info:', error);
-    }
-  };
-
-  const updatePageData = (employeeInfo) => {
-    const updateElements = (selector, value) => {
-      const elements = document.querySelectorAll(selector);
-      if (elements.length > 0) {
-        elements.forEach(el => el.textContent = value || 'N/A');
-      }
-    };
-
-    if (employeeInfo) {
-      updateElements('.employee_id', employeeInfo.employee_id);
-      updateElements('.emp_fname', employeeInfo.emp_fname);
-      updateElements('.emp_lname', employeeInfo.emp_lname);
-    } else {
-      console.warn("Employee info is missing");
-    }
-  };
-
-  const fetchAdminInfo = async () => {
-    try {
-      // ใช้ POST แทน GET ในการดึงข้อมูล employee
-      const response = await axios.post(`http://localhost:8000/api/admin/admininfo`, {}, {
-        withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
-      });
-      console.log(response);
   
-      if (response.data && response.data.admin) {
-        const adminInfo = response.data.admin;
-        console.log("adminInfo:", adminInfo);
-
-        // แสดงข้อมูลบนหน้า
-        updateAdminData(adminInfo);
-  
-      } else {
-        console.error('Invalid data format received from API');
-      }
-    } catch (error) {
-      console.error('Error fetching admin info:', error);
-    }
-  };
-  const updateAdminData = (adminInfo) => {
+  const updatePageData = (adminInfo) => {
     const updateElements = (selector, value) => {
       const elements = document.querySelectorAll(selector);
       if (elements.length > 0) {
@@ -252,8 +93,127 @@ const Logout = async () => {
       console.warn("admin info is missing");
     }
   };
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("addEmployeeForm");
+  
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault(); // ป้องกันการ refresh หน้า
+  
+      // รับค่าจากฟอร์ม
+      const employeeID = document.getElementById("employeeId").value;
+      const emp_fname = document.getElementById('emp_fname').value;
+      const emp_lname = document.getElementById('emp_lname').value;
+      const emp_password = document.getElementById('emp_password').value;
+      const emp_confirmPassword = document.getElementById('emp_confirmPassword').value;
+  
+      // ตรวจสอบว่าข้อมูลครบถ้วน
+      if (!employeeID || !emp_fname || !emp_lname || !emp_password || !emp_confirmPassword) {
+        alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+        return;
+      }
+  
+      if (emp_password !== emp_confirmPassword) {
+        alert('รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน');
+        return;
+      }
+  
+      try {
+        // ส่งข้อมูลไปยัง API
+        const response = await axios.post('http://localhost:8000/api/employees/register-employee', {
+          employee_id: employeeID,
+          password: emp_password,
+          emp_fname: emp_fname,
+          emp_lname: emp_lname
+        });
+  
+        // เปลี่ยนข้อความในการตรวจสอบให้ตรงกับข้อความที่ API ส่งกลับ
+        if (response.data && response.data.message === "Employee registered successfully") {
+          alert("เพิ่มข้อมูลพนักงานสำเร็จ");
+          document.getElementById("addEmployeeModal").style.display = "none";
+          form.reset();
+        } else {
+          alert("เกิดข้อผิดพลาด: " + (response.data.message || "ไม่สามารถบันทึกข้อมูลได้"));
+        }
+      } catch (error) {
+        console.error("Error adding employee:", error);
+        alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
+      }
+    });
+  });
+  //เพิ่มผู้บริหาร
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("addmangerForm");
+  
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault(); // ป้องกันการ refresh หน้า
+  
+      // รับค่าจากฟอร์ม
+      const mangerID = document.getElementById("mangerID").value;
+      const man_fname = document.getElementById('man_fname').value;
+      const man_lname = document.getElementById('man_lname').value;
+      const man_password = document.getElementById('man_password').value;
+      const man_confirmPassword = document.getElementById('man_confirmPassword').value;
+  
+      // ตรวจสอบว่าข้อมูลครบถ้วน
+      if (!mangerID || !man_fname || !man_lname || !man_password || !man_confirmPassword) {
+        alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+        return;
+      }
+  
+      if (man_password !== man_confirmPassword) {
+        alert('รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน');
+        return;
+      }
+  
+      try {
+        // ส่งข้อมูลไปยัง API
+        const response = await axios.post('http://localhost:8000/api/manager/register-manger', {
+          man_id: mangerID,
+          password: man_password,
+          man_fname: man_fname,
+          man_lname: man_lname
+        });
+  
+        // เปลี่ยนข้อความในการตรวจสอบให้ตรงกับข้อความที่ API ส่งกลับ
+        if (response.data && response.data.message === "Manager registered successfully") {
+          alert("เพิ่มข้อมูลพนักงานสำเร็จ");
+          document.getElementById("addMangerModal").style.display = "none";
+          form.reset();
+        } else {
+          alert("เกิดข้อผิดพลาด: " + (response.data.message || "ไม่สามารถบันทึกข้อมูลได้"));
+        }
+      } catch (error) {
+        console.error("Error adding Manger:", error);
+        alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
+      }
+    });
+  });
+  
+  
+  
+  const Logout = async () => {
+    try {
+      // เรียก API logout ไปที่เซิร์ฟเวอร์
+      const response = await axios.post('http://localhost:8000/api/users/logout', {}, { withCredentials: true });
+      sessionStorage.removeItem('employeeID');
+      sessionStorage.removeItem('user_id');
+      // ตรวจสอบผลลัพธ์จากการออกจากระบบ
+      if (response.data.message === 'ออกจากระบบสำเร็จ') {
+        console.log('คุณออกจากระบบเรียบร้อยแล้ว');
+  
+        // เปลี่ยนเส้นทางไปยังหน้าเข้าสู่ระบบ
+        window.location.href = '/view/index.html'; // 
+        // หรือหน้าอื่นที่คุณต้องการ
+      } else {
+        console.error('การออกจากระบบล้มเหลว');
+      }
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+  
 
-let currentDoctorPage = 1;
+  let currentDoctorPage = 1;
 let doctorData = [];
 let filteredDoctorData = [];
 
@@ -598,7 +558,6 @@ function addAvailabilityEventListener() {
 
     const modal = document.getElementById("availabilityModal");
     const doctorID = modal ? modal.getAttribute("data-doctor-id") : sessionStorage.getItem("selectedDoctorID");
-    console.log(doctorID);
     const availableDate = document.getElementById("availableDate").value;
     const startTime = document.getElementById("startTime").value;
     const endTime = document.getElementById("endTime").value;
@@ -628,11 +587,13 @@ function addAvailabilityEventListener() {
     }
   });
 }
-let currentemployeePage = 1;
+
 let adminData = [];
 let filteredAdminData = [];
 
-async function fetchEmployee() {
+// ✅ ฟังก์ชันโหลดข้อมูลเจ้าหน้าที่จาก API
+async function fetchEmployee(page = 1) {
+    currentPage = page;
     try {
         document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">กำลังโหลดข้อมูล...</td></tr>`;
 
@@ -650,7 +611,7 @@ async function fetchEmployee() {
         filteredAdminData = [...adminData];
 
         renderAdminTable();
-        renderEmployeeControls();
+        renderPaginationControls();
        
     } catch (error) {
         console.error("Error fetching employee data:", error);
@@ -661,7 +622,7 @@ async function fetchEmployee() {
 
 
 function renderAdminTable() {
-  const startIndex = (currentemployeePage - 1) * itemsPerPage;
+  const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const pageData = filteredAdminData.slice(startIndex, endIndex);
 
@@ -689,10 +650,11 @@ function renderAdminTable() {
   document.getElementById("addminTable").innerHTML = rows || `<tr><td colspan="4">ไม่มีข้อมูล</td></tr>`;
   
   attachDropdownEmployee();
-  attachEditAndDeleteEmployee();
+  attachEditAndDeleteEvents();
 }
 
-function attachEditAndDeleteEmployee() {
+function attachEditAndDeleteEvents() {
+  // ✅ ปุ่มแก้ไข
   document.querySelectorAll(".editBtn").forEach(button => {
       button.addEventListener("click", (e) => {
           e.preventDefault();
@@ -710,7 +672,7 @@ function attachEditAndDeleteEmployee() {
                   <input type="text" id="editFname" value="${empFname}" placeholder="ชื่อพนักงาน..." required />
                   <label for="editLname">นามสกุล:</label>
                   <input type="text" id="editLname" value="${empLname}" placeholder="นามสกุล..." required />
-                  <button id="saveEditempoloyee">บันทึก</button>
+                  <button id="saveEdit">บันทึก</button>
                 </div>
               </div>
           `;
@@ -721,7 +683,7 @@ function attachEditAndDeleteEmployee() {
               document.querySelector(".popup-container").remove();
           });
 
-          document.getElementById("saveEditempoloyee").addEventListener("click", async () => {
+          document.getElementById("saveEdit").addEventListener("click", async () => {
               try {
                   await axios.post("http://localhost:8000/api/employees/employeeUpdate", {
                       employee_id: empId,
@@ -799,8 +761,8 @@ function attachDropdownEmployee() {
 }
 
 
-function renderEmployeeControls() {
-  const paginationContainer = document.getElementById("PaginationEmployeeControls");
+function renderPaginationControls() {
+  const paginationContainer = document.getElementById("PaginationControls");
 
   if (!paginationContainer) {
       console.warn("⚠️ ไม่พบ PaginationControls ใน DOM");
@@ -811,20 +773,22 @@ function renderEmployeeControls() {
   let controlsHTML = "";
 
   for (let i = 1; i <= totalPages; i++) {
-      controlsHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changeEmployeePage(${i})">${i}</button>`;
+      controlsHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
   }
 
   paginationContainer.innerHTML = totalPages > 1 ? controlsHTML : "";
 }
 
-
 // ✅ ฟังก์ชันเปลี่ยนหน้า
-function changeEmployeePage(page) {
-  currentemployeePage = page;
+function changePage(page) {
+  currentPage = page;
   renderAdminTable();
-  renderEmployeeControls();
+  renderPaginationControls();
 }
 
+
+
+// ✅ ฟังก์ชันกรองข้อมูลเจ้าหน้าที่
 function filterAddmin() {
     const nameFilter = document.getElementById('searchaddmin').value.trim().toLowerCase();
     const idFilter = document.getElementById('searchaddmin').value.trim().toLowerCase();
@@ -841,7 +805,7 @@ function filterAddmin() {
 
     currentPage = 1;
     renderAdminTable();
-    renderEmployeeControls();
+    renderPaginationControls();
 }
 
 
@@ -1730,7 +1694,7 @@ async function fetchManager(page = 1) {
       filteredManagerData = [...managerData];
 
       renderManagerTable();
-      renderManagerControls();
+      renderPaginationControls();
   } catch (error) {
       console.error("Error fetching manager data:", error);
       document.getElementById("managerinTable").innerHTML = `<tr><td colspan="5">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
@@ -1805,7 +1769,7 @@ function attachDropdownManager() {
   });
 }
 // ✅ ฟังก์ชันสร้างปุ่มเปลี่ยนหน้า
-function renderManagerControls() {
+function renderPaginationControls() {
   const paginationContainer = document.getElementById("paginationControls");
 
   if (!paginationContainer) {
@@ -1827,7 +1791,7 @@ function renderManagerControls() {
 function changePage(page) {
   currentPage = page;
   renderManagerTable();
-  renderManagerControls();
+  renderPaginationControls();
 }
 
 // ✅ ฟังก์ชันแนบ Event ให้ปุ่มแก้ไขและลบ
@@ -1917,71 +1881,40 @@ function filterManager() {
 
   currentPage = 1;
   renderManagerTable();
-  renderManagerControls();
+  renderPaginationControls();
 }
 
-// เรียกใช้ฟังก์ชันเมื่อโหลดหน้า
-document.addEventListener("DOMContentLoaded", () => {
-  const currentPage = window.location.pathname.split("/").pop(); // แค่ชื่อไฟล์ เช่น "manage_doctor.html"
-  console.log(`🔹 Current Page: ${currentPage}`); // ✅ Debugging
-
-  function fetchInfoByRole(role) {
-    if (role === "admin") {
+  document.addEventListener("DOMContentLoaded", () => {
+    const currentPage = window.location.pathname.split("/").pop(); // 
+    if (currentPage === "admin_main.html") {
       fetchAdminInfo();
-    } else {
-      fetchEmployeeInfo();
-    }
-  }
-
-  switch (currentPage) {
-    case "manage_doctor.html":
-      fetchInfoByRole("admin");
-      fetchDoctors();
-      sessionStorage.removeItem("user_id");
-      break;
-
-    case "dashboard.html":
-      fetchInfoByRole("employee");
-      sessionStorage.removeItem("user_id");
-      break;
-
-    case "manage_employee.html":
-      fetchInfoByRole("admin");
-      fetchEmployee();
-      sessionStorage.removeItem("user_id");
-      break;
-
-    case "manage_user.html":
-      fetchInfoByRole("employee");
-      fetchUserlist();
-      sessionStorage.removeItem("user_id");
-      break;
-
-    case "mange_user_data.html":
-      fetchInfoByRole("employee");
-      fetchUserDataAndDisplay();
-      fetchUserDetails();
-      fetchAppointment();
-      break;
-
-    case "manage_man.html":
-      fetchInfoByRole("admin");
-      fetchManager();
-      sessionStorage.removeItem("user_id");
-      break;
-
-    case "patientslist.html":
-      if (window.location.pathname.includes("/admin/")) {
-        fetchInfoByRole("admin");
-        sessionStorage.removeItem("user_id");
-      } else {
-        fetchInfoByRole("employee");
+    } 
+    if (currentPage === "manage_doctor.html") {
+        fetchAdminInfo();
+        fetchDoctors();
         sessionStorage.removeItem("user_id");
       }
-      break;
-
-    default:
-      console.warn("⚠️ หน้านี้ไม่ต้องใช้ฟังก์ชัน fetch");
-  }
-});
-
+    if (currentPage === "manage_employee.html") {
+        fetchEmployee()
+        fetchAdminInfo();
+        sessionStorage.removeItem("user_id");
+      }
+    //   if (currentPage === "manage_user.html") {
+    //     fetchUserlist()
+    //     sessionStorage.removeItem("user_id");
+    //   }
+    //   if (currentPage === "mange_user_data.html") {
+    //     fetchUserDataAndDisplay()
+    //     // fetchAppointmentsAndUpdateUI()
+    //     fetchUserDetails()
+    //     fetchAppointment()
+    //   }
+      if (currentPage === "manage_man.html") {
+        fetchManager()
+        fetchAdminInfo();
+        sessionStorage.removeItem("user_id");
+      }
+      if (currentPage === "patientslist.html") {
+        sessionStorage.removeItem("user_id");
+      }
+  });

@@ -4,7 +4,8 @@ const jwt = require('jsonwebtoken');
 const initMySQL = require('../database'); // Import database connection
 const verifyToken = require('../middleware/verifyToken');
 const router = express.Router();
-const secret = 'mysecret';
+require('dotenv').config();
+const secret = process.env.JWT_SECRET;
 
 // Route: Register user
 router.post("/register-doctor", async (req, res) => {
@@ -55,7 +56,7 @@ router.post("/register-doctor", async (req, res) => {
       });
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, 12);
 
     // สร้างข้อมูลสำหรับการบันทึกในตาราง doctor
     const doctorData = {
