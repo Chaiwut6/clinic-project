@@ -6,7 +6,9 @@ services:
     ports:
       - "8000:8000" 
     volumes:
-      - ./:/usr/src/app      
+      - ./:/usr/src/app   
+    environment:
+      JWT_SECRET: '62d8d2b190b5d642f9651d1c7042116ac7180f01619788ac15b6e880a527f7b4'   
     
       
   db:

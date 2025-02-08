@@ -299,28 +299,34 @@ router.post('/userList', async (req, res) => {
       return res.status(404).json({ message: 'ไม่พบข้อมูลผู้ใช้' });
     }
 
-    // ✅ ดึงข้อมูลการนัดหมายทั้งหมด และเลือกเฉพาะอันล่าสุดของแต่ละ user_id
+    // ✅ ดึงข้อมูลการนัดหมายล่าสุดของแต่ละ `user_id` รวมถึง `caseStatus`
     const [appointmentsResult] = await conn.query(`
-      SELECT a.user_id, a.status, a.date 
+      SELECT a.user_id, a.status, a.date, a.caseStatus
       FROM appointments a
       INNER JOIN (
           SELECT user_id, MAX(date) AS latest_date
           FROM appointments
           GROUP BY user_id
-      ) latest ON a.user_id = latest.user_id AND a.date = latest.latest_date
+      ) latest 
+      ON a.user_id = latest.user_id AND a.date = latest.latest_date
     `);
 
-    // ✅ สร้าง `Map` ของสถานะการนัดหมายล่าสุด
+    // ✅ ใช้ `Map` เพื่อเชื่อมข้อมูล `appointments` กับ `users`
     const appointmentMap = new Map();
     appointmentsResult.forEach(app => {
-      appointmentMap.set(app.user_id, { status: app.status, date: app.date });
+      appointmentMap.set(app.user_id, { 
+        status: app.status, 
+        date: app.date,
+        caseStatus: app.caseStatus || "ไม่มีข้อมูล" // ป้องกัน `null` caseStatus
+      });
     });
 
-    // ✅ รวมข้อมูล `users` กับ `appointments`
+    // ✅ รวมข้อมูล `users` กับ `appointments` + `caseStatus`
     const userList = userResult.map(user => ({
       ...user,
       latest_appointment_status: appointmentMap.get(user.user_id)?.status || "ไม่มีข้อมูล",
       latest_appointment_date: appointmentMap.get(user.user_id)?.date || "ไม่มีข้อมูล",
+      latest_case_status: appointmentMap.get(user.user_id)?.caseStatus || "ไม่มีข้อมูล"
     }));
 
     // ✅ ส่งผลลัพธ์กลับไปที่ Client
@@ -336,6 +342,7 @@ router.post('/userList', async (req, res) => {
     }
   }
 });
+
 
 
 router.post('/change-password', verifyToken, async (req, res) => {
@@ -410,9 +417,27 @@ router.post('/appointments', async (req, res) => {
       return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
     }
 
+    const [existingAppointments] = await conn.query(
+      "SELECT * FROM appointments WHERE doc_id = ? AND date = ? AND time_start = ? AND time_end = ?",
+      [doc_id, date, time_start, time_end]
+    );
 
+    if (existingAppointments.length > 0) {
+      const existingAppointment = existingAppointments[0];
+
+      if (existingAppointment.status !== "ยกเลิก") {
+        return res.status(400).json({ message: "เวลานัดหมายนี้ถูกจองไปแล้ว กรุณาเลือกเวลาอื่น" });
+      }
+
+      // ✅ ถ้าสถานะเป็น "ยกเลิก" ให้เพิ่มรายการใหม่แทนการทับข้อมูลเดิม
+    }
+
+    // ✅ สร้าง Appointment ID ใหม่สำหรับการนัดหมายใหม่
+    const newAppointmentId = `APPT-${Date.now()}`;
+
+    // ✅ เพิ่มการนัดหมายใหม่แทนการอัปเดตอันเก่า
     const appointmentData = {
-      Appointment_id,
+      Appointment_id: newAppointmentId,
       user_id,
       user_fname,
       user_lname,
@@ -428,6 +453,7 @@ router.post('/appointments', async (req, res) => {
     await conn.query('INSERT INTO appointments SET ?', appointmentData);
 
     res.status(201).json({ message: 'การนัดหมายถูกบันทึกเรียบร้อยแล้ว' });
+
   } catch (error) {
     console.error('เกิดข้อผิดพลาดในการบันทึกการนัดหมาย:', error);
     res.status(500).json({
@@ -440,6 +466,33 @@ router.post('/appointments', async (req, res) => {
     }
   }
 });
+
+router.post('/appointments-count', async (req, res) => {
+  let conn;
+  try {
+    conn = await initMySQL();
+    const { doc_id, date } = req.body; 
+
+    if (!doc_id || !date) {
+      return res.status(400).json({ message: "Missing doctor ID or date" });
+    }
+
+    const [result] = await conn.query(
+      "SELECT COUNT(*) AS totalAppointments FROM appointments WHERE doc_id = ? AND date = ?",
+      [doc_id, date]
+    );
+
+    res.json({ totalAppointments: result[0].totalAppointments });
+
+  } catch (error) {
+    console.error("Error fetching appointments count:", error);
+    res.status(500).json({ message: "เกิดข้อผิดพลาดในการตรวจสอบจำนวนการนัดหมาย" });
+  } finally {
+    if (conn) await conn.end();
+  }
+});
+
+
 
 
 
@@ -551,22 +604,30 @@ router.post('/receivecare', async (req, res) => {
   try {
     conn = await initMySQL();
 
-    // ดึงข้อมูล Appointment โดยเรียงลำดับจากวันที่ล่าสุด
-    const [appointments] = await conn.query(`
-      SELECT * 
-      FROM appointments
+    // ✅ ค้นหานัดหมายล่าสุดของแต่ละ user (ที่ยังไม่ถูกปิดเคส)
+    const [latestAppointments] = await conn.query(`
+      SELECT a.* 
+      FROM appointments a
+      INNER JOIN (
+          SELECT user_id, MAX(date) AS latest_date
+          FROM appointments
+          WHERE status = 'ยืนยัน'
+          GROUP BY user_id
+      ) latest ON a.user_id = latest.user_id AND a.date = latest.latest_date
+      WHERE a.caseStatus != 'ปิดเคส' OR a.caseStatus IS NULL
     `);
 
-    // ดึงเฉพาะ users ที่มีการนัดหมายใน Appointment
+    // ✅ ค้นหารายชื่อผู้ใช้ที่มีการนัดหมาย (และไม่ถูกปิดเคส)
     const [usersWithAppointments] = await conn.query(`
       SELECT DISTINCT u.*
       FROM users u
       INNER JOIN appointments a ON u.user_id = a.user_id
+      WHERE a.caseStatus != 'ปิดเคส' OR a.caseStatus IS NULL
     `);
 
-    // ตรวจสอบข้อมูล
+    // ✅ ตรวจสอบข้อมูล
     const userinfo = usersWithAppointments.length > 0 ? usersWithAppointments : [{ message: "ไม่พบผู้ใช้งานที่มีการนัดหมาย" }];
-    const userAppointment = appointments.length > 0 ? appointments : [{ message: "ยังไม่มีการนัดหมาย" }];
+    const userAppointment = latestAppointments.length > 0 ? latestAppointments : [{ message: "ยังไม่มีการนัดหมาย" }];
 
     res.json({
       users: userinfo,
@@ -581,6 +642,7 @@ router.post('/receivecare', async (req, res) => {
     }
   }
 });
+
 
 
 router.post('/userfetch', async (req, res) => {
@@ -689,6 +751,60 @@ router.post('/appointmentCount', async (req, res) => {
   }
 });
 
+router.post("/casesStatus", async (req, res) => {
+  let conn;
+  try {
+      conn = await initMySQL();
+      const { user_id, status } = req.body;
+
+      if (!user_id || !status) {
+          return res.status(400).json({ success: false, message: "Missing user_id or status" });
+      }
+
+      
+      const [existingUser] = await conn.query("SELECT * FROM appointments WHERE user_id = ?", [user_id]);
+
+
+      if (existingUser.length === 0) {
+          return res.status(404).json({ success: false, message: "ไม่พบข้อมูลของผู้ใช้" });
+      }
+
+      // ✅ อัปเดตสถานะ
+      await conn.query("UPDATE appointments SET caseStatus = ? WHERE user_id = ?", [status, user_id]);
+
+      res.json({ success: true, message: "Case status updated successfully" });
+
+
+  } catch (error) {
+      console.error("Error updating case status:", error);
+      res.status(500).json({ success: false, message: "Failed to update case status" });
+  } finally {
+      if (conn) await conn.end();
+  }
+});
+
+router.post("/showcasesStatus", async (req, res) => {
+  let conn;
+  try {
+      conn = await initMySQL();
+      const { user_id } = req.body;
+
+      const [result] = await conn.query("SELECT caseStatus FROM appointments WHERE user_id = ?", [user_id]);
+
+      if (result.length === 0) {
+          return res.json({ success: false, message: "ไม่พบข้อมูลสถานะ" });
+      }
+
+      res.json({ success: true, status: result[0].caseStatus });
+  } catch (error) {
+      console.error("Error fetching case status:", error);
+      res.status(500).json({ success: false, message: "เกิดข้อผิดพลาดในการดึงข้อมูล" });
+  } finally {
+      if (conn) await conn.end();
+  }
+});
+
+
 router.post('/confirmedAppointmentCount', async (req, res) => {
   let conn = null;
 
@@ -747,17 +863,22 @@ router.post('/appointmentsOverview', async (req, res) => {
 
     const [appointments] = await conn.query(`
           SELECT 
-              DATE_FORMAT(date, '%Y-%m') AS month,
+              DATE_FORMAT(a.date, '%Y-%m') AS month,
               COUNT(*) AS total,
-              SUM(CASE WHEN status = 'ยืนยัน' THEN 1 ELSE 0 END) AS confirmed,
-              SUM(CASE WHEN status = 'ยกเลิก' THEN 1 ELSE 0 END) AS cancelled,
-              SUM(CASE WHEN status = 'ปิดเคส' THEN 1 ELSE 0 END) AS closedCases,
-              SUM(CASE WHEN status = 'รอการยืนยัน' THEN 1 ELSE 0 END) AS pending
-          FROM appointments
-          WHERE YEAR(date) = ? ${selectedMonth}
+              SUM(CASE WHEN a.status = 'ยืนยัน' THEN 1 ELSE 0 END) AS confirmed,
+              SUM(CASE WHEN a.status = 'ยกเลิก' THEN 1 ELSE 0 END) AS cancelled,
+              SUM(CASE WHEN a.status = 'รอการยืนยัน' THEN 1 ELSE 0 END) AS pending,
+              SUM(CASE WHEN a.caseStatus = 'ติดตามอาการ' THEN 1 ELSE 0 END) AS followUp,
+              SUM(CASE WHEN a.caseStatus = 'ปิดเคส' THEN 1 ELSE 0 END) AS closedCaseStatus
+          FROM appointments a
+          WHERE YEAR(a.date) = ? ${selectedMonth}
+          AND a.date = (
+              SELECT MAX(a2.date) FROM appointments a2 
+              WHERE a2.user_id = a.user_id AND YEAR(a2.date) = ?
+          )
           GROUP BY month
           ORDER BY month;
-      `, [selectedYear]);
+      `, [selectedYear, selectedYear]);
 
     res.json({
       success: true,
@@ -771,6 +892,7 @@ router.post('/appointmentsOverview', async (req, res) => {
     if (conn) await conn.end();
   }
 });
+
 
 
 

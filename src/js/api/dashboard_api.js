@@ -91,27 +91,26 @@ async function fetchDoctorCount() {
         const totalAppointments = data.appointments.map(a => a.total || 0);
         const confirmedAppointments = data.appointments.map(a => a.confirmed || 0);
         const cancelledAppointments = data.appointments.map(a => a.cancelled || 0);
-        const closedCases = data.appointments.map(a => a.closedCases || 0);
         const pendingAppointments = data.appointments.map(a => a.pending || 0);
+        const followUpCases = data.appointments.map(a => a.followUp || 0);
+        const closedCaseStatus = data.appointments.map(a => a.closedCaseStatus || 0);
 
-        const chartContainer = document.querySelector(".chart-container"); // ✅ ค้นหา container ที่เก็บ <canvas>
+        const chartContainer = document.querySelector(".chart-container");
 
-        // ✅ ลบกราฟเก่าถ้ามี
+        // ✅ ลบกราฟเก่า
         const existingChart = Chart.getChart("appointmentsOverviewChart");
         if (existingChart) existingChart.destroy();
 
-        // ✅ ถ้าไม่มีข้อมูล → แสดง `"ไม่มีข้อมูล"` โดยไม่ลบ `<canvas>`
+        // ✅ ไม่มีข้อมูลให้แสดง `"ไม่มีข้อมูล"`
         if (labels.length === 0 || totalAppointments.every(val => val === 0)) {
             chartContainer.innerHTML = `<p class="text-center text-muted">ไม่มีข้อมูล</p>`;
             return;
         } else {
-            // ✅ ถ้าถูกลบไปแล้ว → ตรวจสอบและสร้าง `<canvas>` ใหม่
             if (!document.getElementById("appointmentsOverviewChart")) {
                 chartContainer.innerHTML = `<canvas id="appointmentsOverviewChart"></canvas>`;
             }
         }
 
-        // ✅ ใช้ `setTimeout()` เพื่อให้ `<canvas>` สร้างเสร็จก่อนใช้ `getContext("2d")`
         setTimeout(() => {
             const canvas = document.getElementById("appointmentsOverviewChart");
             if (!canvas) {
@@ -126,7 +125,8 @@ async function fetchDoctorCount() {
                 { label: "รอการยืนยัน", data: pendingAppointments, bgColor: "#87CEFA", borderColor: "#87CEFA" },
                 { label: "ยืนยันแล้ว", data: confirmedAppointments, bgColor: "#f6c23e", borderColor: "#f6c23e" },
                 { label: "ยกเลิก", data: cancelledAppointments, bgColor: "#FF6384", borderColor: "#FF6384" },
-                { label: "ปิดเคส", data: closedCases, bgColor: "#858796", borderColor: "#858796" }
+                { label: "ติดตามอาการ", data: followUpCases, bgColor: "#32CD32", borderColor: "#32CD32" },
+                { label: "ปิดเคส", data: closedCaseStatus, bgColor: "#8B0000", borderColor: "#8B0000" }
             ];
 
             const datasets = chartData.map(item => ({
@@ -164,12 +164,13 @@ async function fetchDoctorCount() {
                     }
                 }
             });
-        }, 100); 
+        }, 100);
 
     } catch (error) {
         console.error("Error loading appointment overview chart:", error);
     }
 }
+
 
 function populateYearFilter(filterId) {
   const yearSelect = document.getElementById(filterId);
@@ -372,119 +373,124 @@ async function exportToExcel() {
 }
 
 async function exportAppointmentsOverview() {
-
-  try {
-    
-      const selectedYear = document.getElementById("yearFilterAppointments").value || new Date().getFullYear();
-      const selectedMonth = document.getElementById("monthFilterAppointments").value || "";
-
-      const thaiYear = parseInt(selectedYear) + 543; // แปลง ค.ศ. เป็น พ.ศ.
-
-      
-      function convertMonthToThai(month) {
-          const thaiMonths = [
-              "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
-              "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
-          ];
-          return thaiMonths[parseInt(month) - 1] || "";
-      }
-
-   
-      let fileMonthName = selectedMonth ? `_${convertMonthToThai(selectedMonth)}` : "";
-      let fileName = `ภาพรวมการนัดหมาย${fileMonthName}_${thaiYear}.xlsx`;
-
-     
-      const response = await axios.post("http://localhost:8000/api/employees/appointmentsOverview", {
-        year: selectedYear,
-        month: selectedMonth
-      });
-
-      const data = response.data;
-
-      if (!data.success || !data.appointments || data.appointments.length === 0) {
-          alert("ไม่มีข้อมูลสำหรับช่วงเวลาที่เลือก");
-          return;
-      }
-
-      // ✅ จัดรูปแบบข้อมูล
-      const sheetData = [
-          ["", `ภาพรวมการนัดหมาย ปี ${thaiYear}`, ""],  // เปลี่ยนปีให้เป็น พ.ศ.
-          ["เดือน", "นัดหมายทั้งหมด", "ยืนยันแล้ว", "ยกเลิก", "ปิดเคส", "รอการยืนยัน"] // หัวตาราง
-      ];
-
-      let totalAppointments = 0;
-      let totalConfirmed = 0;
-      let totalCancelled = 0;
-      let totalClosedCases = 0;
-      let totalPending = 0;
-
-      data.appointments.forEach(appointment => {
-          let thaiMonth = convertMonthToThai(appointment.month.split("-")[1]); // ✅ ใช้เดือนภาษาไทย
-          let monthDisplay = selectedMonth ? thaiMonth : `${thaiMonth} ${thaiYear}`; 
-
-          sheetData.push([
-              monthDisplay, 
-              Number(appointment.total), 
-              Number(appointment.confirmed), 
-              Number(appointment.cancelled), 
-              Number(appointment.closedCases), 
-              Number(appointment.pending)
-          ]);
-
-          totalAppointments += Number(appointment.total);
-          totalConfirmed += Number(appointment.confirmed);
-          totalCancelled += Number(appointment.cancelled);
-          totalClosedCases += Number(appointment.closedCases);
-          totalPending += Number(appointment.pending);
-      });
-
-      sheetData.push([
-          "รวม", 
-          totalAppointments, 
-          totalConfirmed, 
-          totalCancelled, 
-          totalClosedCases, 
-          totalPending
-      ]);
-
-
-      const workbook = XLSX.utils.book_new();
-      const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
-
-
-      const range = XLSX.utils.decode_range(worksheet["!ref"]);
-      for (let C = range.s.c; C <= range.e.c; ++C) {
-          for (let R = range.s.r; R <= range.e.r; ++R) {
-              const cell_address = { c: C, r: R };
-              const cell_ref = XLSX.utils.encode_cell(cell_address);
-              if (!worksheet[cell_ref]) continue;
-
-              worksheet[cell_ref].s = {
-                  alignment: { horizontal: "center", vertical: "center" },
-                  border: {
-                      top: { style: "thin" },
-                      bottom: { style: "thin" },
-                      left: { style: "thin" },
-                      right: { style: "thin" }
-                  }
-              };
-
-              if (R === 1 || R === 2) {
-                  worksheet[cell_ref].s.fill = { fgColor: { rgb: "FFCC99" } };
-              }
-          }
-      }
-
-      XLSX.utils.book_append_sheet(workbook, worksheet, "ภาพรวมการนัดหมาย");
-
-      XLSX.writeFile(workbook, fileName);
-
-
-  } catch (error) {
-      console.error("Error exporting Excel:", error);
-      alert("เกิดข้อผิดพลาดในการสร้างไฟล์ Excel");
-  } 
-}
+    try {
+        const selectedYear = document.getElementById("yearFilterAppointments").value || new Date().getFullYear();
+        const selectedMonth = document.getElementById("monthFilterAppointments").value || "";
+  
+        const thaiYear = parseInt(selectedYear) + 543; // แปลง ค.ศ. เป็น พ.ศ.
+  
+        // ✅ ฟังก์ชันแปลงเดือนเป็นภาษาไทย
+        function convertMonthToThai(month) {
+            const thaiMonths = [
+                "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+                "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+            ];
+            return thaiMonths[parseInt(month) - 1] || "";
+        }
+  
+        // ✅ ตั้งชื่อไฟล์ให้เหมาะสม
+        let fileMonthName = selectedMonth ? `_${convertMonthToThai(selectedMonth)}` : "";
+        let fileName = `ภาพรวมการนัดหมาย${fileMonthName}_${thaiYear}.xlsx`;
+  
+        // ✅ ดึงข้อมูลจาก API
+        const response = await axios.post("http://localhost:8000/api/employees/appointmentsOverview", {
+            year: selectedYear,
+            month: selectedMonth
+        });
+  
+        const data = response.data;
+        console.log(data);
+  
+        if (!data.success || !data.appointments || data.appointments.length === 0) {
+            alert("ไม่มีข้อมูลสำหรับช่วงเวลาที่เลือก");
+            return;
+        }
+  
+        // ✅ จัดรูปแบบข้อมูล
+        const sheetData = [
+            ["", `ภาพรวมการนัดหมาย ปี ${thaiYear}`, ""],  // เปลี่ยนปีให้เป็น พ.ศ.
+            ["เดือน", "นัดหมายทั้งหมด", "ยืนยันแล้ว", "ยกเลิก", "ปิดเคส", "รอการยืนยัน"] // หัวตาราง
+        ];
+  
+        let totalAppointments = 0;
+        let totalConfirmed = 0;
+        let totalCancelled = 0;
+        let totalClosedCases = 0;
+        let totalPending = 0;
+  
+        data.appointments.forEach(appointment => {
+            let thaiMonth = convertMonthToThai(appointment.month.split("-")[1]); // ✅ ใช้เดือนภาษาไทย
+            let monthDisplay = selectedMonth ? thaiMonth : `${thaiMonth} ${thaiYear}`; 
+  
+            sheetData.push([
+                monthDisplay, 
+                Number(appointment.total), 
+                Number(appointment.confirmed), 
+                Number(appointment.cancelled), 
+                Number(appointment.closedCaseStatus), 
+                Number(appointment.pending)
+            ]);
+  
+            // ✅ รวมค่าทั้งหมด
+            totalAppointments += Number(appointment.total);
+            totalConfirmed += Number(appointment.confirmed);
+            totalCancelled += Number(appointment.cancelled);
+            totalClosedCases += Number(appointment.closedCaseStatus);
+            totalPending += Number(appointment.pending);
+        });
+  
+        // ✅ เพิ่มแถวสรุปผลรวม
+        sheetData.push([
+            "รวม", 
+            totalAppointments, 
+            totalConfirmed, 
+            totalCancelled, 
+            totalClosedCases, 
+            totalPending
+        ]);
+  
+        // ✅ สร้างไฟล์ Excel
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+  
+        // ✅ เพิ่มสไตล์ให้หัวตารางและแถวรวม
+        const range = XLSX.utils.decode_range(worksheet["!ref"]);
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+            for (let R = range.s.r; R <= range.e.r; ++R) {
+                const cell_address = { c: C, r: R };
+                const cell_ref = XLSX.utils.encode_cell(cell_address);
+                if (!worksheet[cell_ref]) continue;
+  
+                worksheet[cell_ref].s = {
+                    alignment: { horizontal: "center", vertical: "center" },
+                    border: {
+                        top: { style: "thin" },
+                        bottom: { style: "thin" },
+                        left: { style: "thin" },
+                        right: { style: "thin" }
+                    }
+                };
+  
+                if (R === 1 || R === 2) {
+                    worksheet[cell_ref].s.fill = { fgColor: { rgb: "FFCC99" } };
+                }
+  
+                if (R === range.e.r) { // ✅ แถวรวม
+                    worksheet[cell_ref].s.font = { bold: true };
+                }
+            }
+        }
+  
+        XLSX.utils.book_append_sheet(workbook, worksheet, "ภาพรวมการนัดหมาย");
+  
+        XLSX.writeFile(workbook, fileName);
+  
+    } catch (error) {
+        console.error("Error exporting Excel:", error);
+        alert("เกิดข้อผิดพลาดในการสร้างไฟล์ Excel");
+    } 
+  }
+  
 
 
 

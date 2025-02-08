@@ -40,7 +40,6 @@ function toggleLink() {
 
 const register = async () => {
   try {
-    // Collect form data
     const password = document.querySelector('#password').value;
     const confirm_password = document.querySelector('#confirm_password').value;
     const policyCheckbox = document.querySelector('#policy_checkbox');
@@ -49,8 +48,14 @@ const register = async () => {
     const nickname = document.querySelector('#nickname').value;
     const phone = document.querySelector('#phone').value;
     const faculty = document.querySelector('#faculty').value;
-    const year = document.querySelector('#year').value;
     const user_id = document.querySelector('#user_id').value;
+    const currentYear = new Date().getFullYear() + 543; // แปลง ค.ศ. เป็น พ.ศ.
+    const admissionYear = parseInt(user_id.substring(2, 4)); // ได้ค่า 64
+    const admissionFullYear = admissionYear + 2500; // แปลงเป็น พ.ศ.
+    const studyYear = Math.max(1, currentYear - admissionFullYear); 
+    const year = `ปี ${studyYear}`;
+
+    console.log(`ปีปัจจุบัน: ${currentYear}, ปีที่เข้า: ${admissionFullYear}, ชั้นปี: ${year}`);
 
     // Check if all required fields are filled
     if (!user_fname || !user_lname || !nickname || !phone || !faculty || !year || !user_id || !password || !confirm_password) {
@@ -84,6 +89,7 @@ const register = async () => {
       document.querySelector('#confirm_password').value = '';
       return;
     }
+
 
     // Check if user_id already exists
     const checkUserApiUrl = 'http://localhost:8000/api/users/checkuser';
@@ -138,9 +144,41 @@ const register = async () => {
   }
 };
 
+const updateStudyYearAutomatically = async () => {
 
+  try {
+    const response = await axios.post("http://localhost:8000/api/users/getAllUsers");
 
+    if (!response.data.success) {
+      console.error("❌ ไม่สามารถดึงข้อมูลผู้ใช้ได้");
+      return;
+    }
 
+    const users = response.data.users;
+    const currentYear = new Date().getFullYear() + 543; // แปลงเป็น พ.ศ.
+    let updatedUsers = [];
+
+    users.forEach(user => {
+      const admissionYear = parseInt(user.user_id.substring(2, 4));
+      const admissionFullYear = admissionYear + 2500; // แปลงเป็น พ.ศ.
+      const studyYear = Math.max(1, currentYear - admissionFullYear);
+      const newYear = `ปี ${studyYear}`;
+
+      if (user.year !== newYear) {
+        updatedUsers.push({ user_id: user.user_id, year: newYear });
+      }
+    });
+
+    if (updatedUsers.length > 0) {
+      await axios.post("http://localhost:8000/api/users/updateStudyYear", {
+        users: updatedUsers
+      });
+    } 
+    
+  } catch (error) {
+    console.error("❌ เกิดข้อผิดพลาดในการอัปเดตชั้นปี:", error);
+  }
+};
 
 
 const login = async () => {
@@ -305,9 +343,15 @@ document.addEventListener("DOMContentLoaded", () => {
     return `${day}-${month}-${year}`;
   };
 
+ 
+
   // เรียก fetchUserInfo เมื่อโหลดหน้าเสร็จ
   if (window.location.pathname !== '/view/index.html') {
     fetchUserInfo();
+  }
+  if (window.location.pathname == '/view/index.html') {
+    updateStudyYearAutomatically(); 
+    setInterval(updateStudyYearAutomatically, 1000 * 60 * 60 * 24); 
   }
 });
 
@@ -461,8 +505,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+ 
 
-  // เรียกข้อมูลเก่าเมื่อหน้าโหลดเสร็จ
   if (window.location.pathname.endsWith('profile.html')) {
     fetchUserUpdate();
   }

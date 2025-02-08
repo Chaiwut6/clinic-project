@@ -857,7 +857,7 @@ async function fetchUserlist() {
 
     const response = await axios.post("http://localhost:8000/api/employees/userList");
     userData = response.data?.users || [];
-
+    console.log(userData);
     filteredData = [...userData]; // ✅ สำเนาข้อมูลเพื่อใช้ในการกรอง
 
     if (userData.length === 0) {
@@ -913,7 +913,7 @@ function renderUserTable() {
         <td>${user.nickname || "ไม่ระบุ"}</td>
         <td>${user.faculty || "ไม่ระบุ"}</td>
         <td>${user.phone || "ไม่ระบุ"}</td>
-        <td>${user.latest_appointment_status || "ไม่มีข้อมูล"}</td>  <!-- ✅ แสดงสถานะนัดหมายล่าสุด -->
+        <td>${user.latest_case_status || "ไม่มีข้อมูล"}</td>  <!-- ✅ แสดงสถานะนัดหมายล่าสุด -->
         <td>
           <button class="action-btn" onclick="goToAppointmentPage('${user.user_id}')">จัดการข้อมูล</button>
         </td>
@@ -1299,40 +1299,99 @@ async function fetchUserDataAndDisplay() {
     //   }
     // }
     
-    document.getElementById("close-case-btn").addEventListener("click", async () => {
-      const userId = document.getElementById("userid").textContent;
+    // document.getElementById("close-case-btn").addEventListener("click", async () => {
+    //   const userId = document.getElementById("userid").textContent;
     
-      if (!userId) {
-          alert("ไม่พบรหัสผู้ใช้งาน");
-          return;
-      }
+    //   if (!userId) {
+    //       alert("ไม่พบรหัสผู้ใช้งาน");
+    //       return;
+    //   }
     
-      if (!confirm("คุณต้องการปิดเคสนี้หรือไม่?")) {
-          return; // หากผู้ใช้ยกเลิกการยืนยัน
-      }
+    //   if (!confirm("คุณต้องการปิดเคสนี้หรือไม่?")) {
+    //       return; // หากผู้ใช้ยกเลิกการยืนยัน
+    //   }
     
-      try {
-          const response = await axios.post("http://localhost:8000/api/employees/closeCase", {
-              user_id: userId,
-          });
+    //   try {
+    //       const response = await axios.post("http://localhost:8000/api/employees/closeCase", {
+    //           user_id: userId,
+    //       });
     
-          if (response.status === 200) {
-              alert("ปิดเคสสำเร็จ");
-              fetchUserDetails(userId); 
-          } else {
-              alert(response.data.message || "ไม่สามารถปิดเคสได้");
-          }
-      } catch (error) {
-          console.error("Error closing case:", error);
-          alert("เกิดข้อผิดพลาดในการปิดเคส");
-      }
-    });
+    //       if (response.status === 200) {
+    //           alert("ปิดเคสสำเร็จ");
+    //           fetchUserDetails(userId); 
+    //       } else {
+    //           alert(response.data.message || "ไม่สามารถปิดเคสได้");
+    //       }
+    //   } catch (error) {
+    //       console.error("Error closing case:", error);
+    //       alert("เกิดข้อผิดพลาดในการปิดเคส");
+    //   }
+    // });
     
   } catch (error) {
     console.error('Error:', error);
     alert('เกิดข้อผิดพลาดในการดึงข้อมูลผู้ใช้');
   }
 }
+
+async function loadCaseStatus() {
+  const caseStatusSelect = document.getElementById("caseStatus");
+  const selectedCaseStatus = document.getElementById("selectedCaseStatus");
+  const saveCaseStatusBtn = document.getElementById("saveCaseStatus");
+
+  const encrypUser = sessionStorage.getItem("user_id");
+  const userId = encrypUser ? atob(encrypUser) : null;
+
+  if (!userId) {
+      selectedCaseStatus.innerText = "ไม่พบรหัสผู้ใช้";
+      return;
+  }
+
+  try {
+      const response = await axios.post("http://localhost:8000/api/employees/showcasesStatus", {
+        user_id: userId, 
+    });
+      console.log(response.data);
+      if (response.data.success && response.data.status) {
+          selectedCaseStatus.innerText = response.data.status;
+          caseStatusSelect.value = response.data.status; // 
+      } else {
+          selectedCaseStatus.innerText = "ไม่พบข้อมูลสถานะ";
+      }
+  } catch (error) {
+      console.error("Error fetching case status:", error);
+      selectedCaseStatus.innerText = "เกิดข้อผิดพลาด";
+  }
+
+  caseStatusSelect.addEventListener("change", () => {
+      selectedCaseStatus.innerText = caseStatusSelect.options[caseStatusSelect.selectedIndex].text;
+  });
+
+  // ✅ บันทึกสถานะใหม่
+  saveCaseStatusBtn.addEventListener("click", async () => {
+      const selectedStatus = caseStatusSelect.value;
+
+      try {
+          const response = await axios.post("http://localhost:8000/api/employees/casesStatus", {
+              user_id: userId, 
+              status: selectedStatus
+          });
+
+          if (response.data.success) {
+              selectedCaseStatus.innerText = selectedStatus; // อัปเดต UI
+              alert("บันทึกสถานะสำเร็จ");
+          } else {
+              alert("บันทึกสถานะไม่สำเร็จ");
+          }
+      } catch (error) {
+          console.error("Error updating case status:", error);
+          alert("เกิดข้อผิดพลาดในการบันทึกสถานะ");
+      }
+  });
+}
+
+
+
 
 const changePassword = async () => {
   document.getElementById('change-password-form').addEventListener('submit', async (event) => {
@@ -1546,62 +1605,66 @@ function populateAvailabilityTable(availability) {
 async function saveAppointment() {
   const problem = document.getElementById("problem").value.trim();
   const available_date = document.getElementById("availableDate").value.trim();
-  const start_time = document.getElementById("timeStart").value.trim();
-  const end_time = document.getElementById("timeEnd").value.trim();
+  const timeSlot = document.getElementById("timeSlot").value;
+  const [start_time, end_time] = timeSlot.split("-");
 
-  // ตรวจสอบข้อมูลที่จำเป็น
   if (!userId || !selectedDoctorId || !available_date || !problem || !start_time || !end_time) {
     alert("กรุณากรอกข้อมูลให้ครบถ้วน");
     return;
   }
 
-  // ตรวจสอบว่าเลือกวันที่ในอดีตหรือไม่
   const today = new Date();
   const selectedDate = new Date(available_date);
-  today.setHours(0, 0, 0, 0); 
+  today.setHours(0, 0, 0, 0);
   if (selectedDate < today) {
     alert("ไม่สามารถเลือกวันที่ผ่านมาแล้วได้");
     return;
   }
 
-  const appointmentId = generateUniqueAppointmentId(userId, available_date);
-
-  const appointmentData = {
-    Appointment_id: appointmentId,
-    user_id: userId,
-    user_fname: userFname,
-    user_lname: userLname,
-    doc_id: selectedDoctorId,
-    doc_name: selectedDoctorName,
-    time_start: start_time,
-    time_end: end_time,
-    date: available_date,
-    problem,
-    status: "รอการยืนยัน",
-  };
-
   try {
+    // ✅ เปลี่ยนเป็น `POST` เพื่อส่งข้อมูลไปตรวจสอบจำนวนการนัดหมาย
+    const checkResponse = await axios.post("http://localhost:8000/api/employees/appointments-count", {
+      doc_id: selectedDoctorId,
+      date: available_date
+    });
+
+    if (checkResponse.data.totalAppointments >= 12) {
+      alert("แพทย์มีการนัดหมายเต็มแล้วสำหรับวันนี้ กรุณาเลือกวันอื่น");
+      return;
+    }
+
+    const appointmentId = generateUniqueAppointmentId(userId, available_date);
+
+    const appointmentData = {
+      Appointment_id: appointmentId,
+      user_id: userId,
+      user_fname: userFname,
+      user_lname: userLname,
+      doc_id: selectedDoctorId,
+      doc_name: selectedDoctorName,
+      time_start: start_time,
+      time_end: end_time,
+      date: available_date,
+      problem,
+      status: "รอการยืนยัน",
+    };
+
     const response = await axios.post("http://localhost:8000/api/employees/appointments", appointmentData);
 
     if (response.status === 201) {
       alert(response.data.message);
-      await populateAppointmentTable(selectedDoctorId, available_date);  
+      await populateAppointmentTable(selectedDoctorId, available_date);
       location.reload();
     } else {
       alert(response.data.message || "เกิดข้อผิดพลาด");
     }
   } catch (error) {
-    console.log("Error:", error);
-
-    if (error.response && error.response.status === 400) {
-      console.log("Response Data:", error.response.data); // ตรวจสอบข้อความที่ส่งกลับ
-      alert(error.response.data?.message || "เวลานัดหมายซ้ำ กรุณาเลือกเวลาอื่น");
-    } else {
-      console.error("Error:", error.response ? error.response.data : error.message);
-      alert(error.response ? error.response.data.message : "เกิดข้อผิดพลาดในการบันทึกข้อมูลการนัดหมาย");
-    }
+    console.error("Error:", error);
+    alert(error.response ? error.response.data.message : "เกิดข้อผิดพลาดในการบันทึกข้อมูลการนัดหมาย");
   }
 }
+
+
 
 async function fetchAppointments(doc_id, selectedDate) {
   try {
@@ -1962,6 +2025,7 @@ document.addEventListener("DOMContentLoaded", () => {
       fetchUserDataAndDisplay();
       fetchUserDetails();
       fetchAppointment();
+      loadCaseStatus()
       break;
 
     case "manage_man.html":

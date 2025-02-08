@@ -166,6 +166,56 @@ router.post('/users', async (req, res) => {
   }
 });
 
+
+router.post('/getAllUsers', async (req, res) => {
+  let conn;
+  try {
+      conn = await initMySQL();
+      const [users] = await conn.query("SELECT user_id, year FROM users");
+
+      if (!Array.isArray(users)) {
+          return res.status(500).json({ message: "เกิดข้อผิดพลาด: users ไม่ใช่ array" });
+      }
+
+      res.json({ success: true, users }); // ✅ ส่งเป็น JSON รูปแบบที่ถูกต้อง
+  } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ message: "ไม่สามารถดึงข้อมูลผู้ใช้ได้", error: error.message });
+  } finally {
+      if (conn) await conn.end();
+  }
+});
+
+router.post("/updateStudyYear", async (req, res) => {
+  let conn = null;
+  try {
+    conn = await initMySQL();
+    const usersToUpdate = req.body.users;
+
+    if (!usersToUpdate || usersToUpdate.length === 0) {
+      return res.status(400).json({ message: "ไม่มีข้อมูลที่ต้องอัปเดต" });
+    }
+
+    await conn.beginTransaction();
+
+    for (const user of usersToUpdate) {
+      await conn.query("UPDATE users SET year = ? WHERE user_id = ?", [user.year, user.user_id]);
+    }
+
+    await conn.commit();
+    res.json({ success: true, message: "✅ อัปเดตชั้นปีอัตโนมัติสำเร็จ" });
+
+  } catch (error) {
+    if (conn) await conn.rollback();
+    console.error("❌ Error updating study year:", error);
+    res.status(500).json({ message: "เกิดข้อผิดพลาดในการอัปเดตชั้นปี", error: error.message });
+  } finally {
+    if (conn) await conn.end();
+  }
+});
+
+
+
 router.post('/userCount', async (req, res) => {
   let conn = null;
 

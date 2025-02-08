@@ -4,14 +4,14 @@
 }
 select {
     width: auto; /* ปรับให้กว้างตามข้อความ */
-    min-width: 200px; /* ป้องกัน dropdown แคบเกินไป */
-    max-width: 100%; /* ป้องกัน dropdown ใหญ่เกิน */
+    min-width: 100px; 
+    max-width: 90%; 
   }
 
 .select-container select {
-    margin-right: 20px; 
-    padding-left: 25px;
-    padding-right: 25px;
+    margin-right: 12px; 
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 .print-btn {

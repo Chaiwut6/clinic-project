@@ -58,7 +58,7 @@ const itemsPerPages = 12;
 let patientsData = []; 
 let filteredPatientsData = [];
 
-// ✅ ฟังก์ชันโหลดข้อมูลผู้ป่วยจาก API
+
 async function fetchPatientslist(page = 1) {
     currentPages = page;
     try {
@@ -73,23 +73,7 @@ async function fetchPatientslist(page = 1) {
             return;
         }
 
-        let latestAppointments = {};
-
-        // ✅ เลือกเฉพาะวันนัดหมายล่าสุดของแต่ละ `user_id`
-        appointments.forEach(appointment => {
-            if (appointment.status !== "ยืนยัน") return;
-
-            const userId = appointment.user_id;
-            const appointmentDate = new Date(appointment.date);
-
-            // ถ้า user_id ยังไม่มีข้อมูล หรือ ถ้าวันใหม่กว่า ให้เก็บไว้
-            if (!latestAppointments[userId] || new Date(latestAppointments[userId].date) > appointmentDate) {
-                latestAppointments[userId] = appointment;
-            }
-        });
-
-        // ✅ แปลง Object เป็น Array เพื่อใช้แสดงผล
-        patientsData = Object.values(latestAppointments).map(appointment => {
+        patientsData = appointments.map(appointment => {
             let symptomsData = appointment.symptoms || "[]";
             let symptomsArray = [];
 
@@ -122,26 +106,12 @@ async function fetchPatientslist(page = 1) {
                 problem: appointment.problem || "ไม่ระบุ",
                 symptoms: symptomsArray.join(" / ") || "ไม่ระบุ",
                 appointmentDate: formattedDate,
-                rawMonth: appointmentDate.getMonth(), // ✅ ใช้เก็บค่าของเดือน (0-11)
-                rawDay: appointmentDate.getDate(), // ✅ ใช้เก็บค่าของวัน (1-31)
                 rawDate: appointmentDate,
                 doctor: appointment.doc_name || "ไม่ระบุ"
             };
         });
 
-        // ✅ ลำดับของเดือนภาษาไทย
-        const thaiMonths = [
-            "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", 
-            "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
-        ];
-
-        // ✅ เรียงลำดับวันนัดหมายตาม **เดือนก่อน** และ **วันถัดมา**
-        patientsData.sort((a, b) => {
-            if (a.rawMonth === b.rawMonth) {
-                return a.rawDay - b.rawDay; // ✅ เรียงลำดับตามวัน (1 → 31)
-            }
-            return a.rawMonth - b.rawMonth; // ✅ เรียงลำดับตามเดือน (มกราคม → ธันวาคม)
-        });
+        patientsData.sort((a, b) => b.rawDate - a.rawDate);
 
         filteredPatientsData = [...patientsData];
         renderPatientsTable();
@@ -153,33 +123,32 @@ async function fetchPatientslist(page = 1) {
     }
 }
 
+
   
 
-
-
-// ✅ ฟังก์ชันเรนเดอร์ตารางผู้ป่วย
 function renderPatientsTable() {
-  const startIndex = (currentPages - 1) * itemsPerPages;
-  const endIndex = startIndex + itemsPerPages;
-  const pageData = filteredPatientsData.slice(startIndex, endIndex);
-
-  const rows = pageData.map((patient, index) => `
-      <tr>
-          <td>${startIndex + index + 1}</td>
-          <td>${patient.user_id}</td>
-          <td>${patient.user_fname} ${patient.user_lname}</td>
-          <td>${patient.nickname}</td>
-          <td>${patient.faculty}</td>
-          <td>${patient.phone}</td>
-          <td>${patient.problem}</td>
-          <td>${patient.appointmentDate}</td>
-          <td>${patient.symptoms}</td>
-          <td>${patient.doctor}</td>
-      </tr>
-  `).join("");
-
-  document.getElementById("patientTable").innerHTML = rows || `<tr><td colspan="10">ไม่มีข้อมูล</td></tr>`;
-}
+    const startIndex = (currentPages - 1) * itemsPerPages;
+    const endIndex = startIndex + itemsPerPages;
+    const pageData = filteredPatientsData.slice(startIndex, endIndex);
+  
+    const rows = pageData.map((patient, index) => `
+        <tr>
+            <td>${startIndex + index + 1}</td>
+            <td>${patient.user_id}</td>
+            <td>${patient.user_fname} ${patient.user_lname}</td>
+            <td>${patient.nickname}</td>
+            <td>${patient.faculty}</td>
+            <td>${patient.phone}</td>
+            <td>${patient.problem}</td>
+            <td>${patient.appointmentDate}</td>
+            <td>${patient.symptoms}</td>
+            <td>${patient.doctor}</td>
+        </tr>
+    `).join("");
+  
+    document.getElementById("patientTable").innerHTML = rows || `<tr><td colspan="10">ไม่มีข้อมูล</td></tr>`;
+  }
+  
 
 
 

@@ -31,7 +31,7 @@ const fetchAppointments = async () => {
             <td>${pendingAppointment.doc_name || 'ยังไม่มีการนัด'}</td>
             <td>${formattedDate || 'ยังไม่มีการนัด'}</td>
             <td>${formatTime(pendingAppointment.time_start)}</td>
-            <td>${pendingAppointment.time_end || 'ไม่ระบุ'}</td>
+          
             <td class="text-center">
               <button class="btn btn-success" onclick="updateStatus('${pendingAppointment.Appointment_id}', 'ยืนยัน')">ยืนยัน</button>
               <button class="btn btn-danger" onclick="updateStatus('${pendingAppointment.Appointment_id}', 'ยกเลิก')">ยกเลิก</button>

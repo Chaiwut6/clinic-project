@@ -75,20 +75,20 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="../staff/manage_user.html">
-                  <i class="fa fa-folder"></i>
-                  <span>จัดการข้อมูลผู้ใช้</span></a>
-              </li>
-              <!-- <li class="nav-item">
+                    <i class="fa fa-folder"></i>
+                    <span>จัดการข้อมูลผู้ใช้</span></a>
+            </li>
+            <!-- <li class="nav-item">
                 <a class="nav-link" href="../staff/manage_doctor.html">
                   <i class="fa-solid fa-stethoscope"></i>
                   <span>จัดการข้อมูลแพทย์</span></a>
               </li> -->
-              <li class="nav-item">
+            <li class="nav-item">
                 <a class="nav-link" href="../staff/patientslist.html">
-                  <i class="fa-solid fa-user-plus"></i>
-                  <span>ผู้ป่วยที่อยู่ในการดูแล</span></a>
-              </li>
-              <!-- <li class="nav-item">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>ผู้ป่วยที่อยู่ในการดูแล</span></a>
+            </li>
+            <!-- <li class="nav-item">
                 <a class="nav-link" href="../staff/manage_employee.html">
                     <i class="fa fa-folder"></i>
                     <span>จัดการเจ้าหน้าที่</span></a>
@@ -198,8 +198,16 @@
                             <p></p>
                             <p><strong>คณะ:</strong> <span id="user-faculty"></span></p>
                             <p><strong>ชั้นปี:</strong> <span id="user-year"></span></p>
+
+                            <p><strong>สถานะปัจจุบัน:</strong> <span id="selectedCaseStatus">กำลังโหลด...</span></p>
                         </div>
-                         <button id="close-case-btn" class="close-case-btn">ปิดเคส</button>             
+                        <select id="caseStatus">
+                            <option value="ติดตามอาการ">ติดตามอาการ</option>
+                            <option value="ปิดเคส">ปิดเคส</option>
+                           
+                        </select>
+                        <button id="saveCaseStatus" class="btn-show-form">บันทึก</button>
+
                     </section>
 
                     <div class="history-container">
@@ -207,62 +215,62 @@
                         <section class="card assessment-history">
                             <h2>ประวัติการทำแบบประเมิน</h2>
                             <div class="filter-container" id="filter-container">
-                              <!-- select จะถูกสร้างใน JavaScript -->
+                                <!-- select จะถูกสร้างใน JavaScript -->
                             </div>
                             <div class="assessment-table-container">
-                              <table class="history-table">
-                                <thead>
-                                  <tr>
-                                    <th>วันที่</th>
-                                    <th>ผลการประเมิน</th>
-                                  </tr>
-                                </thead>
-                                <tbody id="assessment-history-body">
-                                  <!-- ข้อมูลจะแสดงที่นี่ -->
-                                </tbody>
-                              </table>
+                                <table class="history-table">
+                                    <thead>
+                                        <tr>
+                                            <th>วันที่</th>
+                                            <th>ผลการประเมิน</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="assessment-history-body">
+                                        <!-- ข้อมูลจะแสดงที่นี่ -->
+                                    </tbody>
+                                </table>
                             </div>
-                          </section>
-                          
+                        </section>
+
 
 
                         <!-- Section: Appointment History -->
                         <section class="card appointment-history">
                             <h2>ประวัติการนัดที่ผ่านมา</h2>
                             <div class="filter-container">
-                              <!-- select สำหรับเลือกเดือน -->
-                              <select id="appointment-month">
-                                <option value="all">เลือกเดือน</option>
-                                <option value="01">มกราคม</option>
-                                <option value="02">กุมภาพันธ์</option>
-                                <option value="03">มีนาคม</option>
-                                <option value="04">เมษายน</option>
-                                <option value="05">พฤษภาคม</option>
-                                <option value="06">มิถุนายน</option>
-                                <option value="07">กรกฎาคม</option>
-                                <option value="08">สิงหาคม</option>
-                                <option value="09">กันยายน</option>
-                                <option value="10">ตุลาคม</option>
-                                <option value="11">พฤศจิกายน</option>
-                                <option value="12">ธันวาคม</option>
-                              </select>
+                                <!-- select สำหรับเลือกเดือน -->
+                                <select id="appointment-month">
+                                    <option value="all">เลือกเดือน</option>
+                                    <option value="01">มกราคม</option>
+                                    <option value="02">กุมภาพันธ์</option>
+                                    <option value="03">มีนาคม</option>
+                                    <option value="04">เมษายน</option>
+                                    <option value="05">พฤษภาคม</option>
+                                    <option value="06">มิถุนายน</option>
+                                    <option value="07">กรกฎาคม</option>
+                                    <option value="08">สิงหาคม</option>
+                                    <option value="09">กันยายน</option>
+                                    <option value="10">ตุลาคม</option>
+                                    <option value="11">พฤศจิกายน</option>
+                                    <option value="12">ธันวาคม</option>
+                                </select>
                             </div>
                             <div class="history-table-container">
-                              <table class="history-table">
-                                <thead>
-                                  <tr>
-                                    <th>วันที่</th>
-                                    <th>แพทย์</th>
-                                    <th>อาการ</th>
-                                    <th>สถานะ</th>
-                                  </tr>
-                                </thead>
-                                <tbody id="appointment-history-body">
-                                  <!-- ข้อมูลการนัดจะแสดงที่นี่ -->
-                                </tbody>
-                              </table>
+                                <table class="history-table">
+                                    <thead>
+                                        <tr>
+                                            <th>วันที่</th>
+                                            <th>แพทย์</th>
+                                            <th>อาการ</th>
+                                            <th>สถานะ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="appointment-history-body">
+                                        <!-- ข้อมูลการนัดจะแสดงที่นี่ -->
+                                    </tbody>
+                                </table>
                             </div>
-                          </section>
+                        </section>
 
                     </div>
 
@@ -285,44 +293,69 @@
 
                     <section class="card add-symptoms">
                         <h2>อาการของผู้ป่วย</h2>
-                    
+
                         <!-- ปุ่มกดแสดงฟอร์ม -->
-                        <button type="button" class="btn-show-form" onclick="toggleSymptomsForm()">เพิ่มอาการล่าสุด</button>
-                    
+                        <button type="button" class="btn-show-form"
+                            onclick="toggleSymptomsForm()">เพิ่มอาการล่าสุด</button>
+
                         <!-- ฟอร์มเพิ่มอาการ (เริ่มต้นซ่อน) -->
                         <div id="symptoms-form-container" style="display: none;">
                             <form id="symptoms-form">
                                 <label>เลือกอาการ:</label>
                                 <div class="symptoms-list">
-                                    <label><input type="checkbox" name="symptoms" value="MDD"> <span>MDD (โรคซึมเศร้า)</span></label>
-                                    <label><input type="checkbox" name="symptoms" value="Adjustment disorder"> <span>Adjustment disorder (ภาวะความผิดปกติของการปรับตัว)</span></label>
-                                    <label><input type="checkbox" name="symptoms" value="Dysthymia"> <span>Dysthymia (โรคซึมเศร้าชนิดเรื้อรัง)</span></label>
-                                    <label><input type="checkbox" name="symptoms" value="Anxiety disorder"> <span>Anxiety disorder (โรควิตกกังวล)</span></label>
-                                    <label><input type="checkbox" name="symptoms" value="Bipola disorder"> <span>Bipola disorder (โรคอารมณ์แปรปรวน 2 ขั้ว)</span></label>
-                                    <label><input type="checkbox" name="symptoms" value="GAD"> <span>GAD (ภาวะวิตกกังวล)</span></label>
-                                    <label><input type="checkbox" name="symptoms" value="ADHD"> <span>ADHD (โรคสมาธิสั้น)</span></label>
-                                    <label><input type="checkbox" name="symptoms" value="OCD c Psychosis"> <span>OCD c Psychosis (โรคย้ำคิดย้ำทำ)</span></label>
-                                    <label><input type="checkbox" name="symptoms" value="PD GAD"> <span>PD GAD (โรคตื่นตระหนก)</span></label>
-                                    <label><input type="checkbox" name="symptoms" value="cannabis dependence"> <span>Cannabis dependence (ความผิดปกติจากการใช้กัญชา)</span></label>
-                                    <label><input type="checkbox" name="symptoms" value="mix/dip"> <span>Mix/Dip (ชัก/พาร์กินสัน)</span></label>
-                                    <label><input type="checkbox" name="symptoms" value="mixed depression and anxiety disorder"> <span>Mixed depression and anxiety disorder (โรควิตกกังวลผสมซึมเศร้า)</span></label>
-                                    <label><input type="checkbox" name="symptoms" value="hypnic hallucination with anxiety syndrome"> <span>Hypnic hallucination with anxiety syndrome (ประสาทหลอน ผีอำ และวิตกกังวล)</span></label>
-                                    <label><input type="checkbox" name="symptoms" value="mixed Anxiety disorder panic attack"> <span>Mixed Anxiety disorder panic attack (โรควิตกกังวลผสมซึมเศร้า)</span></label>
-                                    <label><input type="checkbox" name="symptoms" value="Panic"> <span>Panic (ภาวะตื่นตระหนก วิตกกังวล หรือกลัวแบบกะทันหัน)</span></label>
-                                    <label><input type="checkbox" name="symptoms" value="PMDD"> <span>PMDD (อาการผิดปกติก่อนมีประจำเดือน หงุดหงิด เครียดรุนแรง)</span></label>
-                                    <label><input type="checkbox" name="symptoms" value="voyeurism"> <span>Voyeurism (โรคถ้ำมอง ชอบแอบดู มีพฤติกรรมทางเพศแอบดูคนอื่น)</span></label>
-                                    <label><input type="checkbox" name="symptoms" value="Mild depressive"> <span>Mild depressive (โรคซึมเศร้าระดับน้อย)</span></label>
-                                    <label><input type="checkbox" name="symptoms" value="personal disorder"> <span>Personal disorder (บุคลิกภาพแปรปรวน)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="MDD"> <span>MDD
+                                            (โรคซึมเศร้า)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="Adjustment disorder">
+                                        <span>Adjustment disorder (ภาวะความผิดปกติของการปรับตัว)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="Dysthymia"> <span>Dysthymia
+                                            (โรคซึมเศร้าชนิดเรื้อรัง)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="Anxiety disorder">
+                                        <span>Anxiety disorder (โรควิตกกังวล)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="Bipola disorder"> <span>Bipola
+                                            disorder (โรคอารมณ์แปรปรวน 2 ขั้ว)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="GAD"> <span>GAD
+                                            (ภาวะวิตกกังวล)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="ADHD"> <span>ADHD
+                                            (โรคสมาธิสั้น)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="OCD c Psychosis"> <span>OCD c
+                                            Psychosis (โรคย้ำคิดย้ำทำ)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="PD GAD"> <span>PD GAD
+                                            (โรคตื่นตระหนก)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="cannabis dependence">
+                                        <span>Cannabis dependence (ความผิดปกติจากการใช้กัญชา)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="mix/dip"> <span>Mix/Dip
+                                            (ชัก/พาร์กินสัน)</span></label>
+                                    <label><input type="checkbox" name="symptoms"
+                                            value="mixed depression and anxiety disorder"> <span>Mixed depression and
+                                            anxiety disorder (โรควิตกกังวลผสมซึมเศร้า)</span></label>
+                                    <label><input type="checkbox" name="symptoms"
+                                            value="hypnic hallucination with anxiety syndrome"> <span>Hypnic
+                                            hallucination with anxiety syndrome (ประสาทหลอน ผีอำ
+                                            และวิตกกังวล)</span></label>
+                                    <label><input type="checkbox" name="symptoms"
+                                            value="mixed Anxiety disorder panic attack"> <span>Mixed Anxiety disorder
+                                            panic attack (โรควิตกกังวลผสมซึมเศร้า)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="Panic"> <span>Panic
+                                            (ภาวะตื่นตระหนก วิตกกังวล หรือกลัวแบบกะทันหัน)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="PMDD"> <span>PMDD
+                                            (อาการผิดปกติก่อนมีประจำเดือน หงุดหงิด เครียดรุนแรง)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="voyeurism"> <span>Voyeurism
+                                            (โรคถ้ำมอง ชอบแอบดู มีพฤติกรรมทางเพศแอบดูคนอื่น)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="Mild depressive"> <span>Mild
+                                            depressive (โรคซึมเศร้าระดับน้อย)</span></label>
+                                    <label><input type="checkbox" name="symptoms" value="personal disorder">
+                                        <span>Personal disorder (บุคลิกภาพแปรปรวน)</span></label>
                                 </div>
                                 <div class="additional-symptoms">
                                     <label for="additional-symptom">อาการเพิ่มเติม (หากไม่มีในรายการ):</label>
                                     <input type="text" id="additional-symptom" placeholder="กรอกอาการเพิ่มเติม">
                                 </div>
-                                
-                                <button type="button" class="btn-submit" id="save-symptoms" onclick="saveSymptoms()">บันทึกอาการ</button>
+
+                                <button type="button" class="btn-submit" id="save-symptoms"
+                                    onclick="saveSymptoms()">บันทึกอาการ</button>
                             </form>
                         </div>
-                    
+
                         <!-- แสดงอาการที่เลือกไว้ -->
                         <div id="selected-symptoms-container" style="display: none;">
                             <h3>อาการที่บันทึก:</h3>
@@ -369,48 +402,68 @@
                                 <option value="10">ตุลาคม</option>
                                 <option value="11">พฤศจิกายน</option>
                                 <option value="12">ธันวาคม</option>
-                              </select>
+                            </select>
                             <table>
-                            <thead>
-                                <tr>
-                                    <th>วันที่</th>
-                                    <th>เวลาเริ่ม</th>
-                                    <th>เวลาสิ้นสุด</th>
-                                </tr>
-                            </thead>
-                            <tbody id="availabilityTable">
-                                <tr>
-                                    <td colspan="4">ไม่ได้กำหนดวันเวลาที่ว่าง</td>
-                                </tr>
-                            </tbody>
+                                <thead>
+                                    <tr>
+                                        <th>วันที่</th>
+                                        <th>เวลาเริ่ม</th>
+                                        <th>เวลาสิ้นสุด</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="availabilityTable">
+                                    <tr>
+                                        <td colspan="4">ไม่ได้กำหนดวันเวลาที่ว่าง</td>
+                                    </tr>
+                                </tbody>
                             </table>
 
                             <label for="availableDate">เลือกวันที่:</label>
                             <input type="date" id="availableDate" required>
 
-                            <label for="timeStart">เวลาเริ่ม:</label>
+                            <!-- <label for="timeStart">เวลาเริ่ม:</label>
                             <input type="time" id="timeStart" required>
                             
                             <label for="timeEnd">เวลาสิ้นสุด:</label>
-                            <input type="time" id="timeEnd" required>
+                            <input type="time" id="timeEnd" required> -->
+                            <label for="timeSlot">เลือกเวลานัดหมาย:</label>
+                            <select id="timeSlot" required>
+                                <optgroup label="เช้า">
+                                    <option value="08:30-08:50">08:30 - 08:50</option>
+                                    <option value="09:15-09:30">09:15 - 09:30</option>
+                                    <option value="09:50-10:15">09:50 - 10:15</option>
+                                    <option value="10:30-10:50">10:30 - 10:50</option>
+                                    <option value="11:15-11:30">11:15 - 11:30</option>
+                                    <option value="12:00-12:30">12:00 - 12:30</option>
+                                </optgroup>
+                                <optgroup label="บ่าย">
+                                    <option value="12:40-13:00">12:40 - 13:00</option>
+                                    <option value="13:20-13:50">13:20 - 13:50</option>
+                                    <option value="14:15-14:30">14:15 - 14:30</option>
+                                    <option value="14:50-15:00">14:50 - 15:00</option>
+                                    <option value="15:20-15:50">15:20 - 15:50</option>
+                                    <option value="16:15-16:30">16:15 - 16:30</option>
+                                </optgroup>
+                            </select>
 
                             <label for="timeEnd">การนัดหมายในวันที่เลือก:</label>
                             <table>
                                 <thead>
-                                  <tr>
-                                    <th>วันที่</th>
-                                    <th>เวลาเริ่ม</th>
-                                    <th>เวลาสิ้นสุด</th>
-                                  </tr>
+                                    <tr>
+                                        <th>วันที่</th>
+                                        <th>เวลาเริ่ม</th>
+                                        <th>เวลาสิ้นสุด</th>
+                                    </tr>
                                 </thead>
                                 <tbody id="appointmentTable">
-                                  <tr>
-                                    <td colspan="3">ไม่มีการนัดหมายในวันที่เลือก</td>
-                                  </tr>
+                                    <tr>
+                                        <td colspan="3">ไม่มีการนัดหมายในวันที่เลือก</td>
+                                    </tr>
                                 </tbody>
-                              </table>
+                            </table>
 
-                            <button type="button" class="btn-submit" id="save-appointment" onclick="saveAppointment()">บันทึก</button>
+                            <button type="button" class="btn-submit" id="save-appointment"
+                                onclick="saveAppointment()">บันทึก</button>
                         </form>
                     </section>
 
