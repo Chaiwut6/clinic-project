@@ -350,12 +350,10 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchUserInfo();
   }
   if (window.location.pathname == '/view/index.html') {
-    updateStudyYearAutomatically(); 
+    // updateStudyYearAutomatically(); 
     setInterval(updateStudyYearAutomatically, 1000 * 60 * 60 * 24); 
   }
 });
-
-
 
 const Logout = async () => {
   try {
