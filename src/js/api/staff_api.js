@@ -850,14 +850,12 @@ const itemsPerPage = 12;
 let userData = []; // เก็บข้อมูลทั้งหมด
 let filteredData = []; // เก็บข้อมูลที่ถูกกรอง
 
-// ✅ ดึงข้อมูลผู้ใช้
 async function fetchUserlist() {
   try {
     document.getElementById("UserTable").innerHTML = `<tr><td colspan="8">กำลังโหลดข้อมูล...</td></tr>`;
 
     const response = await axios.post("http://localhost:8000/api/employees/userList");
     userData = response.data?.users || [];
-    console.log(userData);
     filteredData = [...userData]; // ✅ สำเนาข้อมูลเพื่อใช้ในการกรอง
 
     if (userData.length === 0) {
@@ -1983,10 +1981,43 @@ function filterManager() {
   renderManagerControls();
 }
 
+const updateStudyYearAutomatically = async () => {
+  try {
+    const response = await axios.post("http://localhost:8000/api/users/getAllUsers");
+
+    if (!response.data.success) {
+      console.error("❌ ไม่สามารถดึงข้อมูลผู้ใช้ได้");
+      return;
+    }
+
+    const users = response.data.users;
+    const currentYear = new Date().getFullYear() + 543; // แปลงเป็น พ.ศ.
+    let updatedUsers = [];
+
+    users.forEach(user => {
+      const admissionYear = parseInt(user.user_id.substring(2, 4));
+      const admissionFullYear = admissionYear + 2500; // แปลงเป็น พ.ศ.
+      const studyYear = Math.max(1, currentYear - admissionFullYear);
+      const newYear = `ปี ${studyYear}`;
+
+      if (user.year !== newYear) {
+        updatedUsers.push({ user_id: user.user_id, year: newYear });
+      }
+    });
+
+    if (updatedUsers.length > 0) {
+      await axios.post("http://localhost:8000/api/users/updateStudyYear", {
+        users: updatedUsers
+      });
+    } 
+    
+  } catch (error) {
+    console.error("❌ เกิดข้อผิดพลาดในการอัปเดตชั้นปี:", error);
+  }
+};
 // เรียกใช้ฟังก์ชันเมื่อโหลดหน้า
 document.addEventListener("DOMContentLoaded", () => {
   const currentPage = window.location.pathname.split("/").pop(); // แค่ชื่อไฟล์ เช่น "manage_doctor.html"
-  console.log(`🔹 Current Page: ${currentPage}`); // ✅ Debugging
 
   function fetchInfoByRole(role) {
     if (role === "admin") {
@@ -2017,6 +2048,7 @@ document.addEventListener("DOMContentLoaded", () => {
     case "manage_user.html":
       fetchInfoByRole("employee");
       fetchUserlist();
+      setInterval(updateStudyYearAutomatically, 1000 * 60 * 60 * 24);
       sessionStorage.removeItem("user_id");
       break;
 

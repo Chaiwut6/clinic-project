@@ -144,41 +144,41 @@ const register = async () => {
   }
 };
 
-const updateStudyYearAutomatically = async () => {
+// const updateStudyYearAutomatically = async () => {
 
-  try {
-    const response = await axios.post("http://localhost:8000/api/users/getAllUsers");
+//   try {
+//     const response = await axios.post("http://localhost:8000/api/users/getAllUsers");
 
-    if (!response.data.success) {
-      console.error("❌ ไม่สามารถดึงข้อมูลผู้ใช้ได้");
-      return;
-    }
+//     if (!response.data.success) {
+//       console.error("❌ ไม่สามารถดึงข้อมูลผู้ใช้ได้");
+//       return;
+//     }
 
-    const users = response.data.users;
-    const currentYear = new Date().getFullYear() + 543; // แปลงเป็น พ.ศ.
-    let updatedUsers = [];
+//     const users = response.data.users;
+//     const currentYear = new Date().getFullYear() + 543; // แปลงเป็น พ.ศ.
+//     let updatedUsers = [];
 
-    users.forEach(user => {
-      const admissionYear = parseInt(user.user_id.substring(2, 4));
-      const admissionFullYear = admissionYear + 2500; // แปลงเป็น พ.ศ.
-      const studyYear = Math.max(1, currentYear - admissionFullYear);
-      const newYear = `ปี ${studyYear}`;
+//     users.forEach(user => {
+//       const admissionYear = parseInt(user.user_id.substring(2, 4));
+//       const admissionFullYear = admissionYear + 2500; // แปลงเป็น พ.ศ.
+//       const studyYear = Math.max(1, currentYear - admissionFullYear);
+//       const newYear = `ปี ${studyYear}`;
 
-      if (user.year !== newYear) {
-        updatedUsers.push({ user_id: user.user_id, year: newYear });
-      }
-    });
+//       if (user.year !== newYear) {
+//         updatedUsers.push({ user_id: user.user_id, year: newYear });
+//       }
+//     });
 
-    if (updatedUsers.length > 0) {
-      await axios.post("http://localhost:8000/api/users/updateStudyYear", {
-        users: updatedUsers
-      });
-    } 
+//     if (updatedUsers.length > 0) {
+//       await axios.post("http://localhost:8000/api/users/updateStudyYear", {
+//         users: updatedUsers
+//       });
+//     } 
     
-  } catch (error) {
-    console.error("❌ เกิดข้อผิดพลาดในการอัปเดตชั้นปี:", error);
-  }
-};
+//   } catch (error) {
+//     console.error("❌ เกิดข้อผิดพลาดในการอัปเดตชั้นปี:", error);
+//   }
+// };
 
 
 const login = async () => {
@@ -349,10 +349,10 @@ document.addEventListener("DOMContentLoaded", () => {
   if (window.location.pathname !== '/view/index.html') {
     fetchUserInfo();
   }
-  if (window.location.pathname == '/view/index.html') {
-    // updateStudyYearAutomatically(); 
-    setInterval(updateStudyYearAutomatically, 1000 * 60 * 60 * 24); 
-  }
+  // if (window.location.pathname == '/view/index.html') {
+  //   updateStudyYearAutomatically(); 
+  //   setInterval(updateStudyYearAutomatically, 1000 * 60 * 60 * 24); 
+  // }
 });
 
 const Logout = async () => {
