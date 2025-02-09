@@ -35,7 +35,9 @@ async function fetchUserDataAndDisplay() {
 
       if (user[0].profile_image) {
         profileImage.src = `${baseURL}${user[0].profile_image}`;
-    } 
+    } else {
+      profileImage.src = `${baseURL}/uploads/profiles/default.png`;
+  }
   
       const filterContainer = document.getElementById('filter-container');
   
