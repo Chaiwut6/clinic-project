@@ -1,4 +1,4 @@
-
+const baseURL = "http://localhost:8000";
 var inputs = document.querySelectorAll('input');
 inputs.forEach(function (input) {
   input.addEventListener('invalid', function (event) {
@@ -38,6 +38,8 @@ function toggleLink() {
   }
 }
 
+
+
 const register = async () => {
   try {
     const password = document.querySelector('#password').value;
@@ -49,10 +51,12 @@ const register = async () => {
     const phone = document.querySelector('#phone').value;
     const faculty = document.querySelector('#faculty').value;
     const user_id = document.querySelector('#user_id').value;
+    const profileImage = document.querySelector('#profileImage').files[0];
+
     const currentYear = new Date().getFullYear() + 543; // แปลง ค.ศ. เป็น พ.ศ.
     const admissionYear = parseInt(user_id.substring(2, 4)); // ได้ค่า 64
     const admissionFullYear = admissionYear + 2500; // แปลงเป็น พ.ศ.
-    const studyYear = Math.max(1, currentYear - admissionFullYear); 
+    const studyYear = Math.max(1, currentYear - admissionFullYear);
     const year = `ปี ${studyYear}`;
 
     console.log(`ปีปัจจุบัน: ${currentYear}, ปีที่เข้า: ${admissionFullYear}, ชั้นปี: ${year}`);
@@ -101,6 +105,31 @@ const register = async () => {
       return;
     }
 
+    let profileImageUrl = "";
+
+    if (profileImage) {
+      const formData = new FormData();
+      formData.append("profileImage", profileImage);
+      formData.append("user_id", user_id); // ✅ ใส่ user_id
+ 
+    
+      try {
+        const uploadResponse = await axios.post("http://localhost:8000/api/users/upload-profile", formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
+    
+        if (uploadResponse.data.success) {
+          profileImageUrl = uploadResponse.data.imageUrl;
+        } else {
+          alert("เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ");
+        }
+      } catch (error) {
+        console.error("Error uploading profile image:", error);
+        alert("เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ");
+      }
+    }
+
+
     // Define the API URL for registration
     const registerApiUrl = 'http://localhost:8000/api/users/register-user';
 
@@ -113,7 +142,8 @@ const register = async () => {
       faculty,
       year,
       user_id,
-      password
+      password,
+      profile_image: profileImageUrl
     });
 
     console.log('API Response:', response.data);
@@ -174,7 +204,7 @@ const register = async () => {
 //         users: updatedUsers
 //       });
 //     } 
-    
+
 //   } catch (error) {
 //     console.error("❌ เกิดข้อผิดพลาดในการอัปเดตชั้นปี:", error);
 //   }
@@ -201,7 +231,7 @@ const login = async () => {
         login_id,
         password
       }, {
-        withCredentials: true 
+        withCredentials: true
       });
 
       const responseData = response_user.data;
@@ -210,8 +240,10 @@ const login = async () => {
       const userInfo = responseData.user;
       const userAssess = responseData.Assess;
 
-  
+
       if (responseData.roles === 'user') {
+        const encrypUser = btoa(login_id);
+        sessionStorage.setItem('user_id', encrypUser);
         window.location.href = '/view/users/user_info.html';
       } else if (responseData.roles === 'doctor') {
         window.location.href = '../view/doctor/doc_main.html';
@@ -219,7 +251,7 @@ const login = async () => {
         window.location.href = '/view/staff/dashboard.html';
       } else if (responseData.roles === 'manager') {
         window.location.href = '../view/manager/man_main.html';
-      }else if (responseData.roles === 'admin') {
+      } else if (responseData.roles === 'admin') {
         window.location.href = '../view/admin/admin_main.html';
       }
     } else {
@@ -256,7 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // sessionStorage.setItem('user_id', response.data.user.user_id);
         // sessionStorage.setItem('user_fname', response.data.user.user_fname);
         // sessionStorage.setItem('user_lname', response.data.user.user_lname);
-
+       
         // แสดงข้อมูลบนหน้า
         populateAssessments(userAssess);
         updatePageData(userInfo, userAssess);
@@ -277,27 +309,27 @@ document.addEventListener("DOMContentLoaded", () => {
     function formatDateThai(dateString) {
       const date = new Date(dateString);
       return date.toLocaleDateString("th-TH", {
-          year: "numeric",
-          month: "long",
-          day: "numeric"
+        year: "numeric",
+        month: "long",
+        day: "numeric"
       });
-  }
-  
-  assessments.forEach((assessment) => {
+    }
+
+    assessments.forEach((assessment) => {
       const row = document.createElement("tr");
-      const date = formatDateThai(assessment.date); 
+      const date = formatDateThai(assessment.date);
       const totalScore = assessment.total_score !== undefined ? assessment.total_score : 'N/A';
-      const result = assessment.result || 'N/A'; 
-  
+      const result = assessment.result || 'N/A';
+
       row.innerHTML = `
           <td class="date">${date}</td>
           <td class="total_score">${totalScore}</td>
           <td class="result">${result}</td>
       `;
-  
+
       // เพิ่มแถวในตาราง
       tableBody.appendChild(row);
-  });
+    });
   };
 
   const updatePageData = (userInfo, userAssess) => {
@@ -343,7 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return `${day}-${month}-${year}`;
   };
 
- 
+
 
   // เรียก fetchUserInfo เมื่อโหลดหน้าเสร็จ
   if (window.location.pathname !== '/view/index.html') {
@@ -368,10 +400,10 @@ const Logout = async () => {
       sessionStorage.removeItem('user_id');
       sessionStorage.removeItem('user_fname');
       sessionStorage.removeItem('user_lname');
-      
+
       // เปลี่ยนเส้นทางไปยังหน้าเข้าสู่ระบบ
       window.location.href = '/view/index.html'; // 
-     // หรือหน้าอื่นที่คุณต้องการ
+      // หรือหน้าอื่นที่คุณต้องการ
     } else {
       console.error('การออกจากระบบล้มเหลว');
     }
@@ -384,25 +416,25 @@ const Logout = async () => {
 const changePassword = async () => {
   document.getElementById('change-password-form').addEventListener('submit', async (event) => {
     event.preventDefault();
-  
+
     const currentPassword = document.getElementById('current-password').value;
     const newPassword = document.getElementById('new-password').value;
     const confirmPassword = document.getElementById('confirm-password').value;
-  
+
     if (newPassword !== confirmPassword) {
       alert("รหัสผ่านใหม่และการยืนยันไม่ตรงกัน");
       return;
     }
-  
+
     try {
       const response = await axios.post('http://localhost:8000/api/users/change-password', {
         oldPassword: currentPassword,
         newPassword: newPassword,
         confirmPassword: confirmPassword
       }, {
-        withCredentials: true 
+        withCredentials: true
       });
-  
+
       if (response.status === 200) {
         alert("อัปเดตรหัสผ่านเรียบร้อยแล้ว");
         window.location.reload()
@@ -421,38 +453,41 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("profileForm");
   const fetchUserInfo = async () => {
     try {
-      const response = await axios.post('http://localhost:8000/api/users/userinfo', {}, {
-        withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
-      });
+        const response = await axios.post('http://localhost:8000/api/users/userinfo', {}, {
+            withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
+        });
 
-      if (response.data && response.data.user && response.data.Assess) {
-        const userInfo = response.data.user;
-        const userAssess = response.data.Assess;
-        console.log("userInfo:", userInfo);
-        console.log("userAssess:", userAssess);
+        if (response.data && response.data.user && response.data.Assess) {
+            const userInfo = response.data.user; // ✅ userInfo เป็น Object ไม่ต้องใช้ [0]
+            const userAssess = response.data.Assess;
+            console.log("userInfo:", userInfo);
+            console.log("userAssess:", userAssess);
 
-        // sessionStorage.setItem('user_id', response.data.user.user_id);
-        // sessionStorage.setItem('user_fname', response.data.user.user_fname);
-        // sessionStorage.setItem('user_lname', response.data.user.user_lname);
+      
+    
 
-        // แสดงข้อมูลบนหน้า
-        populateAssessments(userAssess);
-        updatePageData(userInfo, userAssess);
+            // ✅ อัปเดตข้อมูลผู้ใช้บนหน้าเว็บ
+            populateAssessments(userAssess);
+            updatePageData(userInfo, userAssess);
+            uploadProfileImage(userInfo);
 
-      } else {
-        console.error('Invalid data format received from API');
-      }
+        } else {
+            console.error('Invalid data format received from API');
+        }
     } catch (error) {
-      console.error('Error fetching user info:', error);
+        console.error('Error fetching user info:', error);
     }
-  };
+};
+
+
 
   const fetchUserUpdate = async () => {
+    
     try {
       const response = await axios.post('http://localhost:8000/api/users/userinfo', {}, { withCredentials: true });
       if (response.data && response.data.user) {
         const userInfo = response.data.user;
-        populateForm(userInfo); // เติมข้อมูลลงในฟอร์ม
+        populateForm(userInfo);
       } else {
         console.error("Invalid user data");
       }
@@ -492,7 +527,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const response = await axios.post('http://localhost:8000/api/users/updateuser', updatedData, { withCredentials: true });
         if (response.data.success) {
           alert("ข้อมูลได้รับการอัปเดตเรียบร้อยแล้ว!");
-          fetchUserInfo(); 
+          fetchUserInfo();
           window.location.reload();
         } else {
           console.error("Update failed:", response.data.message);
@@ -503,12 +538,96 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
- 
 
   if (window.location.pathname.endsWith('profile.html')) {
     fetchUserUpdate();
   }
 });
+
+async function uploadProfileImage() {
+  const fileInput = document.getElementById("profile-image");
+  const encrypUser = sessionStorage.getItem("user_id");
+  const userId = encrypUser ? atob(encrypUser) : null;
+
+  if (!userId) {
+      alert("ไม่พบ user_id กรุณาลองเข้าสู่ระบบใหม่");
+      return;
+  }
+
+  console.log("User ID:", userId);
+
+  const formData = new FormData();
+  formData.append("user_id", userId);
+
+  // ✅ ถ้าผู้ใช้ **อัปโหลดรูปใหม่** ให้แนบไฟล์ไปด้วย
+  if (fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+      formData.append("profileImage", file);
+  } else {
+      console.log("ไม่มีไฟล์ใหม่ ใช้รูปเดิม");
+  }
+
+  try {
+      const response = await axios.post("http://localhost:8000/api/users/upload-profile", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true
+      });
+
+      console.log("Upload Response:", response.data);
+
+      if (response.data.success) {
+          alert("อัปโหลดรูปโปรไฟล์สำเร็จ");
+
+          // ✅ ถ้ามีรูปใหม่ ให้เปลี่ยนภาพ
+          if (response.data.imageUrl) {
+              const profileImg = document.getElementById("user-profile");
+              profileImg.src = `http://localhost:8000${response.data.imageUrl}`;
+              profileImg.onload = () => URL.revokeObjectURL(profileImg.src);
+          }
+      } else {
+          alert("เกิดข้อผิดพลาดในการอัปโหลด");
+      }
+  } catch (error) {
+      console.error("Error uploading profile image:", error);
+      alert("เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ");
+  }
+}
+
+const fetchUserProfile = async () => {
+  try {
+      const response = await axios.post('http://localhost:8000/api/users/userinfo', {}, {
+          withCredentials: true 
+      });
+
+      if (response.data && response.data.user) {
+          const userInfo = response.data.user; // ✅ userInfo เป็น Object
+          console.log("UserProfile:", userInfo);
+
+          const profileImage = document.getElementById("user-profile");
+          console.log(profileImage);
+          
+          if (userInfo.profile_image) {
+            profileImage.src = `${baseURL}${userInfo.profile_image}`;
+        } else {
+            profileImage.src = `${baseURL}/uploads/profiles/default.png`;
+        }
+
+      } else {
+          console.error('Invalid data format received from API');
+      }
+  } catch (error) {
+      console.error('Error fetching user info:', error);
+  }
+};
+
+// ✅ โหลดข้อมูลเมื่อหน้า `profile.html` โหลดเสร็จ
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.location.pathname.includes("profile.html")) {
+    fetchUserProfile();
+  }
+});
+
+
 
 
 

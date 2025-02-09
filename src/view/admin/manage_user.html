@@ -54,7 +54,7 @@
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
       <!-- Sidebar - Brand -->
-      <a class="sidebar-brand d-flex align-items-center justify-content-center" >
+      <a class="sidebar-brand d-flex align-items-center justify-content-center">
         <div class="sidebar-brand-text mx-3">คลินิกกำลังใจ</div>
       </a>
 
@@ -67,12 +67,12 @@
                     <i class="fa-regular fa-user"></i>
                     <span>ข้อมูลส่วนตัว</span></a>
             </li> -->
-            <li class="nav-item">
-              <a class="nav-link" href="../admin/admin_main.html">
-                  <i class="fa-solid fa-chart-line"></i>
-                  <span>Dashboard</span>
-              </a>
-          </li>
+      <li class="nav-item">
+        <a class="nav-link" href="../admin/admin_main.html">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
       <!-- <li class="nav-item">
         <a class="nav-link" href="../staff/manage_user.html">
           <i class="fa fa-folder"></i>
@@ -90,14 +90,19 @@
       </li>
       <li class="nav-item">
         <a class="nav-link" href="../staff/manage_employee.html">
-            <i class="fa fa-folder"></i>
-            <span>จัดการเจ้าหน้าที่</span></a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="../staff/manage_man.html">
+          <i class="fa fa-folder"></i>
+          <span>จัดการเจ้าหน้าที่</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="../staff/manage_man.html">
           <i class="fa fa-folder"></i>
           <span>จัดการผู้บริหาร</span></a>
-  </li>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="../admin/webstting.html">
+          <i class="fa-solid fa-bars"></i>
+          <span>ตั้งค่าเว็บไซต์</span></a>
+      </li>
       <!-- <li class="nav-item">
                 <a class="nav-link" href="index.html">
                     <i class="fa-solid fa-lock"></i>
@@ -112,16 +117,16 @@
       <!-- <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div> -->
-            <li class="nav-item">
-              <a class="nav-link" href="#" onclick="openCustomModal()">
-                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                  <span>ออกจากระบบ</span>
-              </a>
-          </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" onclick="openCustomModal()">
+          <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+          <span>ออกจากระบบ</span>
+        </a>
+      </li>
     </ul>
-    
 
-    
+
+
     <!-- End of Sidebar -->
 
     <!-- Content Wrapper -->
@@ -221,7 +226,7 @@
             </select> -->
 
             <button class="filter-button" onclick="filterPatients()">ค้นหา</button>
-         
+
           </div>
 
           <!-- Table Section -->
@@ -240,7 +245,7 @@
                 </tr>
               </thead>
               <tbody id="UserTable">
-               
+
                 <!-- Add more patients here -->
               </tbody>
             </table>
@@ -286,34 +291,34 @@
       <i class="fas fa-angle-up"></i>
     </a>
 
-           <!-- Logout Modal-->
- <div id="logoutModal" class="custom-modal">
-  <div class="custom-modal-dialog">
-      <div class="custom-modal-content">
+    <!-- Logout Modal-->
+    <div id="logoutModal" class="custom-modal">
+      <div class="custom-modal-dialog">
+        <div class="custom-modal-content">
           <div class="custom-modal-header">
-              <button class="custom-close" onclick="closeCustomModal()">&times;</button>
+            <button class="custom-close" onclick="closeCustomModal()">&times;</button>
           </div>
           <div class="custom-modal-body">
-              เลือก "ออกจากระบบ" ด้านล่างหากคุณพร้อมที่จะออกจากเว็บไซต์ปัจจุบันของคุณ
+            เลือก "ออกจากระบบ" ด้านล่างหากคุณพร้อมที่จะออกจากเว็บไซต์ปัจจุบันของคุณ
           </div>
           <div class="custom-modal-footer">
-              <button class="custom-btn custom-btn-secondary" onclick="closeCustomModal()">ยกเลิก</button>
-              <a class="custom-btn custom-btn-primary" href="../index.html" onclick="Logout()">ออกจากระบบ</a>
+            <button class="custom-btn custom-btn-secondary" onclick="closeCustomModal()">ยกเลิก</button>
+            <a class="custom-btn custom-btn-primary" href="../index.html" onclick="Logout()">ออกจากระบบ</a>
           </div>
+        </div>
       </div>
-  </div>
-</div>
+    </div>
 
 
-<script>
-  function openCustomModal() {
-  document.getElementById('logoutModal').style.display = 'flex';
-}
+    <script>
+      function openCustomModal() {
+        document.getElementById('logoutModal').style.display = 'flex';
+      }
 
-// ปิด Custom Modal
-function closeCustomModal() {
-  document.getElementById('logoutModal').style.display = 'none';
-}</script>
+      // ปิด Custom Modal
+      function closeCustomModal() {
+        document.getElementById('logoutModal').style.display = 'none';
+      }</script>
 
 
     <!-- <script>

@@ -1,3 +1,4 @@
+const baseURL = "http://localhost:8000";
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("addDoctorForm");
 
@@ -958,7 +959,8 @@ async function fetchUserDataAndDisplay() {
 
     const data = response.data;
     const user = data.user;
-
+    const imageUrl = data.user;
+    console.log(imageUrl);
     // Check if user data is valid
     if (!user || !Array.isArray(user) || user.length === 0) {
       console.error('User data is missing or invalid');
@@ -973,7 +975,14 @@ async function fetchUserDataAndDisplay() {
     document.getElementById('user-phone').innerHTML = user[0].phone;
     document.getElementById('user-faculty').innerHTML = user[0].faculty;
     document.getElementById('user-year').innerHTML = user[0].year;
-  
+
+    const profileImage = document.getElementById("user-profile");
+
+    if (user[0].profile_image) {
+      profileImage.src = `${baseURL}${user[0].profile_image}`;
+  } else {
+      profileImage.src = `${baseURL}/uploads/profiles/default.png`;
+  }
 
     const filterContainer = document.getElementById('filter-container');
 
@@ -2063,6 +2072,11 @@ document.addEventListener("DOMContentLoaded", () => {
     case "manage_man.html":
       fetchInfoByRole("admin");
       fetchManager();
+      sessionStorage.removeItem("user_id");
+      break;
+
+      case "webstting.html":
+      fetchInfoByRole("admin");
       sessionStorage.removeItem("user_id");
       break;
 

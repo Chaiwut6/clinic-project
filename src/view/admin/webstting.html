@@ -33,14 +33,14 @@
 
     <!-- Custom styles for this template-->
     <link href="../../style/users/user_main.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../style/admin/webstting.css">
     <link rel="stylesheet" href="../../style/staff/schedule.css">
-    <link rel="stylesheet" href="../../style/staff/patientslist.css">
-    <!-- <script src="../../js/login.js"></script> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
+    <link rel="stylesheet" href="../../style/staff/mange_addmin.css">
     <script src="../../js/staff.js"></script>
     <script src="../../js/api/staff_api.js"></script>
-    <script src="../../js/api/patientslist_api.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="../../js/api/webstting_api.js"></script>
+    <!-- <script src="../../js/login.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
 
 
 </head>
@@ -54,7 +54,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" >
                 <div class="sidebar-brand-text mx-3">คลินิกกำลังใจ</div>
             </a>
 
@@ -104,8 +104,16 @@
                     <span>ตั้งค่าเว็บไซต์</span></a>
             </li>
 
+            <!-- <li class="nav-item">
+                <a class="nav-link" href="index.html">
+                    <i class="fa-solid fa-lock"></i>
+                    <span>เปลี่ยนรหัสผ่าน</span></a>
+            </li> -->
+
+
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
+
             <!-- Sidebar Toggler (Sidebar) -->
             <!-- <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
@@ -116,9 +124,7 @@
                     <span>ออกจากระบบ</span>
                 </a>
             </li>
-           
         </ul>
-
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -134,12 +140,15 @@
                     </button>
 
                     <!-- Topbar Search -->
-                    <h1 class="header-main">ผู้ป่วยที่อยู่ในการดูแล</h1>
+                    <h1 class="header-main">ตั้งค่าเว็บไซต์</h1>
+  
 
+                    <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
                         <!-- Nav Item - Search Dropdown (Visible Only XS) -->
                         <li class="nav-item dropdown no-arrow d-sm-none">
+
                         </li>
 
 
@@ -147,7 +156,7 @@
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
 
-                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             <span class="adm_fname mr-2 d-none d-lg-inline text-gray-600 small"></span>
                             <span class="adm_lname mr-2 d-none d-lg-inline text-gray-600 small"></span>
@@ -185,75 +194,40 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-                    <!-- Page Heading -->
-                    <!-- Doctor Selection Filter -->
-                    <h4 for="doctorSelect">
-                        เลือกแพทย์เพื่อแสดงรายการผู้ป่วย
-                    </h4>
-
-                    <div class="filter-container">
-                        <input type="text" id="searchName" placeholder="ค้นหาชื่อ">
-                        <select id="doctorSelect">
-                            <option value="">--เลือกแพทย์--</option>
-                        </select>
-                        <select id="monthSelect">
-                            <option value="">--เลือกเดือน--</option>
-                            <option value="01">มกราคม</option>
-                            <option value="02">กุมภาพันธ์</option>
-                            <option value="03">มีนาคม</option>
-                            <option value="04">เมษายน</option>
-                            <option value="05">พฤษภาคม</option>
-                            <option value="06">มิถุนายน</option>
-                            <option value="07">กรกฎาคม</option>
-                            <option value="08">สิงหาคม</option>
-                            <option value="09">กันยายน</option>
-                            <option value="10">ตุลาคม</option>
-                            <option value="11">พฤศจิกายน</option>
-                            <option value="12">ธันวาคม</option>
-                        </select>
-                        <button class="filter-button" onclick="filterReceivecare()">ค้นหา</button>
-                        <button onclick="exportToExcel()" style="cursor: pointer;">
-                            <i class="fa-solid fa-print"></i>
-                        </button>
-                    </div>
-
-                    <!-- Table -->
-                    <div class="table-container">
-                        <div class="table-options">
-                            <label>
-                                รายชื่อผู้ป่วยในการดูแล</label>
+                    <div class="settings-container">
+                        <!-- Homepage Image Upload -->
+                        <div class="card-image">
+                            <h3>รูปภาพหน้าแรก</h3>
+                            <label for="uploadBanner">อัพโหลดรูปภาพหน้าแรก:</label>
+                            <input type="file" id="imageInput" name="image" accept="image/*">
+                           
                         </div>
-
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ลำดับ</th>
-                                    <th>รหัสประจำตัว</th>
-                                    <th>ชื่อ-นามสกุล</th>
-                                    <th>ชื่อเล่น</th>
-                                    <th>คณะ</th>
-                                    <th>เบอร์โทร</th>
-                                    <th>ปัญหา</th>
-                                    <th>วันนัด</th>
-                                    <th>ประเภทโรค</th>
-                                    <th>แพทย์</th>
-                                    <!-- <th>ดำเนินการ</th> -->
-                                </tr>
-                            </thead>
-                            <tbody id="patientTable">
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                    <div id="paginationControls" class="pagination-controls"></div>
                     
+                        <!-- About Us Section -->
+                        <!-- <div class="card">
+                            <h3>เกี่ยวกับเรา</h3>
+                            <label for="aboutus">เกี่ยวกับเรา:</label>
+                            <textarea id="aboutus" rows="4" placeholder="กรอกข้อมูลเกี่ยวกับเรา..."></textarea>
+                        </div> -->
+                    
+                        <!-- Contact Information -->
+                        <!-- <div class="card">
+                            <h3>ข้อมูลการติดต่อ</h3>
+                            <label for="phone">เบอร์โทรศัพท์:</label>
+                            <input type="text" id="phone" placeholder="กรอกเบอร์โทรศัพท์">
+                            
+                            <label for="address">ที่อยู่:</label>
+                            <input type="text" id="address" placeholder="กรอกที่อยู่">
+                        </div> -->
+                    
+                        <!-- Save Button -->
+                        <button class="saveSettings" id="saveSettings" type="button" onclick="uploadImage()">บันทึกข้อมูล</button>
+                    </div>
                 </div>
 
-
-
+    
+    
+    
                 <!-- /.container-fluid -->
 
             </div>
@@ -270,11 +244,27 @@
     <!-- End of Page Wrapper -->
 
     <!-- Scroll to Top Button-->
-    <!-- <a class="scroll-to-top rounded" href="#page-top">
+    <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
-    </a> -->
+    </a>
 
- <!-- Logout Modal-->
+    <!-- Delete Modal -->
+    <div class="delete-popup">
+        <div class="delete-content">
+            <div class="delete-header">
+                <h5 class="delete-title">ยืนยันการลบ</h5>
+                <button class="close-delete-btn">&times;</button>
+            </div>
+            <div class="delete-body">
+                <p>คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้ การกระทำนี้ไม่สามารถย้อนกลับได้</p>
+            </div>
+            <div class="delete-footer">
+                <!-- <button class="btn cancel-btn close-delete-btn">ยกเลิก</button> -->
+                <a class="btn delete-btn" href="">ลบ</a>
+            </div>
+        </div>
+    </div>
+             <!-- Logout Modal-->
  <div id="logoutModal" class="custom-modal">
     <div class="custom-modal-dialog">
         <div class="custom-modal-content">
@@ -290,10 +280,10 @@
             </div>
         </div>
     </div>
-</div>
-
-
-<script>
+  </div>
+  
+  
+  <script>
     function openCustomModal() {
     document.getElementById('logoutModal').style.display = 'flex';
   }
@@ -303,23 +293,8 @@
     document.getElementById('logoutModal').style.display = 'none';
   }</script>
 
-
-
-    <!-- <script>
-        const logout = async () => {
-            try {
-                await axios.post('http://localhost:8000/api/logout', {}, { withCredentials: true });
-                alert('You have been logged out successfully.');
-                window.location.href = '../view';
-            } catch (error) {
-                console.error('Logout failed:', error);
-                alert('Logout failed. Please try again.');
-            }
-        };
-    </script> -->
-
     <script src="../../js/jquery.min.js"></script>
-    <!-- <script src="../../js/bootstrap.bundle.min.js"></script> -->
+    <!-- <script src="../../js/bootstrap.bundle.min.js"></scrip> -->
 
 
 </body>

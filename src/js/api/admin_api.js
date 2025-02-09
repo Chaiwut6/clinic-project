@@ -1884,6 +1884,32 @@ function filterManager() {
   renderPaginationControls();
 }
 
+function uploadImage() {
+  console.log("sfgfg");
+  // const fileInput = document.getElementById("imageInput");
+  // const formData = new FormData();
+  // formData.append("image", fileInput.files[0]);
+
+  // try {
+  //     const response = await axios.post("http://localhost:8000/api/upload/upload-image", formData, {
+  //         headers: { "Content-Type": "multipart/form-data" }
+  //     });
+
+  //     const imageUrl = response.data.imageUrl;
+  //     sessionStorage.setItem("uploadedImage", imageUrl); 
+  //     document.getElementById("previewImage").src = imageUrl;
+  //     document.getElementById("previewImage").style.display = "block";
+  //     document.getElementById("deleteButton").style.display = "block";
+
+  //     alert("อัปโหลดรูปภาพสำเร็จ!");
+  // } catch (error) {
+  //     console.error("เกิดข้อผิดพลาด:", error);
+  //     alert("อัปโหลดรูปภาพล้มเหลว!");
+  // }
+}
+
+
+
   document.addEventListener("DOMContentLoaded", () => {
     const currentPage = window.location.pathname.split("/").pop(); // 
     if (currentPage === "admin_main.html") {

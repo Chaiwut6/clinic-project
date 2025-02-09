@@ -41,6 +41,7 @@
 
     <script src="../../js/api/doctor_api.js"></script>
     <!-- <script src="../../js/api/doctor_appointapi.js"></script> -->
+    
     <script src="../../js/api/doctormange_api.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
@@ -167,6 +168,11 @@
                     <!-- Section: User Information -->
                     <section class="card user-info">
                         <h2>ข้อมูลผู้ใช้</h2>
+                        <div style="width: 50%;
+                        height: 50%; border-radius: 50%;">
+                            <img class="user-profile" id="user-profile" 
+                                alt="โปรไฟล์ของผู้ใช้">
+                        </div>
                         <div class="user-grid">
                             <p><strong>รหัสประจำตัว:</strong> <span id="userid"></span></p>
                             <p><strong>ชื่อ:</strong> <span id="user-fname"></span> <span id="user-lname"></span></p>

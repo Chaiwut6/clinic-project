@@ -11359,6 +11359,7 @@
     border-radius: 10px;
     font-size: 14px;
   }
+
   .profile .submit-btn {
     width: 40%;
     padding: 10px;
@@ -11372,6 +11373,20 @@
     text-align: center;
   }
   .profile .submit-btn {
+    background-color: #357ab8;
+  }
+  .profile .submit-profile {
+    width: 20%;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #619AE3;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .profile .submit-profile {
     background-color: #357ab8;
   }
 

@@ -1,3 +1,4 @@
+const baseURL = "http://localhost:8000";
 async function fetchUserDataAndDisplay() {
     const encrypUser = sessionStorage.getItem("user_id");
     try {
@@ -14,6 +15,7 @@ async function fetchUserDataAndDisplay() {
   
       const data = response.data;
       const user = data.user;
+      
   
       // Check if user data is valid
       if (!user || !Array.isArray(user) || user.length === 0) {
@@ -29,7 +31,11 @@ async function fetchUserDataAndDisplay() {
       document.getElementById('user-phone').innerHTML = user[0].phone;
       document.getElementById('user-faculty').innerHTML = user[0].faculty;
       document.getElementById('user-year').innerHTML = user[0].year;
-    
+      const profileImage = document.getElementById("user-profile");
+
+      if (user[0].profile_image) {
+        profileImage.src = `${baseURL}${user[0].profile_image}`;
+    } 
   
       const filterContainer = document.getElementById('filter-container');
   

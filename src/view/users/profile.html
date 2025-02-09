@@ -33,6 +33,7 @@
 
     <!-- Custom styles for this template-->
     <link href="../../style/users/user_main.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../style/users/profile.css">
     <script src="../../js/login.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
 
@@ -258,8 +259,13 @@
                 <div class="container-fluid">
                     <!-- Page Heading -->
                     <form class="profile" id="profileForm">
-                        <!-- <label for="student-id">รหัสประจำตัว (มีขีด)</label>
-                        <input type="text" id="student-id" name="student-id" required> -->
+
+                        <img class="user-profile" id="user-profile"
+                        alt="โปรไฟล์ของผู้ใช้">
+
+                        <input type="file" id="profile-image" accept="image/*">
+                        
+                        <!-- <button class="submit-profile" type="button" id="upload-btn" onclick="uploadProfileImage()">อัปโหลดรูป</button> -->
                     
                         <label for="first-name">ชื่อจริง</label>
                         <input type="text" id="first-name" name="first-name" required>
@@ -271,7 +277,7 @@
                         <input type="text" id="nickname" name="nickname" required>
                     
                         <label for="faculty">คณะ</label>
-                        <select id="faculty" name="faculty"  required>
+                        <select id="faculty" name="faculty" required>
                             <option value="บริหารธุรกิจ">บริหารธุรกิจ</option>
                             <option value="วิศวกรรมศาสตร์">วิศวกรรมศาสตร์</option>
                             <option value="เทคโนโลยีคหกรรมศาสตร์">เทคโนโลยีคหกรรมศาสตร์</option>
@@ -287,7 +293,7 @@
                         </select>
                     
                         <label for="year">ชั้นปี</label>
-                        <select id="year" name="year"  required>
+                        <select id="year" name="year" required>
                             <option value="ปี 1">ปี 1</option>
                             <option value="ปี 2">ปี 2</option>
                             <option value="ปี 3">ปี 3</option>
@@ -298,8 +304,9 @@
                         <label for="phone">เบอร์โทร</label>
                         <input type="text" id="phone" name="phone" required>
                     
-                        <button type="submit" class="submit-btn">บันทึก</button>
+                        <button type="submit" class="submit-btn" onclick="uploadProfileImage()">บันทึก</button>
                     </form>
+                    
                     
                     <!-- Display fname here -->
 

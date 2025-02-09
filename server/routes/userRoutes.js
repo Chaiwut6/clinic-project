@@ -6,14 +6,70 @@ const verifyToken = require('../middleware/verifyToken');
 require('dotenv').config();
 const router = express.Router();
 const secret = process.env.JWT_SECRET;
+const fs = require("fs");
+const multer = require("multer");
+const path = require("path");
 
-// Route: Register user
+const uploadDir = path.join(__dirname, "../uploads/profiles");
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+
+// 📌 ตั้งค่า Multer สำหรับอัปโหลดรูป
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => cb(null, `profile_${Date.now()}${path.extname(file.originalname)}`)
+});
+const upload = multer({ storage });
+
+// ✅ Route สำหรับอัปโหลดโปรไฟล์
+router.post("/upload-profile", upload.single("profileImage"), async (req, res) => {
+  let conn;
+  try {
+    conn = await initMySQL();
+    const { user_id } = req.body;
+
+    if (!user_id) {
+      return res.status(400).json({ success: false, message: "Missing user_id" });
+    }
+
+    // ✅ ค้นหารูปโปรไฟล์ปัจจุบันของ user
+    const [existingUser] = await conn.query("SELECT profile_image FROM users WHERE user_id = ?", [user_id]);
+
+    let imageUrl = existingUser.length > 0 ? existingUser[0].profile_image : null;
+
+    // ✅ ถ้ามีการอัปโหลดไฟล์ใหม่ ให้อัปเดต
+    if (req.file) {
+      const newFilePath = `/uploads/profiles/${req.file.filename}`;
+      
+      // ✅ ลบรูปเก่า ถ้ามี
+      if (imageUrl && fs.existsSync(path.join(__dirname, "..", imageUrl))) {
+        fs.unlinkSync(path.join(__dirname, "..", imageUrl));
+      }
+
+      // ✅ อัปเดตฐานข้อมูลด้วยรูปใหม่
+      await conn.query("UPDATE users SET profile_image = ? WHERE user_id = ?", [newFilePath, user_id]);
+      imageUrl = newFilePath;
+    }
+
+    res.json({ success: true, message: "Profile image updated", imageUrl });
+
+  } catch (error) {
+    console.error("Error uploading profile image:", error);
+    res.status(500).json({ success: false, message: "Error updating profile image", error: error.message });
+  } finally {
+    if (conn) await conn.end();
+  }
+});
+
+// ✅ ให้ Express เสิร์ฟไฟล์รูปภาพ
+router.use("/uploads/profiles", express.static(path.join(__dirname, "../uploads/profiles")));
+
+
 router.post('/register-user', async (req, res) => {
   let conn = null;
   try {
     conn = await initMySQL();
 
-    const { user_id, password, user_fname, user_lname, nickname, year, phone, faculty } = req.body;
+    const { user_id, password, user_fname, user_lname, nickname, year, phone, faculty , profile_image} = req.body;
 
     // Validate input fields
     if (!user_id || !password || !user_fname || !user_lname) {
@@ -30,7 +86,7 @@ router.post('/register-user', async (req, res) => {
     const passwordHash = await bcrypt.hash(password, 12);
 
     // Insert user and login data
-    const userData = { user_id, user_fname, user_lname, nickname, year, phone, faculty };
+    const userData = { user_id, user_fname, user_lname, nickname, year, phone, faculty,profile_image };
     const loginData = { login_id: user_id, password: passwordHash, roles: 'user' };
 
     await conn.query('INSERT INTO users SET ?', userData);
