@@ -12,40 +12,51 @@ async function uploadImage() {
 
     try {
         // ✅ อัปโหลดไปยังเซิร์ฟเวอร์
-        const response = await axios.post("http://localhost:8000/api/upload/upload-image", formData, {
+        await axios.post("http://localhost:8000/api/upload/upload-image", formData, {
             headers: { "Content-Type": "multipart/form-data" }
         });
 
-        const imageUrl = response.data.imageUrl; // URL ที่เซิร์ฟเวอร์ส่งกลับมา
+        alert("อัปโหลดรูปภาพสำเร็จ!");
 
-        // ✅ อ่านไฟล์เป็น Base64 และเก็บใน localStorage
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = function () {
-            const base64Image = reader.result;
-            // console.log(base64Image);
-            localStorage.setItem("uploadedImage", base64Image);
-
-            alert("อัปโหลดรูปภาพสำเร็จ!");
-
-            // ✅ แสดงรูปที่อัปโหลดจาก localStorage
-            
-            document.getElementById("clinicImage").src == base64Image;
-        };
-
-        // ✅ ตั้งค่าให้ `<img>` ใช้ภาพจากเซิร์ฟเวอร์แทน
-        document.getElementById("clinicImage").src == imageUrl;
+        // ✅ โหลดรูปใหม่ทันที
+        const response = await axios.get("http://localhost:8000/api/upload/latest-image");
+        document.querySelector(".clinic-image").src = response.data.imageUrl;
 
     } catch (error) {
         console.error("เกิดข้อผิดพลาด:", error);
-       
     }
 }
 
-// ✅ โหลดรูปจาก localStorage ทันทีที่เปิดหน้า
-document.addEventListener("DOMContentLoaded", () => {
-    const savedImage = localStorage.getItem("uploadedImage");
-    if (savedImage) {
-        document.getElementById("clinicImage").src = savedImage;
+
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        const response = await axios.get("http://localhost:8000/api/upload/latest-image");
+        let latestImageUrl = response.data.imageUrl;
+        const defaultImage = "http://localhost:8000/uploads/default_page.jpg";
+        
+        // ✅ ตรวจสอบว่ามี `.clinic-image` ก่อนเปลี่ยน src
+        const clinicImage = document.querySelector(".clinic-image");
+        if (!clinicImage) return;
+
+        // ✅ ถ้า `latestImageUrl` ไม่มีค่า หรือเป็นค่าไม่ถูกต้อง ให้ใช้ `defaultImage`
+        if (!latestImageUrl || latestImageUrl.includes("uploads/profiles")) {
+            clinicImage.src = defaultImage;
+        } else {
+            clinicImage.src = latestImageUrl;
+        }
+
+    } catch (error) {
+        console.error("Error fetching latest image:", error);
+
+        // ✅ ใช้ค่าเริ่มต้นเมื่อเกิดข้อผิดพลาด
+        const clinicImage = document.querySelector(".clinic-image");
+        if (clinicImage) {
+            clinicImage.src = "http://localhost:8000/uploads/default_page.jpg";
+        }
     }
 });
+
+
+
+
+

@@ -600,7 +600,7 @@ const fetchUserProfile = async () => {
       });
 
       if (response.data && response.data.user) {
-          const userInfo = response.data.user; // ✅ userInfo เป็น Object
+          const userInfo = response.data.user; 
           console.log("UserProfile:", userInfo);
 
           const profileImage = document.getElementById("user-profile");

@@ -10,7 +10,7 @@ const uploadDir = path.join(__dirname, "../uploads");
 
 // ✅ ตรวจสอบว่ามีโฟลเดอร์ `uploads` หรือไม่ ถ้าไม่มีให้สร้าง
 if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
+    fs.mkdirSync(uploadDir, { recursive: true });
 }
 
 // ✅ ตั้งค่า `multer` สำหรับอัปโหลดไฟล์
@@ -52,6 +52,39 @@ router.post("/upload-image", upload.single("image"), (req, res) => {
         res.status(500).json({ message: "เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ" });
     }
 });
+
+router.get("/latest-image", (req, res) => {
+    try {
+        const uploadDir = path.join(__dirname, "../uploads");
+
+        // ✅ อ่านไฟล์ทั้งหมดจากโฟลเดอร์ `uploads`
+        const files = fs.readdirSync(uploadDir);
+
+        if (files.length === 0) {
+            return res.status(404).json({ message: "ไม่มีไฟล์รูปภาพในโฟลเดอร์" });
+        }
+
+        // ✅ เรียงลำดับตามวันที่อัปโหลด (ใช้ timestamp ในชื่อไฟล์)
+        const sortedFiles = files
+            .map(file => ({
+                name: file,
+                time: fs.statSync(path.join(uploadDir, file)).mtime.getTime()
+            }))
+            .sort((a, b) => b.time - a.time); // เรียงจากใหม่ -> เก่า
+
+        // ✅ ดึงไฟล์ล่าสุด
+        const latestFile = sortedFiles[0].name;
+        const latestFilePath = `/uploads/${latestFile}`;
+        const imageUrl = `http://localhost:8000${latestFilePath}`;
+
+        res.json({ imageUrl });
+
+    } catch (error) {
+        console.error("Error retrieving latest image:", error);
+        res.status(500).json({ message: "เกิดข้อผิดพลาดในการดึงรูปภาพล่าสุด" });
+    }
+});
+
 
 
 // ✅ API แสดงรูปภาพที่อัปโหลด
