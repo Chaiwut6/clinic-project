@@ -227,7 +227,7 @@ async function loadAppointmentsBreakdownChart() {
       const labels = data.appointments.map(a => a.faculty) || [];
       const totalAppointments = data.appointments.map(a => a.total) || [];
       const totalAll = data.totalConfirmedAppointments || 0;
-
+      console.log(totalAll);
       // ✅ ดึง <select> อาการที่มีอยู่
       const symptomFilter = document.getElementById("symptomFilterUsers");
       const existingSymptoms = new Set(Array.from(symptomFilter.options).map(opt => opt.value));

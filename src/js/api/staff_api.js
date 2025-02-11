@@ -1094,7 +1094,7 @@ async function fetchUserDataAndDisplay() {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
-          }); // ✅ แปลงวันที่ให้แสดงในรูปแบบไทย
+          }); 
       
           const row = document.createElement('tr');
           row.innerHTML = `

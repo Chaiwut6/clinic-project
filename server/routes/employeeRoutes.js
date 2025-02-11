@@ -911,21 +911,25 @@ router.post('/appointmentsByFaculty', async (req, res) => {
     SELECT u.faculty, COUNT(DISTINCT a.user_id) AS total, JSON_UNQUOTE(JSON_EXTRACT(a.symptoms, '$')) AS symptoms
     FROM appointments a
     JOIN users u ON a.user_id = u.user_id
+    JOIN (
+        SELECT user_id, MAX(date) AS latest_date 
+        FROM appointments 
+        WHERE status = 'ยืนยัน' 
+        AND (caseStatus = 'ติดตามอาการ' OR caseStatus IS NULL) 
+        GROUP BY user_id
+    ) latest_appointments
+    ON a.user_id = latest_appointments.user_id 
+    AND a.date = latest_appointments.latest_date
     WHERE a.status = 'ยืนยัน' 
     AND YEAR(a.date) = ?
-    AND a.date = (
-        SELECT MAX(a2.date) FROM appointments a2
-        WHERE a2.user_id = a.user_id
-        AND a2.status = 'ยืนยัน'
-    )
     AND a.symptoms IS NOT NULL 
     AND a.symptoms != '[]' 
     ${faculty ? "AND u.faculty = ?" : ""}
     GROUP BY u.faculty, a.symptoms
-    `;
+`;
 
-    let params = faculty ? [selectedYear, faculty] : [selectedYear];
-    const [facultyAppointments] = await conn.query(query, params);
+let params = faculty ? [selectedYear, faculty] : [selectedYear];
+const [facultyAppointments] = await conn.query(query, params);
 
     // ✅ แปลงข้อมูล JSON อาการให้ถูกต้อง
     let facultyData = {};
