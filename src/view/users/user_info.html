@@ -77,7 +77,7 @@
                     <i class="fa-solid fa-calendar-days"></i>
                     <span>การนัดพบแพทย์</span></a>
             </li>
-     
+
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
             <li class="nav-item">
@@ -102,12 +102,29 @@
 
                     <!-- Topbar Search -->
                     <!-- <h1 class="header-main">การนัดพบแพทย์</h1> -->
-          
+
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
+                        <!-- Nav Item - Alerts -->
+                        <li class="nav-item dropdown no-arrow mx-1">
+                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-bell fa-fw"></i>
+                                <span id="notificationBadge" class="badge badge-danger badge-counter">0</span>
+                            </a>
+                            <!-- Dropdown - Alerts -->
+                            <div id="alertsDropdownContent"
+                                class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="alertsDropdown">
+                                <h6 class="dropdown-header"> แจ้งเตือน </h6>
+                                <div id="alertItems">
+                                    <a class="dropdown-item text-center small text-gray-500"
+                                        href="#">ไม่มีการแจ้งเตือน</a>
+                                </div>
+                            </div>
+                        </li>
 
-              
 
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
@@ -118,7 +135,7 @@
                                 <span class="lname mr-2 d-none d-lg-inline text-gray-600 small"></span>
 
                             </a>
-                            
+
 
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -132,8 +149,8 @@
                                     <i class="fas fa-lock fa-sm fa-fw mr-2 text-gray-400"></i>
                                     เปลี่ยนรหัสผ่าน
                                 </a>
-                                    
-                       
+
+
                             </div>
                         </li>
 
@@ -154,32 +171,35 @@
                         <h1>ยินดีต้อนรับสู่คลินิกกำลังใจ</h1>
                         <p>บริการให้คำปรึกษาสำหรับนักศึกษา มหาวิทยาลัยเทคโนโลยีราชมงคลธัญบุรี</p>
                     </header> -->
-            
+
                     <div class="container">
                         <!-- <img src="../../image/บริการให้คำปรึกษา.jpg" alt="บริการให้คำปรึกษา"> -->
-                            
+
                         <div class="image-container">
-                            <img id="clinicImage" alt="บริการให้คำปรึกษา" class="clinic-image"
-                            >
-                          </div>
-                         
+                            <img id="clinicImage" alt="บริการให้คำปรึกษา" class="clinic-image">
+                        </div>
+
                         <section>
                             <h2>เกี่ยวกับเรา</h2>
-                            <p>คลินิกกำลังใจบริการให้คำปรึกษา แก่นักศึกษาทั้งด้านปัญหาการเรียน ปัญหาส่วนตัว เช่น การใช้ชีวิต ความสัมพันธ์กับเพื่อน การเงิน ความรัก และปัญหาด้านสุขภาพอื่นๆ</p>
-                        </section>              
-                       <section>
+                            <p>คลินิกกำลังใจบริการให้คำปรึกษา แก่นักศึกษาทั้งด้านปัญหาการเรียน ปัญหาส่วนตัว เช่น
+                                การใช้ชีวิต ความสัมพันธ์กับเพื่อน การเงิน ความรัก และปัญหาด้านสุขภาพอื่นๆ</p>
+                        </section>
+                        <section>
                             <h2>ติดต่อเรา</h2>
                             <div class="contact-info">
                                 <span><i class="fa-solid fa-phone"></i> 08 0197 2024</span>
                                 <span class="contact-info">
-                                    <i class="fa-brands fa-facebook"></i> <a href="https://www.facebook.com/share/15caDsVTv4/" target="_blank" >งานบริการให้คำปรึกษา RMUTT </a>
+                                    <i class="fa-brands fa-facebook"></i> <a
+                                        href="https://www.facebook.com/share/15caDsVTv4/"
+                                        target="_blank">งานบริการให้คำปรึกษา RMUTT </a>
                                 </span>
-                                <span><i class="fa-solid fa-map-marker-alt"></i> ที่อยู่: อาคาร 2 กองพัฒนานักศึกษา มหาวิทยาลัยเทคโนโลยีราชมงคลธัญบุรี</span>
+                                <span><i class="fa-solid fa-map-marker-alt"></i> ที่อยู่: อาคาร 2 กองพัฒนานักศึกษา
+                                    มหาวิทยาลัยเทคโนโลยีราชมงคลธัญบุรี</span>
                             </div>
                         </section>
                     </div>
                 </div>
-               
+
                 <!-- /.container-fluid -->
 
             </div>
@@ -201,7 +221,8 @@
     </a>
 
     <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">

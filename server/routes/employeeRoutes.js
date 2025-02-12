@@ -833,7 +833,7 @@ router.post('/closedCasesCount', async (req, res) => {
 
   try {
     conn = await initMySQL();
-    const [result] = await conn.query("SELECT COUNT(*) AS count FROM appointments WHERE status = 'ปิดเคส'");
+    const [result] = await conn.query("SELECT COUNT(*) AS count FROM appointments WHERE caseStatus = 'ปิดเคส'");
 
     res.json({
       success: true,

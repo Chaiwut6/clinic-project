@@ -35,6 +35,7 @@
     <link href="../../style/users/user_main.css" rel="stylesheet">
     <link rel="stylesheet" href="../../style/users/profile.css">
     <script src="../../js/login.js"></script>
+    <script src="../../js/api/user_api.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
 
 </head>
@@ -135,80 +136,23 @@
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
-
-                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                        <li class="nav-item dropdown no-arrow d-sm-none">
-                            <!-- <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a> -->
-                            <!-- Dropdown - Messages -->
-                            <!-- <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                                aria-labelledby="searchDropdown">
-                                <form class="form-inline mr-auto w-100 navbar-search">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search for..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
-                                                <i class="fas fa-search fa-sm"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div> -->
-                        </li>
-
                         <!-- Nav Item - Alerts -->
                         <li class="nav-item dropdown no-arrow mx-1">
-                            <!-- <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-bell fa-fw"></i> -->
-                                <!-- Counter - Alerts -->
-                                <!-- <span class="badge badge-danger badge-counter">3+</span>
-                            </a> -->
+                                <i class="fas fa-bell fa-fw"></i>
+                                <span id="notificationBadge" class="badge badge-danger badge-counter">0</span>
+                            </a>
                             <!-- Dropdown - Alerts -->
-                            <!-- <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                            <div id="alertsDropdownContent"
+                                class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="alertsDropdown">
-                                <h6 class="dropdown-header">
-                                    Alerts Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-primary">
-                                            <i class="fas fa-file-alt text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 12, 2019</div>
-                                        <span class="font-weight-bold">A new monthly report is ready to download!</span>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-success">
-                                            <i class="fas fa-donate text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 7, 2019</div>
-                                        $290.29 has been deposited into your account!
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-warning">
-                                            <i class="fas fa-exclamation-triangle text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 2, 2019</div>
-                                        Spending Alert: We've noticed unusually high spending for your account.
-                                    </div>
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
-                            </div> -->
+                                <h6 class="dropdown-header"> แจ้งเตือน </h6>
+                                <div id="alertItems">
+                                    <a class="dropdown-item text-center small text-gray-500"
+                                        href="#">ไม่มีการแจ้งเตือน</a>
+                                </div>
+                            </div>
                         </li>
 
                         <!-- Nav Item - User Information -->
@@ -260,23 +204,21 @@
                     <!-- Page Heading -->
                     <form class="profile" id="profileForm">
 
-                        <img class="user-profile" id="user-profile"
-                        src="default.png"
-                        alt="โปรไฟล์ของผู้ใช้">
+                        <img class="user-profile" id="user-profile" src="default.png" alt="โปรไฟล์ของผู้ใช้">
 
                         <input type="file" id="profile-image" accept="image/*">
-                        
+
                         <!-- <button class="submit-profile" type="button" id="upload-btn" onclick="uploadProfileImage()">อัปโหลดรูป</button> -->
-                    
+
                         <label for="first-name">ชื่อจริง</label>
                         <input type="text" id="first-name" name="first-name" required>
-                    
+
                         <label for="last-name">นามสกุล</label>
                         <input type="text" id="last-name" name="last-name" required>
-                    
+
                         <label for="nickname">ชื่อเล่น</label>
                         <input type="text" id="nickname" name="nickname" required>
-                    
+
                         <label for="faculty">คณะ</label>
                         <select id="faculty" name="faculty" required>
                             <option value="บริหารธุรกิจ">บริหารธุรกิจ</option>
@@ -292,7 +234,7 @@
                             <option value="แพทย์บูรณาการ">แพทย์บูรณาการ</option>
                             <option value="พยาบาลศาสตร์">พยาบาลศาสตร์</option>
                         </select>
-                    
+
                         <label for="year">ชั้นปี</label>
                         <select id="year" name="year" required>
                             <option value="ปี 1">ปี 1</option>
@@ -301,14 +243,14 @@
                             <option value="ปี 4">ปี 4</option>
                             <option value="ปี 5">ปี 5</option>
                         </select>
-                    
+
                         <label for="phone">เบอร์โทร</label>
                         <input type="text" id="phone" name="phone" required>
-                    
+
                         <button type="submit" class="submit-btn" onclick="uploadProfileImage()">บันทึก</button>
                     </form>
-                    
-                    
+
+
                     <!-- Display fname here -->
 
                 </div>

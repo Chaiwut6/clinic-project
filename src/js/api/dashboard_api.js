@@ -205,9 +205,6 @@ function convertToThaiDate(isoString) {
   return `${month} ${year}`;
 }
 
-
-
-
 async function loadAppointmentsBreakdownChart() {
   try {
       const selectedYear = document.getElementById("yearFilterUsers").value;
