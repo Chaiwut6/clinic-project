@@ -2,7 +2,6 @@ const apiUrl = 'http://localhost:8000';
 
 document.addEventListener("DOMContentLoaded", async function () {
     // const user_id = sessionStorage.getItem('user_id');
-    
     try {
         // ดึงข้อมูลผู้ใช้จาก API
         const response = await axios.post(`${apiUrl}/api/users/userinfo`, {}, {
