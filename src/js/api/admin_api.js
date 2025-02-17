@@ -626,8 +626,11 @@ function renderAdminTable() {
   const endIndex = startIndex + itemsPerPage;
   const pageData = filteredAdminData.slice(startIndex, endIndex);
 
-  const rows = pageData.map((emp) => `
-      <tr data-id="${emp.employee_id}">
+  const rows = pageData.map((emp,index) => {
+    const displayIndex = startIndex + index + 1;
+  return `
+     <tr data-id="${emp.employee_id}">
+      <td>${displayIndex}</td>
         <td>${emp.employee_id || "ไม่ระบุ"}</td>
         <td>${emp.emp_fname || "ไม่ระบุ"}</td>
         <td>${emp.emp_lname || "ไม่ระบุ"}</td>
@@ -645,7 +648,7 @@ function renderAdminTable() {
           </div>
         </td>
       </tr>
-  `).join("");
+  `}).join("");
 
   document.getElementById("addminTable").innerHTML = rows || `<tr><td colspan="4">ไม่มีข้อมูล</td></tr>`;
   

@@ -168,18 +168,31 @@
                     <!-- Section: User Information -->
                     <section class="card user-info">
                         <h2>ข้อมูลผู้ใช้</h2>
-                        <div style="width: 50%;
-                        height: 50%; border-radius: 50%;">
-                        <img class="user-profile" id="user-profile" src="default-profile.png"
-                        alt="โปรไฟล์ของผู้ใช้">
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <img class="user-profile" id="user-profile" src="default-profile.png"
+                                alt="โปรไฟล์ของผู้ใช้">
                         </div>
                         <div class="user-grid">
                             <p><strong>รหัสประจำตัว:</strong> <span id="userid"></span></p>
-                            <p><strong>ชื่อ:</strong> <span id="user-fname"></span> <span id="user-lname"></span></p>
+                            <p><strong>ชื่อ:</strong> <span id="user-fname"></span>&nbsp;<span id="user-lname"></span>
+                            </p>
+
                             <p><strong>เบอร์โทร:</strong> <span id="user-phone"></span></p>
+                            <p></p>
                             <p><strong>คณะ:</strong> <span id="user-faculty"></span></p>
                             <p><strong>ชั้นปี:</strong> <span id="user-year"></span></p>
+
+                            <!-- <p><strong>สถานะปัจจุบัน:</strong> <span id="selectedCaseStatus">กำลังโหลด...</span></p> -->
                         </div>
+
+
+                        <!-- <select id="caseStatus">
+                            <option value="ติดตามอาการ">ติดตามอาการ</option>
+                            <option value="ปิดเคส">ปิดเคส</option>
+
+                        </select>
+                        <button id="saveCaseStatus" class="btn-show-form">บันทึก</button> -->
+
                     </section>
                 
                     <div class="history-container">
