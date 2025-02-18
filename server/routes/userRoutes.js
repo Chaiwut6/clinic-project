@@ -86,7 +86,8 @@ router.post('/register-user', async (req, res) => {
     const passwordHash = await bcrypt.hash(password, 12);
 
     // Insert user and login data
-    const userData = { user_id, title , user_fname, user_lname, nickname, year, phone, faculty,profile_image };
+    const userData = { user_id, title , user_fname, user_lname, nickname, year, phone, faculty, profile_image:profile_image || "" };
+    
     const loginData = { login_id: user_id, password: passwordHash, roles: 'user' };
 
     await conn.query('INSERT INTO users SET ?', userData);

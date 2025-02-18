@@ -54,10 +54,15 @@ const register = async () => {
     const user_id = document.querySelector('#user_id').value;
     const profileImage = document.querySelector('#profileImage').files[0];
 
-    const currentYear = new Date().getFullYear() + 543; // แปลง ค.ศ. เป็น พ.ศ.
-    const admissionYear = parseInt(user_id.substring(2, 4)); // ได้ค่า 64
-    const admissionFullYear = admissionYear + 2500; // แปลงเป็น พ.ศ.
-    const studyYear = Math.max(1, currentYear - admissionFullYear);
+    const currentYear = new Date().getFullYear() + 543; 
+    const admissionYear = parseInt(user_id.substring(2, 4)); 
+    const admissionFullYear = admissionYear + 2500; 
+    let studyYear = currentYear - admissionFullYear;
+    
+    const maxYear = faculty === "สถาปัตยกรรมศาสตร์" ? 5 : 4;
+    
+    studyYear = Math.min(Math.max(1, studyYear), maxYear);
+    
     const year = `ปี ${studyYear}`;
 
     console.log(`ปีปัจจุบัน: ${currentYear}, ปีที่เข้า: ${admissionFullYear}, ชั้นปี: ${year}`);

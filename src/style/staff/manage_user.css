@@ -216,5 +216,17 @@
   background-color: #0056b3;
 }
 
+#addUserBtn {
+  padding: 10px 20px;
+  background-color: #4f80ff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 200px;
+}
 
+#addUserBtn:hover {
+  background-color: #3c66d6;
+}
 

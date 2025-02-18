@@ -1,4 +1,108 @@
 const baseURL = "http://localhost:8000";
+
+document.addEventListener("DOMContentLoaded", () => {
+  const addUserBtn = document.getElementById('addUserBtn');
+  const addUserModal = document.getElementById('addUserModal');
+  const closeBtn = document.querySelector('#addUserModal .close');
+
+  // เปิด Modal
+  if (addUserBtn) {
+      addUserBtn.addEventListener('click', () => {
+          addUserModal.style.display = 'block';
+      });
+  }
+
+  // ปิด Modal เมื่อกดปุ่ม X
+  if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+          addUserModal.style.display = 'none';
+      });
+  }
+
+  // ปิด Modal ถ้าคลิกนอกกล่อง
+  window.addEventListener('click', (event) => {
+      if (event.target === addUserModal) {
+          addUserModal.style.display = 'none';
+      }
+  });
+
+  // ฟอร์มเพิ่มผู้ใช้งาน
+  const form = document.getElementById("addUserForm");
+
+  form.addEventListener("submit", async (event) => {
+      event.preventDefault(); 
+
+      // รับค่าจากฟอร์ม
+      const userID = document.getElementById("userID").value
+      const title = document.getElementById("title").value;
+      const user_fname = document.getElementById("user_fname").value
+      const user_lname = document.getElementById("user_lname").value
+      const nickname = document.getElementById("nickname").value
+      const phone = document.getElementById("phone").value
+      const faculty = document.getElementById("faculty").value;
+      const password = generatePassword(); 
+      // pass 6 ตัวท้ายของ userID
+      let profileImageUrl = "";
+      const currentYear = new Date().getFullYear() + 543; 
+    const admissionYear = parseInt(userID.substring(2, 4)); 
+    const admissionFullYear = admissionYear + 2500; 
+    let studyYear = currentYear - admissionFullYear;
+    
+    const maxYear = faculty === "สถาปัตยกรรมศาสตร์" ? 5 : 4;
+    
+    studyYear = Math.min(Math.max(1, studyYear), maxYear);
+    
+    const year = `ปี ${studyYear}`;
+     
+      if (!userID || !title || !user_fname || !user_lname || !nickname || !phone || !faculty) {
+          alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+          return;
+      }
+
+      
+      if (!/^\d{10}$/.test(phone)) {
+          alert("กรุณากรอกเบอร์โทรที่ถูกต้อง (10 ตัวและเป็นเลขเท่านั้น)");
+          document.getElementById("phone").focus();
+          return;
+      }
+
+      try {
+          const response = await axios.post("http://localhost:8000/api/users/register-user", {
+              title: title,
+              user_id: userID,
+              user_fname: user_fname,
+              user_lname: user_lname,
+              nickname: nickname,
+              phone: phone,
+              year,
+              faculty: faculty,
+              password: password, 
+              profile_image: profileImageUrl
+          });
+
+          if (response.data && response.data.message === "User registered successfully") {
+              alert(`เพิ่มข้อมูลผู้ใช้งานสำเร็จ`);
+              document.getElementById("addUserModal").style.display = "none";
+              form.reset();
+          }
+      } catch (error) {
+          console.error("Error adding user:", error);
+          alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
+      }
+  });
+});
+
+function generatePassword() {
+  const userID = document.getElementById("userID").value;
+  const cleanUserID = userID.replace(/-/g, ""); 
+  if (cleanUserID.length >= 6) {
+      return cleanUserID.slice(-6); 
+  }
+  return ""; 
+}
+
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("addDoctorForm");
 

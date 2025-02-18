@@ -220,7 +220,7 @@
             </select> -->
 
             <button class="filter-button" onclick="filterPatients()">ค้นหา</button>
-         
+            <button id="addUserBtn">เพิ่มผู้ใช้</button>
           </div>
 
           <!-- Table Section -->
@@ -247,6 +247,57 @@
           </div>
 
         </div>
+
+        <div id="addUserModal" class="modal">
+          <div class="modal-content">
+              <div>
+                  <span class="close">&times;</span>
+              </div>
+      
+              <form id="addUserForm">
+                  <label for="userID">รหัสประจำตัว</label>
+                  <input type="text" id="userID" oninput="generatePassword()" />
+      
+                  <label for="title">คำนำหน้า</label>
+                  <select id="title">
+                      <option value="นาย">นาย</option>
+                      <option value="นาง">นาง</option>
+                      <option value="นางสาว">นางสาว</option>
+                  </select>
+      
+                  <label for="user_fname">ชื่อจริง</label>
+                  <input type="text" id="user_fname" />
+
+                  <label for="user_lname">นามสกุล</label>
+                  <input type="text" id="user_lname" />
+      
+                  <label for="nickname">ชื่อเล่น</label>
+                  <input type="text" id="nickname" />
+      
+                  <label for="phone">เบอร์โทรศัพท์</label>
+                  <input type="text" id="phone" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                      maxlength="10" />
+      
+                  <label for="faculty">คณะ</label>
+                  <select id="faculty">
+                      <option value="บริหารธุรกิจ">บริหารธุรกิจ</option>
+                      <option value="วิศวกรรมศาสตร์">วิศวกรรมศาสตร์</option>
+                      <option value="เทคโนโลยีคหกรรมศาสตร์">เทคโนโลยีคหกรรมศาสตร์</option>
+                      <option value="ศิลปกรรมศาสตร์">ศิลปกรรมศาสตร์</option>
+                      <option value="เทคโนโลยีการเกษตร">เทคโนโลยีการเกษตร</option>
+                      <option value="ครุศาสตร์อุตสาหกรรม">ครุศาสตร์อุตสาหกรรม</option>
+                      <option value="สถาปัตยกรรมศาสตร์">สถาปัตยกรรมศาสตร์</option>
+                      <option value="วิทยาศาสตร์และเทคโนโลยี">วิทยาศาสตร์และเทคโนโลยี</option>
+                      <option value="เทคโนโลยีสื่อสารมวลชน">เทคโนโลยีสื่อสารมวลชน</option>
+                      <option value="ศิลปศาสตร์">ศิลปศาสตร์</option>
+                      <option value="แพทย์บูรณาการ">แพทย์บูรณาการ</option>
+                      <option value="พยาบาลศาสตร์">พยาบาลศาสตร์</option>
+                  </select>
+      
+                  <button type="submit">บันทึก</button>
+              </form>
+          </div>
+      </div>
         <!-- risk -->
         <!-- <div id="risk-popup" class="risk-popup">
           <div class="risk-content">
