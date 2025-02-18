@@ -41,6 +41,17 @@
             <form action="http://localhost:8000/api/register" method="post">
                 <div class="user-details">
                     <div class="input-box">
+                        <span class="details">คำนำหน้า <span style="color: red;">*</span></span>
+                        <div class="select-box">
+                            <select id="title" name="title">
+                                <option value="นาย">นาย</option>
+                                <option value="นาง">นาง</option>
+                                <option value="นางสาว">นางสาว</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="input-box">
                         <span class="details">ชื่อจริง <span style="color: red;">*</span></span>
                         <input id=user_fname type="text" required required autocomplete="off"
                             pattern="^[a-zA-Zก-ฮะ-์]+$" title="กรุณากรอกตัวอักษรเท่านั้น">

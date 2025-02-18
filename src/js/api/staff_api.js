@@ -885,7 +885,7 @@ function filterPatients() {
   // ✅ กรองข้อมูลจาก userData
   filteredData = userData.filter(user => {
     const ID = (user.user_id || "").toLowerCase();
-    const name = `${user.user_fname} ${user.user_lname}`.toLowerCase();
+    const name = `${user.title} ${user.user_fname} ${user.user_lname}`.toLowerCase();
     const faculty = user.faculty?.trim() || "";
 
     return (
@@ -911,7 +911,7 @@ function renderUserTable() {
       <tr data-id="${user.user_id}">
         <td>${displayIndex}</td>  
         <td>${user.user_id || "ไม่ระบุ"}</td>
-        <td>${user.user_fname} ${user.user_lname || "ไม่ระบุ"}</td>
+        <td> ${user.title} ${user.user_fname} ${user.user_lname || "ไม่ระบุ"}</td>
         <td>${user.nickname || "ไม่ระบุ"}</td>
         <td>${user.faculty || "ไม่ระบุ"}</td>
         <td>${user.phone || "ไม่ระบุ"}</td>
@@ -974,6 +974,7 @@ async function fetchUserDataAndDisplay() {
     // Populate user data on the page
     document.getElementById('userid').innerHTML = user[0].user_id;
     document.getElementById('user-fname').innerHTML = user[0].user_fname;
+    document.getElementById('title').innerHTML = user[0].title;
     document.getElementById('user-lname').innerHTML = user[0].user_lname;
     document.getElementById('user-phone').innerHTML = user[0].phone;
     document.getElementById('user-faculty').innerHTML = user[0].faculty;

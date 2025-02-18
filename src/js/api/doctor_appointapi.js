@@ -12,6 +12,7 @@ async function fetchPatientslist(page = 1) {
             withCredentials: true
         });
 
+        console.log(response);
         if (!response.data || !response.data.appointments || response.data.appointments.length === 0) {
             document.getElementById("patientTable").innerHTML = `<tr><td colspan="9">ไม่พบข้อมูลผู้ป่วย</td></tr>`;
             document.getElementById("paginationControls").innerHTML = "";
@@ -37,6 +38,7 @@ async function fetchPatientslist(page = 1) {
         patientsData = Object.values(latestAppointments).map(appointment => ({
             Appointment_id: appointment.Appointment_id,
             user_id: appointment.user_id,
+            title: appointment.title,
             user_fname: appointment.user_fname,
             user_lname: appointment.user_lname,
             nickname: appointment.nickname,
@@ -72,7 +74,7 @@ function renderPatientsTable(page = 1) {
         <tr data-id="${patient.Appointment_id}">
             <td>${startIndex + index + 1}</td> <!-- ✅ แสดงลำดับที่ -->
             <td>${patient.user_id}</td>
-            <td>${patient.user_fname} ${patient.user_lname}</td>
+            <td>${patient.title} ${patient.user_fname} ${patient.user_lname}</td>
             <td>${patient.nickname}</td>
             <td>${patient.faculty}</td>
             <td>${patient.phone}</td>

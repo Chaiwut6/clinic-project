@@ -823,7 +823,9 @@ async function fetchUserlist() {
     document.getElementById("UserTable").innerHTML = `<tr><td colspan="8">กำลังโหลดข้อมูล...</td></tr>`;
 
     const response = await axios.post("http://localhost:8000/api/employees/userList");
+
     userData = response.data?.users || [];
+    
 
     filteredData = [...userData]; // ✅ สำเนาข้อมูลเพื่อใช้ในการกรอง
 
@@ -850,7 +852,7 @@ function filterPatients() {
   // ✅ กรองข้อมูลจาก userData
   filteredData = userData.filter(user => {
     const ID = (user.user_id || "").toLowerCase();
-    const name = `${user.user_fname} ${user.user_lname}`.toLowerCase();
+    const name = `${user.title} ${user.user_fname} ${user.user_lname}`.toLowerCase();
     const faculty = user.faculty?.trim() || "";
 
     return (

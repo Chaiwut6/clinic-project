@@ -45,6 +45,7 @@ const register = async () => {
     const password = document.querySelector('#password').value;
     const confirm_password = document.querySelector('#confirm_password').value;
     const policyCheckbox = document.querySelector('#policy_checkbox');
+    const title = document.querySelector('#title').value;
     const user_fname = document.querySelector('#user_fname').value;
     const user_lname = document.querySelector('#user_lname').value;
     const nickname = document.querySelector('#nickname').value;
@@ -62,7 +63,7 @@ const register = async () => {
     console.log(`ปีปัจจุบัน: ${currentYear}, ปีที่เข้า: ${admissionFullYear}, ชั้นปี: ${year}`);
 
     // Check if all required fields are filled
-    if (!user_fname || !user_lname || !nickname || !phone || !faculty || !year || !user_id || !password || !confirm_password) {
+    if (!title || !user_fname || !user_lname || !nickname || !phone || !faculty || !year || !user_id || !password || !confirm_password) {
       alert('กรุณากรอกข้อมูลให้ครบทุกช่อง');
       return;
     }
@@ -135,6 +136,7 @@ const register = async () => {
 
     // Call the API to register the user
     const response = await axios.post(registerApiUrl, {
+      title,
       user_fname,
       user_lname,
       nickname,

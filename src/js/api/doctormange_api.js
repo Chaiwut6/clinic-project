@@ -26,6 +26,7 @@ async function fetchUserDataAndDisplay() {
   
       // Populate user data on the page
       document.getElementById('userid').innerHTML = user[0].user_id;
+      document.getElementById('title').innerHTML = user[0].title;
       document.getElementById('user-fname').innerHTML = user[0].user_fname;
       document.getElementById('user-lname').innerHTML = user[0].user_lname;
       document.getElementById('user-phone').innerHTML = user[0].phone;

@@ -98,6 +98,7 @@ async function fetchPatientslist(page = 1) {
 
             return {
                 user_id: appointment.user_id,
+                title: userInfo.title,
                 user_fname: appointment.user_fname,
                 user_lname: appointment.user_lname,
                 nickname: userInfo.nickname || "ไม่ระบุ",
@@ -135,7 +136,7 @@ function renderPatientsTable() {
         <tr>
             <td>${startIndex + index + 1}</td>
             <td>${patient.user_id}</td>
-            <td>${patient.user_fname} ${patient.user_lname}</td>
+            <td>${patient.title} ${patient.user_fname} ${patient.user_lname}</td>
             <td>${patient.nickname}</td>
             <td>${patient.faculty}</td>
             <td>${patient.phone}</td>
@@ -253,7 +254,7 @@ function exportToExcel() {
           }
           groupedData[doctorName].push([
               patient.user_id,
-              `${patient.user_fname} ${patient.user_lname}`,
+              `${patient.title} ${patient.user_fname} ${patient.user_lname}`,
               patient.nickname || "-",
               patient.faculty || "-",
               patient.phone || "-",

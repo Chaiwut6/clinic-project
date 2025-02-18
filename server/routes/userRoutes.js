@@ -69,7 +69,7 @@ router.post('/register-user', async (req, res) => {
   try {
     conn = await initMySQL();
 
-    const { user_id, password, user_fname, user_lname, nickname, year, phone, faculty , profile_image} = req.body;
+    const { title , user_id, password, user_fname, user_lname, nickname, year, phone, faculty , profile_image} = req.body;
 
     // Validate input fields
     if (!user_id || !password || !user_fname || !user_lname) {
@@ -86,7 +86,7 @@ router.post('/register-user', async (req, res) => {
     const passwordHash = await bcrypt.hash(password, 12);
 
     // Insert user and login data
-    const userData = { user_id, user_fname, user_lname, nickname, year, phone, faculty,profile_image };
+    const userData = { user_id, title , user_fname, user_lname, nickname, year, phone, faculty,profile_image };
     const loginData = { login_id: user_id, password: passwordHash, roles: 'user' };
 
     await conn.query('INSERT INTO users SET ?', userData);

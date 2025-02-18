@@ -627,12 +627,13 @@ router.post('/doctorappointments', verifyToken, async (req, res) => {
     conn = await initMySQL();
 
     const [appointmentsResults] = await conn.query(
-      `SELECT a.*, u.user_fname, u.user_lname, u.nickname, u.faculty, u.phone
+      `SELECT a.*, u.title, u.user_fname, u.user_lname, u.nickname, u.faculty, u.phone
        FROM appointments a 
        JOIN users u ON a.user_id = u.user_id
        WHERE a.doc_id = ? AND a.status = 'ยืนยัน'`,
       [login_id]
     );
+    
 
     if (!appointmentsResults || appointmentsResults.length === 0) {
       return res.status(404).json({ message: "ยังไม่มีข้อมูล" });
