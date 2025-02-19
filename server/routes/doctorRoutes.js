@@ -370,8 +370,13 @@ router.post('/doctorDelete', async (req, res) => {
       [doc_id]
     );
 
+    const [Availability] = await conn.query(
+      "DELETE FROM doctor_availability WHERE doc_id = ?",
+      [doc_id]
+    );
+
     // ตรวจสอบผลลัพธ์จากการลบ
-    if (result.affectedRows > 0 || loginResult.affectedRows > 0) {
+    if (result.affectedRows > 0 || loginResult.affectedRows > 0 || Availability.affectedRows > 0) {
       await conn.commit();
       res.status(200).json({
         success: true,
