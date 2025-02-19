@@ -79,7 +79,7 @@
             <li class="nav-item">
                 <a class="nav-link" href="../admin/manage_doctor.html">
                     <i class="fa-solid fa-stethoscope"></i>
-                    <span>จัดการข้อมูลแพทย์</span></a>
+                    <span>จัดการข้อมูลหมอ</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="../admin/patientslist.html">
@@ -139,7 +139,7 @@
                     </button>
 
                     <!-- Topbar Search -->
-                    <h1 class="header-main">จัดการข้อมูลแพทย์</h1>
+                    <h1 class="header-main">จัดการข้อมูลหมอ</h1>
                     <!-- <form
                         class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <div class="input-group">
@@ -277,11 +277,11 @@
                     <!-- Page Heading -->
                     <div>
                         <header>
-                            <h1>รายชื่อแพทย์</h1>
+                            <h1>รายชื่อหมอ</h1>
                             <div class="header-actions">
                                 <input type="text" id="searchdoctor" placeholder="ค้นหา">
                                 <button class="filter-button" onclick="filterDoctor()">ค้นหา</button>
-                                <button id="addDoctorBtn">เพิ่มแพทย์</button>
+                                <button id="addDoctorBtn">เพิ่มหมอ</button>
                             </div>
                         </header>
                         <div>
@@ -290,7 +290,7 @@
                                     <tr>
                                         <th>ลำดับที่</th>
                                         <th>รหัสประจำตัว</th>
-                                        <th>ชื่อแพทย์</th>
+                                        <th>ชื่อหมอ</th>
                                         <th>เบอร์โทรศัพท์</th>
                                         <th>เพิ่มเติม</th>
                                     </tr>
@@ -321,7 +321,7 @@
                             <input type="text" id="doctorID" /> -->
                             <label for="doctorID">รหัสประจำตัว</label>
                             <input type="text" id="doctorID" />
-                            <label for="doctorName">ชื่อแพทย์</label>
+                            <label for="doctorName">ชื่อหมอ</label>
                             <input type="text" id="doctorName" />
                             <label for="phoneNumber">เบอร์โทรศัพท์</label>
                             <input type="text" id="phoneNumber" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
@@ -347,7 +347,7 @@
                             <label for="email">รหัสประจำตัว</label>
                             <input type="email" class="email" />
 
-                            <label for="doctorName">ชื่อแพทย์</label>
+                            <label for="doctorName">ชื่อหมอ</label>
                             <input type="text" class="doctorName" pattern="^[a-zA-Zก-ฮะ-์]+$"
                                 title="กรุณากรอกตัวอักษรเท่านั้น" />
 

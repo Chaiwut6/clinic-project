@@ -224,7 +224,7 @@ async function loadAppointmentsBreakdownChart() {
       const labels = data.appointments.map(a => a.faculty) || [];
       const totalAppointments = data.appointments.map(a => a.total) || [];
       const totalAll = data.totalConfirmedAppointments || 0;
-      console.log(totalAll);
+    //   console.log(totalAll);
       // ✅ ดึง <select> อาการที่มีอยู่
       const symptomFilter = document.getElementById("symptomFilterUsers");
       const existingSymptoms = new Set(Array.from(symptomFilter.options).map(opt => opt.value));
@@ -396,7 +396,7 @@ async function exportAppointmentsOverview() {
         });
   
         const data = response.data;
-        console.log(data);
+        // console.log(data);
   
         if (!data.success || !data.appointments || data.appointments.length === 0) {
             alert("ไม่มีข้อมูลสำหรับช่วงเวลาที่เลือก");

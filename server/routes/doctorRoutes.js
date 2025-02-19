@@ -265,7 +265,7 @@ router.post('/doctorUpdate', async (req, res) => {
     } else {
       // Rollback หากไม่มีข้อมูลในตาราง `doctor`
       await conn.rollback();
-      res.status(404).json({ success: false, message: 'ไม่พบข้อมูลแพทย์ในระบบ' });
+      res.status(404).json({ success: false, message: 'ไม่พบข้อมูลหมอในระบบ' });
     }
   } catch (error) {
     // Rollback ในกรณีที่เกิดข้อผิดพลาด
@@ -375,12 +375,12 @@ router.post('/doctorDelete', async (req, res) => {
       await conn.commit();
       res.status(200).json({
         success: true,
-        message: 'ลบข้อมูลแพทย์สำเร็จ'
+        message: 'ลบข้อมูลหมอสำเร็จ'
       });
     } else {
       res.status(404).json({
         success: false,
-        message: 'ไม่พบข้อมูลแพทย์ที่ต้องการลบ'
+        message: 'ไม่พบข้อมูลหมอที่ต้องการลบ'
       });
     }
   } catch (error) {
@@ -458,7 +458,7 @@ router.post("/add-availability", async (req, res) => {
   }
 
   try {
-    console.log("Request Payload:", { doc_id, available_date, start_time, end_time });
+    // console.log("Request Payload:", { doc_id, available_date, start_time, end_time });
 
     conn = await initMySQL();
 
@@ -753,15 +753,29 @@ router.delete('/deleteAvailability', async (req, res) => {
 router.post('/saveSymptoms', async (req, res) => {
   let conn;
   try {
-    const { user_id, appointment_id, symptoms, additionalSymptom } = req.body;
+    const { user_id, symptoms, additionalSymptom } = req.body;
 
-    if (!user_id || !appointment_id || !symptoms) {
+    if (!user_id || !symptoms) {
         return res.status(400).json({ message: 'ข้อมูลไม่ครบถ้วน' });
     }
 
     conn = await initMySQL();
 
+    const [latestAppointment] = await conn.query(
+      "SELECT Appointment_id FROM appointments WHERE user_id = ? AND status = 'ยืนยัน' AND date <= NOW() ORDER BY date DESC LIMIT 1",
+      [user_id]
+    );
+
+    if (!latestAppointment.length) {
+      return res.status(404).json({ message: "ไม่พบวันนัดล่าสุดของผู้ใช้" });
+    }
+
+    const appointment_id = latestAppointment[0].Appointment_id;
+    
     let allSymptoms = Array.isArray(symptoms) ? [...symptoms] : [];
+    if (additionalSymptom && additionalSymptom.trim() !== '') {
+      allSymptoms.push(additionalSymptom.trim());
+    }
 
 
     if (additionalSymptom && additionalSymptom.trim() !== '') {

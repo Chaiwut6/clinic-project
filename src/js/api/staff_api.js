@@ -143,7 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       if (response.data && response.data.message === "Doctor registration successful") {
-        alert("เพิ่มข้อมูลแพทย์สำเร็จ");
+        alert("เพิ่มข้อมูลหมอสำเร็จ");
         // ปิด modal และ clear ฟอร์ม
         document.getElementById("addDoctorModal").style.display = "none";
         form.reset();
@@ -287,7 +287,7 @@ const Logout = async () => {
 
       if (response.data && response.data.employee) {
         const employeeInfo = response.data.employee;
-        console.log("employeeInfo:", employeeInfo);
+        // console.log("employeeInfo:", employeeInfo);
         sessionStorage.setItem('employeeID', employeeInfo.employee_id || '');
 
 
@@ -325,11 +325,11 @@ const Logout = async () => {
       const response = await axios.post(`http://localhost:8000/api/admin/admininfo`, {}, {
         withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
       });
-      console.log(response);
+      // console.log(response);
   
       if (response.data && response.data.admin) {
         const adminInfo = response.data.admin;
-        console.log("adminInfo:", adminInfo);
+        // console.log("adminInfo:", adminInfo);
 
         // แสดงข้อมูลบนหน้า
         updateAdminData(adminInfo);
@@ -372,7 +372,7 @@ async function fetchDoctors() {
     doctorData = response.data?.doctor || [];
 
     if (doctorData.length === 0) {
-      document.getElementById("doctorinTable").innerHTML = `<tr><td colspan="5">ไม่พบข้อมูลแพทย์</td></tr>`;
+      document.getElementById("doctorinTable").innerHTML = `<tr><td colspan="5">ไม่พบข้อมูลหมอ</td></tr>`;
       document.getElementById("doctorPaginationControls").innerHTML = "";
       return;
     }
@@ -519,7 +519,7 @@ function editDoctor(docId, docName, docPhone) {
         <div>
           <span class="close" id="cancelEdit">&times;</span>
         </div>
-        <label for="editName">ชื่อแพทย์</label>
+        <label for="editName">ชื่อหมอ</label>
         <input type="text" id="editName" value="${docName}" required />
         <label for="editPhone">เบอร์โทรศัพท์</label>
         <input type="text" id="editPhone" value="${docPhone}" pattern="^\\d{10}$" title="กรุณากรอกตัวเลข 10 หลัก" required />
@@ -555,11 +555,11 @@ function editDoctor(docId, docName, docPhone) {
 }
 
 async function deleteDoctor(docId) {
-  if (!confirm("คุณต้องการลบข้อมูลแพทย์นี้หรือไม่?")) return;
+  if (!confirm("คุณต้องการลบข้อมูลหมอนี้หรือไม่?")) return;
 
   try {
     await axios.post("http://localhost:8000/api/doctors/doctorDelete", { doc_id: docId });
-    alert("ลบข้อมูลแพทย์สำเร็จ");
+    alert("ลบข้อมูลหมอสำเร็จ");
     fetchDoctors();
   } catch (err) {
     console.error("Error deleting doctor data:", err);
@@ -703,7 +703,7 @@ function addAvailabilityEventListener() {
 
     const modal = document.getElementById("availabilityModal");
     const doctorID = modal ? modal.getAttribute("data-doctor-id") : sessionStorage.getItem("selectedDoctorID");
-    console.log(doctorID);
+    // console.log(doctorID);
     const availableDate = document.getElementById("availableDate").value;
     const startTime = document.getElementById("startTime").value;
     const endTime = document.getElementById("endTime").value;
@@ -1067,7 +1067,7 @@ async function fetchUserDataAndDisplay() {
     const data = response.data;
     const user = data.user;
     const imageUrl = data.user;
-    console.log(imageUrl);
+    // console.log(imageUrl);
     // Check if user data is valid
     if (!user || !Array.isArray(user) || user.length === 0) {
       console.error('User data is missing or invalid');
@@ -1466,7 +1466,7 @@ async function loadCaseStatus() {
       const response = await axios.post("http://localhost:8000/api/employees/showcasesStatus", {
         user_id: userId, 
     });
-      console.log(response.data);
+      // console.log(response.data);
       if (response.data.success && response.data.status) {
           selectedCaseStatus.innerText = response.data.status;
           caseStatusSelect.value = response.data.status; // 
@@ -1576,7 +1576,7 @@ async function fetchAppointment() {
     if (doctors && doctors.length > 0) {
       populateDoctorDropdown(doctors);
     } else {
-      alert("ไม่พบข้อมูลแพทย์");
+      alert("ไม่พบข้อมูลหมอ");
     }
   } catch (error) {
     console.error("Error fetching doctor data:", error);
@@ -1591,7 +1591,7 @@ function populateDoctorDropdown(doctors) {
     return;
   }
 
-  doctorSelect.innerHTML = '<option value="">--เลือกแพทย์--</option>';
+  doctorSelect.innerHTML = '<option value="">--เลือกหมอ--</option>';
 
   doctors.forEach(doctor => {
     const option = document.createElement("option");
@@ -1653,7 +1653,7 @@ async function fetchAvailabilityList(docId) {
       alert(error.response.data.message || "ยังไม่มีการเพิ่มวันที่ว่าง"); 
     } else {
       console.error("Error fetching availability:", error);
-      alert("เกิดข้อผิดพลาดในการดึงข้อมูลวันเวลาที่ว่างของแพทย์");
+      alert("เกิดข้อผิดพลาดในการดึงข้อมูลวันเวลาที่ว่างของหมอ");
     }
   }
 }
@@ -1677,7 +1677,7 @@ function populateAvailabilityTable(availability) {
     const row = document.createElement("tr");
     const cell = document.createElement("td");
     cell.colSpan = 3;
-    cell.textContent = "ไม่มีข้อมูลวันเวลาที่แพทย์ว่าง";
+    cell.textContent = "ไม่มีข้อมูลวันเวลาที่หมอว่าง";
     row.appendChild(cell);
     tableBody.appendChild(row);
     return;
@@ -1744,7 +1744,7 @@ async function saveAppointment() {
     });
 
     if (checkResponse.data.totalAppointments >= 12) {
-      alert("แพทย์มีการนัดหมายเต็มแล้วสำหรับวันนี้ กรุณาเลือกวันอื่น");
+      alert("หมอมีการนัดหมายเต็มแล้วสำหรับวันนี้ กรุณาเลือกวันอื่น");
       return;
     }
 

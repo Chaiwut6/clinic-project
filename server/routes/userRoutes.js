@@ -433,7 +433,7 @@ router.post('/change-password', verifyToken, async (req, res) => {
 
     // อัปเดตรหัสผ่านในฐานข้อมูล
     const [result] = await conn.query("UPDATE login SET password = ? WHERE login_id = ?", [hashedPassword, login_id]);
-    console.log("Update result:", result);
+    // console.log("Update result:", result);
 
     // ส่งคำตอบสำเร็จ
     res.status(200).json({ message: 'อัปเดตรหัสผ่านเรียบร้อยแล้ว' });
@@ -453,14 +453,14 @@ router.post('/updateuser', verifyToken, async (req, res) => {
   const login_id = req.user.login_id; // ได้มาจาก verifyToken
   let conn = null;
   const {
-    user_fname, user_lname, nickname, faculty, year, phone
+    user_fname, user_lname, nickname, faculty, phone
   } = req.body;
 
   try {
     conn = await initMySQL();
     
     // ตรวจสอบข้อมูลที่จำเป็น
-    if (!user_fname || !user_lname || !faculty || !year || !nickname || !phone) {
+    if (!user_fname || !user_lname || !faculty  || !nickname || !phone) {
       return res.status(400).json({ success: false, message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
     }
 
@@ -469,8 +469,8 @@ router.post('/updateuser', verifyToken, async (req, res) => {
 
     // อัปเดตในตาราง users
     const [result1] = await conn.query(
-      "UPDATE users SET user_fname = ?, user_lname = ?, nickname = ?, faculty = ?, year = ?, phone = ? WHERE user_id = ?",
-      [user_fname, user_lname, nickname, faculty, year, phone, login_id]
+      "UPDATE users SET user_fname = ?, user_lname = ?, nickname = ?, faculty = ?, phone = ? WHERE user_id = ?",
+      [user_fname, user_lname, nickname, faculty,phone, login_id]
     );
 
     // อัปเดตในตาราง results

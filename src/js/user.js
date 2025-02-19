@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     user_fname: user_fname,
                     user_lname: user_lname,
                 });
-                console.log('Success:', response.data);
+                // console.log('Success:', response.data);
                 return true; // ส่งคืนค่า true หากบันทึกสำเร็จ
             } catch (error) {
                 console.error('Error:', error);

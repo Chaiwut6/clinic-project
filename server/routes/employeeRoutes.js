@@ -995,7 +995,7 @@ router.post('/saveSymptoms', async (req, res) => {
 
     // ✅ ดึง Appointment_id ล่าสุดของ user นี้
     const [latestAppointment] = await conn.query(
-      "SELECT Appointment_id FROM appointments WHERE user_id = ? ORDER BY date DESC LIMIT 1",
+      "SELECT Appointment_id FROM appointments WHERE user_id = ? AND status = 'ยืนยัน' AND date <= NOW() ORDER BY date DESC LIMIT 1",
       [user_id]
     );
 

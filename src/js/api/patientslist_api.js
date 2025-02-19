@@ -36,7 +36,7 @@ function populateDoctorDropdown(doctors) {
   const doctorSelect = document.getElementById("doctorSelect");
 
   // ลบตัวเลือกเก่าที่อาจมีอยู่แล้วใน select
-  doctorSelect.innerHTML = `<option value="">--เลือกแพทย์--</option>`;
+  doctorSelect.innerHTML = `<option value="">--เลือกหมอ--</option>`;
 
   // เติมตัวเลือกลงใน select
   doctors.forEach(doctor => {
@@ -271,7 +271,7 @@ function exportToExcel() {
   Object.keys(groupedData).forEach((doctorName) => {
       const sheetData = [
           [`หมอที่ดูแล: ${doctorName}`],
-          ["รหัสประจำตัว", "ชื่อ-นามสกุล", "ชื่อเล่น", "คณะ", "เบอร์โทร", "ปัญหา", "วันนัด", "ประเภทโรค", "แพทย์"]
+          ["รหัสประจำตัว", "ชื่อ-นามสกุล", "ชื่อเล่น", "คณะ", "เบอร์โทร", "ปัญหา", "วันนัด", "ประเภทโรค", "หมอ"]
       ];
 
       sheetData.push(...groupedData[doctorName]);

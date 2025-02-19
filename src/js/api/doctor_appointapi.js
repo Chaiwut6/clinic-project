@@ -12,7 +12,7 @@ async function fetchPatientslist(page = 1) {
             withCredentials: true
         });
 
-        console.log(response);
+        // console.log(response);
         if (!response.data || !response.data.appointments || response.data.appointments.length === 0) {
             document.getElementById("patientTable").innerHTML = `<tr><td colspan="9">ไม่พบข้อมูลผู้ป่วย</td></tr>`;
             document.getElementById("paginationControls").innerHTML = "";

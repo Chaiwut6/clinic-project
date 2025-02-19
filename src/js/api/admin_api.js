@@ -4,11 +4,11 @@ const fetchAdminInfo = async () => {
       const response = await axios.post(`http://localhost:8000/api/admin/admininfo`, {}, {
         withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
       });
-      console.log(response);
+      // console.log(response);
   
       if (response.data && response.data.admin) {
         const adminInfo = response.data.admin;
-        console.log("adminInfo:", adminInfo);
+        // console.log("adminInfo:", adminInfo);
 
   
   
@@ -63,7 +63,7 @@ const fetchAdminInfo = async () => {
       });
 
       if (response.data && response.data.message === "Doctor registration successful") {
-        alert("เพิ่มข้อมูลแพทย์สำเร็จ");
+        alert("เพิ่มข้อมูลหมอสำเร็จ");
         // ปิด modal และ clear ฟอร์ม
         document.getElementById("addDoctorModal").style.display = "none";
         form.reset();
@@ -227,7 +227,7 @@ async function fetchDoctors() {
     doctorData = response.data?.doctor || [];
 
     if (doctorData.length === 0) {
-      document.getElementById("doctorinTable").innerHTML = `<tr><td colspan="5">ไม่พบข้อมูลแพทย์</td></tr>`;
+      document.getElementById("doctorinTable").innerHTML = `<tr><td colspan="5">ไม่พบข้อมูลหมอ</td></tr>`;
       document.getElementById("doctorPaginationControls").innerHTML = "";
       return;
     }
@@ -374,7 +374,7 @@ function editDoctor(docId, docName, docPhone) {
         <div>
           <span class="close" id="cancelEdit">&times;</span>
         </div>
-        <label for="editName">ชื่อแพทย์</label>
+        <label for="editName">ชื่อหมอ</label>
         <input type="text" id="editName" value="${docName}" required />
         <label for="editPhone">เบอร์โทรศัพท์</label>
         <input type="text" id="editPhone" value="${docPhone}" pattern="^\\d{10}$" title="กรุณากรอกตัวเลข 10 หลัก" required />
@@ -410,11 +410,11 @@ function editDoctor(docId, docName, docPhone) {
 }
 
 async function deleteDoctor(docId) {
-  if (!confirm("คุณต้องการลบข้อมูลแพทย์นี้หรือไม่?")) return;
+  if (!confirm("คุณต้องการลบข้อมูลหมอนี้หรือไม่?")) return;
 
   try {
     await axios.post("http://localhost:8000/api/doctors/doctorDelete", { doc_id: docId });
-    alert("ลบข้อมูลแพทย์สำเร็จ");
+    alert("ลบข้อมูลหมอสำเร็จ");
     fetchDoctors();
   } catch (err) {
     console.error("Error deleting doctor data:", err);
@@ -1371,7 +1371,7 @@ async function fetchAppointment() {
     if (doctors && doctors.length > 0) {
       populateDoctorDropdown(doctors);
     } else {
-      alert("ไม่พบข้อมูลแพทย์");
+      alert("ไม่พบข้อมูลหมอ");
     }
   } catch (error) {
     console.error("Error fetching doctor data:", error);
@@ -1386,7 +1386,7 @@ function populateDoctorDropdown(doctors) {
     return;
   }
 
-  doctorSelect.innerHTML = '<option value="">--เลือกแพทย์--</option>';
+  doctorSelect.innerHTML = '<option value="">--เลือกหมอ--</option>';
 
   doctors.forEach(doctor => {
     const option = document.createElement("option");
@@ -1448,7 +1448,7 @@ async function fetchAvailabilityList(docId) {
       alert(error.response.data.message || "ยังไม่มีการเพิ่มวันที่ว่าง"); 
     } else {
       console.error("Error fetching availability:", error);
-      alert("เกิดข้อผิดพลาดในการดึงข้อมูลวันเวลาที่ว่างของแพทย์");
+      alert("เกิดข้อผิดพลาดในการดึงข้อมูลวันเวลาที่ว่างของหมอ");
     }
   }
 }
@@ -1472,7 +1472,7 @@ function populateAvailabilityTable(availability) {
     const row = document.createElement("tr");
     const cell = document.createElement("td");
     cell.colSpan = 3;
-    cell.textContent = "ไม่มีข้อมูลวันเวลาที่แพทย์ว่าง";
+    cell.textContent = "ไม่มีข้อมูลวันเวลาที่หมอว่าง";
     row.appendChild(cell);
     tableBody.appendChild(row);
     return;
@@ -1563,7 +1563,7 @@ async function saveAppointment() {
     console.log("Error:", error);
 
     if (error.response && error.response.status === 400) {
-      console.log("Response Data:", error.response.data); // ตรวจสอบข้อความที่ส่งกลับ
+      // console.log("Response Data:", error.response.data); // ตรวจสอบข้อความที่ส่งกลับ
       alert(error.response.data?.message || "เวลานัดหมายซ้ำ กรุณาเลือกเวลาอื่น");
     } else {
       console.error("Error:", error.response ? error.response.data : error.message);
@@ -1890,7 +1890,6 @@ function filterManager() {
 }
 
 function uploadImage() {
-  console.log("sfgfg");
   // const fileInput = document.getElementById("imageInput");
   // const formData = new FormData();
   // formData.append("image", fileInput.files[0]);

@@ -7,7 +7,7 @@ const fetchDoctorInfo = async () => {
 
     if (response.data && response.data.doctor) {
       const doctorInfo = response.data.doctor;
-      console.log("doctorInfo:", doctorInfo);
+      // console.log("doctorInfo:", doctorInfo);
       // sessionStorage.setItem('doctorID', doctorInfo.doc_id || '');
 
 

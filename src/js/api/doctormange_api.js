@@ -157,6 +157,7 @@ async function fetchUserDataAndDisplay() {
             const row = document.createElement('tr');
             row.innerHTML = `
               <td>${formattedDate || 'ยังไม่มีการนัด'}</td>
+              <td>${appointment.doc_name || 'ไม่ระบุ'}</td>
               <td>${Array.isArray(appointment.symptoms) ? appointment.symptoms.join(" / ") : 'ไม่ระบุ'}</td>
               <td>${appointment.status || 'ไม่ระบุ'}</td>
             `;
