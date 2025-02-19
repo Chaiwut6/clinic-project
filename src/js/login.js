@@ -452,9 +452,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
           if (response.data && response.data.user) {
               const userInfo = response.data.user; 
-              
-
-
+            
               populateForm(userInfo);
 
               // ✅ อัปเดตรูปโปรไฟล์ถ้ามี
@@ -514,6 +512,7 @@ document.addEventListener("DOMContentLoaded", () => {
               if (response.data.success) {
                   alert("ข้อมูลได้รับการอัปเดตเรียบร้อยแล้ว!");
                   fetchUserInfo();
+                  location.reload();
               } else {
                   console.error(" Update failed:", response.data.message);
                   alert("ไม่สามารถอัปเดตข้อมูลได้: " + (response.data.message || "ไม่ทราบสาเหตุ"));

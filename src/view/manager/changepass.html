@@ -78,10 +78,9 @@
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
             <li class="nav-item">
-                <a class="nav-link" href="#" onclick="openCustomModal()">
+                <a class="nav-link" href="#" data-toggle="modal" data-target="#logoutModal">
                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                    <span>ออกจากระบบ</span>
-                </a>
+                    <span>ออกจากระบบ</span></a>
             </li>
             <!-- Sidebar Toggler (Sidebar) -->
             <!-- <div class="text-center d-none d-md-inline">
@@ -283,18 +282,18 @@
     </a>
 
     <!-- Logout Modal-->
-    <div id="logoutModal" class="custom-modal">
-        <div class="custom-modal-dialog">
-            <div class="custom-modal-content">
-                <div class="custom-modal-header">
-                    <button class="custom-close" onclick="closeCustomModal()">&times;</button>
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
                 </div>
-                <div class="custom-modal-body">
-                    เลือก "ออกจากระบบ" ด้านล่างหากคุณพร้อมที่จะออกจากเว็บไซต์ปัจจุบันของคุณ
-                </div>
-                <div class="custom-modal-footer">
-                    <button class="custom-btn custom-btn-secondary" onclick="closeCustomModal()">ยกเลิก</button>
-                    <a class="custom-btn custom-btn-primary" href="../index.html" onclick="Logout()">ออกจากระบบ</a>
+                <div class="modal-body">เลือก "ออกจากระบบ" ด้านล่างหากคุณพร้อมที่จะออกจากเว็บไซต์ปัจจุบันของคุณ</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">ยกเลิก</button>
+                    <a class="btn btn-primary" href="../index.html" onclick="Logout()">ออกจากระบบ</a>
                 </div>
             </div>
         </div>
