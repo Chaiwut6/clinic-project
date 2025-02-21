@@ -212,11 +212,28 @@
                             <option value="11">พฤศจิกายน</option>
                             <option value="12">ธันวาคม</option>
                         </select>
+                        <select id="yearSelect">
+                            <option value="">--เลือกปี--</option>
+                        </select>
                         <button class="filter-button" onclick="filterReceivecare()">ค้นหา</button>
                         <button onclick="exportToExcel()" style="cursor: pointer;">
                             <i class="fa-solid fa-print" onclick="exportToExcel()"></i>
                         </button>
                     </div>
+
+                    <script>
+                        const yearSelect = document.getElementById('yearSelect');
+                        const currentYear = new Date().getFullYear();
+                    
+                        for (let year = currentYear; year >= currentYear - 3; year--) {
+                            const thaiYear = year + 543; // ✅ แปลง ค.ศ. เป็น พ.ศ.
+                            const option = document.createElement('option');
+                            option.value = thaiYear;    // ✅ ใช้ พ.ศ. เป็น value
+                            option.textContent = thaiYear; // ✅ แสดงผลเป็น พ.ศ.
+                            yearSelect.appendChild(option);
+                        }
+                    </script>
+                    
 
                     <!-- Table -->
                     <div class="table-container">

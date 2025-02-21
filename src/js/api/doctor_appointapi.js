@@ -12,7 +12,6 @@ async function fetchPatientslist(page = 1) {
             withCredentials: true
         });
 
-        // console.log(response);
         if (!response.data || !response.data.appointments || response.data.appointments.length === 0) {
             document.getElementById("patientTable").innerHTML = `<tr><td colspan="9">ไม่พบข้อมูลผู้ป่วย</td></tr>`;
             document.getElementById("paginationControls").innerHTML = "";
@@ -35,21 +34,31 @@ async function fetchPatientslist(page = 1) {
         });
 
         // ✅ แปลง Object กลับเป็น Array เพื่อใช้แสดงผล
-        patientsData = Object.values(latestAppointments).map(appointment => ({
-            Appointment_id: appointment.Appointment_id,
-            user_id: appointment.user_id,
-            title: appointment.title,
-            user_fname: appointment.user_fname,
-            user_lname: appointment.user_lname,
-            nickname: appointment.nickname,
-            faculty: appointment.faculty,
-            phone: appointment.phone,
-            problem: appointment.problem || "ไม่ระบุ",
-            appointmentDate: appointment.date
-                ? new Date(appointment.date).toLocaleDateString("th-TH", { year: "numeric", month: "long", day: "numeric" })
-                : "ไม่ระบุ",
-            doctor: appointment.doc_name || "ไม่ระบุ"
-        }));
+        patientsData = Object.values(latestAppointments).map(appointment => {
+            const rawDate = new Date(appointment.date); // ✅ เก็บ Date Object สำหรับการเรียงลำดับ
+            const thaiDate = rawDate.toLocaleDateString("th-TH", { 
+                year: "numeric", 
+                month: "long", 
+                day: "numeric" 
+            });
+            return {
+                Appointment_id: appointment.Appointment_id,
+                user_id: appointment.user_id,
+                title: appointment.title,
+                user_fname: appointment.user_fname,
+                user_lname: appointment.user_lname,
+                nickname: appointment.nickname,
+                faculty: appointment.faculty,
+                phone: appointment.phone,
+                problem: appointment.problem || "ไม่ระบุ",
+                rawDate: rawDate, // ✅ เก็บ Date Object สำหรับการเรียงลำดับ
+                appointmentDate: thaiDate, // ✅ แสดงผลเป็น พ.ศ.
+                doctor: appointment.doc_name || "ไม่ระบุ"
+            };
+        });
+
+        // ✅ เรียงลำดับวันนัดจาก **ใหม่สุดไปหาเก่าสุด**
+        patientsData.sort((a, b) => b.rawDate - a.rawDate);
 
         filteredPatientsData = [...patientsData];
         renderPatientsTable(page);
@@ -59,6 +68,7 @@ async function fetchPatientslist(page = 1) {
         console.error("Error fetching patient data:", error);
     }
 }
+
 
 
 
@@ -131,6 +141,7 @@ function filterReceivecare() {
     const searchFilter = document.getElementById('searchName').value.trim().toLowerCase();
     const facultyFilter = document.getElementById('searchFaculty').value.trim();
     const monthFilter = document.getElementById('monthSelect').value.trim();
+    const yearFilter = document.getElementById('yearSelect').value.trim();
 
     const monthMap = {
         'มกราคม': '01', 'กุมภาพันธ์': '02', 'มีนาคม': '03', 'เมษายน': '04',
@@ -146,10 +157,12 @@ function filterReceivecare() {
 
         // ✅ คำนวณเดือนที่ตรงกัน
         let formattedMonth = "";
+        let formattedYear = "";
         if (dateText) {
             const dateParts = dateText.split(' ');
             if (dateParts.length >= 2) {
                 formattedMonth = monthMap[dateParts[1].trim()] || '';
+                formattedYear = dateParts[2].trim();
             }
         }
 
@@ -157,7 +170,8 @@ function filterReceivecare() {
             // ✅ ค้นหาจาก ชื่อ-นามสกุล หรือ รหัสประจำตัว
             (!searchFilter || fullName.includes(searchFilter) || userID.includes(searchFilter)) &&
             (!facultyFilter || faculty === facultyFilter) &&
-            (!monthFilter || formattedMonth === monthFilter)
+            (!monthFilter || formattedMonth === monthFilter) &&
+            (!yearFilter || formattedYear === yearFilter)
         );
     });
 

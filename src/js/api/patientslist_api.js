@@ -184,6 +184,7 @@ function filterReceivecare() {
     const nameFilter = document.getElementById('searchName').value.trim().toLowerCase();
     const doctorFilter = document.getElementById('doctorSelect').value.trim();
     const monthFilter = document.getElementById('monthSelect').value.trim();
+    const yearFilter = document.getElementById('yearSelect').value.trim();
 
     const monthMap = {
         'มกราคม': '01', 'กุมภาพันธ์': '02', 'มีนาคม': '03', 'เมษายน': '04',
@@ -199,17 +200,20 @@ function filterReceivecare() {
         const dateText = (patient.appointmentDate || "").trim();
 
         let formattedMonth = "";
+        let formattedYear = "";
         if (dateText) {
             const dateParts = dateText.split(' ');
-            if (dateParts.length >= 2) {
+            if (dateParts.length >= 3) {
                 formattedMonth = monthMap[dateParts[1].trim()] || '';
+                formattedYear = dateParts[2].trim();
             }
         }
 
         return (
             (!nameFilter || name.includes(nameFilter) || userID.includes(nameFilter)) &&
             (!doctorFilter || doctor === doctorFilter) &&
-            (!monthFilter || formattedMonth === monthFilter)
+            (!monthFilter || formattedMonth === monthFilter) &&
+            (!yearFilter || formattedYear === yearFilter)  // ✅ เพิ่มการกรองตามปี
         );
     });
 
@@ -217,6 +221,7 @@ function filterReceivecare() {
     renderPatientsTable();
     renderPaginationControls();
 }
+
 
 function exportToExcel() {
   const doctorSelect = document.getElementById("doctorSelect");

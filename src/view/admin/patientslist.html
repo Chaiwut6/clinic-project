@@ -211,11 +211,26 @@
                             <option value="11">พฤศจิกายน</option>
                             <option value="12">ธันวาคม</option>
                         </select>
+                        <select id="yearSelect">
+                            <option value="">--เลือกปี--</option>
+                        </select>
                         <button class="filter-button" onclick="filterReceivecare()">ค้นหา</button>
                         <button onclick="exportToExcel()" style="cursor: pointer;">
                             <i class="fa-solid fa-print"></i>
                         </button>
                     </div>
+                    <script>
+                        const yearSelect = document.getElementById('yearSelect');
+                        const currentYear = new Date().getFullYear();
+                    
+                        for (let year = currentYear; year >= currentYear - 3; year--) {
+                            const thaiYear = year + 543; 
+                            const option = document.createElement('option');
+                            option.value = thaiYear;    
+                            option.textContent = thaiYear; 
+                            yearSelect.appendChild(option);
+                        }
+                    </script>
 
                     <!-- Table -->
                     <div class="table-container">
