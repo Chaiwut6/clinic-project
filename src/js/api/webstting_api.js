@@ -30,31 +30,45 @@ async function uploadImage() {
 
 document.addEventListener("DOMContentLoaded", async () => {
     try {
+        // 🔹 เรียก API เพื่อตรวจสอบรูปล่าสุดในโฟลเดอร์ uploads
         const response = await axios.get("http://localhost:8000/api/upload/latest-image");
         let latestImageUrl = response.data.imageUrl;
         const defaultImage = "http://localhost:8000/uploads/default_page.jpg";
         
-        // ✅ ตรวจสอบว่ามี `.clinic-image` ก่อนเปลี่ยน src
+        // 🔹 ค้นหา .clinic-image ก่อนเปลี่ยน src
         const clinicImage = document.querySelector(".clinic-image");
         if (!clinicImage) return;
 
-        // ✅ ถ้า `latestImageUrl` ไม่มีค่า หรือเป็นค่าไม่ถูกต้อง ให้ใช้ `defaultImage`
-        if (!latestImageUrl || latestImageUrl.includes("uploads/profiles")) {
-            clinicImage.src = defaultImage;
+        // 🔹 ตรวจสอบว่า `latestImageUrl` มีค่าและไม่ใช่รูป default
+        if (latestImageUrl && !latestImageUrl.includes("default_page.jpg")) {
+            // ✅ ตรวจสอบว่ารูปล่าสุดยังมีอยู่จริง
+            const imageExists = await checkImageExists(latestImageUrl);
+            clinicImage.src = imageExists ? latestImageUrl : defaultImage;
         } else {
-            clinicImage.src = latestImageUrl;
+            clinicImage.src = defaultImage;
         }
 
     } catch (error) {
         console.error("Error fetching latest image:", error);
 
-        // ✅ ใช้ค่าเริ่มต้นเมื่อเกิดข้อผิดพลาด
+        // ✅ ใช้รูป default เมื่อเกิดข้อผิดพลาด
         const clinicImage = document.querySelector(".clinic-image");
         if (clinicImage) {
             clinicImage.src = "http://localhost:8000/uploads/default_page.jpg";
         }
     }
 });
+
+// 🔸 ฟังก์ชันตรวจสอบว่ารูปมีอยู่จริงหรือไม่
+async function checkImageExists(imageUrl) {
+    try {
+        const response = await axios.head(imageUrl);
+        return response.status === 200;
+    } catch (error) {
+        console.error("Error checking image existence:", error);
+        return false;
+    }
+}
 
 
 

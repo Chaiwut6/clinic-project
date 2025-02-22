@@ -610,7 +610,7 @@ function updateAvailabilityTable() {
     : [...availabilityData]; // ถ้าไม่เลือกเดือนให้แสดงทั้งหมด
 
   renderAvailabilityTable();
-  renderPaginationControls();
+  // renderPaginationControls();
 }
 
 function renderAvailabilityTable() {
@@ -1620,16 +1620,16 @@ function populateMonthDropdown() {
 
   const currentYear = new Date().getFullYear();
 
-  for (let month = 1; month <= 12; month++) {
-    const option = document.createElement("option");
-    option.value = `${currentYear}-${month.toString().padStart(2, "0")}`;
-    option.textContent = new Date(currentYear, month - 1).toLocaleString("th-TH", {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-    monthSelect.appendChild(option);
-  }
+  // for (let month = 1; month <= 12; month++) {
+  //   const option = document.createElement("option");
+  //   option.value = `${currentYear}-${month.toString().padStart(2, "0")}`;
+  //   option.textContent = new Date(currentYear, month - 1).toLocaleString("th-TH", {
+  //     year: 'numeric',
+  //     month: 'long',
+  //     day: 'numeric'
+  //   });
+  //   monthSelect.appendChild(option);
+  // }
 
   monthSelect.addEventListener("change", () => {
     const selectedMonth = monthSelect.value;

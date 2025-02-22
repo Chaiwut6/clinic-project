@@ -70,7 +70,7 @@ router.get("/latest-image", (req, res) => {
                 name: file,
                 time: fs.statSync(path.join(uploadDir, file)).mtime.getTime()
             }))
-            .sort((a, b) => b.time - a.time); // เรียงจากใหม่ -> เก่า
+            .sort((a, b) => b.time - a.time); 
 
         // ✅ ดึงไฟล์ล่าสุด
         const latestFile = sortedFiles[0].name;
