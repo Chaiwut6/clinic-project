@@ -8,7 +8,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (response.data && response.data.manager) {
                 const managerInfo = response.data.manager;
                 // console.log("Manager Info:", managerInfo);
-                sessionStorage.setItem('managerID', managerInfo.man_id || '');
+                const encrypManager = btoa(managerInfo.man_id)
+                sessionStorage.setItem('managerID', encrypManager || '');
 
                 // แสดงข้อมูลบนหน้า
                 updatePageData(managerInfo);

@@ -126,7 +126,7 @@ function renderPaginationControls() {
     let controlsHTML = "";
 
     for (let i = 1; i <= totalPages; i++) {
-        controlsHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+        controlsHTML += `<button class="page-btn ${i === currentPages ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
     }
 
     paginationContainer.innerHTML = totalPages > 1 ? controlsHTML : "";

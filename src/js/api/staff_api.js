@@ -287,8 +287,8 @@ const Logout = async () => {
 
       if (response.data && response.data.employee) {
         const employeeInfo = response.data.employee;
-        // console.log("employeeInfo:", employeeInfo);
-        sessionStorage.setItem('employeeID', employeeInfo.employee_id || '');
+        const encrypEmployee = btoa(employeeInfo.employee_id)
+        sessionStorage.setItem('employeeID', encrypEmployee || '');
 
 
         // แสดงข้อมูลบนหน้า
@@ -919,7 +919,7 @@ function renderEmployeeControls() {
   let controlsHTML = "";
 
   for (let i = 1; i <= totalPages; i++) {
-      controlsHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changeEmployeePage(${i})">${i}</button>`;
+      controlsHTML += `<button class="page-btn ${i === currentemployeePage ? 'active' : ''}" onclick="changeEmployeePage(${i})">${i}</button>`;
   }
 
   paginationContainer.innerHTML = totalPages > 1 ? controlsHTML : "";
