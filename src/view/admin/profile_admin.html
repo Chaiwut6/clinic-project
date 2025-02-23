@@ -33,15 +33,13 @@
 
     <!-- Custom styles for this template-->
     <link href="../../style/users/user_main.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../style/admin/webstting.css">
-    <link rel="stylesheet" href="../../style/staff/schedule.css">
-    <link rel="stylesheet" href="../../style/staff/mange_addmin.css">
-    <script src="../../js/staff.js"></script>
+    <link rel="stylesheet" href="../../style/users/profile.css">
+    <link rel="stylesheet" href="../../style/staff/">
     <script src="../../js/api/staff_api.js"></script>
-    <script src="../../js/api/webstting_api.js"></script>
-    <!-- <script src="../../js/login.js"></script> -->
+    <script src="../../js/staff.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 
@@ -54,7 +52,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" >
+            <a class="sidebar-brand d-flex align-items-center justify-content-center">
                 <div class="sidebar-brand-text mx-3">คลินิกกำลังใจ</div>
             </a>
 
@@ -104,26 +102,19 @@
                     <span>ตั้งค่าเว็บไซต์</span></a>
             </li>
 
-            <!-- <li class="nav-item">
-                <a class="nav-link" href="index.html">
-                    <i class="fa-solid fa-lock"></i>
-                    <span>เปลี่ยนรหัสผ่าน</span></a>
-            </li> -->
-
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
-
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-toggle="modal" data-target="#logoutModal">
+                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                    <span>ออกจากระบบ</span></a>
+            </li>
             <!-- Sidebar Toggler (Sidebar) -->
             <!-- <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div> -->
-            <li class="nav-item">
-                <a class="nav-link" href="#" onclick="openCustomModal()">
-                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                    <span>ออกจากระบบ</span>
-                </a>
-            </li>
+
         </ul>
         <!-- End of Sidebar -->
 
@@ -140,45 +131,52 @@
                     </button>
 
                     <!-- Topbar Search -->
-                    <h1 class="header-main">ตั้งค่าเว็บไซต์</h1>
-  
+                    <h1 class="header-main">ข้อมูลส่วนตัว</h1>
+                    <!-- <form
+                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                        <div class="input-group">
+                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button">
+                                    <i class="fas fa-search fa-sm"></i>
+                                </button>
+
+                            </div>
+                        </div>
+                    </form> -->
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
-
-                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                        <li class="nav-item dropdown no-arrow d-sm-none">
-
-                        </li>
-
-
+           
 
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
 
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <span class="adm_fname mr-2 d-none d-lg-inline text-gray-600 small"></span>
-                            <span class="adm_lname mr-2 d-none d-lg-inline text-gray-600 small"></span>
-
-                            <!-- <img src="../../image/user.png" style="height: 50%; wigth: 50px;"> -->
-                        </a>
-
+                            <!-- <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="adm_fname mr-2 d-none d-lg-inline text-gray-600 small"></span>
+                                <span class="adm_lname mr-2 d-none d-lg-inline text-gray-600 small"></span>
+                            </a> -->
 
                             <!-- Dropdown - User Information -->
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                            <!-- <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
+
 
                                 <a class="dropdown-item" href="profile_admin.html">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     ข้อมูลส่วนตัว
                                 </a>
-                                <a class="dropdown-item" href="../admin/changepass.html">
+                                <a class="dropdown-item" href="changepass.html">
                                     <i class="fas fa-lock fa-sm fa-fw mr-2 text-gray-400"></i>
                                     เปลี่ยนรหัสผ่าน
                                 </a>
 
-                            </div>
+                                <div class="dropdown-divider"></div>
+                        
+
+                            </div> -->
                         </li>
 
                         <!-- Make sure you load Bootstrap JS properly -->
@@ -194,40 +192,22 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-                    <div class="settings-container">
-                        <!-- Homepage Image Upload -->
-                        <div class="card-image">
-                            <h3>รูปภาพหน้าแรก</h3>
-                            <label for="uploadBanner">อัพโหลดรูปภาพหน้าแรก:</label>
-                            <input type="file" id="imageInput" name="image" accept="image/*">
-                           
-                        </div>
+                    <!-- Page Heading -->
+                    <form class="profile" id="profileAdmin">
+                        <label for="first-name">ชื่อจริง</label>
+                        <input type="text" id="first-name" name="first-name" required>
                     
-                        <!-- About Us Section -->
-                        <!-- <div class="card">
-                            <h3>เกี่ยวกับเรา</h3>
-                            <label for="aboutus">เกี่ยวกับเรา:</label>
-                            <textarea id="aboutus" rows="4" placeholder="กรอกข้อมูลเกี่ยวกับเรา..."></textarea>
-                        </div> -->
+                        <label for="last-name">นามสกุล</label>
+                        <input type="text" id="last-name" name="last-name" required>
                     
-                        <!-- Contact Information -->
-                        <!-- <div class="card">
-                            <h3>ข้อมูลการติดต่อ</h3>
-                            <label for="phone">เบอร์โทรศัพท์:</label>
-                            <input type="text" id="phone" placeholder="กรอกเบอร์โทรศัพท์">
-                            
-                            <label for="address">ที่อยู่:</label>
-                            <input type="text" id="address" placeholder="กรอกที่อยู่">
-                        </div> -->
-                    
-                        <!-- Save Button -->
-                        <button class="saveSettings" id="saveSettings" type="button" onclick="uploadImage()">บันทึกข้อมูล</button>
-                    </div>
+                        <button type="submit" class="submit-btn">บันทึก</button>
+                    </form>
+
+
+                    <!-- Display fname here -->
+
                 </div>
 
-    
-    
-    
                 <!-- /.container-fluid -->
 
             </div>
@@ -248,53 +228,40 @@
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Delete Modal -->
-    <div class="delete-popup">
-        <div class="delete-content">
-            <div class="delete-header">
-                <h5 class="delete-title">ยืนยันการลบ</h5>
-                <button class="close-delete-btn">&times;</button>
-            </div>
-            <div class="delete-body">
-                <p>คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้ การกระทำนี้ไม่สามารถย้อนกลับได้</p>
-            </div>
-            <div class="delete-footer">
-                <!-- <button class="btn cancel-btn close-delete-btn">ยกเลิก</button> -->
-                <a class="btn delete-btn" href="">ลบ</a>
-            </div>
-        </div>
-    </div>
-             <!-- Logout Modal-->
- <div id="logoutModal" class="custom-modal">
-    <div class="custom-modal-dialog">
-        <div class="custom-modal-content">
-            <div class="custom-modal-header">
-                <button class="custom-close" onclick="closeCustomModal()">&times;</button>
-            </div>
-            <div class="custom-modal-body">
-                เลือก "ออกจากระบบ" ด้านล่างหากคุณพร้อมที่จะออกจากเว็บไซต์ปัจจุบันของคุณ
-            </div>
-            <div class="custom-modal-footer">
-                <button class="custom-btn custom-btn-secondary" onclick="closeCustomModal()">ยกเลิก</button>
-                <a class="custom-btn custom-btn-primary" href="../index.html" onclick="Logout()">ออกจากระบบ</a>
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">เลือก "ออกจากระบบ" ด้านล่างหากคุณพร้อมที่จะออกจากเว็บไซต์ปัจจุบันของคุณ</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">ยกเลิก</button>
+                    <a class="btn btn-primary" href="../index.html" onclick="Logout()">ออกจากระบบ</a>
+                </div>
             </div>
         </div>
     </div>
-  </div>
-  
-  
-  <script>
-    function openCustomModal() {
-    document.getElementById('logoutModal').style.display = 'flex';
-  }
-  
-  // ปิด Custom Modal
-  function closeCustomModal() {
-    document.getElementById('logoutModal').style.display = 'none';
-  }</script>
+
+    <!-- <script>
+        const logout = async () => {
+            try {
+                await axios.post('http://localhost:8000/api/logout', {}, { withCredentials: true });
+                alert('You have been logged out successfully.');
+                window.location.href = '../view';
+            } catch (error) {
+                console.error('Logout failed:', error);
+                alert('Logout failed. Please try again.');
+            }
+        };
+    </script> -->
 
     <script src="../../js/jquery.min.js"></script>
-    <!-- <script src="../../js/bootstrap.bundle.min.js"></scrip> -->
+    <!-- <script src="../../js/bootstrap.bundle.min.js"></script> -->
 
 
 </body>

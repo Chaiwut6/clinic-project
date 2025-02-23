@@ -7,98 +7,98 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // เปิด Modal
   if (addUserBtn) {
-      addUserBtn.addEventListener('click', () => {
-          addUserModal.style.display = 'block';
-      });
+    addUserBtn.addEventListener('click', () => {
+      addUserModal.style.display = 'block';
+    });
   }
 
   // ปิด Modal เมื่อกดปุ่ม X
   if (closeBtn) {
-      closeBtn.addEventListener('click', () => {
-          addUserModal.style.display = 'none';
-      });
+    closeBtn.addEventListener('click', () => {
+      addUserModal.style.display = 'none';
+    });
   }
 
   // ปิด Modal ถ้าคลิกนอกกล่อง
   window.addEventListener('click', (event) => {
-      if (event.target === addUserModal) {
-          addUserModal.style.display = 'none';
-      }
+    if (event.target === addUserModal) {
+      addUserModal.style.display = 'none';
+    }
   });
 
   // ฟอร์มเพิ่มผู้ใช้งาน
   const form = document.getElementById("addUserForm");
 
   form.addEventListener("submit", async (event) => {
-      event.preventDefault(); 
+    event.preventDefault();
 
-      // รับค่าจากฟอร์ม
-      const userID = document.getElementById("userID").value
-      const title = document.getElementById("title").value;
-      const user_fname = document.getElementById("user_fname").value
-      const user_lname = document.getElementById("user_lname").value
-      const nickname = document.getElementById("nickname").value
-      const phone = document.getElementById("phone").value
-      const faculty = document.getElementById("faculty").value;
-      const password = generatePassword(); 
-      // pass 6 ตัวท้ายของ userID
-      let profileImageUrl = "";
-      const currentYear = new Date().getFullYear() + 543; 
-    const admissionYear = parseInt(userID.substring(2, 4)); 
-    const admissionFullYear = admissionYear + 2500; 
+    // รับค่าจากฟอร์ม
+    const userID = document.getElementById("userID").value
+    const title = document.getElementById("title").value;
+    const user_fname = document.getElementById("user_fname").value
+    const user_lname = document.getElementById("user_lname").value
+    const nickname = document.getElementById("nickname").value
+    const phone = document.getElementById("phone").value
+    const faculty = document.getElementById("faculty").value;
+    const password = generatePassword();
+    // pass 6 ตัวท้ายของ userID
+    let profileImageUrl = "";
+    const currentYear = new Date().getFullYear() + 543;
+    const admissionYear = parseInt(userID.substring(2, 4));
+    const admissionFullYear = admissionYear + 2500;
     let studyYear = currentYear - admissionFullYear;
-    
+
     const maxYear = faculty === "สถาปัตยกรรมศาสตร์" ? 5 : 4;
-    
+
     studyYear = Math.min(Math.max(1, studyYear), maxYear);
-    
+
     const year = `ปี ${studyYear}`;
-     
-      if (!userID || !title || !user_fname || !user_lname || !nickname || !phone || !faculty) {
-          alert("กรุณากรอกข้อมูลให้ครบถ้วน");
-          return;
-      }
 
-      
-      if (!/^\d{10}$/.test(phone)) {
-          alert("กรุณากรอกเบอร์โทรที่ถูกต้อง (10 ตัวและเป็นเลขเท่านั้น)");
-          document.getElementById("phone").focus();
-          return;
-      }
+    if (!userID || !title || !user_fname || !user_lname || !nickname || !phone || !faculty) {
+      alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+      return;
+    }
 
-      try {
-          const response = await axios.post("http://localhost:8000/api/users/register-user", {
-              title: title,
-              user_id: userID,
-              user_fname: user_fname,
-              user_lname: user_lname,
-              nickname: nickname,
-              phone: phone,
-              year,
-              faculty: faculty,
-              password: password, 
-              profile_image: profileImageUrl
-          });
 
-          if (response.data && response.data.message === "User registered successfully") {
-              alert(`เพิ่มข้อมูลผู้ใช้งานสำเร็จ`);
-              document.getElementById("addUserModal").style.display = "none";
-              form.reset();
-          }
-      } catch (error) {
-          console.error("Error adding user:", error);
-          alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
+    if (!/^\d{10}$/.test(phone)) {
+      alert("กรุณากรอกเบอร์โทรที่ถูกต้อง (10 ตัวและเป็นเลขเท่านั้น)");
+      document.getElementById("phone").focus();
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:8000/api/users/register-user", {
+        title: title,
+        user_id: userID,
+        user_fname: user_fname,
+        user_lname: user_lname,
+        nickname: nickname,
+        phone: phone,
+        year,
+        faculty: faculty,
+        password: password,
+        profile_image: profileImageUrl
+      });
+
+      if (response.data && response.data.message === "User registered successfully") {
+        alert(`เพิ่มข้อมูลผู้ใช้งานสำเร็จ`);
+        document.getElementById("addUserModal").style.display = "none";
+        form.reset();
       }
+    } catch (error) {
+      console.error("Error adding user:", error);
+      alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
+    }
   });
 });
 
 function generatePassword() {
   const userID = document.getElementById("userID").value;
-  const cleanUserID = userID.replace(/-/g, ""); 
+  const cleanUserID = userID.replace(/-/g, "");
   if (cleanUserID.length >= 6) {
-      return cleanUserID.slice(-6); 
+    return cleanUserID.slice(-6);
   }
-  return ""; 
+  return "";
 }
 
 
@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const confirmPassword = document.getElementById('confirmPassword').value;
 
     // ตรวจสอบว่าข้อมูลครบถ้วน
-      if (!doctorID || !doctorName || !phoneNumber|| !password || !confirmPassword) {
+    if (!doctorID || !doctorName || !phoneNumber || !password || !confirmPassword) {
       alert("กรุณากรอกข้อมูลให้ครบถ้วน");
       return;
     }
@@ -277,86 +277,146 @@ const Logout = async () => {
   }
 };
 
-  const fetchEmployeeInfo = async () => {
-    try {
-      // ใช้ POST แทน GET ในการดึงข้อมูล employee
-      const response = await axios.post("http://localhost:8000/api/employees/employeeinfo", {}, {
-        withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
-      });
-      
-
-      if (response.data && response.data.employee) {
-        const employeeInfo = response.data.employee;
-        const encrypEmployee = btoa(employeeInfo.employee_id)
-        sessionStorage.setItem('employeeID', encrypEmployee || '');
+const fetchEmployeeInfo = async () => {
+  try {
+    // ใช้ POST แทน GET ในการดึงข้อมูล employee
+    const response = await axios.post("http://localhost:8000/api/employees/employeeinfo", {}, {
+      withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
+    });
 
 
-        // แสดงข้อมูลบนหน้า
-        updatePageData(employeeInfo);
+    if (response.data && response.data.employee) {
+      const employeeInfo = response.data.employee;
+      const encrypEmployee = btoa(employeeInfo.employee_id)
+      sessionStorage.setItem('employeeID', encrypEmployee || '');
 
-      } else {
-        console.error('Invalid data format received from API');
-      }
-    } catch (error) {
-      console.error('Error fetching employee info:', error);
-    }
-  };
 
-  const updatePageData = (employeeInfo) => {
-    const updateElements = (selector, value) => {
-      const elements = document.querySelectorAll(selector);
-      if (elements.length > 0) {
-        elements.forEach(el => el.textContent = value || 'N/A');
-      }
-    };
+      // แสดงข้อมูลบนหน้า
+      updatePageData(employeeInfo);
 
-    if (employeeInfo) {
-      updateElements('.employee_id', employeeInfo.employee_id);
-      updateElements('.emp_fname', employeeInfo.emp_fname);
-      updateElements('.emp_lname', employeeInfo.emp_lname);
     } else {
-      console.warn("Employee info is missing");
+      console.error('Invalid data format received from API');
+    }
+  } catch (error) {
+    console.error('Error fetching employee info:', error);
+  }
+};
+
+const updatePageData = (employeeInfo) => {
+  const updateElements = (selector, value) => {
+    const elements = document.querySelectorAll(selector);
+    if (elements.length > 0) {
+      elements.forEach(el => el.textContent = value || 'N/A');
     }
   };
+
+  if (employeeInfo) {
+    updateElements('.employee_id', employeeInfo.employee_id);
+    updateElements('.emp_fname', employeeInfo.emp_fname);
+    updateElements('.emp_lname', employeeInfo.emp_lname);
+  } else {
+    console.warn("Employee info is missing");
+  }
+};
+
+const fetchAdminInfo = async () => {
+  try {
+    // ใช้ POST แทน GET ในการดึงข้อมูล employee
+    const response = await axios.post(`http://localhost:8000/api/admin/admininfo`, {}, {
+      withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
+    });
+    // console.log(response);
+
+    if (response.data && response.data.admin) {
+      const adminInfo = response.data.admin;
+      // console.log("adminInfo:", adminInfo);
+
+      // แสดงข้อมูลบนหน้า
+      updateAdminData(adminInfo);
+
+    } else {
+      console.error('Invalid data format received from API');
+    }
+  } catch (error) {
+    console.error('Error fetching admin info:', error);
+  }
+};
+const updateAdminData = (adminInfo) => {
+  const updateElements = (selector, value) => {
+    const elements = document.querySelectorAll(selector);
+    if (elements.length > 0) {
+      elements.forEach(el => el.textContent = value || 'N/A');
+    }
+  };
+
+  if (adminInfo) {
+    updateElements('.admin_id', adminInfo.admin_id);
+    updateElements('.adm_fname', adminInfo.adm_fname);
+    updateElements('.adm_lname', adminInfo.adm_lname);
+  } else {
+    console.warn("admin info is missing");
+  }
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("profileAdmin"); 
 
   const fetchAdminInfo = async () => {
-    try {
-      // ใช้ POST แทน GET ในการดึงข้อมูล employee
-      const response = await axios.post(`http://localhost:8000/api/admin/admininfo`, {}, {
-        withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
-      });
-      // console.log(response);
-  
-      if (response.data && response.data.admin) {
-        const adminInfo = response.data.admin;
-        // console.log("adminInfo:", adminInfo);
+      try {
+          const response = await axios.post('http://localhost:8000/api/admin/admininfo', {}, {
+              withCredentials: true 
+          });
+          console.log(response);
 
-        // แสดงข้อมูลบนหน้า
-        updateAdminData(adminInfo);
-  
-      } else {
-        console.error('Invalid data format received from API');
+          if (response.data && response.data.admin) {
+              const AdminInfo = response.data.admin; 
+              populateForm(AdminInfo);
+
+          } else {
+              console.error('ข้อมูลที่ได้รับไม่ถูกต้องจาก API');
+          }
+      } catch (error) {
+          console.error('Error fetching admin info:', error);
       }
-    } catch (error) {
-      console.error('Error fetching admin info:', error);
-    }
   };
-  const updateAdminData = (adminInfo) => {
-    const updateElements = (selector, value) => {
-      const elements = document.querySelectorAll(selector);
-      if (elements.length > 0) {
-        elements.forEach(el => el.textContent = value || 'N/A');
-      }
-    };
-  
-    if (adminInfo) {
-      updateElements('.admin_id', adminInfo.admin_id);
-      updateElements('.adm_fname', adminInfo.adm_fname);
-      updateElements('.adm_lname', adminInfo.adm_lname);
-    } else {
-      console.warn("admin info is missing");
-    }
+
+  const populateForm = (AdminInfo) => {
+      document.getElementById("first-name").value = AdminInfo.adm_fname || '';
+      document.getElementById("last-name").value = AdminInfo.adm_lname || '';
   };
+
+  if (form) {
+      form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+      
+          const updatedData = {
+              adm_fname: document.getElementById("first-name").value,
+              adm_lname: document.getElementById("last-name").value, // ✅ แก้จาก adm_fname เป็น adm_lname
+          };
+
+          try {
+              const response = await axios.post('http://localhost:8000/api/admin/updateadmin', updatedData, {
+                  withCredentials: true
+              });
+
+              if (response.data.success) {
+                  alert("ข้อมูลได้รับการอัปเดตเรียบร้อยแล้ว!");
+                  fetchAdminInfo();
+              } else {
+                  console.error(" Update failed:", response.data.message);
+                  alert("ไม่สามารถอัปเดตข้อมูลได้: " + (response.data.message || "ไม่ทราบสาเหตุ"));
+              }
+          } catch (error) {
+              console.error(" Error updating user info:", error);
+              alert(' เกิดข้อผิดพลาด: ' + (error.response?.data?.message || error.message || 'Unknown error'));
+          }
+      });
+  }
+
+  if (window.location.pathname.endsWith('profile_admin.html')) {
+    fetchAdminInfo();
+  }
+});
 
 let currentDoctorPage = 1;
 let doctorData = [];
@@ -445,10 +505,10 @@ function renderDoctorTable() {
   }).join("");
 
   document.getElementById("doctorinTable").innerHTML = rows || `<tr><td colspan="5">ไม่พบข้อมูล</td></tr>`;
-  
-  attachDropdownEventListeners(); 
 
-  
+  attachDropdownEventListeners();
+
+
 }
 
 // ✅ ฟังก์ชันจัดการ Dropdown
@@ -490,7 +550,7 @@ function attachDropdownEventListeners() {
 // ✅ ฟังก์ชันสร้างปุ่มเปลี่ยนหน้า
 function renderDoctorPaginationControls() {
   const paginationContainer = document.getElementById("doctorPaginationControls");
-  
+
   if (!paginationContainer) {
     console.warn("⚠️ ไม่พบ doctorPaginationControls ใน DOM");
     return; // หยุดทำงานถ้าไม่พบ element
@@ -584,7 +644,7 @@ let currentPage = 1;
 let availabilityData = []; // เก็บข้อมูลทั้งหมดหลังจากดึงจาก API
 
 
-async function fetchAvailability(doctorID) { 
+async function fetchAvailability(doctorID) {
   try {
     const response = await axios.post("http://localhost:8000/api/doctors/get-availability", { doc_id: doctorID });
     availabilityData = response.data.availability || [];
@@ -603,7 +663,7 @@ async function fetchAvailability(doctorID) {
 // ✅ อัปเดตตารางเมื่อเลือกเดือน
 function updateAvailabilityTable() {
   const selectedMonth = document.getElementById("monthFilter").value;
-  
+
   // กรองข้อมูลตามเดือนที่เลือก
   filteredData = selectedMonth
     ? availabilityData.filter(item => new Date(item.available_date).getMonth() + 1 == selectedMonth)
@@ -738,30 +798,30 @@ let adminData = [];
 let filteredAdminData = [];
 
 async function fetchEmployee() {
-    try {
-        document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">กำลังโหลดข้อมูล...</td></tr>`;
+  try {
+    document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">กำลังโหลดข้อมูล...</td></tr>`;
 
-        const response = await axios.post("http://localhost:8000/api/employees/employeeResult");
-        const { employee } = response.data;
+    const response = await axios.post("http://localhost:8000/api/employees/employeeResult");
+    const { employee } = response.data;
 
-        if (!employee || employee.length === 0) {
-            document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">ไม่พบข้อมูลพนักงาน</td></tr>`;
-            document.getElementById("paginationControls").innerHTML = "";
-            return;
-        }
-
-
-        adminData = [...employee];
-        filteredAdminData = [...adminData];
-
-        renderAdminTable();
-        renderEmployeeControls();
-       
-    } catch (error) {
-        console.error("Error fetching employee data:", error);
-        document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
-        document.getElementById("paginationControls").innerHTML = "";
+    if (!employee || employee.length === 0) {
+      document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">ไม่พบข้อมูลพนักงาน</td></tr>`;
+      document.getElementById("paginationControls").innerHTML = "";
+      return;
     }
+
+
+    adminData = [...employee];
+    filteredAdminData = [...adminData];
+
+    renderAdminTable();
+    renderEmployeeControls();
+
+  } catch (error) {
+    console.error("Error fetching employee data:", error);
+    document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
+    document.getElementById("paginationControls").innerHTML = "";
+  }
 }
 
 
@@ -770,9 +830,9 @@ function renderAdminTable() {
   const endIndex = startIndex + itemsPerPage;
   const pageData = filteredAdminData.slice(startIndex, endIndex);
 
-  const rows = pageData.map((emp,index) => {
+  const rows = pageData.map((emp, index) => {
     const displayIndex = startIndex + index + 1;
-  return `
+    return `
      <tr data-id="${emp.employee_id}">
       <td>${displayIndex}</td>
         <td>${emp.employee_id || "ไม่ระบุ"}</td>
@@ -795,20 +855,20 @@ function renderAdminTable() {
   `}).join("");
 
   document.getElementById("addminTable").innerHTML = rows || `<tr><td colspan="4">ไม่มีข้อมูล</td></tr>`;
-  
+
   attachDropdownEmployee();
   attachEditAndDeleteEmployee();
 }
 
 function attachEditAndDeleteEmployee() {
   document.querySelectorAll(".editBtn").forEach(button => {
-      button.addEventListener("click", (e) => {
-          e.preventDefault();
-          const empId = button.getAttribute("data-id");
-          const empFname = button.getAttribute("data-fname");
-          const empLname = button.getAttribute("data-lname");
+    button.addEventListener("click", (e) => {
+      e.preventDefault();
+      const empId = button.getAttribute("data-id");
+      const empFname = button.getAttribute("data-fname");
+      const empLname = button.getAttribute("data-lname");
 
-          const formHtml = `
+      const formHtml = `
               <div class="popup-container">
                 <div class="popup-content">
                   <div>
@@ -823,51 +883,51 @@ function attachEditAndDeleteEmployee() {
               </div>
           `;
 
-          document.body.insertAdjacentHTML("beforeend", formHtml);
-          
-          document.getElementById("cancelEdit").addEventListener("click", () => {
-              document.querySelector(".popup-container").remove();
-          });
+      document.body.insertAdjacentHTML("beforeend", formHtml);
 
-          document.getElementById("saveEditempoloyee").addEventListener("click", async () => {
-              try {
-                  await axios.post("http://localhost:8000/api/employees/employeeUpdate", {
-                      employee_id: empId,
-                      emp_fname: document.getElementById("editFname").value,
-                      emp_lname: document.getElementById("editLname").value,
-                  });
-
-                  alert("ข้อมูลพนักงานได้รับการอัปเดตเรียบร้อยแล้ว");
-                  fetchEmployee();
-                  document.querySelector(".popup-container").remove();
-              } catch (err) {
-                  console.error("Error updating employee:", err);
-                  alert("เกิดข้อผิดพลาดในการอัปเดตข้อมูล");
-              }
-          });
+      document.getElementById("cancelEdit").addEventListener("click", () => {
+        document.querySelector(".popup-container").remove();
       });
+
+      document.getElementById("saveEditempoloyee").addEventListener("click", async () => {
+        try {
+          await axios.post("http://localhost:8000/api/employees/employeeUpdate", {
+            employee_id: empId,
+            emp_fname: document.getElementById("editFname").value,
+            emp_lname: document.getElementById("editLname").value,
+          });
+
+          alert("ข้อมูลพนักงานได้รับการอัปเดตเรียบร้อยแล้ว");
+          fetchEmployee();
+          document.querySelector(".popup-container").remove();
+        } catch (err) {
+          console.error("Error updating employee:", err);
+          alert("เกิดข้อผิดพลาดในการอัปเดตข้อมูล");
+        }
+      });
+    });
   });
 
   // ✅ ปุ่มลบ
   document.querySelectorAll(".delete-trigger").forEach(button => {
-      button.addEventListener("click", async (e) => {
-          e.preventDefault();
-          const empId = button.getAttribute("data-id");
+    button.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const empId = button.getAttribute("data-id");
 
-          if (confirm("คุณต้องการลบข้อมูลพนักงานนี้หรือไม่?")) {
-              try {
-                  await axios.post("http://localhost:8000/api/employees/employeeDelete", {
-                      employee_id: empId,
-                  });
+      if (confirm("คุณต้องการลบข้อมูลพนักงานนี้หรือไม่?")) {
+        try {
+          await axios.post("http://localhost:8000/api/employees/employeeDelete", {
+            employee_id: empId,
+          });
 
-                  alert("ลบข้อมูลพนักงานสำเร็จ");
-                  fetchEmployee(); // รีเฟรชข้อมูล
-              } catch (err) {
-                  console.error("Error deleting employee:", err);
-                  alert("เกิดข้อผิดพลาดในการลบข้อมูล");
-              }
-          }
-      });
+          alert("ลบข้อมูลพนักงานสำเร็จ");
+          fetchEmployee(); // รีเฟรชข้อมูล
+        } catch (err) {
+          console.error("Error deleting employee:", err);
+          alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+        }
+      }
+    });
   });
 }
 
@@ -911,15 +971,15 @@ function renderEmployeeControls() {
   const paginationContainer = document.getElementById("PaginationEmployeeControls");
 
   if (!paginationContainer) {
-      console.warn("⚠️ ไม่พบ PaginationControls ใน DOM");
-      return;
+    console.warn("⚠️ ไม่พบ PaginationControls ใน DOM");
+    return;
   }
 
   const totalPages = Math.ceil(filteredAdminData.length / itemsPerPage);
   let controlsHTML = "";
 
   for (let i = 1; i <= totalPages; i++) {
-      controlsHTML += `<button class="page-btn ${i === currentemployeePage ? 'active' : ''}" onclick="changeEmployeePage(${i})">${i}</button>`;
+    controlsHTML += `<button class="page-btn ${i === currentemployeePage ? 'active' : ''}" onclick="changeEmployeePage(${i})">${i}</button>`;
   }
 
   paginationContainer.innerHTML = totalPages > 1 ? controlsHTML : "";
@@ -934,22 +994,22 @@ function changeEmployeePage(page) {
 }
 
 function filterAddmin() {
-    const nameFilter = document.getElementById('searchaddmin').value.trim().toLowerCase();
-    const idFilter = document.getElementById('searchaddmin').value.trim().toLowerCase();
+  const nameFilter = document.getElementById('searchaddmin').value.trim().toLowerCase();
+  const idFilter = document.getElementById('searchaddmin').value.trim().toLowerCase();
 
-    filteredAdminData = adminData.filter(emp => {
-        const name = (emp.emp_fname + " " + emp.emp_lname).trim().toLowerCase();
-        const ID = (emp.employee_id || "").trim().toLowerCase();
+  filteredAdminData = adminData.filter(emp => {
+    const name = (emp.emp_fname + " " + emp.emp_lname).trim().toLowerCase();
+    const ID = (emp.employee_id || "").trim().toLowerCase();
 
-        return (
-            (!nameFilter || name.includes(nameFilter)) ||
-            (!idFilter || ID.includes(idFilter))
-        );
-    });
+    return (
+      (!nameFilter || name.includes(nameFilter)) ||
+      (!idFilter || ID.includes(idFilter))
+    );
+  });
 
-    currentPage = 1;
-    renderAdminTable();
-    renderEmployeeControls();
+  currentPage = 1;
+  renderAdminTable();
+  renderEmployeeControls();
 }
 
 
@@ -1039,7 +1099,7 @@ function renderUserPaginationControls() {
     controlsHTML += `<button class="page-btn ${i === currentUserPage ? 'active' : ''}" onclick="changeUserPage(${i})">${i}</button>`;
   }
 
-  document.getElementById("userPaginationControls").innerHTML = totalPages > 1 ? controlsHTML : ""; 
+  document.getElementById("userPaginationControls").innerHTML = totalPages > 1 ? controlsHTML : "";
 }
 
 function changeUserPage(page) {
@@ -1088,9 +1148,9 @@ async function fetchUserDataAndDisplay() {
 
     if (user[0].profile_image) {
       profileImage.src = `${baseURL}${user[0].profile_image}`;
-  } else {
+    } else {
       profileImage.src = `${baseURL}/uploads/profiles/default.png`;
-  }
+    }
 
     const filterContainer = document.getElementById('filter-container');
 
@@ -1131,38 +1191,38 @@ async function fetchUserDataAndDisplay() {
     function filterAssessmentHistory(selectedMonth) {
       const assessmentBody = document.getElementById('assessment-history-body');
       assessmentBody.innerHTML = ''; // Clear previous data
-    
+
       const filteredResults = data.results.filter(result => {
         const date = new Date(result.date);
         const month = String(date.getMonth() + 1).padStart(2, '0'); // Format month as two digits
         return selectedMonth === 'all' || month === selectedMonth;
       });
-    
+
       if (filteredResults.length === 0) {
         assessmentBody.innerHTML = '<tr><td colspan="2">ไม่มีข้อมูล</td></tr>';
       } else {
         filteredResults.forEach(result => {
           const date = new Date(result.date);
           const formattedDate = date.toLocaleDateString('th-TH', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
           });
 
           // ✅ ตรวจสอบระดับผลการประเมินและกำหนดสี
           let assessmentClass = "";
           if (result.result.includes("ระดับน้อย")) {
-              assessmentClass = "assessment-low";
+            assessmentClass = "assessment-low";
           } else if (result.result.includes("ระดับปานกลาง")) {
-              assessmentClass = "assessment-medium";
+            assessmentClass = "assessment-medium";
           } else if (result.result.includes("ระดับรุนแรง")) {
-              assessmentClass = "assessment-high";
+            assessmentClass = "assessment-high";
           }
 
           const row = document.createElement('tr');
           row.innerHTML = `<td>${formattedDate}</td><td class="${assessmentClass}">${result.result}</td>`;
           assessmentBody.appendChild(row);
-      });
+        });
       }
     }
 
@@ -1184,35 +1244,35 @@ async function fetchUserDataAndDisplay() {
       const selectedMonth = appointmentMonthSelect.value;
       const appointmentBody = document.getElementById('appointment-history-body');
       appointmentBody.innerHTML = ''; // Clear previous data
-    
+
       const filteredAppointments = data.appointments.filter(appointment => {
         const appointmentDate = new Date(appointment.date);
         const appointmentMonth = String(appointmentDate.getMonth() + 1).padStart(2, '0'); // Format month as two digits
         return selectedMonth === 'all' || appointmentMonth === selectedMonth;
       });
-    
+
       if (filteredAppointments.length === 0) {
         appointmentBody.innerHTML = '<tr><td colspan="4">ไม่มีข้อมูล</td></tr>';
       } else {
         filteredAppointments
-        .sort((a, b) => new Date(b.date) - new Date(a.date)) // ✅ เรียงจากวันล่าสุด -> วันเก่า
-        .forEach(appointment => {
-          const appointmentDate = new Date(appointment.date);
-          const formattedDate = appointmentDate.toLocaleDateString('th-TH', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          }); 
-      
-          const row = document.createElement('tr');
-          row.innerHTML = `
+          .sort((a, b) => new Date(b.date) - new Date(a.date)) // ✅ เรียงจากวันล่าสุด -> วันเก่า
+          .forEach(appointment => {
+            const appointmentDate = new Date(appointment.date);
+            const formattedDate = appointmentDate.toLocaleDateString('th-TH', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            });
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
             <td>${formattedDate || 'ยังไม่มีการนัด'}</td>
             <td>${appointment.doc_name || 'ไม่ระบุ'}</td>
             <td>${Array.isArray(appointment.symptoms) ? appointment.symptoms.join(" / ") : 'ไม่ระบุ'}</td>
             <td>${appointment.status || 'ไม่ระบุ'}</td>
           `;
-          appointmentBody.appendChild(row);
-        });
+            appointmentBody.appendChild(row);
+          });
       }
     }
 
@@ -1222,11 +1282,11 @@ async function fetchUserDataAndDisplay() {
     // Display appointment history
     const appointmentBody = document.getElementById('appointment-history-body');
     const appointmentList = document.getElementById('appointment-list');
-    
+
     // Clear old data before rendering new data
     appointmentBody.innerHTML = '';
     appointmentList.innerHTML = '';
-    
+
     if (!data.appointments || data.appointments.length === 0) {
       // ไม่มีข้อมูลการนัดหมาย
       appointmentBody.innerHTML = '<tr><td colspan="2">ไม่มีข้อมูล</td></tr>';
@@ -1234,30 +1294,30 @@ async function fetchUserDataAndDisplay() {
     } else {
       // แสดงประวัติการนัดทั้งหมด
       data.appointments
-      .sort((a, b) => new Date(b.date) - new Date(a.date)) 
-      .forEach((appointment) => {
-        const appointmentDate = new Date(appointment.date);
-        const formattedDate = appointmentDate.toLocaleDateString('th-TH', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        });
-    
-        const row = document.createElement('tr');
-        row.innerHTML = `
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .forEach((appointment) => {
+          const appointmentDate = new Date(appointment.date);
+          const formattedDate = appointmentDate.toLocaleDateString('th-TH', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+
+          const row = document.createElement('tr');
+          row.innerHTML = `
           <td>${formattedDate || 'ยังไม่มีการนัด'}</td>
           <td>${appointment.doc_name || 'ไม่ระบุ'}</td>
           <td>${Array.isArray(appointment.symptoms) ? appointment.symptoms.join(" / ") : 'ไม่ระบุ'}</td>
           <td>${appointment.status || 'ไม่ระบุ'}</td>
         `;
-        appointmentBody.appendChild(row);
-      });
-    
+          appointmentBody.appendChild(row);
+        });
+
       // กรองข้อมูล "รอการยืนยัน" สำหรับการนัดล่าสุด
       const pendingAppointments = data.appointments.filter(
         (appointment) => appointment.status === 'รอการยืนยัน'
       );
-    
+
       if (pendingAppointments.length === 0) {
         // ไม่มีการนัดที่รอการยืนยัน
         appointmentList.innerHTML = '<tr><td colspan="3">ไม่มีการนัดล่าสุด</td></tr>';
@@ -1268,7 +1328,7 @@ async function fetchUserDataAndDisplay() {
           const dateB = new Date(b.date);
           return dateB - dateA; // เรียงจากวันที่ล่าสุด
         });
-    
+
         // แสดงเฉพาะการนัดที่รอการยืนยันล่าสุด
         const firstAppointment = sortedAppointments[0];
         const firstAppointmentDate = new Date(firstAppointment.date);
@@ -1277,7 +1337,7 @@ async function fetchUserDataAndDisplay() {
           month: 'long',
           day: 'numeric'
         });
-    
+
         const row2 = document.createElement('tr');
         row2.innerHTML = `
           <td>${formattedFirstDate || 'ยังไม่มีการนัด'}</td>
@@ -1288,27 +1348,27 @@ async function fetchUserDataAndDisplay() {
           </td>
         `;
         appointmentList.appendChild(row2);
-    
-       // เพิ่ม Event Listener ให้กับปุ่ม "ยกเลิก"
-    const cancelButton = row2.querySelector('.cancel-appointment');
-    cancelButton.addEventListener('click', handleCancelAppointment);
 
-    // เพิ่ม Event Listener ให้กับปุ่ม "ยืนยัน"
-    const confirmButton = row2.querySelector('.confirm-appointment');
-    confirmButton.addEventListener('click', handleConfirmAppointment);
+        // เพิ่ม Event Listener ให้กับปุ่ม "ยกเลิก"
+        const cancelButton = row2.querySelector('.cancel-appointment');
+        cancelButton.addEventListener('click', handleCancelAppointment);
+
+        // เพิ่ม Event Listener ให้กับปุ่ม "ยืนยัน"
+        const confirmButton = row2.querySelector('.confirm-appointment');
+        confirmButton.addEventListener('click', handleConfirmAppointment);
       }
     }
-    
+
     // ฟังก์ชันยกเลิกการนัด
     async function handleCancelAppointment(event) {
       const appointmentId = event.target.getAttribute('data-appointment-id');
-    
+
       try {
         const response = await axios.post("http://localhost:8000/api/employees/Statusappointments", {
           Appointment_id: appointmentId,
           status: 'ยกเลิก'
         });
-    
+
         if (response.status === 200) {
           alert('การนัดหมายถูกยกเลิกเรียบร้อยแล้ว');
           // ดึงข้อมูลใหม่และอัปเดตตาราง
@@ -1325,13 +1385,13 @@ async function fetchUserDataAndDisplay() {
 
     async function handleConfirmAppointment(event) {
       const appointmentId = event.target.getAttribute('data-appointment-id');
-    
+
       try {
         const response = await axios.post("http://localhost:8000/api/employees/Statusappointments", {
           Appointment_id: appointmentId,
           status: 'ยืนยัน',
         });
-    
+
         if (response.status === 200) {
           alert('การนัดหมายได้รับการยืนยันเรียบร้อยแล้ว');
           location.reload();
@@ -1343,13 +1403,13 @@ async function fetchUserDataAndDisplay() {
         alert('เกิดข้อผิดพลาดในการยืนยันการนัดหมาย');
       }
     }
-    
+
     // ฟังก์ชันดึงข้อมูลการนัดหมายและอัปเดต UI
     // async function fetchAppointmentsAndUpdateUI() {
     //   try {
     //     const response = await axios.post("http://localhost:8000/api/employees/getAppointments");
     //     const data = response.data;
-    
+
     //     updateAppointmentUI(data);
     //   } catch (error) {
     //     console.error("Error fetching appointments:", error);
@@ -1357,24 +1417,24 @@ async function fetchUserDataAndDisplay() {
     //     appointmentList.innerHTML = '<tr><td colspan="3">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>';
     //   }
     // }
-    
+
     // ฟังก์ชันอัปเดต UI
     // function updateAppointmentUI(data) {
     //   // Clear tables
     //   appointmentBody.innerHTML = '';
     //   appointmentList.innerHTML = '';
-    
+
     //   if (!data.appointments || data.appointments.length === 0) {
     //     appointmentBody.innerHTML = '<tr><td colspan="2">ไม่มีข้อมูล</td></tr>';
     //     appointmentList.innerHTML = '<tr><td colspan="3">ไม่มีการนัดล่าสุด</td></tr>';
     //     return;
     //   }
-    
+
     //   // ดึงข้อมูลประวัติทั้งหมด
     //   data.appointments.forEach((appointment) => {
     //     const appointmentDate = new Date(appointment.date);
     //     const formattedDate = appointmentDate.toLocaleDateString('th-TH');
-    
+
     //     const row = document.createElement('tr');
     //     row.innerHTML = `
     //       <td>${formattedDate || 'ยังไม่มีการนัด'}</td>
@@ -1382,12 +1442,12 @@ async function fetchUserDataAndDisplay() {
     //     `;
     //     appointmentBody.appendChild(row);
     //   });
-    
+
     //   // ดึงข้อมูล "รอการยืนยัน"
     //   const pendingAppointments = data.appointments.filter(
     //     (appointment) => appointment.status === 'รอการยืนยัน'
     //   );
-    
+
     //   if (pendingAppointments.length === 0) {
     //     appointmentList.innerHTML = '<tr><td colspan="3">ไม่มีการนัดล่าสุด</td></tr>';
     //   } else {
@@ -1396,11 +1456,11 @@ async function fetchUserDataAndDisplay() {
     //       const dateB = new Date(b.date);
     //       return dateB - dateA;
     //     });
-    
+
     //     const firstAppointment = sortedAppointments[0];
     //     const firstAppointmentDate = new Date(firstAppointment.date);
     //     const formattedFirstDate = firstAppointmentDate.toLocaleDateString('th-TH');
-    
+
     //     const row2 = document.createElement('tr');
     //     row2.innerHTML = `
     //       <td>${formattedFirstDate || 'ยังไม่มีการนัด'}</td>
@@ -1408,29 +1468,29 @@ async function fetchUserDataAndDisplay() {
     //       <td><button class="cancel-appointment" data-appointment-id="${firstAppointment.Appointment_id}">ยกเลิก</button></td>
     //     `;
     //     appointmentList.appendChild(row2);
-    
+
     //     const cancelButton = row2.querySelector('.cancel-appointment');
     //     cancelButton.addEventListener('click', handleCancelAppointment);
     //   }
     // }
-    
+
     // document.getElementById("close-case-btn").addEventListener("click", async () => {
     //   const userId = document.getElementById("userid").textContent;
-    
+
     //   if (!userId) {
     //       alert("ไม่พบรหัสผู้ใช้งาน");
     //       return;
     //   }
-    
+
     //   if (!confirm("คุณต้องการปิดเคสนี้หรือไม่?")) {
     //       return; // หากผู้ใช้ยกเลิกการยืนยัน
     //   }
-    
+
     //   try {
     //       const response = await axios.post("http://localhost:8000/api/employees/closeCase", {
     //           user_id: userId,
     //       });
-    
+
     //       if (response.status === 200) {
     //           alert("ปิดเคสสำเร็จ");
     //           fetchUserDetails(userId); 
@@ -1442,7 +1502,7 @@ async function fetchUserDataAndDisplay() {
     //       alert("เกิดข้อผิดพลาดในการปิดเคส");
     //   }
     // });
-    
+
   } catch (error) {
     console.error('Error:', error);
     alert('เกิดข้อผิดพลาดในการดึงข้อมูลผู้ใช้');
@@ -1458,50 +1518,50 @@ async function loadCaseStatus() {
   const userId = encrypUser ? atob(encrypUser) : null;
 
   if (!userId) {
-      selectedCaseStatus.innerText = "ไม่พบรหัสผู้ใช้";
-      return;
+    selectedCaseStatus.innerText = "ไม่พบรหัสผู้ใช้";
+    return;
   }
 
   try {
-      const response = await axios.post("http://localhost:8000/api/employees/showcasesStatus", {
-        user_id: userId, 
+    const response = await axios.post("http://localhost:8000/api/employees/showcasesStatus", {
+      user_id: userId,
     });
-      // console.log(response.data);
-      if (response.data.success && response.data.status) {
-          selectedCaseStatus.innerText = response.data.status;
-          caseStatusSelect.value = response.data.status; // 
-      } else {
-          selectedCaseStatus.innerText = "ไม่พบข้อมูลสถานะ";
-      }
+    // console.log(response.data);
+    if (response.data.success && response.data.status) {
+      selectedCaseStatus.innerText = response.data.status;
+      caseStatusSelect.value = response.data.status; // 
+    } else {
+      selectedCaseStatus.innerText = "ไม่พบข้อมูลสถานะ";
+    }
   } catch (error) {
-      console.error("Error fetching case status:", error);
-      selectedCaseStatus.innerText = "เกิดข้อผิดพลาด";
+    console.error("Error fetching case status:", error);
+    selectedCaseStatus.innerText = "เกิดข้อผิดพลาด";
   }
 
   caseStatusSelect.addEventListener("change", () => {
-      selectedCaseStatus.innerText = caseStatusSelect.options[caseStatusSelect.selectedIndex].text;
+    selectedCaseStatus.innerText = caseStatusSelect.options[caseStatusSelect.selectedIndex].text;
   });
 
   // ✅ บันทึกสถานะใหม่
   saveCaseStatusBtn.addEventListener("click", async () => {
-      const selectedStatus = caseStatusSelect.value;
+    const selectedStatus = caseStatusSelect.value;
 
-      try {
-          const response = await axios.post("http://localhost:8000/api/employees/casesStatus", {
-              user_id: userId, 
-              status: selectedStatus
-          });
+    try {
+      const response = await axios.post("http://localhost:8000/api/employees/casesStatus", {
+        user_id: userId,
+        status: selectedStatus
+      });
 
-          if (response.data.success) {
-              selectedCaseStatus.innerText = selectedStatus; // อัปเดต UI
-              alert("บันทึกสถานะสำเร็จ");
-          } else {
-              alert("บันทึกสถานะไม่สำเร็จ");
-          }
-      } catch (error) {
-          console.error("Error updating case status:", error);
-          alert("เกิดข้อผิดพลาดในการบันทึกสถานะ");
+      if (response.data.success) {
+        selectedCaseStatus.innerText = selectedStatus; // อัปเดต UI
+        alert("บันทึกสถานะสำเร็จ");
+      } else {
+        alert("บันทึกสถานะไม่สำเร็จ");
       }
+    } catch (error) {
+      console.error("Error updating case status:", error);
+      alert("เกิดข้อผิดพลาดในการบันทึกสถานะ");
+    }
   });
 }
 
@@ -1545,7 +1605,7 @@ const changePassword = async () => {
 
 
 let selectedDoctorId = null;
-let selectedDoctorName = ''; 
+let selectedDoctorName = '';
 const encrypUser = sessionStorage.getItem("user_id");
 const userId = encrypUser ? atob(encrypUser) : null;
 let userFname = '';
@@ -1650,7 +1710,7 @@ async function fetchAvailabilityList(docId) {
     filterAvailabilityByMonth(availability);
   } catch (error) {
     if (error.response && error.response.status === 404) {
-      alert(error.response.data.message || "ยังไม่มีการเพิ่มวันที่ว่าง"); 
+      alert(error.response.data.message || "ยังไม่มีการเพิ่มวันที่ว่าง");
     } else {
       console.error("Error fetching availability:", error);
       alert("เกิดข้อผิดพลาดในการดึงข้อมูลวันเวลาที่ว่างของหมอ");
@@ -1673,7 +1733,7 @@ function populateAvailabilityTable(availability) {
   const tableBody = document.getElementById("availabilityTable");
   tableBody.innerHTML = "";
 
-  if (!Array.isArray(availability) ||availability.length === 0) {
+  if (!Array.isArray(availability) || availability.length === 0) {
     const row = document.createElement("tr");
     const cell = document.createElement("td");
     cell.colSpan = 3;
@@ -1685,33 +1745,33 @@ function populateAvailabilityTable(availability) {
 
   availability.forEach(item => {
     const row = document.createElement("tr");
-  
+
     // ตรวจสอบและแปลงค่าของวันที่
     const formattedDate = item.available_date
       ? new Date(item.available_date).toLocaleDateString("th-TH", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
       : "Invalid Date";
-  
+
     // ตรวจสอบและแปลงค่าของเวลา
     const timeStart = item.start_time ? item.start_time.slice(0, 5) : "N/A";
     const timeEnd = item.end_time ? item.end_time.slice(0, 5) : "N/A";
-  
+
     row.innerHTML = `
       <td>${formattedDate}</td>
       <td>${timeStart}</td>
       <td>${timeEnd}</td>
     `;
-  
+
     // เพิ่ม Event Listener ให้ทุกแถว
     row.style.cursor = "pointer";
     row.addEventListener("click", () => {
       selectedAvailability = item;
       alert(`เลือกวันและเวลานี้: ${formattedDate} (${timeStart} - ${timeEnd})`);
     });
-  
+
     tableBody.appendChild(row);
   });
 }
@@ -1823,10 +1883,10 @@ async function populateAppointmentTable(doc_id, selectedDate) {
     const row = document.createElement("tr");
     row.innerHTML = `
       <td>${new Date(appointment.date).toLocaleDateString("th-TH", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })}</td>
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })}</td>
       <td>${appointment.time_start.slice(0, 5)}</td>
       <td>${appointment.time_end.slice(0, 5)}</td>
     `;
@@ -1893,26 +1953,26 @@ let filteredManagerData = [];
 async function fetchManager(page = 1) {
   currentPage = page;
   try {
-      document.getElementById("managerinTable").innerHTML = `<tr><td colspan="5">กำลังโหลดข้อมูล...</td></tr>`;
+    document.getElementById("managerinTable").innerHTML = `<tr><td colspan="5">กำลังโหลดข้อมูล...</td></tr>`;
 
-      const response = await axios.post("http://localhost:8000/api/manager/managerResult");
-      const { manager } = response.data;
+    const response = await axios.post("http://localhost:8000/api/manager/managerResult");
+    const { manager } = response.data;
 
-      if (!manager || manager.length === 0) {
-          document.getElementById("managerinTable").innerHTML = `<tr><td colspan="5">ไม่พบข้อมูลผู้บริหาร</td></tr>`;
-          document.getElementById("paginationControls").innerHTML = "";
-          return;
-      }
-
-      managerData = [...manager];
-      filteredManagerData = [...managerData];
-
-      renderManagerTable();
-      renderManagerControls();
-  } catch (error) {
-      console.error("Error fetching manager data:", error);
-      document.getElementById("managerinTable").innerHTML = `<tr><td colspan="5">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
+    if (!manager || manager.length === 0) {
+      document.getElementById("managerinTable").innerHTML = `<tr><td colspan="5">ไม่พบข้อมูลผู้บริหาร</td></tr>`;
       document.getElementById("paginationControls").innerHTML = "";
+      return;
+    }
+
+    managerData = [...manager];
+    filteredManagerData = [...managerData];
+
+    renderManagerTable();
+    renderManagerControls();
+  } catch (error) {
+    console.error("Error fetching manager data:", error);
+    document.getElementById("managerinTable").innerHTML = `<tr><td colspan="5">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
+    document.getElementById("paginationControls").innerHTML = "";
   }
 }
 
@@ -1944,7 +2004,7 @@ function renderManagerTable() {
   `).join("");
 
   document.getElementById("managerinTable").innerHTML = rows || `<tr><td colspan="5">ไม่มีข้อมูล</td></tr>`;
-  
+
   attachDropdownManager();
   attachEditAndDeleteEvents();
 }
@@ -1987,15 +2047,15 @@ function renderManagerControls() {
   const paginationContainer = document.getElementById("paginationControls");
 
   if (!paginationContainer) {
-      console.warn("⚠️ ไม่พบ paginationControls ใน DOM");
-      return;
+    console.warn("⚠️ ไม่พบ paginationControls ใน DOM");
+    return;
   }
 
   const totalPages = Math.ceil(filteredManagerData.length / itemsPerPage);
   let controlsHTML = "";
 
   for (let i = 1; i <= totalPages; i++) {
-      controlsHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+    controlsHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
   }
 
   paginationContainer.innerHTML = totalPages > 1 ? controlsHTML : "";
@@ -2011,13 +2071,13 @@ function changePage(page) {
 // ✅ ฟังก์ชันแนบ Event ให้ปุ่มแก้ไขและลบ
 function attachEditAndDeleteEvents() {
   document.querySelectorAll(".editBtn").forEach(button => {
-      button.addEventListener("click", (e) => {
-          e.preventDefault();
-          const manId = button.getAttribute("data-id");
-          const manFname = button.getAttribute("data-fname");
-          const manLname = button.getAttribute("data-lname");
+    button.addEventListener("click", (e) => {
+      e.preventDefault();
+      const manId = button.getAttribute("data-id");
+      const manFname = button.getAttribute("data-fname");
+      const manLname = button.getAttribute("data-lname");
 
-          const formHtml = `
+      const formHtml = `
               <div class="popup-container">
                 <div class="popup-content">
                   <div>
@@ -2032,50 +2092,50 @@ function attachEditAndDeleteEvents() {
               </div>
           `;
 
-          document.body.insertAdjacentHTML("beforeend", formHtml);
-          
-          document.getElementById("cancelEdit").addEventListener("click", () => {
-              document.querySelector(".popup-container").remove();
-          });
+      document.body.insertAdjacentHTML("beforeend", formHtml);
 
-          document.getElementById("saveEdit").addEventListener("click", async () => {
-              try {
-                  await axios.post("http://localhost:8000/api/manager/managerUpdate", {
-                      man_id: manId,
-                      man_fname: document.getElementById("editFname").value,
-                      man_lname: document.getElementById("editLname").value,
-                  });
-
-                  alert("ข้อมูลผู้บริหารได้รับการอัปเดตเรียบร้อยแล้ว");
-                  fetchManager();
-                  document.querySelector(".popup-container").remove();
-              } catch (err) {
-                  console.error("Error updating manager:", err);
-                  alert("เกิดข้อผิดพลาดในการอัปเดตข้อมูล");
-              }
-          });
+      document.getElementById("cancelEdit").addEventListener("click", () => {
+        document.querySelector(".popup-container").remove();
       });
+
+      document.getElementById("saveEdit").addEventListener("click", async () => {
+        try {
+          await axios.post("http://localhost:8000/api/manager/managerUpdate", {
+            man_id: manId,
+            man_fname: document.getElementById("editFname").value,
+            man_lname: document.getElementById("editLname").value,
+          });
+
+          alert("ข้อมูลผู้บริหารได้รับการอัปเดตเรียบร้อยแล้ว");
+          fetchManager();
+          document.querySelector(".popup-container").remove();
+        } catch (err) {
+          console.error("Error updating manager:", err);
+          alert("เกิดข้อผิดพลาดในการอัปเดตข้อมูล");
+        }
+      });
+    });
   });
 
   document.querySelectorAll(".delete-trigger").forEach(button => {
-      button.addEventListener("click", async (e) => {
-          e.preventDefault();
-          const manId = button.getAttribute("data-id");
+    button.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const manId = button.getAttribute("data-id");
 
-          if (confirm("คุณต้องการลบข้อมูลนี้หรือไม่?")) {
-              try {
-                  await axios.post("http://localhost:8000/api/manager/managerDelete", {
-                      man_id: manId,
-                  });
+      if (confirm("คุณต้องการลบข้อมูลนี้หรือไม่?")) {
+        try {
+          await axios.post("http://localhost:8000/api/manager/managerDelete", {
+            man_id: manId,
+          });
 
-                  alert("ลบข้อมูลสำเร็จ");
-                  fetchManager();
-              } catch (err) {
-                  console.error("Error deleting manager:", err);
-                  alert("เกิดข้อผิดพลาดในการลบข้อมูล");
-              }
-          }
-      });
+          alert("ลบข้อมูลสำเร็จ");
+          fetchManager();
+        } catch (err) {
+          console.error("Error deleting manager:", err);
+          alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+        }
+      }
+    });
   });
 }
 
@@ -2084,13 +2144,13 @@ function filterManager() {
   const idFilter = document.getElementById('searchmanager').value.trim().toLowerCase();
 
   filteredManagerData = managerData.filter(man => {
-      const name = (man.man_fname + " " + man.man_lname).trim().toLowerCase();
-      const ID = (man.man_id || "").trim().toLowerCase();
+    const name = (man.man_fname + " " + man.man_lname).trim().toLowerCase();
+    const ID = (man.man_id || "").trim().toLowerCase();
 
-      return (
-          (!nameFilter || name.includes(nameFilter)) ||
-          (!idFilter || ID.includes(idFilter))
-      );
+    return (
+      (!nameFilter || name.includes(nameFilter)) ||
+      (!idFilter || ID.includes(idFilter))
+    );
   });
 
   currentPage = 1;
@@ -2126,8 +2186,8 @@ const updateStudyYearAutomatically = async () => {
       await axios.post("http://localhost:8000/api/users/updateStudyYear", {
         users: updatedUsers
       });
-    } 
-    
+    }
+
   } catch (error) {
     console.error("❌ เกิดข้อผิดพลาดในการอัปเดตชั้นปี:", error);
   }
@@ -2183,9 +2243,13 @@ document.addEventListener("DOMContentLoaded", () => {
       sessionStorage.removeItem("user_id");
       break;
 
-      case "webstting.html":
+    case "webstting.html":
       fetchInfoByRole("admin");
       sessionStorage.removeItem("user_id");
+      break;
+
+    case "profile_admin.html":
+      fetchInfoByRole("admin");
       break;
 
     case "patientslist.html":

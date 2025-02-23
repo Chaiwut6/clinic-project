@@ -460,10 +460,10 @@ document.addEventListener("DOMContentLoaded", () => {
                   updateProfileImage(userInfo.profile_image);
               }
           } else {
-              console.error('❌ ข้อมูลที่ได้รับไม่ถูกต้องจาก API');
+              console.error('ข้อมูลที่ได้รับไม่ถูกต้องจาก API');
           }
       } catch (error) {
-          console.error('❌ Error fetching user info:', error);
+          console.error('Error fetching user info:', error);
       }
   };
 

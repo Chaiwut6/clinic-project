@@ -150,6 +150,46 @@ router.post('/admininfo', verifyToken, async (req, res) => {
   }
 });
 
+router.post('/updateadmin', verifyToken, async (req, res) => {
+  const login_id = req.user.login_id; 
+  let conn = null;
+  const {
+    adm_fname, adm_lname
+  } = req.body;
 
+  try {
+    conn = await initMySQL();
+    
+    
+    if (!adm_fname || !adm_lname) {
+      return res.status(400).json({ success: false, message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
+    }
+
+    await conn.beginTransaction();
+
+    const [result1] = await conn.query(
+      "UPDATE admin SET adm_fname = ?, adm_lname = ? WHERE admin_id = ?",
+      [adm_fname, adm_lname, login_id]
+    );
+
+    if (result1.affectedRows > 0 ) {
+      await conn.commit();
+      res.status(200).json({ success: true, message: 'อัปเดตข้อมูลสำเร็จ' });
+    } else {
+      await conn.rollback();
+      res.status(404).json({ success: false, message: 'ไม่พบผู้ใช้นี้ในระบบ' });
+    }
+  } catch (error) {
+    if (conn) await conn.rollback();
+
+    console.error('Error during admin update:', error.message);
+    console.error('Stack trace:', error.stack);
+    res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดในระบบ', error: error.message });
+  } finally {
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
 
 module.exports = router;
