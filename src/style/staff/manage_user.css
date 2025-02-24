@@ -230,3 +230,22 @@
   background-color: #3c66d6;
 }
 
+.reset-password-btn {
+  display: inline-block;
+  color: white;
+  background-color: #dc3545; /* สีแดง */
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.reset-password-btn:hover {
+  background-color: #c82333; /* สีแดงเข้มเมื่อ Hover */
+}
+
+
+

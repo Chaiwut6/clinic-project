@@ -1033,6 +1033,57 @@ router.post('/saveSymptoms', async (req, res) => {
   }
 });
 
+router.post('/reset-password', async (req, res) => {
+  let conn = null;
+  try {
+    const { user_id } = req.body;
+
+    console.log("✅ Received user_id:", user_id); // ✅ ดูค่า user_id ที่ส่งมา
+
+    if (!user_id) {
+      return res.status(400).json({ message: 'กรุณาระบุ User ID' });
+    }
+
+    conn = await initMySQL();
+
+    // ✅ ตรวจสอบว่า User ID นี้มีอยู่จริงหรือไม่
+    const [rows] = await conn.query("SELECT login_id FROM login WHERE login_id = ?", [user_id]);
+    console.log("✅ Found User:", rows);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'ไม่พบ User ID ในระบบ' });
+    }
+
+   
+    let newPassword = user_id.slice(-7); 
+    newPassword = newPassword.replace(/-/g, ''); 
+
+
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+    const [result] = await conn.query(
+      "UPDATE login SET password = ? WHERE login_id = ?",
+      [hashedPassword, user_id]
+    );
+
+    console.log("✅ Update Result:", result);
+
+    if (result.affectedRows > 0) {
+      res.status(200).json({ message: `รีเซ็ตรหัสผ่านสำเร็จ รหัสผ่านใหม่คือ: ${newPassword}` });
+    } else {
+      res.status(404).json({ message: 'ไม่พบ User ID ในระบบ' });
+    }
+  } catch (error) {
+    console.error('Error during password reset:', error.message);
+    console.error('Stack trace:', error.stack);
+    res.status(500).json({ message: 'เกิดข้อผิดพลาดในระบบ', error: error.message });
+  } finally {
+    if (conn) {
+      await conn.end();
+    }
+  }
+});
+
 
 
 

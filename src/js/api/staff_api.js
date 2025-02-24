@@ -1083,11 +1083,33 @@ function renderUserTable() {
         <td>
           <button class="action-btn" onclick="goToAppointmentPage('${user.user_id}')">จัดการข้อมูล</button>
         </td>
+        <td>
+        <a href="#" class="reset-password-btn" onclick="resetUserPassword('${user.user_id}')">Reset Password</a>
+        </td>
       </tr>
     `;
   }).join("");
 
   document.getElementById("UserTable").innerHTML = rows || `<tr><td colspan="8">ไม่พบข้อมูล</td></tr>`;
+}
+
+async function resetUserPassword(user_id) {
+  if (confirm("คุณต้องการรีเซ็ตรหัสผ่านสำหรับผู้ใช้นี้หรือไม่?")) {
+      try {
+          const response = await axios.post("http://localhost:8000/api/employees/reset-password", {
+              user_id: user_id
+          });
+
+          if (response.status === 200) {
+            alert(`รีเซ็ตรหัสผ่านสำเร็จ รหัสผ่านใหม่คือ 6 ตัวท้ายของ รหัสประจำตัว`);
+        } else {
+            alert("ไม่สามารถรีเซ็ตรหัสผ่านได้");
+        }
+      } catch (error) {
+          console.error("Error:", error);
+          alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+      }
+  }
 }
 
 
