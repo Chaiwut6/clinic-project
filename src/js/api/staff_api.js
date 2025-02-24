@@ -1070,28 +1070,63 @@ function renderUserTable() {
   const pageData = filteredData.slice(startIndex, endIndex);
 
   const rows = pageData.map((user, index) => {
-    const displayIndex = startIndex + index + 1; // ✅ ลำดับแสดงในตาราง
+    const displayIndex = startIndex + index + 1; 
+
     return `
       <tr data-id="${user.user_id}">
         <td>${displayIndex}</td>  
         <td>${user.user_id || "ไม่ระบุ"}</td>
-        <td> ${user.title} ${user.user_fname} ${user.user_lname || "ไม่ระบุ"}</td>
+        <td>${user.title} ${user.user_fname} ${user.user_lname || "ไม่ระบุ"}</td>
         <td>${user.nickname || "ไม่ระบุ"}</td>
         <td>${user.faculty || "ไม่ระบุ"}</td>
         <td>${user.phone || "ไม่ระบุ"}</td>
-        <td>${user.latest_case_status || "ไม่มีข้อมูล"}</td>  <!-- ✅ แสดงสถานะนัดหมายล่าสุด -->
+        <td>${user.latest_case_status || "ไม่มีข้อมูล"}</td>  
         <td>
-          <button class="action-btn" onclick="goToAppointmentPage('${user.user_id}')">จัดการข้อมูล</button>
-        </td>
-        <td>
-        <a href="#" class="reset-password-btn" onclick="resetUserPassword('${user.user_id}')">Reset Password</a>
+          <div class="dropdown-user">
+            <button class="actionBtn">
+              <i class="fa-solid fa-grip-lines"></i>
+            </button>
+            <div class="dropdown-content-user">
+              <a href="#" onclick="goToAppointmentPage('${user.user_id}')">จัดการข้อมูล</a>
+              <a href="#" class="reset-password-btn" onclick="resetUserPassword('${user.user_id}')">รีเซ็ตรหัสผ่าน</a>
+            </div>
+          </div>
         </td>
       </tr>
     `;
   }).join("");
 
   document.getElementById("UserTable").innerHTML = rows || `<tr><td colspan="8">ไม่พบข้อมูล</td></tr>`;
+  attachDropdownUser();
 }
+
+function attachDropdownUser() {
+  document.querySelectorAll(".actionBtn").forEach(button => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const dropdown = button.closest(".dropdown-user");
+      const dropdownContent = dropdown.querySelector(".dropdown-content-user");
+
+      // ปิด Dropdown อื่นๆ ก่อน
+      document.querySelectorAll(".dropdown-content-user.show").forEach(openDropdown => {
+        if (openDropdown !== dropdownContent) {
+          openDropdown.classList.remove("show");
+        }
+      });
+
+      // เปิด/ปิด Dropdown ที่คลิก
+      dropdownContent.classList.toggle("show");
+    });
+  });
+
+  // ปิด Dropdown เมื่อคลิกที่อื่น
+  document.addEventListener("click", () => {
+    document.querySelectorAll(".dropdown-content-user.show").forEach(dropdown => {
+      dropdown.classList.remove("show");
+    });
+  });
+}
+
 
 async function resetUserPassword(user_id) {
   if (confirm("คุณต้องการรีเซ็ตรหัสผ่านสำหรับผู้ใช้นี้หรือไม่?")) {
