@@ -230,47 +230,53 @@
   background-color: #3c66d6;
 }
 
-
-
 .dropdown-user {
   position: relative;
 }
 
-.dropdown-user .action-btn {
+
+.dropdown-content-user {
+  position: absolute;
+  justify-content: center;
+  left: 0;
+  top: calc(100% + 5px); /* แสดงด้านล่าง */
+  z-index: 1;
+  min-width: 100%;
+  background-color: #fff;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  display: none;
+  transition: all 0.3s;
+}
+
+.dropdown-content-user.show {
+  display: block;
+}
+
+.dropdown-content-user.above {
+  top: auto;
+  bottom: calc(100% + 5px); /* แสดงขึ้นด้านบน */
+}
+
+.dropdown-content-user a {
+  color: black;
+  padding: 10px 15px;
+  text-decoration: none;
+  display: block;
+  border-bottom: 1px solid #ddd;
+}
+
+.dropdown-content-user a:hover {
+  background-color: #f1f1f1;
+}
+
+.action-btn {
   background: transparent;
   border: none;
   cursor: pointer;
   font-size: 18px;
 }
 
-.dropdown-user .dropdown-content-user {
-  display: none;
-  position: absolute;
-  justify-content: center;
-  background-color: #fff;
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-  min-width: 100%;
-  border-radius: 5px;
-  overflow: hidden;
-}
-
-.dropdown-user .dropdown-content-user a {
-  color: black;
-  padding: 10px 10px;
-  text-decoration: none;
-  display: block;
-  border-bottom: 1px solid #ddd;
-  transition: background-color 0.3s;
-}
-
-.dropdown-user .dropdown-content-user a:hover {
-  background-color: #f1f1f1;
-}
-
-.dropdown-user .dropdown-content-user.show {
-  display: block;
-}
 
 
 

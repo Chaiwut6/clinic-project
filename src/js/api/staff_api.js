@@ -1103,19 +1103,30 @@ function renderUserTable() {
 function attachDropdownUser() {
   document.querySelectorAll(".actionBtn").forEach(button => {
     button.addEventListener("click", (event) => {
-      event.stopPropagation();
+      event.stopPropagation(); 
       const dropdown = button.closest(".dropdown-user");
       const dropdownContent = dropdown.querySelector(".dropdown-content-user");
 
-      // ปิด Dropdown อื่นๆ ก่อน
+      // ปิด Dropdown อื่นๆ ก่อนเปิดอันที่ต้องการ
       document.querySelectorAll(".dropdown-content-user.show").forEach(openDropdown => {
         if (openDropdown !== dropdownContent) {
           openDropdown.classList.remove("show");
+          openDropdown.classList.remove("above");
         }
       });
 
-      // เปิด/ปิด Dropdown ที่คลิก
+      // เปิด/ปิด Dropdown
       dropdownContent.classList.toggle("show");
+
+      // ✅ ตรวจสอบพื้นที่ว่าง
+      const rect = dropdownContent.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+
+      if (rect.bottom > windowHeight) {
+        dropdownContent.classList.add("above");
+      } else {
+        dropdownContent.classList.remove("above");
+      }
     });
   });
 
@@ -1123,9 +1134,11 @@ function attachDropdownUser() {
   document.addEventListener("click", () => {
     document.querySelectorAll(".dropdown-content-user.show").forEach(dropdown => {
       dropdown.classList.remove("show");
+      dropdown.classList.remove("above");
     });
   });
 }
+
 
 
 async function resetUserPassword(user_id) {
