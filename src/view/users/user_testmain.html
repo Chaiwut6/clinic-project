@@ -27,15 +27,15 @@
             try {
                 
                 // เรียก API เพื่อดึงข้อมูลของผู้ใช้
-                const response = await axios.post('http://localhost:8000/api/users/userinfo', {}, {
+                const response = await axios.post('http://localhost:8000/api/students/userinfo', {}, {
                     withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
                 });
                 
-                const user_id = response.data.user.user_id;
-                const user_fname = response.data.user.user_fname;
-                const user_lname = response.data.user.user_lname;
+                const stu_id = response.data.user.stu_id;
+                const stu_fname = response.data.user.stu_fname;
+                const stu_lname = response.data.user.stu_lname;
                 // ถ้าไม่มีข้อมูลของผู้ใช้ให้แสดงข้อความแจ้งเตือน
-                if (!user_id || !user_fname || !user_lname) {
+                if (!stu_id || !stu_fname || !stu_lname) {
                     alert("โปรดเข้าสู่ระบบก่อนทำการสำรวจ");
                     return; // หยุดการทำงานถ้าไม่มีข้อมูลผู้ใช้
                 }

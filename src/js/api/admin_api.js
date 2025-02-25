@@ -194,9 +194,9 @@ const fetchAdminInfo = async () => {
   const Logout = async () => {
     try {
       // เรียก API logout ไปที่เซิร์ฟเวอร์
-      const response = await axios.post('http://localhost:8000/api/users/logout', {}, { withCredentials: true });
+      const response = await axios.post('http://localhost:8000/api/students/logout', {}, { withCredentials: true });
       sessionStorage.removeItem('employeeID');
-      sessionStorage.removeItem('user_id');
+      sessionStorage.removeItem('stu_id');
       // ตรวจสอบผลลัพธ์จากการออกจากระบบ
       if (response.data.message === 'ออกจากระบบสำเร็จ') {
         console.log('คุณออกจากระบบเรียบร้อยแล้ว');
@@ -824,7 +824,7 @@ async function fetchUserlist() {
 
     const response = await axios.post("http://localhost:8000/api/employees/userList");
 
-    userData = response.data?.users || [];
+    userData = response.data?.students || [];
     
 
     filteredData = [...userData]; // ✅ สำเนาข้อมูลเพื่อใช้ในการกรอง
@@ -851,8 +851,8 @@ function filterPatients() {
 
   // ✅ กรองข้อมูลจาก userData
   filteredData = userData.filter(user => {
-    const ID = (user.user_id || "").toLowerCase();
-    const name = `${user.title} ${user.user_fname} ${user.user_lname}`.toLowerCase();
+    const ID = (user.stu_id || "").toLowerCase();
+    const name = `${user.title} ${user.stu_fname} ${user.stu_lname}`.toLowerCase();
     const faculty = user.faculty?.trim() || "";
 
     return (
@@ -875,16 +875,16 @@ function renderUserTable() {
   const rows = pageData.map((user, index) => {
     const displayIndex = startIndex + index + 1; // ✅ ลำดับแสดงในตาราง
     return `
-      <tr data-id="${user.user_id}">
+      <tr data-id="${user.stu_id}">
         <td>${displayIndex}</td>  
-        <td>${user.user_id || "ไม่ระบุ"}</td>
-        <td>${user.user_fname} ${user.user_lname || "ไม่ระบุ"}</td>
+        <td>${user.stu_id || "ไม่ระบุ"}</td>
+        <td>${user.stu_fname} ${user.stu_lname || "ไม่ระบุ"}</td>
         <td>${user.nickname || "ไม่ระบุ"}</td>
         <td>${user.faculty || "ไม่ระบุ"}</td>
         <td>${user.phone || "ไม่ระบุ"}</td>
         <td>${user.latest_appointment_status || "ไม่มีข้อมูล"}</td>  <!-- ✅ แสดงสถานะนัดหมายล่าสุด -->
         <td>
-          <button class="action-btn" onclick="goToAppointmentPage('${user.user_id}')">จัดการข้อมูล</button>
+          <button class="action-btn" onclick="goToAppointmentPage('${user.stu_id}')">จัดการข้อมูล</button>
         </td>
       </tr>
     `;
@@ -915,13 +915,13 @@ function changeUserPage(page) {
 
 async function fetchUserDataAndDisplay() {
   try {
-    const encrypUser = sessionStorage.getItem("user_id");
-    const user_id = encrypUser ? atob(encrypUser) : null;
-    if (!user_id) {
+    const encrypUser = sessionStorage.getItem("stu_id");
+    const stu_id = encrypUser ? atob(encrypUser) : null;
+    if (!stu_id) {
       throw new Error('User ID is not available in session storage');
     }
 
-    const response = await axios.post("http://localhost:8000/api/employees/userdetails", { userId: user_id });
+    const response = await axios.post("http://localhost:8000/api/employees/userdetails", { userId: stu_id });
 
     if (response.status < 200 || response.status >= 300) {
       throw new Error('Error fetching user data');
@@ -938,9 +938,9 @@ async function fetchUserDataAndDisplay() {
     }
 
     // Populate user data on the page
-    document.getElementById('userid').innerHTML = user[0].user_id;
-    document.getElementById('user-fname').innerHTML = user[0].user_fname;
-    document.getElementById('user-lname').innerHTML = user[0].user_lname;
+    document.getElementById('userid').innerHTML = user[0].stu_id;
+    document.getElementById('user-fname').innerHTML = user[0].stu_fname;
+    document.getElementById('user-lname').innerHTML = user[0].stu_lname;
     document.getElementById('user-phone').innerHTML = user[0].phone;
     document.getElementById('user-faculty').innerHTML = user[0].faculty;
     document.getElementById('user-year').innerHTML = user[0].year;
@@ -1282,7 +1282,7 @@ async function fetchUserDataAndDisplay() {
     
       try {
           const response = await axios.post("http://localhost:8000/api/employees/closeCase", {
-              user_id: userId,
+            stu_id: userId,
           });
     
           if (response.status === 200) {
@@ -1341,7 +1341,7 @@ const changePassword = async () => {
 
 let selectedDoctorId = null;
 let selectedDoctorName = ''; 
-const encrypUser = sessionStorage.getItem("user_id");
+const encrypUser = sessionStorage.getItem("stu_id");
 const userId = encrypUser ? atob(encrypUser) : null;
 let userFname = '';
 let userLname = '';
@@ -1352,8 +1352,8 @@ async function fetchUserDetails() {
     const response = await axios.post("http://localhost:8000/api/employees/userdetails", { userId: userId });
     const user = response.data.user;
     if (user && user.length > 0) {
-      userFname = user[0].user_fname;
-      userLname = user[0].user_lname;
+      userFname = user[0].stu_fname;
+      userLname = user[0].stu_lname;
     }
   } catch (error) {
     console.error("Error fetching user details:", error);
@@ -1537,9 +1537,9 @@ async function saveAppointment() {
 
   const appointmentData = {
     Appointment_id: appointmentId,
-    user_id: userId,
-    user_fname: userFname,
-    user_lname: userLname,
+    stu_id: userId,
+    stu_fname: userFname,
+    stu_lname: userLname,
     doc_id: selectedDoctorId,
     doc_name: selectedDoctorName,
     time_start: start_time,
@@ -1922,16 +1922,16 @@ function uploadImage() {
     if (currentPage === "manage_doctor.html") {
         fetchAdminInfo();
         fetchDoctors();
-        sessionStorage.removeItem("user_id");
+        sessionStorage.removeItem("stu_id");
       }
     if (currentPage === "manage_employee.html") {
         fetchEmployee()
         fetchAdminInfo();
-        sessionStorage.removeItem("user_id");
+        sessionStorage.removeItem("stu_id");
       }
     //   if (currentPage === "manage_user.html") {
     //     fetchUserlist()
-    //     sessionStorage.removeItem("user_id");
+    //     sessionStorage.removeItem("stu_id");
     //   }
     //   if (currentPage === "mange_user_data.html") {
     //     fetchUserDataAndDisplay()
@@ -1942,9 +1942,9 @@ function uploadImage() {
       if (currentPage === "manage_man.html") {
         fetchManager()
         fetchAdminInfo();
-        sessionStorage.removeItem("user_id");
+        sessionStorage.removeItem("stu_id");
       }
       if (currentPage === "patientslist.html") {
-        sessionStorage.removeItem("user_id");
+        sessionStorage.removeItem("stu_id");
       }
   });

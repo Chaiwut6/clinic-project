@@ -305,7 +305,7 @@ function saveSymptoms() {
 
 const goToAppointmentPage = (userId) => {
   const encrypUser = btoa(userId);
-  sessionStorage.setItem('user_id', encrypUser);
+  sessionStorage.setItem('stu_id', encrypUser);
   window.location.href = 'mange_user_data.html';
 };
 

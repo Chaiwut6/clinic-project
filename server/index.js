@@ -2,7 +2,7 @@ const express = require('express');
 const path = require("path");
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const userRoutes = require('./routes/userRoutes');
+const studentRoutes = require('./routes/studentRoutes');
 const doctorRoutes = require('./routes/doctorRoutes');
 const employeeRoutes = require('./routes/employeeRoutes');
 const mangerRoutes = require('./routes/manRoutes');
@@ -23,7 +23,7 @@ app.use(cors({
 app.use("/uploads", express.static(uploadDir));
 
 // Routes
-app.use('/api/users', userRoutes);
+app.use('/api/students', studentRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/employees', employeeRoutes);
 app.use('/api/manager', mangerRoutes);

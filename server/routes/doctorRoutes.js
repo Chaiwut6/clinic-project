@@ -632,9 +632,9 @@ router.post('/doctorappointments', verifyToken, async (req, res) => {
     conn = await initMySQL();
 
     const [appointmentsResults] = await conn.query(
-      `SELECT a.*, u.title, u.user_fname, u.user_lname, u.nickname, u.faculty, u.phone
+      `SELECT a.*, u.title, u.stu_fname, u.stu_lname, u.nickname, u.faculty, u.phone
        FROM appointments a 
-       JOIN users u ON a.user_id = u.user_id
+       JOIN students u ON a.stu_id = u.stu_id
        WHERE a.doc_id = ? AND a.status = 'ยืนยัน'`,
       [login_id]
     );
@@ -758,17 +758,17 @@ router.delete('/deleteAvailability', async (req, res) => {
 router.post('/saveSymptoms', async (req, res) => {
   let conn;
   try {
-    const { user_id, symptoms, additionalSymptom } = req.body;
+    const { stu_id, symptoms, additionalSymptom } = req.body;
 
-    if (!user_id || !symptoms) {
+    if (!stu_id || !symptoms) {
         return res.status(400).json({ message: 'ข้อมูลไม่ครบถ้วน' });
     }
 
     conn = await initMySQL();
 
     const [latestAppointment] = await conn.query(
-      "SELECT Appointment_id FROM appointments WHERE user_id = ? AND status = 'ยืนยัน' AND date <= NOW() ORDER BY date DESC LIMIT 1",
-      [user_id]
+      "SELECT Appointment_id FROM appointments WHERE stu_id = ? AND status = 'ยืนยัน' AND date <= NOW() ORDER BY date DESC LIMIT 1",
+      [stu_id]
     );
 
     if (!latestAppointment.length) {

@@ -1,6 +1,5 @@
 
   .table-container {
-    overflow-y: auto; /* เพิ่ม Scroll */
     max-height: 800px; /* จำกัดความสูงของตาราง */
     border: 1px solid #ccc; /* เพิ่มขอบ */
     margin-top: 10px;
@@ -230,17 +229,18 @@
   background-color: #3c66d6;
 }
 
+
+
 .dropdown-user {
   position: relative;
 }
-
 
 .dropdown-content-user {
   position: absolute;
   justify-content: center;
   left: 0;
-  top: calc(100% + 5px); /* แสดงด้านล่าง */
-  z-index: 1;
+  top: calc(100% + 5px); 
+  z-index: 2000;
   min-width: 100%;
   background-color: #fff;
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
@@ -255,7 +255,7 @@
 
 .dropdown-content-user.above {
   top: auto;
-  bottom: calc(100% + 5px); /* แสดงขึ้นด้านบน */
+  bottom: calc(100% + 5px); 
 }
 
 .dropdown-content-user a {
@@ -270,7 +270,7 @@
   background-color: #f1f1f1;
 }
 
-.action-btn {
+.actionbtn {
   background: transparent;
   border: none;
   cursor: pointer;

@@ -1,6 +1,6 @@
 const fetchAppointments = async () => {
   try {
-    const response = await axios.post('http://localhost:8000/api/users/appointment', null, {
+    const response = await axios.post('http://localhost:8000/api/students/appointment', null, {
       withCredentials: true,
     });
 
@@ -93,7 +93,7 @@ const fetchAppointments = async () => {
 
 const fetchNotifications = async () => {
   try {
-    const response = await axios.post('http://localhost:8000/api/users/appointment', null, {
+    const response = await axios.post('http://localhost:8000/api/students/appointment', null, {
       withCredentials: true,
     });
 
@@ -142,7 +142,7 @@ const fetchNotifications = async () => {
   const updateStatus = async (Appointment_id, status) => {
     try {
       // เรียก API เพื่ออัปเดตสถานะการนัดหมาย
-      const response = await axios.post('http://localhost:8000/api/users/update-appointment', {
+      const response = await axios.post('http://localhost:8000/api/students/update-appointment', {
         Appointment_id: Appointment_id,
         status: status
       });

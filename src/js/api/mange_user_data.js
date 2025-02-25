@@ -1,5 +1,5 @@
 async function saveSymptoms() {
-    const encrypUser = sessionStorage.getItem("user_id");
+    const encrypUser = sessionStorage.getItem("stu_id");
     const userId = encrypUser ? atob(encrypUser) : null;
 
     if (!userId) {
@@ -16,7 +16,7 @@ async function saveSymptoms() {
 
     try {
         const response = await axios.post("http://localhost:8000/api/employees/saveSymptoms", {
-            user_id: userId,
+            stu_id: userId,
             symptoms: selectedSymptoms,
             additionalSymptom: additionalSymptom
         });

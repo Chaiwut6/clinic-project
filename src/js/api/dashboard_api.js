@@ -16,7 +16,7 @@ async function fetchDoctorCount() {
   }
   async function fetchUserCount() {
     try {
-      const response = await axios.post("http://localhost:8000/api/users/userCount");
+      const response = await axios.post("http://localhost:8000/api/students/userCount");
   
       if (response.data.success) {
         document.getElementById("userCount").textContent = response.data.userCount;

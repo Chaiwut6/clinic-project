@@ -46,16 +46,16 @@ const register = async () => {
     const confirm_password = document.querySelector('#confirm_password').value;
     const policyCheckbox = document.querySelector('#policy_checkbox');
     const title = document.querySelector('#title').value;
-    const user_fname = document.querySelector('#user_fname').value;
-    const user_lname = document.querySelector('#user_lname').value;
+    const stu_fname = document.querySelector('#stu_fname').value;
+    const stu_lname = document.querySelector('#stu_lname').value;
     const nickname = document.querySelector('#nickname').value;
     const phone = document.querySelector('#phone').value;
     const faculty = document.querySelector('#faculty').value;
-    const user_id = document.querySelector('#user_id').value;
+    const stu_id = document.querySelector('#stu_id').value;
     const profileImage = document.querySelector('#profileImage').files[0];
 
     const currentYear = new Date().getFullYear() + 543; 
-    const admissionYear = parseInt(user_id.substring(2, 4)); 
+    const admissionYear = parseInt(stu_id.substring(2, 4)); 
     const admissionFullYear = admissionYear + 2500; 
     let studyYear = currentYear - admissionFullYear;
     
@@ -68,7 +68,7 @@ const register = async () => {
     // console.log(`ปีปัจจุบัน: ${currentYear}, ปีที่เข้า: ${admissionFullYear}, ชั้นปี: ${year}`);
 
     // Check if all required fields are filled
-    if (!title || !user_fname || !user_lname || !nickname || !phone || !faculty || !year || !user_id || !password || !confirm_password) {
+    if (!title || !stu_fname || !stu_lname || !nickname || !phone || !faculty || !year || !stu_id || !password || !confirm_password) {
       alert('กรุณากรอกข้อมูลให้ครบทุกช่อง');
       return;
     }
@@ -80,9 +80,9 @@ const register = async () => {
       return;
     }
 
-    if (!/^\d{12}-\d{1}$/.test(user_id)) {
+    if (!/^\d{12}-\d{1}$/.test(stu_id)) {
       alert('กรุณากรอกรหัสประจำตัวให้ถูกต้อง เช่น 116510001001-2');
-      document.querySelector('#user_id').focus();
+      document.querySelector('#stu_id').focus();
       return;
     }
 
@@ -101,9 +101,9 @@ const register = async () => {
     }
 
 
-    // Check if user_id already exists
-    const checkUserApiUrl = 'http://localhost:8000/api/users/checkuser';
-    const checkResponse = await axios.post(checkUserApiUrl, { user_id });
+    // Check if stu_id already exists
+    const checkUserApiUrl = 'http://localhost:8000/api/students/checkuser';
+    const checkResponse = await axios.post(checkUserApiUrl, { stu_id });
 
     if (!checkResponse.data.success) {
       alert('รหัสนักศึกษานี้มีการลงทะเบียนแล้ว');
@@ -116,11 +116,11 @@ const register = async () => {
     if (profileImage) {
       const formData = new FormData();
       formData.append("profileImage", profileImage);
-      formData.append("user_id", user_id); // ✅ ใส่ user_id
+      formData.append("stu_id", stu_id); // ✅ ใส่ stu_id
  
     
       try {
-        const uploadResponse = await axios.post("http://localhost:8000/api/users/upload-profile", formData, {
+        const uploadResponse = await axios.post("http://localhost:8000/api/students/upload-profile", formData, {
           headers: { "Content-Type": "multipart/form-data" }
         });
     
@@ -137,18 +137,18 @@ const register = async () => {
 
 
     // Define the API URL for registration
-    const registerApiUrl = 'http://localhost:8000/api/users/register-user';
+    const registerApiUrl = 'http://localhost:8000/api/students/register-user';
 
     // Call the API to register the user
     const response = await axios.post(registerApiUrl, {
       title,
-      user_fname,
-      user_lname,
+      stu_fname,
+      stu_lname,
       nickname,
       phone,
       faculty,
       year,
-      user_id,
+      stu_id,
       password,
       profile_image: profileImageUrl
     });
@@ -184,7 +184,7 @@ const register = async () => {
 // const updateStudyYearAutomatically = async () => {
 
 //   try {
-//     const response = await axios.post("http://localhost:8000/api/users/getAllUsers");
+//     const response = await axios.post("http://localhost:8000/api/students/getAllUsers");
 
 //     if (!response.data.success) {
 //       console.error("❌ ไม่สามารถดึงข้อมูลผู้ใช้ได้");
@@ -196,13 +196,13 @@ const register = async () => {
 //     let updatedUsers = [];
 
 //     users.forEach(user => {
-//       const admissionYear = parseInt(user.user_id.substring(2, 4));
+//       const admissionYear = parseInt(user.stu_id.substring(2, 4));
 //       const admissionFullYear = admissionYear + 2500; // แปลงเป็น พ.ศ.
 //       const studyYear = Math.max(1, currentYear - admissionFullYear);
 //       const newYear = `ปี ${studyYear}`;
 
 //       if (user.year !== newYear) {
-//         updatedUsers.push({ user_id: user.user_id, year: newYear });
+//         updatedUsers.push({ stu_id: user.stu_id, year: newYear });
 //       }
 //     });
 
@@ -219,7 +219,7 @@ const register = async () => {
 
 
 const login = async () => {
-  const login_id = document.querySelector('input[name=user_id]').value;
+  const login_id = document.querySelector('input[name=stu_id]').value;
   const password = document.querySelector('input[name=password]').value;
 
 
@@ -234,7 +234,7 @@ const login = async () => {
       return;
     }
     if (login_id) {
-      const response_user = await axios.post('http://localhost:8000/api/users/login', {
+      const response_user = await axios.post('http://localhost:8000/api/students/login', {
         login_id,
         password
       }, {
@@ -248,9 +248,9 @@ const login = async () => {
       const userAssess = responseData.Assess;
 
 
-      if (responseData.roles === 'user') {
+      if (responseData.roles === 'student') {
         const encrypUser = btoa(login_id);
-        sessionStorage.setItem('user_id', encrypUser);
+        sessionStorage.setItem('stu_id', encrypUser);
         window.location.href = '/view/users/user_info.html';
       } else if (responseData.roles === 'doctor') {
         window.location.href = '../view/doctor/doc_main.html';
@@ -282,7 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const fetchUserInfo = async () => {
     try {
       // ใช้ POST แทน GET ในการดึงข้อมูล
-      const response = await axios.post('http://localhost:8000/api/users/userinfo', {}, {
+      const response = await axios.post('http://localhost:8000/api/students/userinfo', {}, {
         withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
       });
 
@@ -347,9 +347,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ✅ อัปเดตข้อมูลผู้ใช้
     if (userInfo) {
-      updateElements('.id', userInfo.user_id);
-      updateElements('.fname', userInfo.user_fname);
-      updateElements('.lname', userInfo.user_lname);
+      updateElements('.id', userInfo.stu_id);
+      updateElements('.fname', userInfo.stu_fname);
+      updateElements('.lname', userInfo.stu_lname);
       updateElements('.nickname', userInfo.nickname);
       updateElements('.year', userInfo.year);
       updateElements('.phone', userInfo.phone);
@@ -380,16 +380,16 @@ document.addEventListener("DOMContentLoaded", () => {
 const Logout = async () => {
   try {
     // เรียก API logout ไปที่เซิร์ฟเวอร์
-    const response = await axios.post('http://localhost:8000/api/users/logout', {}, { withCredentials: true });
+    const response = await axios.post('http://localhost:8000/api/students/logout', {}, { withCredentials: true });
 
     // ตรวจสอบผลลัพธ์จากการออกจากระบบ
     if (response.data.message === 'ออกจากระบบสำเร็จ') {
       console.log('คุณออกจากระบบเรียบร้อยแล้ว');
 
       // ลบข้อมูลจาก sessionStorage
-      sessionStorage.removeItem('user_id');
-      sessionStorage.removeItem('user_fname');
-      sessionStorage.removeItem('user_lname');
+      sessionStorage.removeItem('stu_id');
+      sessionStorage.removeItem('stu_fname');
+      sessionStorage.removeItem('stu_lname');
 
       // เปลี่ยนเส้นทางไปยังหน้าเข้าสู่ระบบ
       window.location.href = '/view/index.html'; // 
@@ -417,7 +417,7 @@ const changePassword = async () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:8000/api/users/change-password', {
+      const response = await axios.post('http://localhost:8000/api/students/change-password', {
         oldPassword: currentPassword,
         newPassword: newPassword,
         confirmPassword: confirmPassword
@@ -446,7 +446,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ✅ ฟังก์ชันดึงข้อมูลผู้ใช้จาก API
   const fetchUserInfo = async () => {
       try {
-          const response = await axios.post('http://localhost:8000/api/users/userinfo', {}, {
+          const response = await axios.post('http://localhost:8000/api/students/userinfo', {}, {
               withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
           });
 
@@ -469,8 +469,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ✅ ฟังก์ชันเติมข้อมูลในฟอร์ม
   const populateForm = (userInfo) => {
-      document.getElementById("first-name").value = userInfo.user_fname || '';
-      document.getElementById("last-name").value = userInfo.user_lname || '';
+      document.getElementById("first-name").value = userInfo.stu_fname || '';
+      document.getElementById("last-name").value = userInfo.stu_lname || '';
       document.getElementById("nickname").value = userInfo.nickname || '';
       document.getElementById("faculty").value = userInfo.faculty || '';
       document.getElementById("phone").value = userInfo.phone || '';
@@ -487,25 +487,25 @@ document.addEventListener("DOMContentLoaded", () => {
       form.addEventListener("submit", async (event) => {
           event.preventDefault(); // ป้องกันการโหลดหน้าใหม่
 
-          const encrypUser = sessionStorage.getItem("user_id");
+          const encrypUser = sessionStorage.getItem("stu_id");
           const userId = encrypUser ? atob(encrypUser) : null;
 
           if (!userId) {
-              alert("ไม่พบ user_id กรุณาลองเข้าสู่ระบบใหม่");
+              alert("ไม่พบ stu_id กรุณาลองเข้าสู่ระบบใหม่");
               return;
           }
 
           const updatedData = {
-              user_id: userId, 
-              user_fname: document.getElementById("first-name").value,
-              user_lname: document.getElementById("last-name").value,
+              stu_id: userId, 
+              stu_fname: document.getElementById("first-name").value,
+              stu_lname: document.getElementById("last-name").value,
               nickname: document.getElementById("nickname").value,
               faculty: document.getElementById("faculty").value,
               phone: document.getElementById("phone").value,
           };
 
           try {
-              const response = await axios.post('http://localhost:8000/api/users/updateuser', updatedData, {
+              const response = await axios.post('http://localhost:8000/api/students/updateuser', updatedData, {
                   withCredentials: true
               });
 
@@ -530,18 +530,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function uploadProfileImage() {
   const fileInput = document.getElementById("profile-image");
-  const encrypUser = sessionStorage.getItem("user_id");
+  const encrypUser = sessionStorage.getItem("stu_id");
   const userId = encrypUser ? atob(encrypUser) : null;
 
   if (!userId) {
-      alert("ไม่พบ user_id กรุณาลองเข้าสู่ระบบใหม่");
+      alert("ไม่พบ stu_id กรุณาลองเข้าสู่ระบบใหม่");
       return;
   }
 
   // console.log("User ID:", userId);
 
   const formData = new FormData();
-  formData.append("user_id", userId);
+  formData.append("stu_id", userId);
 
   // ✅ ถ้าผู้ใช้ **อัปโหลดรูปใหม่** ให้แนบไฟล์ไปด้วย
   if (fileInput.files.length > 0) {
@@ -552,7 +552,7 @@ async function uploadProfileImage() {
   }
 
   try {
-      const response = await axios.post("http://localhost:8000/api/users/upload-profile", formData, {
+      const response = await axios.post("http://localhost:8000/api/students/upload-profile", formData, {
           headers: { "Content-Type": "multipart/form-data" },
           withCredentials: true
       });
@@ -579,7 +579,7 @@ async function uploadProfileImage() {
 
 const fetchUserProfile = async () => {
   try {
-      const response = await axios.post('http://localhost:8000/api/users/userinfo', {}, {
+      const response = await axios.post('http://localhost:8000/api/students/userinfo', {}, {
           withCredentials: true 
       });
 

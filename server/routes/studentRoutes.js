@@ -25,14 +25,14 @@ router.post("/upload-profile", upload.single("profileImage"), async (req, res) =
   let conn;
   try {
     conn = await initMySQL();
-    const { user_id } = req.body;
+    const { stu_id } = req.body;
 
-    if (!user_id) {
-      return res.status(400).json({ success: false, message: "Missing user_id" });
+    if (!stu_id) {
+      return res.status(400).json({ success: false, message: "Missing stu_id" });
     }
 
     // ✅ ค้นหารูปโปรไฟล์ปัจจุบันของ user
-    const [existingUser] = await conn.query("SELECT profile_image FROM users WHERE user_id = ?", [user_id]);
+    const [existingUser] = await conn.query("SELECT profile_image FROM students WHERE stu_id = ?", [stu_id]);
 
     let imageUrl = existingUser.length > 0 ? existingUser[0].profile_image : null;
 
@@ -46,7 +46,7 @@ router.post("/upload-profile", upload.single("profileImage"), async (req, res) =
       }
 
       // ✅ อัปเดตฐานข้อมูลด้วยรูปใหม่
-      await conn.query("UPDATE users SET profile_image = ? WHERE user_id = ?", [newFilePath, user_id]);
+      await conn.query("UPDATE students SET profile_image = ? WHERE stu_id = ?", [newFilePath, stu_id]);
       imageUrl = newFilePath;
     }
 
@@ -69,15 +69,15 @@ router.post('/register-user', async (req, res) => {
   try {
     conn = await initMySQL();
 
-    const { title , user_id, password, user_fname, user_lname, nickname, year, phone, faculty , profile_image} = req.body;
+    const { title , stu_id, password, stu_fname, stu_lname, nickname, year, phone, faculty , profile_image} = req.body;
 
     // Validate input fields
-    if (!user_id || !password || !user_fname || !user_lname) {
+    if (!stu_id || !password || !stu_fname || !stu_lname) {
       return res.status(400).json({ message: 'Please fill all required fields.' });
     }
 
     // Check for duplicate user ID
-    const [rows] = await conn.query('SELECT user_id FROM users WHERE user_id = ?', [user_id]);
+    const [rows] = await conn.query('SELECT stu_id FROM students WHERE stu_id = ?', [stu_id]);
     if (rows.length > 0) {
       return res.status(400).json({ message: 'User ID already exists. Please use a different User ID.' });
     }
@@ -86,15 +86,15 @@ router.post('/register-user', async (req, res) => {
     const passwordHash = await bcrypt.hash(password, 12);
 
     // Insert user and login data
-    const userData = { user_id, title , user_fname, user_lname, nickname, year, phone, faculty, profile_image:profile_image || "" };
+    const userData = { stu_id, title , stu_fname, stu_lname, nickname, year, phone, faculty, profile_image:profile_image || "" };
     
-    const loginData = { login_id: user_id, password: passwordHash, roles: 'user' };
+    const loginData = { login_id: stu_id, password: passwordHash, roles: 'student' };
 
-    await conn.query('INSERT INTO users SET ?', userData);
+    await conn.query('INSERT INTO students SET ?', userData);
     await conn.query('INSERT INTO login SET ?', loginData);
 
     // Create JWT token
-    const token = jwt.sign({ login_id: user_id }, secret, { expiresIn: '1h' });
+    const token = jwt.sign({ login_id: stu_id }, secret, { expiresIn: '1h' });
 
     // Set cookie
     res.cookie('token', token, {
@@ -107,7 +107,7 @@ router.post('/register-user', async (req, res) => {
     // Response
     res.status(201).json({
       message: 'User registered successfully',
-      user_id,
+      stu_id,
       token,
     });
   } catch (error) {
@@ -145,9 +145,9 @@ router.post("/login", async (req, res) => {
     let userInfo = null;
     let userAssess = null;
 
-    if (userData.roles === 'user') {
-      const [userResults] = await conn.query("SELECT * FROM users WHERE user_id = ?", [login_id]);
-      const [userAssessResults] = await conn.query("SELECT * FROM risk_results WHERE user_id = ?", [login_id]);
+    if (userData.roles === 'student') {
+      const [userResults] = await conn.query("SELECT * FROM students WHERE stu_id = ?", [login_id]);
+      const [userAssessResults] = await conn.query("SELECT * FROM risk_results WHERE stu_id = ?", [login_id]);
       userInfo = userResults[0];
       userAssess = userAssessResults;
     } else if (userData.roles === 'employee') {
@@ -184,7 +184,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post('/users', async (req, res) => {
+router.post('/students', async (req, res) => {
   let conn = null;
   try {
     conn = await initMySQL();
@@ -201,14 +201,14 @@ router.post('/users', async (req, res) => {
 
     const user = jwt.verify(authToken, process.env.JWT_SECRET);
 
-    const [checkResults] = await conn.query('SELECT * FROM users WHERE user_id = ?', [user.user_id]);
+    const [checkResults] = await conn.query('SELECT * FROM students WHERE stu_id = ?', [user.stu_id]);
     if (!checkResults[0]) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const [results] = await conn.query('SELECT * FROM users');
+    const [results] = await conn.query('SELECT * FROM students');
     res.json({
-      users: results,
+      students: results,
     });
   } catch (error) {
     console.log('error', error);
@@ -224,19 +224,19 @@ router.post('/users', async (req, res) => {
 });
 
 
-router.post('/getAllUsers', async (req, res) => {
+router.post('/getAllstudents', async (req, res) => {
   let conn;
   try {
       conn = await initMySQL();
-      const [users] = await conn.query("SELECT user_id, year FROM users");
+      const [students] = await conn.query("SELECT stu_id, year FROM students");
 
-      if (!Array.isArray(users)) {
-          return res.status(500).json({ message: "เกิดข้อผิดพลาด: users ไม่ใช่ array" });
+      if (!Array.isArray(students)) {
+          return res.status(500).json({ message: "เกิดข้อผิดพลาด: students ไม่ใช่ array" });
       }
 
-      res.json({ success: true, users }); // ✅ ส่งเป็น JSON รูปแบบที่ถูกต้อง
+      res.json({ success: true, students }); // ✅ ส่งเป็น JSON รูปแบบที่ถูกต้อง
   } catch (error) {
-      console.error("Error fetching users:", error);
+      console.error("Error fetching students:", error);
       res.status(500).json({ message: "ไม่สามารถดึงข้อมูลผู้ใช้ได้", error: error.message });
   } finally {
       if (conn) await conn.end();
@@ -247,16 +247,16 @@ router.post("/updateStudyYear", async (req, res) => {
   let conn = null;
   try {
     conn = await initMySQL();
-    const usersToUpdate = req.body.users;
+    const studentsToUpdate = req.body.students;
 
-    if (!usersToUpdate || usersToUpdate.length === 0) {
+    if (!studentsToUpdate || studentsToUpdate.length === 0) {
       return res.status(400).json({ message: "ไม่มีข้อมูลที่ต้องอัปเดต" });
     }
 
     await conn.beginTransaction();
 
-    for (const user of usersToUpdate) {
-      await conn.query("UPDATE users SET year = ? WHERE user_id = ?", [user.year, user.user_id]);
+    for (const user of studentsToUpdate) {
+      await conn.query("UPDATE students SET year = ? WHERE stu_id = ?", [user.year, user.stu_id]);
     }
 
     await conn.commit();
@@ -278,7 +278,7 @@ router.post('/userCount', async (req, res) => {
 
   try {
     conn = await initMySQL();
-    const [result] = await conn.query("SELECT COUNT(*) AS count FROM users");
+    const [result] = await conn.query("SELECT COUNT(*) AS count FROM students");
 
     res.json({
       success: true,
@@ -302,10 +302,10 @@ router.post('/save-result', async (req, res) => {
   let conn = null;
   try {
       conn = await initMySQL();
-      const { result_id, user_id, totalScore, result, user_fname, user_lname } = req.body;
+      const { result_id, stu_id, totalScore, result, stu_fname, stu_lname } = req.body;
 
       // ตรวจสอบว่าข้อมูลครบถ้วน
-      if (!result_id || !user_id || totalScore === undefined || result === undefined) {
+      if (!result_id || !stu_id || totalScore === undefined || result === undefined) {
           return res.status(400).json({ 
               message: 'Result ID, User ID, totalScore, and result are required' 
           });
@@ -314,11 +314,11 @@ router.post('/save-result', async (req, res) => {
       // สร้างข้อมูลใหม่สำหรับผลลัพธ์การประเมิน
       const userData = {
           result_id: result_id,
-          user_id: user_id,
+          stu_id: stu_id,
           total_score: totalScore,
           result: result,
-          user_fname: user_fname,
-          user_lname: user_lname,
+          stu_fname: stu_fname,
+          stu_lname: stu_lname,
       };
 
       // แทรกข้อมูลใหม่เข้าไปในฐานข้อมูล
@@ -358,8 +358,8 @@ router.post('/userinfo', verifyToken, async (req, res) => {
     conn = await initMySQL();
 
     // Query user information
-    const [userResults] = await conn.query("SELECT * FROM users WHERE user_id = ?", [login_id]);
-    const [userAssess] = await conn.query("SELECT * FROM risk_results WHERE user_id = ?", [login_id]);
+    const [userResults] = await conn.query("SELECT * FROM students WHERE stu_id = ?", [login_id]);
+    const [userAssess] = await conn.query("SELECT * FROM risk_results WHERE stu_id = ?", [login_id]);
     
     const userInfo = userResults[0];
     const userAssessInfo = userAssess;
@@ -453,35 +453,35 @@ router.post('/updateuser', verifyToken, async (req, res) => {
   const login_id = req.user.login_id; // ได้มาจาก verifyToken
   let conn = null;
   const {
-    user_fname, user_lname, nickname, faculty, phone
+    stu_fname, stu_lname, nickname, faculty, phone
   } = req.body;
 
   try {
     conn = await initMySQL();
     
     // ตรวจสอบข้อมูลที่จำเป็น
-    if (!user_fname || !user_lname || !faculty  || !nickname || !phone) {
+    if (!stu_fname || !stu_lname || !faculty  || !nickname || !phone) {
       return res.status(400).json({ success: false, message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
     }
 
     // เริ่มต้นธุรกรรม
     await conn.beginTransaction();
 
-    // อัปเดตในตาราง users
+    // อัปเดตในตาราง students
     const [result1] = await conn.query(
-      "UPDATE users SET user_fname = ?, user_lname = ?, nickname = ?, faculty = ?, phone = ? WHERE user_id = ?",
-      [user_fname, user_lname, nickname, faculty,phone, login_id]
+      "UPDATE students SET stu_fname = ?, stu_lname = ?, nickname = ?, faculty = ?, phone = ? WHERE stu_id = ?",
+      [stu_fname, stu_lname, nickname, faculty,phone, login_id]
     );
 
     // อัปเดตในตาราง results
     const [result2] = await conn.query(
-      "UPDATE risk_results SET user_fname = ?, user_lname = ? WHERE user_id = ?",
-      [user_fname, user_lname, login_id]
+      "UPDATE risk_results SET stu_fname = ?, stu_lname = ? WHERE stu_id = ?",
+      [stu_fname, stu_lname, login_id]
     );
 
     const [result3] = await conn.query(
-      "UPDATE appointments SET user_fname = ?, user_lname = ? WHERE user_id = ?",
-      [user_fname, user_lname, login_id]
+      "UPDATE appointments SET stu_fname = ?, stu_lname = ? WHERE stu_id = ?",
+      [stu_fname, stu_lname, login_id]
     );
 
     if (result1.affectedRows > 0 || result2.affectedRows > 0) {
@@ -509,21 +509,21 @@ router.post('/updateuser', verifyToken, async (req, res) => {
 
 
 router.post('/checkuser', async (req, res) => {
-  const { user_id } = req.body;
+  const { stu_id } = req.body;
   let conn = null;
   
   try {
     // เริ่มการเชื่อมต่อกับ MySQL
     conn = await initMySQL();
 
-    // ตรวจสอบว่า user_id มีอยู่ในฐานข้อมูลหรือไม่
-    const [checuser] = await conn.query("SELECT * FROM users WHERE user_id = ?", [user_id]);
+    // ตรวจสอบว่า stu_id มีอยู่ในฐานข้อมูลหรือไม่
+    const [checuser] = await conn.query("SELECT * FROM students WHERE stu_id = ?", [stu_id]);
     
     if (checuser.length > 0) {
-      // ถ้ามี user_id ซ้ำในฐานข้อมูล
+      // ถ้ามี stu_id ซ้ำในฐานข้อมูล
       return res.status(200).json({ success: false, message: 'User ID already exists' });
     } else {
-      // ถ้าไม่มี user_id ในฐานข้อมูล
+      // ถ้าไม่มี stu_id ในฐานข้อมูล
       return res.status(200).json({ success: true, message: 'User ID is available' });
     }
   } catch (error) {
@@ -541,7 +541,7 @@ router.post('/checkuser', async (req, res) => {
 
 
 router.post('/appointment', verifyToken, async (req, res) => {
-  const user_id = req.user.login_id;
+  const stu_id = req.user.login_id;
   let conn = null;
 
   try {
@@ -552,11 +552,11 @@ router.post('/appointment', verifyToken, async (req, res) => {
       `
       SELECT * 
       FROM appointments 
-      WHERE user_id = ? AND status = 'รอการยืนยัน'
+      WHERE stu_id = ? AND status = 'รอการยืนยัน'
       ORDER BY date ASC, time_start ASC
       LIMIT 1
       `,
-      [user_id]
+      [stu_id]
     );
 
     // ถ้าไม่มีการนัดรอการยืนยัน ดึงการนัดที่ยืนยันล่าสุด
@@ -566,11 +566,11 @@ router.post('/appointment', verifyToken, async (req, res) => {
         `
         SELECT * 
         FROM appointments 
-        WHERE user_id = ? AND status = 'ยืนยัน'
+        WHERE stu_id = ? AND status = 'ยืนยัน'
         ORDER BY date DESC, time_start DESC
         LIMIT 1
         `,
-        [user_id]
+        [stu_id]
       );
     }
 

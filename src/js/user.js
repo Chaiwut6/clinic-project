@@ -1,15 +1,15 @@
 const apiUrl = 'http://localhost:8000'; 
 
 document.addEventListener("DOMContentLoaded", async function () {
-    // const user_id = sessionStorage.getItem('user_id');
+    // const stu_id = sessionStorage.getItem('stu_id');
     try {
         // ดึงข้อมูลผู้ใช้จาก API
-        const response = await axios.post(`${apiUrl}/api/users/userinfo`, {}, {
+        const response = await axios.post(`${apiUrl}/api/students/userinfo`, {}, {
             withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
         });
-        const user_id = response.data.user.user_id;
-        const user_fname = response.data.user.user_fname;
-        const user_lname = response.data.user.user_lname;
+        const stu_id = response.data.user.stu_id;
+        const stu_fname = response.data.user.stu_fname;
+        const stu_lname = response.data.user.stu_lname;
 
         const buttons = document.querySelectorAll('.button');
         const choiceContainers = document.querySelectorAll('.choice-container');
@@ -59,15 +59,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                         if (totalScore <= 12) {
                             result = "ระดับน้อย";
-                            const success = await saveResult(user_id, totalScore, result, user_fname, user_lname);
+                            const success = await saveResult(stu_id, totalScore, result, stu_fname, stu_lname);
                             if (success) window.location.href = 'evaluation results/user_low.html';
                         } else if (totalScore >= 13 && totalScore <= 18) {
                             result = "ระดับปานกลาง";
-                            const success = await saveResult(user_id, totalScore, result, user_fname, user_lname);
+                            const success = await saveResult(stu_id, totalScore, result, stu_fname, stu_lname);
                             if (success) window.location.href = 'user_consult.html';
                         } else if (totalScore > 18) {
                             result = "ระดับรุนแรง";
-                            const success = await saveResult(user_id, totalScore, result, user_fname, user_lname);
+                            const success = await saveResult(stu_id, totalScore, result, stu_fname, stu_lname);
                             if (success) window.location.href = 'user_consult.html';
                         }
 
@@ -88,19 +88,19 @@ document.addEventListener("DOMContentLoaded", async function () {
             });
         });
 
-        async function saveResult(user_id, totalScore, result, user_fname, user_lname) {
+        async function saveResult(stu_id, totalScore, result, stu_fname, stu_lname) {
             const timestamp = Date.now().toString(); // เวลาปัจจุบันในรูปแบบ timestamp
             const reversedTimestamp = timestamp.split("").reverse().join(""); // สลับตัวเลข
-            const resultId = `R${user_id.slice(-2)}${reversedTimestamp.slice(0, 7)}`; // ใช้ 2 ตัวท้ายของ user_id และ 7 ตัวแรกของ timestamp ที่สลับ
+            const resultId = `R${stu_id.slice(-2)}${reversedTimestamp.slice(0, 7)}`; // ใช้ 2 ตัวท้ายของ stu_id และ 7 ตัวแรกของ timestamp ที่สลับ
         
             try {
-                const response = await axios.post("http://localhost:8000/api/users/save-result", {
+                const response = await axios.post("http://localhost:8000/api/students/save-result", {
                     result_id: resultId, // ส่ง result_id ไปด้วย
-                    user_id: user_id,
+                    stu_id: stu_id,
                     totalScore: totalScore,
                     result: result,
-                    user_fname: user_fname,
-                    user_lname: user_lname,
+                    stu_fname: stu_fname,
+                    stu_lname: stu_lname,
                 });
                 // console.log('Success:', response.data);
                 return true; // ส่งคืนค่า true หากบันทึกสำเร็จ

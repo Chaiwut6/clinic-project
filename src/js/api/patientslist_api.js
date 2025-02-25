@@ -65,9 +65,9 @@ async function fetchPatientslist(page = 1) {
         document.getElementById("patientTable").innerHTML = `<tr><td colspan="9">กำลังโหลดข้อมูล...</td></tr>`;
 
         const response = await axios.post("http://localhost:8000/api/employees/receivecare");
-        const { users, appointments } = response.data;
+        const { students, appointments } = response.data;
 
-        if (!users || users.length === 0) {
+        if (!students || students.length === 0) {
             document.getElementById("patientTable").innerHTML = `<tr><td colspan="9">ไม่พบข้อมูลผู้ใช้</td></tr>`;
             document.getElementById("paginationControls").innerHTML = "";
             return;
@@ -88,8 +88,8 @@ async function fetchPatientslist(page = 1) {
                 symptomsArray = [];
             }
 
-            // ✅ ค้นหาข้อมูล `nickname`, `faculty`, `phone` จาก `users`
-            const userInfo = users.find(user => user.user_id === appointment.user_id) || {};
+            // ✅ ค้นหาข้อมูล `nickname`, `faculty`, `phone` จาก `students`
+            const userInfo = students.find(user => user.stu_id === appointment.stu_id) || {};
 
             const appointmentDate = new Date(appointment.date);
             const formattedDate = appointmentDate.toLocaleDateString("th-TH", { 
@@ -97,10 +97,10 @@ async function fetchPatientslist(page = 1) {
             });
 
             return {
-                user_id: appointment.user_id,
+                stu_id: appointment.stu_id,
                 title: userInfo.title,
-                user_fname: appointment.user_fname,
-                user_lname: appointment.user_lname,
+                stu_fname: appointment.stu_fname,
+                stu_lname: appointment.stu_lname,
                 nickname: userInfo.nickname || "ไม่ระบุ",
                 faculty: userInfo.faculty || "ไม่ระบุ",
                 phone: userInfo.phone || "ไม่ระบุ",
@@ -135,8 +135,8 @@ function renderPatientsTable() {
     const rows = pageData.map((patient, index) => `
         <tr>
             <td>${startIndex + index + 1}</td>
-            <td>${patient.user_id}</td>
-            <td>${patient.title} ${patient.user_fname} ${patient.user_lname}</td>
+            <td>${patient.stu_id}</td>
+            <td>${patient.title} ${patient.stu_fname} ${patient.stu_lname}</td>
             <td>${patient.nickname}</td>
             <td>${patient.faculty}</td>
             <td>${patient.phone}</td>
@@ -194,8 +194,8 @@ function filterReceivecare() {
 
     // ✅ ใช้ `patientsData` ที่โหลดจาก API
     filteredPatientsData = patientsData.filter(patient => {
-        const name = (patient.user_fname + " " + patient.user_lname).trim().toLowerCase();
-        const userID = (patient.user_id || "").trim().toLowerCase();
+        const name = (patient.stu_fname + " " + patient.stu_lname).trim().toLowerCase();
+        const userID = (patient.stu_id || "").trim().toLowerCase();
         const doctor = (patient.doctor || "").trim();
         const dateText = (patient.appointmentDate || "").trim();
 
@@ -258,8 +258,8 @@ function exportToExcel() {
               groupedData[doctorName] = [];
           }
           groupedData[doctorName].push([
-              patient.user_id,
-              `${patient.title} ${patient.user_fname} ${patient.user_lname}`,
+              patient.stu_id,
+              `${patient.title} ${patient.stu_fname} ${patient.stu_lname}`,
               patient.nickname || "-",
               patient.faculty || "-",
               patient.phone || "-",

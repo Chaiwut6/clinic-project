@@ -33,10 +33,10 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault();
 
     // รับค่าจากฟอร์ม
-    const userID = document.getElementById("userID").value
+    const stu_id = document.getElementById("userID").value
     const title = document.getElementById("title").value;
-    const user_fname = document.getElementById("user_fname").value
-    const user_lname = document.getElementById("user_lname").value
+    const stu_fname = document.getElementById("stu_fname").value
+    const stu_lname = document.getElementById("stu_lname").value
     const nickname = document.getElementById("nickname").value
     const phone = document.getElementById("phone").value
     const faculty = document.getElementById("faculty").value;
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // pass 6 ตัวท้ายของ userID
     let profileImageUrl = "";
     const currentYear = new Date().getFullYear() + 543;
-    const admissionYear = parseInt(userID.substring(2, 4));
+    const admissionYear = parseInt(stu_id.substring(2, 4));
     const admissionFullYear = admissionYear + 2500;
     let studyYear = currentYear - admissionFullYear;
 
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const year = `ปี ${studyYear}`;
 
-    if (!userID || !title || !user_fname || !user_lname || !nickname || !phone || !faculty) {
+    if (!stu_id || !title || !stu_fname || !stu_lname || !nickname || !phone || !faculty) {
       alert("กรุณากรอกข้อมูลให้ครบถ้วน");
       return;
     }
@@ -66,12 +66,22 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    
+
     try {
-      const response = await axios.post("http://localhost:8000/api/users/register-user", {
+
+    const checkUserApiUrl = 'http://localhost:8000/api/students/checkuser';
+    const checkResponse = await axios.post(checkUserApiUrl, { stu_id });
+
+    if (!checkResponse.data.success) {
+      alert('รหัสนักศึกษานี้มีการลงทะเบียนแล้ว');
+    }
+
+      const response = await axios.post("http://localhost:8000/api/students/register-user", {
         title: title,
-        user_id: userID,
-        user_fname: user_fname,
-        user_lname: user_lname,
+        stu_id: stu_id,
+        stu_fname: stu_fname,
+        stu_lname: stu_lname,
         nickname: nickname,
         phone: phone,
         year,
@@ -87,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch (error) {
       console.error("Error adding user:", error);
-      alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
+      // alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
     }
   });
 });
@@ -259,9 +269,9 @@ document.addEventListener("DOMContentLoaded", () => {
 const Logout = async () => {
   try {
     // เรียก API logout ไปที่เซิร์ฟเวอร์
-    const response = await axios.post('http://localhost:8000/api/users/logout', {}, { withCredentials: true });
+    const response = await axios.post('http://localhost:8000/api/students/logout', {}, { withCredentials: true });
     sessionStorage.removeItem('employeeID');
-    sessionStorage.removeItem('user_id');
+    sessionStorage.removeItem('stu_id');
     // ตรวจสอบผลลัพธ์จากการออกจากระบบ
     if (response.data.message === 'ออกจากระบบสำเร็จ') {
       console.log('คุณออกจากระบบเรียบร้อยแล้ว');
@@ -1023,7 +1033,7 @@ async function fetchUserlist() {
     document.getElementById("UserTable").innerHTML = `<tr><td colspan="8">กำลังโหลดข้อมูล...</td></tr>`;
 
     const response = await axios.post("http://localhost:8000/api/employees/userList");
-    userData = response.data?.users || [];
+    userData = response.data?.students || [];
     filteredData = [...userData]; // ✅ สำเนาข้อมูลเพื่อใช้ในการกรอง
 
     if (userData.length === 0) {
@@ -1048,8 +1058,8 @@ function filterPatients() {
 
   // ✅ กรองข้อมูลจาก userData
   filteredData = userData.filter(user => {
-    const ID = (user.user_id || "").toLowerCase();
-    const name = `${user.title} ${user.user_fname} ${user.user_lname}`.toLowerCase();
+    const ID = (user.stu_id || "").toLowerCase();
+    const name = `${user.title} ${user.stu_fname} ${user.stu_lname}`.toLowerCase();
     const faculty = user.faculty?.trim() || "";
 
     return (
@@ -1058,7 +1068,7 @@ function filterPatients() {
     );
   });
 
-  currentUserPage = 1; // ✅ รีเซ็ตไปหน้าที่ 1 หลังค้นหา
+  currentUserPage = 1;
   renderUserTable();
   renderUserPaginationControls();
 }
@@ -1073,22 +1083,22 @@ function renderUserTable() {
     const displayIndex = startIndex + index + 1; 
 
     return `
-      <tr data-id="${user.user_id}">
+      <tr data-id="${user.stu_id}">
         <td>${displayIndex}</td>  
-        <td>${user.user_id || "ไม่ระบุ"}</td>
-        <td>${user.title} ${user.user_fname} ${user.user_lname || "ไม่ระบุ"}</td>
+        <td>${user.stu_id || "ไม่ระบุ"}</td>
+        <td>${user.title} ${user.stu_fname} ${user.stu_lname || "ไม่ระบุ"}</td>
         <td>${user.nickname || "ไม่ระบุ"}</td>
         <td>${user.faculty || "ไม่ระบุ"}</td>
         <td>${user.phone || "ไม่ระบุ"}</td>
         <td>${user.latest_case_status || "ไม่มีข้อมูล"}</td>  
         <td>
           <div class="dropdown-user">
-            <button class="actionBtn">
+            <button class="action-btn">
               <i class="fa-solid fa-grip-lines"></i>
             </button>
             <div class="dropdown-content-user">
-              <a href="#" onclick="goToAppointmentPage('${user.user_id}')">จัดการข้อมูล</a>
-              <a href="#" class="reset-password-btn" onclick="resetUserPassword('${user.user_id}')">รีเซ็ตรหัสผ่าน</a>
+              <a href="#" onclick="goToAppointmentPage('${user.stu_id}')">จัดการข้อมูล</a>
+              <a href="#" class="reset-password-btn" onclick="resetUserPassword('${user.stu_id}')">รีเซ็ตรหัสผ่าน</a>
             </div>
           </div>
         </td>
@@ -1097,17 +1107,20 @@ function renderUserTable() {
   }).join("");
 
   document.getElementById("UserTable").innerHTML = rows || `<tr><td colspan="8">ไม่พบข้อมูล</td></tr>`;
+
+  // ✅ เรียกใช้การแนบ Event Listener ทุกครั้งหลัง Render
   attachDropdownUser();
 }
 
+
 function attachDropdownUser() {
-  document.querySelectorAll(".actionBtn").forEach(button => {
+  document.querySelectorAll(".action-btn").forEach(button => {
     button.addEventListener("click", (event) => {
       event.stopPropagation(); 
       const dropdown = button.closest(".dropdown-user");
       const dropdownContent = dropdown.querySelector(".dropdown-content-user");
 
-      // ปิด Dropdown อื่นๆ ก่อนเปิดอันที่ต้องการ
+      // ✅ ปิด Dropdown อื่นๆ ก่อนเปิดอันที่ต้องการ
       document.querySelectorAll(".dropdown-content-user.show").forEach(openDropdown => {
         if (openDropdown !== dropdownContent) {
           openDropdown.classList.remove("show");
@@ -1115,13 +1128,13 @@ function attachDropdownUser() {
         }
       });
 
-      // เปิด/ปิด Dropdown
+      // ✅ เปิด/ปิด Dropdown
       dropdownContent.classList.toggle("show");
 
-      // ✅ ตรวจสอบพื้นที่ว่าง
       const rect = dropdownContent.getBoundingClientRect();
       const windowHeight = window.innerHeight;
 
+      // ✅ ตรวจสอบว่าชนขอบล่างของจอหรือไม่ ถ้าใช่ ให้เปิดขึ้นด้านบน
       if (rect.bottom > windowHeight) {
         dropdownContent.classList.add("above");
       } else {
@@ -1130,7 +1143,7 @@ function attachDropdownUser() {
     });
   });
 
-  // ปิด Dropdown เมื่อคลิกที่อื่น
+  // ✅ ปิด Dropdown เมื่อคลิกที่อื่น
   document.addEventListener("click", () => {
     document.querySelectorAll(".dropdown-content-user.show").forEach(dropdown => {
       dropdown.classList.remove("show");
@@ -1139,13 +1152,11 @@ function attachDropdownUser() {
   });
 }
 
-
-
-async function resetUserPassword(user_id) {
+async function resetUserPassword(stu_id) {
   if (confirm("คุณต้องการรีเซ็ตรหัสผ่านสำหรับผู้ใช้นี้หรือไม่?")) {
       try {
           const response = await axios.post("http://localhost:8000/api/employees/reset-password", {
-              user_id: user_id
+            stu_id: stu_id
           });
 
           if (response.status === 200) {
@@ -1172,9 +1183,10 @@ function renderUserPaginationControls() {
   document.getElementById("userPaginationControls").innerHTML = totalPages > 1 ? controlsHTML : "";
 }
 
+
 function changeUserPage(page) {
   currentUserPage = page;
-  renderUserTable();
+  renderUserTable(); 
   renderUserPaginationControls();
 }
 
@@ -1182,13 +1194,13 @@ function changeUserPage(page) {
 
 async function fetchUserDataAndDisplay() {
   try {
-    const encrypUser = sessionStorage.getItem("user_id");
-    const user_id = encrypUser ? atob(encrypUser) : null;
-    if (!user_id) {
+    const encrypUser = sessionStorage.getItem("stu_id");
+    const stu_id = encrypUser ? atob(encrypUser) : null;
+    if (!stu_id) {
       throw new Error('User ID is not available in session storage');
     }
 
-    const response = await axios.post("http://localhost:8000/api/employees/userdetails", { userId: user_id });
+    const response = await axios.post("http://localhost:8000/api/employees/userdetails", { userId: stu_id });
 
     if (response.status < 200 || response.status >= 300) {
       throw new Error('Error fetching user data');
@@ -1206,10 +1218,10 @@ async function fetchUserDataAndDisplay() {
     }
 
     // Populate user data on the page
-    document.getElementById('userid').innerHTML = user[0].user_id;
-    document.getElementById('user-fname').innerHTML = user[0].user_fname;
+    document.getElementById('userid').innerHTML = user[0].stu_id;
+    document.getElementById('user-fname').innerHTML = user[0].stu_fname;
     document.getElementById('title').innerHTML = user[0].title;
-    document.getElementById('user-lname').innerHTML = user[0].user_lname;
+    document.getElementById('user-lname').innerHTML = user[0].stu_lname;
     document.getElementById('user-phone').innerHTML = user[0].phone;
     document.getElementById('user-faculty').innerHTML = user[0].faculty;
     document.getElementById('user-year').innerHTML = user[0].year;
@@ -1558,7 +1570,7 @@ async function fetchUserDataAndDisplay() {
 
     //   try {
     //       const response = await axios.post("http://localhost:8000/api/employees/closeCase", {
-    //           user_id: userId,
+    //           stu_id: userId,
     //       });
 
     //       if (response.status === 200) {
@@ -1584,7 +1596,7 @@ async function loadCaseStatus() {
   const selectedCaseStatus = document.getElementById("selectedCaseStatus");
   const saveCaseStatusBtn = document.getElementById("saveCaseStatus");
 
-  const encrypUser = sessionStorage.getItem("user_id");
+  const encrypUser = sessionStorage.getItem("stu_id");
   const userId = encrypUser ? atob(encrypUser) : null;
 
   if (!userId) {
@@ -1594,7 +1606,7 @@ async function loadCaseStatus() {
 
   try {
     const response = await axios.post("http://localhost:8000/api/employees/showcasesStatus", {
-      user_id: userId,
+      stu_id: userId,
     });
     // console.log(response.data);
     if (response.data.success && response.data.status) {
@@ -1618,7 +1630,7 @@ async function loadCaseStatus() {
 
     try {
       const response = await axios.post("http://localhost:8000/api/employees/casesStatus", {
-        user_id: userId,
+        stu_id: userId,
         status: selectedStatus
       });
 
@@ -1676,7 +1688,7 @@ const changePassword = async () => {
 
 let selectedDoctorId = null;
 let selectedDoctorName = '';
-const encrypUser = sessionStorage.getItem("user_id");
+const encrypUser = sessionStorage.getItem("stu_id");
 const userId = encrypUser ? atob(encrypUser) : null;
 let userFname = '';
 let userLname = '';
@@ -1687,8 +1699,8 @@ async function fetchUserDetails() {
     const response = await axios.post("http://localhost:8000/api/employees/userdetails", { userId: userId });
     const user = response.data.user;
     if (user && user.length > 0) {
-      userFname = user[0].user_fname;
-      userLname = user[0].user_lname;
+      userFname = user[0].stu_fname;
+      userLname = user[0].stu_lname;
     }
   } catch (error) {
     console.error("Error fetching user details:", error);
@@ -1882,9 +1894,9 @@ async function saveAppointment() {
 
     const appointmentData = {
       Appointment_id: appointmentId,
-      user_id: userId,
-      user_fname: userFname,
-      user_lname: userLname,
+      stu_id: userId,
+      stu_fname: userFname,
+      stu_lname: userLname,
       doc_id: selectedDoctorId,
       doc_name: selectedDoctorName,
       time_start: start_time,
@@ -2230,31 +2242,31 @@ function filterManager() {
 
 const updateStudyYearAutomatically = async () => {
   try {
-    const response = await axios.post("http://localhost:8000/api/users/getAllUsers");
+    const response = await axios.post("http://localhost:8000/api/students/getAllUsers");
 
     if (!response.data.success) {
       console.error("❌ ไม่สามารถดึงข้อมูลผู้ใช้ได้");
       return;
     }
 
-    const users = response.data.users;
+    const students = response.data.students;
     const currentYear = new Date().getFullYear() + 543; // แปลงเป็น พ.ศ.
     let updatedUsers = [];
 
-    users.forEach(user => {
-      const admissionYear = parseInt(user.user_id.substring(2, 4));
+    students.forEach(user => {
+      const admissionYear = parseInt(user.stu_id.substring(2, 4));
       const admissionFullYear = admissionYear + 2500; // แปลงเป็น พ.ศ.
       const studyYear = Math.max(1, currentYear - admissionFullYear);
       const newYear = `ปี ${studyYear}`;
 
       if (user.year !== newYear) {
-        updatedUsers.push({ user_id: user.user_id, year: newYear });
+        updatedUsers.push({ stu_id: user.stu_id, year: newYear });
       }
     });
 
     if (updatedUsers.length > 0) {
-      await axios.post("http://localhost:8000/api/users/updateStudyYear", {
-        users: updatedUsers
+      await axios.post("http://localhost:8000/api/students/updateStudyYear", {
+        students: updatedUsers
       });
     }
 
@@ -2278,25 +2290,25 @@ document.addEventListener("DOMContentLoaded", () => {
     case "manage_doctor.html":
       fetchInfoByRole("admin");
       fetchDoctors();
-      sessionStorage.removeItem("user_id");
+      sessionStorage.removeItem("stu_id");
       break;
 
     case "dashboard.html":
       fetchInfoByRole("employee");
-      sessionStorage.removeItem("user_id");
+      sessionStorage.removeItem("stu_id");
       break;
 
     case "manage_employee.html":
       fetchInfoByRole("admin");
       fetchEmployee();
-      sessionStorage.removeItem("user_id");
+      sessionStorage.removeItem("stu_id");
       break;
 
     case "manage_user.html":
       fetchInfoByRole("employee");
       fetchUserlist();
       setInterval(updateStudyYearAutomatically, 1000 * 60 * 60 * 24);
-      sessionStorage.removeItem("user_id");
+      sessionStorage.removeItem("stu_id");
       break;
 
     case "mange_user_data.html":
@@ -2310,12 +2322,12 @@ document.addEventListener("DOMContentLoaded", () => {
     case "manage_man.html":
       fetchInfoByRole("admin");
       fetchManager();
-      sessionStorage.removeItem("user_id");
+      sessionStorage.removeItem("stu_id");
       break;
 
     case "webstting.html":
       fetchInfoByRole("admin");
-      sessionStorage.removeItem("user_id");
+      sessionStorage.removeItem("stu_id");
       break;
 
     case "profile_admin.html":
@@ -2325,10 +2337,10 @@ document.addEventListener("DOMContentLoaded", () => {
     case "patientslist.html":
       if (window.location.pathname.includes("/admin/")) {
         fetchInfoByRole("admin");
-        sessionStorage.removeItem("user_id");
+        sessionStorage.removeItem("stu_id");
       } else {
         fetchInfoByRole("employee");
-        sessionStorage.removeItem("user_id");
+        sessionStorage.removeItem("stu_id");
       }
       break;
 

@@ -1,13 +1,13 @@
 const baseURL = "http://localhost:8000";
 async function fetchUserDataAndDisplay() {
-    const encrypUser = sessionStorage.getItem("user_id");
+    const encrypUser = sessionStorage.getItem("stu_id");
     try {
-      const user_id = encrypUser ? atob(encrypUser) : null;
-      if (!user_id) {
+      const stu_id = encrypUser ? atob(encrypUser) : null;
+      if (!stu_id) {
         throw new Error('User ID is not available in session storage');
       }
   
-      const response = await axios.post("http://localhost:8000/api/employees/userdetails", { userId: user_id });
+      const response = await axios.post("http://localhost:8000/api/employees/userdetails", { userId: stu_id });
   
       if (response.status < 200 || response.status >= 300) {
         throw new Error('Error fetching user data');
@@ -25,10 +25,10 @@ async function fetchUserDataAndDisplay() {
       }
   
       // Populate user data on the page
-      document.getElementById('userid').innerHTML = user[0].user_id;
+      document.getElementById('userid').innerHTML = user[0].stu_id;
       document.getElementById('title').innerHTML = user[0].title;
-      document.getElementById('user-fname').innerHTML = user[0].user_fname;
-      document.getElementById('user-lname').innerHTML = user[0].user_lname;
+      document.getElementById('user-fname').innerHTML = user[0].stu_fname;
+      document.getElementById('user-lname').innerHTML = user[0].stu_lname;
       document.getElementById('user-phone').innerHTML = user[0].phone;
       document.getElementById('user-faculty').innerHTML = user[0].faculty;
       document.getElementById('user-year').innerHTML = user[0].year;
@@ -174,7 +174,7 @@ async function fetchUserDataAndDisplay() {
     }
   }
   async function saveSymptoms() {
-    const encrypUser = sessionStorage.getItem("user_id");
+    const encrypUser = sessionStorage.getItem("stu_id");
     const userId = encrypUser ? atob(encrypUser) : null;
 
     const encrypAppointment = sessionStorage.getItem("appointment_id");
@@ -198,7 +198,7 @@ async function fetchUserDataAndDisplay() {
     }
 
     const requestBody = {
-        user_id: userId,
+        stu_id: userId,
         appointment_id: appointmentId,
         symptoms: selectedSymptoms,
         ...(additionalSymptom && { additionalSymptom }) // ✅ ส่งไปเฉพาะถ้ามีข้อมูล

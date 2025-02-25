@@ -293,44 +293,44 @@ router.post('/userList', async (req, res) => {
     conn = await initMySQL();
 
     // ✅ ดึงข้อมูลผู้ใช้ทั้งหมด
-    const [userResult] = await conn.query("SELECT * FROM users");
+    const [userResult] = await conn.query("SELECT * FROM students");
 
     if (!userResult || userResult.length === 0) {
       return res.status(404).json({ message: 'ไม่พบข้อมูลผู้ใช้' });
     }
 
-    // ✅ ดึงข้อมูลการนัดหมายล่าสุดของแต่ละ `user_id` รวมถึง `caseStatus`
+    // ✅ ดึงข้อมูลการนัดหมายล่าสุดของแต่ละ `stu_id` รวมถึง `caseStatus`
     const [appointmentsResult] = await conn.query(`
-      SELECT a.user_id, a.status, a.date, a.caseStatus
+      SELECT a.stu_id, a.status, a.date, a.caseStatus
       FROM appointments a
       INNER JOIN (
-          SELECT user_id, MAX(date) AS latest_date
+          SELECT stu_id, MAX(date) AS latest_date
           FROM appointments
-          GROUP BY user_id
+          GROUP BY stu_id
       ) latest 
-      ON a.user_id = latest.user_id AND a.date = latest.latest_date
+      ON a.stu_id = latest.stu_id AND a.date = latest.latest_date
     `);
 
-    // ✅ ใช้ `Map` เพื่อเชื่อมข้อมูล `appointments` กับ `users`
+    // ✅ ใช้ `Map` เพื่อเชื่อมข้อมูล `appointments` กับ `students`
     const appointmentMap = new Map();
     appointmentsResult.forEach(app => {
-      appointmentMap.set(app.user_id, { 
+      appointmentMap.set(app.stu_id, { 
         status: app.status, 
         date: app.date,
         caseStatus: app.caseStatus || "ไม่มีข้อมูล" // ป้องกัน `null` caseStatus
       });
     });
 
-    // ✅ รวมข้อมูล `users` กับ `appointments` + `caseStatus`
+    // ✅ รวมข้อมูล `students` กับ `appointments` + `caseStatus`
     const userList = userResult.map(user => ({
       ...user,
-      latest_appointment_status: appointmentMap.get(user.user_id)?.status || "ไม่มีข้อมูล",
-      latest_appointment_date: appointmentMap.get(user.user_id)?.date || "ไม่มีข้อมูล",
-      latest_case_status: appointmentMap.get(user.user_id)?.caseStatus || "ไม่มีข้อมูล"
+      latest_appointment_status: appointmentMap.get(user.stu_id)?.status || "ไม่มีข้อมูล",
+      latest_appointment_date: appointmentMap.get(user.stu_id)?.date || "ไม่มีข้อมูล",
+      latest_case_status: appointmentMap.get(user.stu_id)?.caseStatus || "ไม่มีข้อมูล"
     }));
 
     // ✅ ส่งผลลัพธ์กลับไปที่ Client
-    res.json({ users: userList });
+    res.json({ students: userList });
 
   } catch (error) {
     console.error('Error retrieving user data:', error);
@@ -407,13 +407,13 @@ router.post('/change-password', verifyToken, async (req, res) => {
 });
 
 router.post('/appointments', async (req, res) => {
-  const { Appointment_id, user_id, user_fname, user_lname, doc_id, doc_name, time_start, time_end, date, problem, status } = req.body;
+  const { Appointment_id, stu_id, stu_fname, stu_lname, doc_id, doc_name, time_start, time_end, date, problem, status } = req.body;
   let conn = null;
 
   try {
     conn = await initMySQL();
 
-    if (!Appointment_id || !user_id || !user_fname || !user_lname || !doc_id || !doc_name || !date || !problem || !status || !time_start || !time_end) {
+    if (!Appointment_id || !stu_id || !stu_fname || !stu_lname || !doc_id || !doc_name || !date || !problem || !status || !time_start || !time_end) {
       return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
     }
 
@@ -438,9 +438,9 @@ router.post('/appointments', async (req, res) => {
     // ✅ เพิ่มการนัดหมายใหม่แทนการอัปเดตอันเก่า
     const appointmentData = {
       Appointment_id: newAppointmentId,
-      user_id,
-      user_fname,
-      user_lname,
+      stu_id,
+      stu_fname,
+      stu_lname,
       doc_id,
       doc_name,
       time_start,
@@ -571,9 +571,9 @@ router.post('/userdetails', async (req, res) => {
   try {
     conn = await initMySQL();
 
-    const [user] = await conn.query("SELECT * FROM users WHERE user_id = ?", [userId]);
-    const [Result] = await conn.query("SELECT * FROM risk_results WHERE user_id = ?", [userId]);
-    const [Appointment] = await conn.query("SELECT * FROM appointments WHERE user_id = ?", [userId]);
+    const [user] = await conn.query("SELECT * FROM students WHERE stu_id = ?", [userId]);
+    const [Result] = await conn.query("SELECT * FROM risk_results WHERE stu_id = ?", [userId]);
+    const [Appointment] = await conn.query("SELECT * FROM appointments WHERE stu_id = ?", [userId]);
 
     const userinfo = user;
     const userdetails = Result;
@@ -609,28 +609,28 @@ router.post('/receivecare', async (req, res) => {
       SELECT a.* 
       FROM appointments a
       INNER JOIN (
-          SELECT user_id, MAX(date) AS latest_date
+          SELECT stu_id, MAX(date) AS latest_date
           FROM appointments
           WHERE status = 'ยืนยัน'
-          GROUP BY user_id
-      ) latest ON a.user_id = latest.user_id AND a.date = latest.latest_date
+          GROUP BY stu_id
+      ) latest ON a.stu_id = latest.stu_id AND a.date = latest.latest_date
       WHERE a.caseStatus != 'ปิดเคส' OR a.caseStatus IS NULL
     `);
 
     // ✅ ค้นหารายชื่อผู้ใช้ที่มีการนัดหมาย (และไม่ถูกปิดเคส)
-    const [usersWithAppointments] = await conn.query(`
+    const [studentsWithAppointments] = await conn.query(`
       SELECT DISTINCT u.*
-      FROM users u
-      INNER JOIN appointments a ON u.user_id = a.user_id
+      FROM students u
+      INNER JOIN appointments a ON u.stu_id = a.stu_id
       WHERE a.caseStatus != 'ปิดเคส' OR a.caseStatus IS NULL
     `);
 
     // ✅ ตรวจสอบข้อมูล
-    const userinfo = usersWithAppointments.length > 0 ? usersWithAppointments : [{ message: "ไม่พบผู้ใช้งานที่มีการนัดหมาย" }];
+    const userinfo = studentsWithAppointments.length > 0 ? studentsWithAppointments : [{ message: "ไม่พบผู้ใช้งานที่มีการนัดหมาย" }];
     const userAppointment = latestAppointments.length > 0 ? latestAppointments : [{ message: "ยังไม่มีการนัดหมาย" }];
 
     res.json({
-      users: userinfo,
+      students: userinfo,
       appointments: userAppointment,
     });
   } catch (error) {
@@ -646,13 +646,13 @@ router.post('/receivecare', async (req, res) => {
 
 
 router.post('/userfetch', async (req, res) => {
-  const { user_id } = req.body;
+  const { stu_id } = req.body;
   let conn = null;
 
   try {
     conn = await initMySQL();
 
-    const [user] = await conn.query("SELECT * FROM users WHERE user_id = ?", [user_id]);
+    const [user] = await conn.query("SELECT * FROM students WHERE stu_id = ?", [stu_id]);
 
 
     const userinfo = user;
@@ -676,13 +676,13 @@ router.post('/userfetch', async (req, res) => {
 });
 
 router.post("/closeCase", async (req, res) => {
-  const { user_id } = req.body;
+  const { stu_id } = req.body;
   let conn = null;
 
   try {
     conn = await initMySQL();
 
-    if (!user_id) {
+    if (!stu_id) {
       return res.status(400).json({
         success: false,
         message: "กรุณาเลือกผู้ใช้งานที่ต้องการปิดเคส",
@@ -693,10 +693,10 @@ router.post("/closeCase", async (req, res) => {
     const [latestConfirmedAppointment] = await conn.query(
       `SELECT Appointment_id 
        FROM appointments 
-       WHERE user_id = ? AND status = 'ยืนยัน' 
+       WHERE stu_id = ? AND status = 'ยืนยัน' 
        ORDER BY date DESC, time_start DESC 
        LIMIT 1`,
-      [user_id]
+      [stu_id]
     );
 
     if (latestConfirmedAppointment.length === 0) {
@@ -755,22 +755,21 @@ router.post("/casesStatus", async (req, res) => {
   let conn;
   try {
       conn = await initMySQL();
-      const { user_id, status } = req.body;
+      const { stu_id, status } = req.body;
 
-      if (!user_id || !status) {
-          return res.status(400).json({ success: false, message: "Missing user_id or status" });
+      if (!stu_id || !status) {
+          return res.status(400).json({ success: false, message: "Missing stu_id or status" });
       }
 
       
-      const [existingUser] = await conn.query("SELECT * FROM appointments WHERE user_id = ?", [user_id]);
+      const [existingUser] = await conn.query("SELECT * FROM appointments WHERE stu_id = ?", [stu_id]);
 
 
       if (existingUser.length === 0) {
           return res.status(404).json({ success: false, message: "ไม่พบข้อมูลของผู้ใช้" });
       }
 
-      // ✅ อัปเดตสถานะ
-      await conn.query("UPDATE appointments SET caseStatus = ? WHERE user_id = ?", [status, user_id]);
+      await conn.query("UPDATE appointments SET caseStatus = ? WHERE stu_id = ?", [status, stu_id]);
 
       res.json({ success: true, message: "Case status updated successfully" });
 
@@ -787,9 +786,9 @@ router.post("/showcasesStatus", async (req, res) => {
   let conn;
   try {
       conn = await initMySQL();
-      const { user_id } = req.body;
+      const { stu_id } = req.body;
 
-      const [result] = await conn.query("SELECT caseStatus FROM appointments WHERE user_id = ?", [user_id]);
+      const [result] = await conn.query("SELECT caseStatus FROM appointments WHERE stu_id = ?", [stu_id]);
 
       if (result.length === 0) {
           return res.json({ success: false, message: "ไม่พบข้อมูลสถานะ" });
@@ -874,7 +873,7 @@ router.post('/appointmentsOverview', async (req, res) => {
           WHERE YEAR(a.date) = ? ${selectedMonth}
           AND a.date = (
               SELECT MAX(a2.date) FROM appointments a2 
-              WHERE a2.user_id = a.user_id AND YEAR(a2.date) = ?
+              WHERE a2.stu_id = a.stu_id AND YEAR(a2.date) = ?
           )
           GROUP BY month
           ORDER BY month;
@@ -908,17 +907,17 @@ router.post('/appointmentsByFaculty', async (req, res) => {
     const selectedYear = year || new Date().getFullYear();
 
     let query = `
-    SELECT u.faculty, COUNT(DISTINCT a.user_id) AS total, JSON_UNQUOTE(JSON_EXTRACT(a.symptoms, '$')) AS symptoms
+    SELECT u.faculty, COUNT(DISTINCT a.stu_id) AS total, JSON_UNQUOTE(JSON_EXTRACT(a.symptoms, '$')) AS symptoms
     FROM appointments a
-    JOIN users u ON a.user_id = u.user_id
+    JOIN students u ON a.stu_id = u.stu_id
     JOIN (
-        SELECT user_id, MAX(date) AS latest_date 
+        SELECT stu_id, MAX(date) AS latest_date 
         FROM appointments 
         WHERE status = 'ยืนยัน' 
         AND (caseStatus = 'ติดตามอาการ' OR caseStatus IS NULL) 
-        GROUP BY user_id
+        GROUP BY stu_id
     ) latest_appointments
-    ON a.user_id = latest_appointments.user_id 
+    ON a.stu_id = latest_appointments.stu_id 
     AND a.date = latest_appointments.latest_date
     WHERE a.status = 'ยืนยัน' 
     AND YEAR(a.date) = ?
@@ -985,9 +984,9 @@ const [facultyAppointments] = await conn.query(query, params);
 router.post('/saveSymptoms', async (req, res) => {
   let conn;
   try {
-    const { user_id, symptoms, additionalSymptom } = req.body;
+    const { stu_id, symptoms, additionalSymptom } = req.body;
 
-    if (!user_id || !symptoms) {
+    if (!stu_id || !symptoms) {
       return res.status(400).json({ message: 'ข้อมูลไม่ครบถ้วน' });
     }
 
@@ -995,8 +994,8 @@ router.post('/saveSymptoms', async (req, res) => {
 
     // ✅ ดึง Appointment_id ล่าสุดของ user นี้
     const [latestAppointment] = await conn.query(
-      "SELECT Appointment_id FROM appointments WHERE user_id = ? AND status = 'ยืนยัน' AND date <= NOW() ORDER BY date DESC LIMIT 1",
-      [user_id]
+      "SELECT Appointment_id FROM appointments WHERE stu_id = ? AND status = 'ยืนยัน' AND date <= NOW() ORDER BY date DESC LIMIT 1",
+      [stu_id]
     );
 
     if (!latestAppointment.length) {
@@ -1036,18 +1035,18 @@ router.post('/saveSymptoms', async (req, res) => {
 router.post('/reset-password', async (req, res) => {
   let conn = null;
   try {
-    const { user_id } = req.body;
+    const { stu_id } = req.body;
 
-    console.log("✅ Received user_id:", user_id); // ✅ ดูค่า user_id ที่ส่งมา
+    console.log("✅ Received stu_id:", stu_id); // ✅ ดูค่า stu_id ที่ส่งมา
 
-    if (!user_id) {
+    if (!stu_id) {
       return res.status(400).json({ message: 'กรุณาระบุ User ID' });
     }
 
     conn = await initMySQL();
 
     // ✅ ตรวจสอบว่า User ID นี้มีอยู่จริงหรือไม่
-    const [rows] = await conn.query("SELECT login_id FROM login WHERE login_id = ?", [user_id]);
+    const [rows] = await conn.query("SELECT login_id FROM login WHERE login_id = ?", [stu_id]);
     console.log("✅ Found User:", rows);
 
     if (rows.length === 0) {
@@ -1055,7 +1054,7 @@ router.post('/reset-password', async (req, res) => {
     }
 
    
-    let newPassword = user_id.slice(-7); 
+    let newPassword = stu_id.slice(-7); 
     newPassword = newPassword.replace(/-/g, ''); 
 
 
@@ -1063,7 +1062,7 @@ router.post('/reset-password', async (req, res) => {
 
     const [result] = await conn.query(
       "UPDATE login SET password = ? WHERE login_id = ?",
-      [hashedPassword, user_id]
+      [hashedPassword, stu_id]
     );
 
     console.log("✅ Update Result:", result);

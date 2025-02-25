@@ -20,9 +20,9 @@ async function fetchPatientslist(page = 1) {
 
         let latestAppointments = {};
 
-        // ✅ คัดกรองเฉพาะวันนัดล่าสุดของแต่ละ user_id
+        // ✅ คัดกรองเฉพาะวันนัดล่าสุดของแต่ละ stu_id
         response.data.appointments.forEach(appointment => {
-            const userId = appointment.user_id;
+            const userId = appointment.stu_id;
             const appointmentDate = new Date(appointment.date);
 
             if (
@@ -43,10 +43,10 @@ async function fetchPatientslist(page = 1) {
             });
             return {
                 Appointment_id: appointment.Appointment_id,
-                user_id: appointment.user_id,
+                stu_id: appointment.stu_id,
                 title: appointment.title,
-                user_fname: appointment.user_fname,
-                user_lname: appointment.user_lname,
+                stu_fname: appointment.stu_fname,
+                stu_lname: appointment.stu_lname,
                 nickname: appointment.nickname,
                 faculty: appointment.faculty,
                 phone: appointment.phone,
@@ -83,15 +83,15 @@ function renderPatientsTable(page = 1) {
     const rows = pageData.map((patient, index) => `
         <tr data-id="${patient.Appointment_id}">
             <td>${startIndex + index + 1}</td> <!-- ✅ แสดงลำดับที่ -->
-            <td>${patient.user_id}</td>
-            <td>${patient.title} ${patient.user_fname} ${patient.user_lname}</td>
+            <td>${patient.stu_id}</td>
+            <td>${patient.title} ${patient.stu_fname} ${patient.stu_lname}</td>
             <td>${patient.nickname}</td>
             <td>${patient.faculty}</td>
             <td>${patient.phone}</td>
             <td>${patient.problem}</td>
             <td>${patient.appointmentDate}</td>
             <td>
-                <button class="action-btn" onclick="goToAppointmentPage('${patient.user_id}', '${patient.Appointment_id}')">จัดการข้อมูล</button>
+                <button class="action-btn" onclick="goToAppointmentPage('${patient.stu_id}', '${patient.Appointment_id}')">จัดการข้อมูล</button>
             </td>
         </tr>
     `).join("");
@@ -107,7 +107,7 @@ const goToAppointmentPage = (userId, appointmentId) => {
     const encrypAppointment = btoa(appointmentId);
     const encrypUser = btoa(userId);
     sessionStorage.setItem("appointment_id", encrypAppointment);
-    sessionStorage.setItem('user_id', encrypUser);
+    sessionStorage.setItem('stu_id', encrypUser);
     window.location.href = 'doctormange_data.html';
 };
   
@@ -150,8 +150,8 @@ function filterReceivecare() {
     };
 
     filteredPatientsData = patientsData.filter(patient => {
-        const fullName = (patient.user_fname + " " + patient.user_lname).trim().toLowerCase();
-        const userID = (patient.user_id || "").trim().toLowerCase();
+        const fullName = (patient.stu_fname + " " + patient.stu_lname).trim().toLowerCase();
+        const userID = (patient.stu_id || "").trim().toLowerCase();
         const faculty = (patient.faculty || "").trim();
         const dateText = (patient.appointmentDate || "").trim();
 

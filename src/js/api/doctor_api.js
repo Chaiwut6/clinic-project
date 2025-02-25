@@ -245,7 +245,7 @@ async function deleteAvailability(event) {
 const Logout = async () => {
   try {
     // เรียก API logout ไปที่เซิร์ฟเวอร์
-    const response = await axios.post('http://localhost:8000/api/users/logout', {}, { withCredentials: true });
+    const response = await axios.post('http://localhost:8000/api/students/logout', {}, { withCredentials: true });
     sessionStorage.removeItem('doctorID');
     if (response.data.message === 'ออกจากระบบสำเร็จ') {
       console.log('คุณออกจากระบบเรียบร้อยแล้ว');
