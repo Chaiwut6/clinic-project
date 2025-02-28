@@ -214,8 +214,8 @@ async function loadAppointmentsBreakdownChart() {
       // ✅ ส่งค่าปี, อาการ และ คณะ ไปยัง API
       const response = await axios.post("http://localhost:8000/api/employees/appointmentsByFaculty", {
           year: selectedYear,
-          symptom: selectedSymptom || null,  // ถ้าไม่เลือกอาการ ให้ส่งค่า null ไป
-          faculty: selectedFaculty || null  // ถ้าไม่เลือกคณะ ให้ส่งค่า null ไป
+          symptom: selectedSymptom || null,
+          faculty: selectedFaculty || null
       });
 
       const data = response.data;
@@ -224,16 +224,15 @@ async function loadAppointmentsBreakdownChart() {
       const labels = data.appointments.map(a => a.faculty) || [];
       const totalAppointments = data.appointments.map(a => a.total) || [];
       const totalAll = data.totalConfirmedAppointments || 0;
-    //   console.log(totalAll);
-      // ✅ ดึง <select> อาการที่มีอยู่
+
+      // ✅ อัปเดต <select> สำหรับอาการ
       const symptomFilter = document.getElementById("symptomFilterUsers");
       const existingSymptoms = new Set(Array.from(symptomFilter.options).map(opt => opt.value));
 
-      // ✅ ตรวจจับอาการใหม่ที่ไม่อยู่ใน `<select>` แล้วเพิ่มเข้าไป
+      // ✅ ตรวจจับอาการใหม่ที่ไม่อยู่ใน <select> แล้วเพิ่มเข้าไป
       data.appointments.forEach(appointment => {
           Object.keys(appointment.symptoms).forEach(symptom => {
               if (!existingSymptoms.has(symptom)) {
-                  // ✅ เพิ่มอาการใหม่เข้าไปใน dropdown
                   const newOption = document.createElement("option");
                   newOption.value = symptom;
                   newOption.textContent = `${symptom}`;
@@ -265,7 +264,7 @@ async function loadAppointmentsBreakdownChart() {
 
       const ctx = document.getElementById('appointmentsBreakdownChart').getContext('2d');
       new Chart(ctx, {
-          type: 'pie', // ✅ ใช้ Pie Chart
+          type: 'pie',
           data: {
               labels: labels,
               datasets: [{
@@ -307,6 +306,7 @@ async function loadAppointmentsBreakdownChart() {
       console.error("Error loading appointment breakdown chart:", error);
   }
 }
+
 
 
 

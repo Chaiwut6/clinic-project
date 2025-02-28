@@ -1878,7 +1878,6 @@ async function saveAppointment() {
   }
 
   try {
-    // ✅ เปลี่ยนเป็น `POST` เพื่อส่งข้อมูลไปตรวจสอบจำนวนการนัดหมาย
     const checkResponse = await axios.post("http://localhost:8000/api/employees/appointments-count", {
       doc_id: selectedDoctorId,
       date: available_date

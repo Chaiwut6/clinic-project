@@ -406,6 +406,7 @@ router.post('/change-password', verifyToken, async (req, res) => {
   }
 });
 
+
 router.post('/appointments', async (req, res) => {
   const { Appointment_id, stu_id, stu_fname, stu_lname, doc_id, doc_name, time_start, time_end, date, problem, status } = req.body;
   let conn = null;
@@ -413,29 +414,61 @@ router.post('/appointments', async (req, res) => {
   try {
     conn = await initMySQL();
 
+    // ✅ Debug: ดูข้อมูลที่ส่งมาจาก Frontend
+    console.log("Request Body:", req.body);
+
+    // ✅ ตรวจสอบข้อมูลว่ามีครบทุก Field ที่ต้องใช้หรือไม่
     if (!Appointment_id || !stu_id || !stu_fname || !stu_lname || !doc_id || !doc_name || !date || !problem || !status || !time_start || !time_end) {
       return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
     }
 
+    // ✅ ตรวจสอบว่าเวลานัดนี้ถูกจองไปแล้วหรือไม่
     const [existingAppointments] = await conn.query(
       "SELECT * FROM appointments WHERE doc_id = ? AND date = ? AND time_start = ? AND time_end = ?",
       [doc_id, date, time_start, time_end]
     );
 
+    console.log("Existing Appointments:", existingAppointments);
+
     if (existingAppointments.length > 0) {
       const existingAppointment = existingAppointments[0];
-
       if (existingAppointment.status !== "ยกเลิก") {
         return res.status(400).json({ message: "เวลานัดหมายนี้ถูกจองไปแล้ว กรุณาเลือกเวลาอื่น" });
       }
-
-      // ✅ ถ้าสถานะเป็น "ยกเลิก" ให้เพิ่มรายการใหม่แทนการทับข้อมูลเดิม
     }
+
+ 
+    const [latestSymptoms] = await conn.query(
+      `SELECT symptoms 
+       FROM appointments 
+       WHERE stu_id = ? 
+       AND date <= NOW()
+       ORDER BY date DESC LIMIT 1`,
+      [stu_id]
+    );
+
+    let symptoms = null;
+    if (latestSymptoms.length > 0) {
+      if (latestSymptoms[0].symptoms === null) {
+        symptoms = null; 
+      } else {
+        try {
+          // ✅ ถ้าเป็น JSON ที่ถูกต้องแล้ว ให้ใช้ตามเดิม
+          symptoms = JSON.stringify(latestSymptoms[0].symptoms);
+        } catch (error) {
+          // ✅ ถ้าไม่ใช่ JSON ให้แปลงเป็น Array และ JSON.stringify()
+          symptoms = JSON.stringify([latestSymptoms[0].symptoms]);
+        }
+      }
+    }
+
+    // ✅ ใช้ JSON.stringify() ก่อนบันทึก
+    // const symptomsJson = JSON.stringify(symptoms);
 
     // ✅ สร้าง Appointment ID ใหม่สำหรับการนัดหมายใหม่
     const newAppointmentId = `APPT-${Date.now()}`;
 
-    // ✅ เพิ่มการนัดหมายใหม่แทนการอัปเดตอันเก่า
+    // ✅ เพิ่มการนัดหมายใหม่
     const appointmentData = {
       Appointment_id: newAppointmentId,
       stu_id,
@@ -448,7 +481,10 @@ router.post('/appointments', async (req, res) => {
       date,
       problem,
       status,
+      symptoms: symptoms  
     };
+
+    console.log("Appointment Data:", appointmentData);
 
     await conn.query('INSERT INTO appointments SET ?', appointmentData);
 
@@ -458,7 +494,8 @@ router.post('/appointments', async (req, res) => {
     console.error('เกิดข้อผิดพลาดในการบันทึกการนัดหมาย:', error);
     res.status(500).json({
       message: 'เกิดข้อผิดพลาดในการบันทึกการนัดหมาย กรุณาลองใหม่อีกครั้ง',
-      error: error.message
+      error: error.message,
+      stack: error.stack
     });
   } finally {
     if (conn) {
@@ -466,6 +503,10 @@ router.post('/appointments', async (req, res) => {
     }
   }
 });
+
+
+
+
 
 router.post('/appointments-count', async (req, res) => {
   let conn;
@@ -893,11 +934,6 @@ router.post('/appointmentsOverview', async (req, res) => {
 });
 
 
-
-
-
-
-
 router.post('/appointmentsByFaculty', async (req, res) => {
   let conn = null;
   try {
@@ -907,54 +943,48 @@ router.post('/appointmentsByFaculty', async (req, res) => {
     const selectedYear = year || new Date().getFullYear();
 
     let query = `
-    SELECT u.faculty, COUNT(DISTINCT a.stu_id) AS total, JSON_UNQUOTE(JSON_EXTRACT(a.symptoms, '$')) AS symptoms
+    SELECT 
+        u.faculty, 
+        COUNT(DISTINCT CONCAT(a.stu_id, symptom_details.symptom)) AS total,
+        symptom_details.symptom AS symptom_name
     FROM appointments a
     JOIN students u ON a.stu_id = u.stu_id
-    JOIN (
-        SELECT stu_id, MAX(date) AS latest_date 
-        FROM appointments 
-        WHERE status = 'ยืนยัน' 
-        AND (caseStatus = 'ติดตามอาการ' OR caseStatus IS NULL) 
-        GROUP BY stu_id
-    ) latest_appointments
-    ON a.stu_id = latest_appointments.stu_id 
-    AND a.date = latest_appointments.latest_date
+    JOIN JSON_TABLE(
+        CAST(a.symptoms AS JSON), 
+        '$[*]' COLUMNS (
+            symptom VARCHAR(255) PATH '$'
+        )
+    ) symptom_details ON 1=1
     WHERE a.status = 'ยืนยัน' 
     AND YEAR(a.date) = ?
-    AND a.symptoms IS NOT NULL 
-    AND a.symptoms != '[]' 
+    AND JSON_LENGTH(a.symptoms) > 0
     ${faculty ? "AND u.faculty = ?" : ""}
-    GROUP BY u.faculty, a.symptoms
-`;
+    ${symptom ? "AND symptom_details.symptom = ?" : ""}
+    GROUP BY u.faculty, symptom_details.symptom
+    ORDER BY total DESC;
+    `;
 
-let params = faculty ? [selectedYear, faculty] : [selectedYear];
-const [facultyAppointments] = await conn.query(query, params);
+    // ✅ ปรับปรุง params ให้รองรับทุกตัวกรอง
+    let params = [];
+    params.push(selectedYear);
+    if (faculty) params.push(faculty);
+    if (symptom) params.push(symptom);
 
-    // ✅ แปลงข้อมูล JSON อาการให้ถูกต้อง
+    const [facultyAppointments] = await conn.query(query, params);
+
+    // ✅ จัดการข้อมูลให้อยู่ในรูปแบบที่เหมาะสม
     let facultyData = {};
     facultyAppointments.forEach(row => {
-      let symptomsArray = [];
-      try {
-        symptomsArray = JSON.parse(row.symptoms || "[]");
-      } catch (error) {
-        symptomsArray = [];
-      }
-
       if (!facultyData[row.faculty]) {
         facultyData[row.faculty] = { total: 0, symptoms: {} };
       }
 
-      // ✅ กรองตามอาการที่เลือก และป้องกันการนับซ้ำ
-      if (!symptom || symptomsArray.includes(symptom)) {
-        facultyData[row.faculty].total += row.total;
+      facultyData[row.faculty].total += row.total;
 
-        symptomsArray.forEach(symptomName => {
-          if (!facultyData[row.faculty].symptoms[symptomName]) {
-            facultyData[row.faculty].symptoms[symptomName] = 0;
-          }
-          facultyData[row.faculty].symptoms[symptomName] += row.total;
-        });
+      if (!facultyData[row.faculty].symptoms[row.symptom_name]) {
+        facultyData[row.faculty].symptoms[row.symptom_name] = 0;
       }
+      facultyData[row.faculty].symptoms[row.symptom_name] += row.total;
     });
 
     // ✅ แปลงข้อมูลให้อยู่ในรูปแบบ Array
@@ -980,6 +1010,89 @@ const [facultyAppointments] = await conn.query(query, params);
 
 
 
+// router.post('/appointmentsByFaculty', async (req, res) => {
+//   let conn = null;
+//   try {
+//     conn = await initMySQL();
+//     const { year, symptom, faculty } = req.body;
+
+//     const selectedYear = year || new Date().getFullYear();
+
+//     let query = `
+//     SELECT u.faculty, COUNT(DISTINCT a.stu_id) AS total, JSON_UNQUOTE(JSON_EXTRACT(a.symptoms, '$')) AS symptoms
+//     FROM appointments a
+//     JOIN students u ON a.stu_id = u.stu_id
+//     JOIN (
+//         SELECT stu_id, MAX(date) AS latest_date 
+//         FROM appointments 
+//         WHERE status = 'ยืนยัน' 
+//         AND (caseStatus = 'ติดตามอาการ' OR caseStatus IS NULL) 
+//         GROUP BY stu_id
+//     ) latest_appointments
+//     ON a.stu_id = latest_appointments.stu_id 
+//     AND a.date = latest_appointments.latest_date
+//     WHERE a.status = 'ยืนยัน' 
+//     AND YEAR(a.date) = ?
+//     AND a.symptoms IS NOT NULL 
+//     AND a.symptoms != '[]' 
+//     ${faculty ? "AND u.faculty = ?" : ""}
+//     GROUP BY u.faculty, a.symptoms
+// `;
+
+// let params = faculty ? [selectedYear, faculty] : [selectedYear];
+// const [facultyAppointments] = await conn.query(query, params);
+
+//     // ✅ แปลงข้อมูล JSON อาการให้ถูกต้อง
+//     let facultyData = {};
+//     facultyAppointments.forEach(row => {
+//       let symptomsArray = [];
+//       try {
+//         symptomsArray = JSON.parse(row.symptoms || "[]");
+//       } catch (error) {
+//         symptomsArray = [];
+//       }
+
+//       if (!facultyData[row.faculty]) {
+//         facultyData[row.faculty] = { total: 0, symptoms: {} };
+//       }
+
+//       // ✅ กรองตามอาการที่เลือก และป้องกันการนับซ้ำ
+//       if (!symptom || symptomsArray.includes(symptom)) {
+//         facultyData[row.faculty].total += row.total;
+
+//         symptomsArray.forEach(symptomName => {
+//           if (!facultyData[row.faculty].symptoms[symptomName]) {
+//             facultyData[row.faculty].symptoms[symptomName] = 0;
+//           }
+//           facultyData[row.faculty].symptoms[symptomName] += row.total;
+//         });
+//       }
+//     });
+
+//     // ✅ แปลงข้อมูลให้อยู่ในรูปแบบ Array
+//     const formattedData = Object.keys(facultyData).map(faculty => ({
+//       faculty,
+//       total: facultyData[faculty].total,
+//       symptoms: facultyData[faculty].symptoms
+//     }));
+
+//     res.json({
+//       success: true,
+//       appointments: formattedData,
+//       totalConfirmedAppointments: formattedData.reduce((sum, row) => sum + row.total, 0)
+//     });
+
+//   } catch (error) {
+//     console.error('Error fetching confirmed appointments by faculty:', error);
+//     res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูล', error: error.message });
+//   } finally {
+//     if (conn) await conn.end();
+//   }
+// });
+
+
+
+
 
 router.post('/saveSymptoms', async (req, res) => {
   let conn;
@@ -993,8 +1106,12 @@ router.post('/saveSymptoms', async (req, res) => {
     conn = await initMySQL();
 
     // ✅ ดึง Appointment_id ล่าสุดของ user นี้
+    // const [latestAppointment] = await conn.query(
+    //   "SELECT Appointment_id FROM appointments WHERE stu_id = ? AND status = 'ยืนยัน' AND date <= NOW() ORDER BY date DESC LIMIT 1",
+    //   [stu_id]
+    // );
     const [latestAppointment] = await conn.query(
-      "SELECT Appointment_id FROM appointments WHERE stu_id = ? AND status = 'ยืนยัน' AND date <= NOW() ORDER BY date DESC LIMIT 1",
+      "SELECT Appointment_id FROM appointments WHERE stu_id = ? ORDER BY date DESC LIMIT 1",
       [stu_id]
     );
 

@@ -766,8 +766,13 @@ router.post('/saveSymptoms', async (req, res) => {
 
     conn = await initMySQL();
 
+    // const [latestAppointment] = await conn.query(
+    //   "SELECT Appointment_id FROM appointments WHERE stu_id = ? AND status = 'ยืนยัน' AND date <= NOW() ORDER BY date DESC LIMIT 1",
+    //   [stu_id]
+    // );
+
     const [latestAppointment] = await conn.query(
-      "SELECT Appointment_id FROM appointments WHERE stu_id = ? AND status = 'ยืนยัน' AND date <= NOW() ORDER BY date DESC LIMIT 1",
+      "SELECT Appointment_id FROM appointments WHERE stu_id = ? ORDER BY date DESC LIMIT 1",
       [stu_id]
     );
 
