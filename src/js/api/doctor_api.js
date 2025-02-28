@@ -118,7 +118,6 @@ async function saveAvailability() {
 
     const response = await axios.post("http://localhost:8000/api/doctors/saveAvailability", {
       Availability_id,
-      doc_id,
       date,
       time_start,
       time_end

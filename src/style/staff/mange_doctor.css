@@ -183,3 +183,26 @@
 .page-btn.active {
   background-color: #0056b3;
 }
+
+.delete-availability {
+  background-color: #ff4d4d; /* สีพื้นหลังปุ่ม (สีแดง) */
+  color: white;             /* สีตัวอักษร */
+  border: none;             /* ไม่มีขอบปุ่ม */
+  padding: 8px 16px;        /* ขนาดปุ่ม */
+  border-radius: 5px;       /* มุมปุ่มโค้ง */
+  cursor: pointer;          /* เปลี่ยนเคอร์เซอร์เมื่อชี้ที่ปุ่ม */
+  font-size: 14px;          /* ขนาดตัวอักษร */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* เพิ่มการเคลื่อนไหวเมื่อ hover หรือ active */
+}
+
+.delete-availability:hover {
+  background-color: #ff1a1a; /* สีพื้นหลังเมื่อ hover */
+  transform: scale(1.05);     /* ขยายขนาดปุ่มเล็กน้อยเมื่อ hover */
+}
+
+.delete-availability:active {
+  background-color: #e60000; /* สีพื้นหลังเมื่อคลิก */
+  transform: scale(0.98);     /* ลดขนาดปุ่มเล็กน้อยเมื่อคลิก */
+}
+
+

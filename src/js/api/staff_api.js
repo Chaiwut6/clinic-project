@@ -658,12 +658,11 @@ async function fetchAvailability(doctorID) {
   try {
     const response = await axios.post("http://localhost:8000/api/doctors/get-availability", { doc_id: doctorID });
     availabilityData = response.data.availability || [];
-
     // เรียงวันจากน้อยไปมาก
     availabilityData.sort((a, b) => new Date(a.available_date) - new Date(b.available_date));
 
     currentPage = 1; // รีเซ็ตหน้าปัจจุบัน
-    updateAvailabilityTable();
+    updateAvailabilityTable(doctorID);
   } catch (error) {
     console.error("Error fetching availability:", error);
     document.getElementById("availabilityTable").innerHTML = `<tr><td colspan="4">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
@@ -671,7 +670,7 @@ async function fetchAvailability(doctorID) {
 }
 
 // ✅ อัปเดตตารางเมื่อเลือกเดือน
-function updateAvailabilityTable() {
+function updateAvailabilityTable(doctorID) {
   const selectedMonth = document.getElementById("monthFilter").value;
 
   // กรองข้อมูลตามเดือนที่เลือก
@@ -679,11 +678,11 @@ function updateAvailabilityTable() {
     ? availabilityData.filter(item => new Date(item.available_date).getMonth() + 1 == selectedMonth)
     : [...availabilityData]; // ถ้าไม่เลือกเดือนให้แสดงทั้งหมด
 
-  renderAvailabilityTable();
+  renderAvailabilityTable(doctorID);
   // renderPaginationControls();
 }
 
-function renderAvailabilityTable() {
+function renderAvailabilityTable(doctorID) {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const pageData = filteredData.slice(startIndex, endIndex);
@@ -706,7 +705,7 @@ function renderAvailabilityTable() {
   }).join("");
 
   document.getElementById("availabilityTable").innerHTML = rows || `<tr><td colspan="4">ไม่มีข้อมูลวันว่าง</td></tr>`;
-  attachDeleteAvailabilityListeners();
+  attachDeleteAvailabilityListeners(doctorID);
 }
 
 // ✅ สร้างปุ่มเปลี่ยนหน้า
@@ -729,27 +728,28 @@ function changePage(page) {
 }
 
 // ✅ ผูก Event Listener ให้ปุ่มลบ
-function attachDeleteAvailabilityListeners() {
-  document.querySelectorAll(".delete-availability").forEach(button => {
-    button.addEventListener("click", async (event) => {
-      const availabilityId = event.target.dataset.id;
-      if (confirm("คุณต้องการลบรายการนี้หรือไม่?")) {
-        try {
-          await axios.post("http://localhost:8000/api/doctors/delete-availability", { Availability_id: availabilityId });
-          alert("ลบรายการสำเร็จ");
-          fetchAvailability(sessionStorage.getItem("selectedDoctorID")); // รีโหลดตารางใหม่
-        } catch (error) {
-          console.error("Error deleting availability:", error);
-          alert("เกิดข้อผิดพลาดในการลบข้อมูล");
-        }
-      }
-    });
-  });
-}
+// function attachDeleteAvailabilityListeners() {
+//   document.querySelectorAll(".delete-availability").forEach(button => {
+//     button.addEventListener("click", async (event) => {
+//       const availabilityId = event.target.dataset.id;
+//       if (confirm("คุณต้องการลบรายการนี้หรือไม่?")) {
+//         try {
+//           await axios.post("http://localhost:8000/api/doctors/delete-availability", { Availability_id: availabilityId });
+//           alert("ลบรายการสำเร็จ");
+//           fetchAvailability(sessionStorage.getItem("selectedDoctorID")); 
+//         } catch (error) {
+//           console.error("Error deleting availability:", error);
+//           alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+//         }
+//       }
+//     });
+//   });
+// }
 
 function attachDeleteAvailabilityListeners(doctorID) {
   document.querySelectorAll(".delete-availability").forEach((button) => {
     button.addEventListener("click", async (event) => {
+      console.log(doctorID);
       const availabilityId = event.target.dataset.id;
       if (confirm("คุณต้องการลบรายการนี้หรือไม่?")) {
         try {
@@ -773,7 +773,6 @@ function addAvailabilityEventListener() {
 
     const modal = document.getElementById("availabilityModal");
     const doctorID = modal ? modal.getAttribute("data-doctor-id") : sessionStorage.getItem("selectedDoctorID");
-    // console.log(doctorID);
     const availableDate = document.getElementById("availableDate").value;
     const startTime = document.getElementById("startTime").value;
     const endTime = document.getElementById("endTime").value;
