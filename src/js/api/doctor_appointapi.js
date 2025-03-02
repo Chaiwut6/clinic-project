@@ -20,7 +20,7 @@ async function fetchPatientslist(page = 1) {
 
         let latestAppointments = {};
 
-        // ✅ คัดกรองเฉพาะวันนัดล่าสุดของแต่ละ stu_id
+        //  คัดกรองเฉพาะวันนัดล่าสุดของแต่ละ stu_id
         response.data.appointments.forEach(appointment => {
             const userId = appointment.stu_id;
             const appointmentDate = new Date(appointment.date);
@@ -33,9 +33,9 @@ async function fetchPatientslist(page = 1) {
             }
         });
 
-        // ✅ แปลง Object กลับเป็น Array เพื่อใช้แสดงผล
+        //  แปลง Object กลับเป็น Array เพื่อใช้แสดงผล
         patientsData = Object.values(latestAppointments).map(appointment => {
-            const rawDate = new Date(appointment.date); // ✅ เก็บ Date Object สำหรับการเรียงลำดับ
+            const rawDate = new Date(appointment.date); //  เก็บ Date Object สำหรับการเรียงลำดับ
             const thaiDate = rawDate.toLocaleDateString("th-TH", { 
                 year: "numeric", 
                 month: "long", 
@@ -51,13 +51,13 @@ async function fetchPatientslist(page = 1) {
                 faculty: appointment.faculty,
                 phone: appointment.phone,
                 problem: appointment.problem || "ไม่ระบุ",
-                rawDate: rawDate, // ✅ เก็บ Date Object สำหรับการเรียงลำดับ
-                appointmentDate: thaiDate, // ✅ แสดงผลเป็น พ.ศ.
+                rawDate: rawDate, //  เก็บ Date Object สำหรับการเรียงลำดับ
+                appointmentDate: thaiDate, //  แสดงผลเป็น พ.ศ.
                 doctor: appointment.doc_name || "ไม่ระบุ"
             };
         });
 
-        // ✅ เรียงลำดับวันนัดจาก **ใหม่สุดไปหาเก่าสุด**
+        //  เรียงลำดับวันนัดจาก **ใหม่สุดไปหาเก่าสุด**
         patientsData.sort((a, b) => b.rawDate - a.rawDate);
 
         filteredPatientsData = [...patientsData];
@@ -73,16 +73,16 @@ async function fetchPatientslist(page = 1) {
 
 
 
-// ✅ ฟังก์ชันเรนเดอร์ตารางผู้ป่วย
+//  ฟังก์ชันเรนเดอร์ตารางผู้ป่วย
 function renderPatientsTable(page = 1) {
-    currentPages = page;  // ✅ อัปเดตค่าปัจจุบัน
+    currentPages = page;  //  อัปเดตค่าปัจจุบัน
     const startIndex = (page - 1) * itemsPerPages;
     const endIndex = startIndex + itemsPerPages;
     const pageData = filteredPatientsData.slice(startIndex, endIndex);
 
     const rows = pageData.map((patient, index) => `
         <tr data-id="${patient.Appointment_id}">
-            <td>${startIndex + index + 1}</td> <!-- ✅ แสดงลำดับที่ -->
+            <td>${startIndex + index + 1}</td> <!--  แสดงลำดับที่ -->
             <td>${patient.stu_id}</td>
             <td>${patient.title} ${patient.stu_fname} ${patient.stu_lname}</td>
             <td>${patient.nickname}</td>
@@ -98,7 +98,7 @@ function renderPatientsTable(page = 1) {
 
     document.getElementById("patientTable").innerHTML = rows || `<tr><td colspan="9">ไม่มีข้อมูล</td></tr>`;
 
-    // ✅ อัปเดตปุ่มเปลี่ยนหน้า
+    //  อัปเดตปุ่มเปลี่ยนหน้า
     renderPaginationControls();
 }
 
@@ -113,12 +113,12 @@ const goToAppointmentPage = (userId, appointmentId) => {
   
 
 
-// ✅ ฟังก์ชันสร้างปุ่มเปลี่ยนหน้า
+//  ฟังก์ชันสร้างปุ่มเปลี่ยนหน้า
 function renderPaginationControls() {
     const paginationContainer = document.getElementById("paginationControls");
 
     if (!paginationContainer) {
-        console.warn("⚠️ ไม่พบ paginationControls ใน DOM");
+        console.warn(" ไม่พบ paginationControls ใน DOM");
         return;
     }
 
@@ -155,7 +155,7 @@ function filterReceivecare() {
         const faculty = (patient.faculty || "").trim();
         const dateText = (patient.appointmentDate || "").trim();
 
-        // ✅ คำนวณเดือนที่ตรงกัน
+        //  คำนวณเดือนที่ตรงกัน
         let formattedMonth = "";
         let formattedYear = "";
         if (dateText) {
@@ -167,7 +167,7 @@ function filterReceivecare() {
         }
 
         return (
-            // ✅ ค้นหาจาก ชื่อ-นามสกุล หรือ รหัสประจำตัว
+            //  ค้นหาจาก ชื่อ-นามสกุล หรือ รหัสประจำตัว
             (!searchFilter || fullName.includes(searchFilter) || userID.includes(searchFilter)) &&
             (!facultyFilter || faculty === facultyFilter) &&
             (!monthFilter || formattedMonth === monthFilter) &&

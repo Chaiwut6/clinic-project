@@ -88,7 +88,7 @@ async function fetchPatientslist(page = 1) {
                 symptomsArray = [];
             }
 
-            // ✅ ค้นหาข้อมูล `nickname`, `faculty`, `phone` จาก `students`
+            //  ค้นหาข้อมูล `nickname`, `faculty`, `phone` จาก `students`
             const userInfo = students.find(user => user.stu_id === appointment.stu_id) || {};
 
             const appointmentDate = new Date(appointment.date);
@@ -153,12 +153,12 @@ function renderPatientsTable() {
 
 
 
-// ✅ ฟังก์ชันสร้างปุ่มเปลี่ยนหน้า
+//  ฟังก์ชันสร้างปุ่มเปลี่ยนหน้า
 function renderPaginationControls() {
     const paginationContainer = document.getElementById("paginationControls");
 
     if (!paginationContainer) {
-        console.warn("⚠️ ไม่พบ paginationControls ใน DOM");
+        console.warn(" ไม่พบ paginationControls ใน DOM");
         return;
     }
 
@@ -172,14 +172,14 @@ function renderPaginationControls() {
     paginationContainer.innerHTML = totalPages > 1 ? controlsHTML : "";
 }
 
-// ✅ ฟังก์ชันเปลี่ยนหน้า
+//  ฟังก์ชันเปลี่ยนหน้า
 function changePage(page) {
     currentPages = page;
     renderPatientsTable();
     renderPaginationControls();
 }
 
-// ✅ ฟังก์ชันกรองข้อมูล
+//  ฟังก์ชันกรองข้อมูล
 function filterReceivecare() {
     const nameFilter = document.getElementById('searchName').value.trim().toLowerCase();
     const doctorFilter = document.getElementById('doctorSelect').value.trim();
@@ -192,7 +192,7 @@ function filterReceivecare() {
         'กันยายน': '09', 'ตุลาคม': '10', 'พฤศจิกายน': '11', 'ธันวาคม': '12'
     };
 
-    // ✅ ใช้ `patientsData` ที่โหลดจาก API
+    //  ใช้ `patientsData` ที่โหลดจาก API
     filteredPatientsData = patientsData.filter(patient => {
         const name = (patient.stu_fname + " " + patient.stu_lname).trim().toLowerCase();
         const userID = (patient.stu_id || "").trim().toLowerCase();
@@ -213,7 +213,7 @@ function filterReceivecare() {
             (!nameFilter || name.includes(nameFilter) || userID.includes(nameFilter)) &&
             (!doctorFilter || doctor === doctorFilter) &&
             (!monthFilter || formattedMonth === monthFilter) &&
-            (!yearFilter || formattedYear === yearFilter)  // ✅ เพิ่มการกรองตามปี
+            (!yearFilter || formattedYear === yearFilter)  //  เพิ่มการกรองตามปี
         );
     });
 
@@ -232,7 +232,7 @@ function exportToExcel() {
 
   const groupedData = {};
 
-  // ✅ ใช้ patientsData เพื่อดึงข้อมูลทุกหน้า
+  //  ใช้ patientsData เพื่อดึงข้อมูลทุกหน้า
   patientsData.forEach((patient) => {
       const doctorName = patient.doctor || "ไม่ระบุ";
       const dateText = patient.appointmentDate || "";
@@ -249,7 +249,7 @@ function exportToExcel() {
           rowMonth = monthMap[dateParts[1]] || "";
       }
 
-      // ✅ ตรวจสอบเงื่อนไขการกรอง
+      //  ตรวจสอบเงื่อนไขการกรอง
       if (
           (selectedDoctor === "" || doctorName === selectedDoctor) &&
           (selectedMonth === "" || rowMonth === selectedMonth)
@@ -284,7 +284,7 @@ function exportToExcel() {
       const sheetName = doctorName || "ทั้งหมด";
       const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
 
-      // ✅ ปรับขนาดคอลัมน์ให้เหมาะสม
+      //  ปรับขนาดคอลัมน์ให้เหมาะสม
       worksheet["!cols"] = [
           { wch: 15 }, { wch: 25 }, { wch: 15 }, { wch: 20 },
           { wch: 15 }, { wch: 20 }, { wch: 20 }, { wch: 30 },

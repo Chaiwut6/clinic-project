@@ -11,14 +11,14 @@ async function uploadImage() {
     formData.append("image", file);
 
     try {
-        // ✅ อัปโหลดไปยังเซิร์ฟเวอร์
+        //  อัปโหลดไปยังเซิร์ฟเวอร์
         await axios.post("http://localhost:8000/api/upload/upload-image", formData, {
             headers: { "Content-Type": "multipart/form-data" }
         });
 
         alert("อัปโหลดรูปภาพสำเร็จ!");
 
-        // ✅ โหลดรูปใหม่ทันที
+        //  โหลดรูปใหม่ทันที
         const response = await axios.get("http://localhost:8000/api/upload/latest-image");
         document.querySelector(".clinic-image").src = response.data.imageUrl;
 
@@ -30,18 +30,18 @@ async function uploadImage() {
 
 document.addEventListener("DOMContentLoaded", async () => {
     try {
-        // 🔹 เรียก API เพื่อตรวจสอบรูปล่าสุดในโฟลเดอร์ uploads
+        //  เรียก API เพื่อตรวจสอบรูปล่าสุดในโฟลเดอร์ uploads
         const response = await axios.get("http://localhost:8000/api/upload/latest-image");
         let latestImageUrl = response.data.imageUrl;
         const defaultImage = "http://localhost:8000/uploads/default_page.jpg";
         
-        // 🔹 ค้นหา .clinic-image ก่อนเปลี่ยน src
+        //  ค้นหา .clinic-image ก่อนเปลี่ยน src
         const clinicImage = document.querySelector(".clinic-image");
         if (!clinicImage) return;
 
-        // 🔹 ตรวจสอบว่า `latestImageUrl` มีค่าและไม่ใช่รูป default
+        //  ตรวจสอบว่า `latestImageUrl` มีค่าและไม่ใช่รูป default
         if (latestImageUrl && !latestImageUrl.includes("default_page.jpg")) {
-            // ✅ ตรวจสอบว่ารูปล่าสุดยังมีอยู่จริง
+            //  ตรวจสอบว่ารูปล่าสุดยังมีอยู่จริง
             const imageExists = await checkImageExists(latestImageUrl);
             clinicImage.src = imageExists ? latestImageUrl : defaultImage;
         } else {
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (error) {
         console.error("Error fetching latest image:", error);
 
-        // ✅ ใช้รูป default เมื่อเกิดข้อผิดพลาด
+        //  ใช้รูป default เมื่อเกิดข้อผิดพลาด
         const clinicImage = document.querySelector(".clinic-image");
         if (clinicImage) {
             clinicImage.src = "http://localhost:8000/uploads/default_page.jpg";
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-// 🔸 ฟังก์ชันตรวจสอบว่ารูปมีอยู่จริงหรือไม่
+//  ฟังก์ชันตรวจสอบว่ารูปมีอยู่จริงหรือไม่
 async function checkImageExists(imageUrl) {
     try {
         const response = await axios.head(imageUrl);

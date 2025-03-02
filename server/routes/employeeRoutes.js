@@ -292,14 +292,14 @@ router.post('/userList', async (req, res) => {
   try {
     conn = await initMySQL();
 
-    // ✅ ดึงข้อมูลผู้ใช้ทั้งหมด
+    // ดึงข้อมูลผู้ใช้ทั้งหมด
     const [userResult] = await conn.query("SELECT * FROM students");
 
     if (!userResult || userResult.length === 0) {
       return res.status(404).json({ message: 'ไม่พบข้อมูลผู้ใช้' });
     }
 
-    // ✅ ดึงข้อมูลการนัดหมายล่าสุดของแต่ละ `stu_id` รวมถึง `caseStatus`
+    // ดึงข้อมูลการนัดหมายล่าสุดของแต่ละ `stu_id` รวมถึง `caseStatus`
     const [appointmentsResult] = await conn.query(`
       SELECT a.stu_id, a.status, a.date, a.caseStatus
       FROM appointments a
@@ -311,7 +311,7 @@ router.post('/userList', async (req, res) => {
       ON a.stu_id = latest.stu_id AND a.date = latest.latest_date
     `);
 
-    // ✅ ใช้ `Map` เพื่อเชื่อมข้อมูล `appointments` กับ `students`
+    // ใช้ `Map` เพื่อเชื่อมข้อมูล `appointments` กับ `students`
     const appointmentMap = new Map();
     appointmentsResult.forEach(app => {
       appointmentMap.set(app.stu_id, { 
@@ -321,7 +321,7 @@ router.post('/userList', async (req, res) => {
       });
     });
 
-    // ✅ รวมข้อมูล `students` กับ `appointments` + `caseStatus`
+    // รวมข้อมูล `students` กับ `appointments` + `caseStatus`
     const userList = userResult.map(user => ({
       ...user,
       latest_appointment_status: appointmentMap.get(user.stu_id)?.status || "ไม่มีข้อมูล",
@@ -329,7 +329,7 @@ router.post('/userList', async (req, res) => {
       latest_case_status: appointmentMap.get(user.stu_id)?.caseStatus || "ไม่มีข้อมูล"
     }));
 
-    // ✅ ส่งผลลัพธ์กลับไปที่ Client
+    // ส่งผลลัพธ์กลับไปที่ Client
     res.json({ students: userList });
 
   } catch (error) {
@@ -414,15 +414,15 @@ router.post('/appointments', async (req, res) => {
   try {
     conn = await initMySQL();
 
-    // ✅ Debug: ดูข้อมูลที่ส่งมาจาก Frontend
+    // Debug: ดูข้อมูลที่ส่งมาจาก Frontend
     console.log("Request Body:", req.body);
 
-    // ✅ ตรวจสอบข้อมูลว่ามีครบทุก Field ที่ต้องใช้หรือไม่
+    // ตรวจสอบข้อมูลว่ามีครบทุก Field ที่ต้องใช้หรือไม่
     if (!Appointment_id || !stu_id || !stu_fname || !stu_lname || !doc_id || !doc_name || !date || !problem || !status || !time_start || !time_end) {
       return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
     }
 
-    // ✅ ตรวจสอบว่าเวลานัดนี้ถูกจองไปแล้วหรือไม่
+    // ตรวจสอบว่าเวลานัดนี้ถูกจองไปแล้วหรือไม่
     const [existingAppointments] = await conn.query(
       "SELECT * FROM appointments WHERE doc_id = ? AND date = ? AND time_start = ? AND time_end = ?",
       [doc_id, date, time_start, time_end]
@@ -453,22 +453,22 @@ router.post('/appointments', async (req, res) => {
         symptoms = null; 
       } else {
         try {
-          // ✅ ถ้าเป็น JSON ที่ถูกต้องแล้ว ให้ใช้ตามเดิม
+          // ถ้าเป็น JSON ที่ถูกต้องแล้ว ให้ใช้ตามเดิม
           symptoms = JSON.stringify(latestSymptoms[0].symptoms);
         } catch (error) {
-          // ✅ ถ้าไม่ใช่ JSON ให้แปลงเป็น Array และ JSON.stringify()
+          // ถ้าไม่ใช่ JSON ให้แปลงเป็น Array และ JSON.stringify()
           symptoms = JSON.stringify([latestSymptoms[0].symptoms]);
         }
       }
     }
 
-    // ✅ ใช้ JSON.stringify() ก่อนบันทึก
+    // ใช้ JSON.stringify() ก่อนบันทึก
     // const symptomsJson = JSON.stringify(symptoms);
 
-    // ✅ สร้าง Appointment ID ใหม่สำหรับการนัดหมายใหม่
+    // สร้าง Appointment ID ใหม่สำหรับการนัดหมายใหม่
     const newAppointmentId = `APPT-${Date.now()}`;
 
-    // ✅ เพิ่มการนัดหมายใหม่
+    // เพิ่มการนัดหมายใหม่
     const appointmentData = {
       Appointment_id: newAppointmentId,
       stu_id,
@@ -645,7 +645,7 @@ router.post('/receivecare', async (req, res) => {
   try {
     conn = await initMySQL();
 
-    // ✅ ค้นหานัดหมายล่าสุดของแต่ละ user (ที่ยังไม่ถูกปิดเคส)
+    // ค้นหานัดหมายล่าสุดของแต่ละ user (ที่ยังไม่ถูกปิดเคส)
     const [latestAppointments] = await conn.query(`
       SELECT a.* 
       FROM appointments a
@@ -658,7 +658,7 @@ router.post('/receivecare', async (req, res) => {
       WHERE a.caseStatus != 'ปิดเคส' OR a.caseStatus IS NULL
     `);
 
-    // ✅ ค้นหารายชื่อผู้ใช้ที่มีการนัดหมาย (และไม่ถูกปิดเคส)
+    // ค้นหารายชื่อผู้ใช้ที่มีการนัดหมาย (และไม่ถูกปิดเคส)
     const [studentsWithAppointments] = await conn.query(`
       SELECT DISTINCT u.*
       FROM students u
@@ -666,7 +666,7 @@ router.post('/receivecare', async (req, res) => {
       WHERE a.caseStatus != 'ปิดเคส' OR a.caseStatus IS NULL
     `);
 
-    // ✅ ตรวจสอบข้อมูล
+    // ตรวจสอบข้อมูล
     const userinfo = studentsWithAppointments.length > 0 ? studentsWithAppointments : [{ message: "ไม่พบผู้ใช้งานที่มีการนัดหมาย" }];
     const userAppointment = latestAppointments.length > 0 ? latestAppointments : [{ message: "ยังไม่มีการนัดหมาย" }];
 
@@ -964,7 +964,7 @@ router.post('/appointmentsByFaculty', async (req, res) => {
     ORDER BY total DESC;
     `;
 
-    // ✅ ปรับปรุง params ให้รองรับทุกตัวกรอง
+    // ปรับปรุง params ให้รองรับทุกตัวกรอง
     let params = [];
     params.push(selectedYear);
     if (faculty) params.push(faculty);
@@ -972,7 +972,7 @@ router.post('/appointmentsByFaculty', async (req, res) => {
 
     const [facultyAppointments] = await conn.query(query, params);
 
-    // ✅ จัดการข้อมูลให้อยู่ในรูปแบบที่เหมาะสม
+    // จัดการข้อมูลให้อยู่ในรูปแบบที่เหมาะสม
     let facultyData = {};
     facultyAppointments.forEach(row => {
       if (!facultyData[row.faculty]) {
@@ -987,7 +987,7 @@ router.post('/appointmentsByFaculty', async (req, res) => {
       facultyData[row.faculty].symptoms[row.symptom_name] += row.total;
     });
 
-    // ✅ แปลงข้อมูลให้อยู่ในรูปแบบ Array
+    // แปลงข้อมูลให้อยู่ในรูปแบบ Array
     const formattedData = Object.keys(facultyData).map(faculty => ({
       faculty,
       total: facultyData[faculty].total,
@@ -1105,7 +1105,7 @@ router.post('/saveSymptoms', async (req, res) => {
 
     conn = await initMySQL();
 
-    // ✅ ดึง Appointment_id ล่าสุดของ user นี้
+    // ดึง Appointment_id ล่าสุดของ user นี้
     // const [latestAppointment] = await conn.query(
     //   "SELECT Appointment_id FROM appointments WHERE stu_id = ? AND status = 'ยืนยัน' AND date <= NOW() ORDER BY date DESC LIMIT 1",
     //   [stu_id]
@@ -1121,13 +1121,13 @@ router.post('/saveSymptoms', async (req, res) => {
 
     const appointment_id = latestAppointment[0].Appointment_id;
 
-    // ✅ รวมอาการเก่ากับอาการใหม่
+    // รวมอาการเก่ากับอาการใหม่
     let allSymptoms = Array.isArray(symptoms) ? [...symptoms] : [];
     if (additionalSymptom && additionalSymptom.trim() !== '') {
       allSymptoms.push(additionalSymptom.trim());
     }
 
-    // ✅ อัปเดตอาการในวันนัดล่าสุด
+    // อัปเดตอาการในวันนัดล่าสุด
     await conn.query(
       "UPDATE appointments SET symptoms = ? WHERE Appointment_id = ?",
       [JSON.stringify(allSymptoms), appointment_id]
@@ -1154,7 +1154,7 @@ router.post('/reset-password', async (req, res) => {
   try {
     const { stu_id } = req.body;
 
-    console.log("✅ Received stu_id:", stu_id); // ✅ ดูค่า stu_id ที่ส่งมา
+    console.log(" Received stu_id:", stu_id); // ดูค่า stu_id ที่ส่งมา
 
     if (!stu_id) {
       return res.status(400).json({ message: 'กรุณาระบุ User ID' });
@@ -1162,9 +1162,9 @@ router.post('/reset-password', async (req, res) => {
 
     conn = await initMySQL();
 
-    // ✅ ตรวจสอบว่า User ID นี้มีอยู่จริงหรือไม่
+    // ตรวจสอบว่า User ID นี้มีอยู่จริงหรือไม่
     const [rows] = await conn.query("SELECT login_id FROM login WHERE login_id = ?", [stu_id]);
-    console.log("✅ Found User:", rows);
+    console.log(" Found User:", rows);
 
     if (rows.length === 0) {
       return res.status(404).json({ message: 'ไม่พบ User ID ในระบบ' });
@@ -1182,7 +1182,7 @@ router.post('/reset-password', async (req, res) => {
       [hashedPassword, stu_id]
     );
 
-    console.log("✅ Update Result:", result);
+    console.log(" Update Result:", result);
 
     if (result.affectedRows > 0) {
       res.status(200).json({ message: `รีเซ็ตรหัสผ่านสำเร็จ รหัสผ่านใหม่คือ: ${newPassword}` });

@@ -460,7 +460,7 @@ async function fetchDoctors() {
   }
 }
 
-// ✅ ฟังก์ชันกรองข้อมูลแพทย์
+//  ฟังก์ชันกรองข้อมูลแพทย์
 function filterDoctor() {
   const nameFilter = document.getElementById('searchdoctor').value.toLowerCase();
 
@@ -476,7 +476,7 @@ function filterDoctor() {
   renderDoctorPaginationControls();
 }
 
-// ✅ ฟังก์ชันเรนเดอร์ตารางแพทย์
+//  ฟังก์ชันเรนเดอร์ตารางแพทย์
 function renderDoctorTable() {
   const startIndex = (currentDoctorPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -521,7 +521,7 @@ function renderDoctorTable() {
 
 }
 
-// ✅ ฟังก์ชันจัดการ Dropdown
+//  ฟังก์ชันจัดการ Dropdown
 function attachDropdownEventListeners() {
   document.querySelectorAll(".actionBtn").forEach(button => {
     button.addEventListener("click", (event) => {
@@ -557,12 +557,12 @@ function attachDropdownEventListeners() {
   });
 }
 
-// ✅ ฟังก์ชันสร้างปุ่มเปลี่ยนหน้า
+//  ฟังก์ชันสร้างปุ่มเปลี่ยนหน้า
 function renderDoctorPaginationControls() {
   const paginationContainer = document.getElementById("doctorPaginationControls");
 
   if (!paginationContainer) {
-    console.warn("⚠️ ไม่พบ doctorPaginationControls ใน DOM");
+    console.warn(" ไม่พบ doctorPaginationControls ใน DOM");
     return; // หยุดทำงานถ้าไม่พบ element
   }
 
@@ -669,7 +669,7 @@ async function fetchAvailability(doctorID) {
   }
 }
 
-// ✅ อัปเดตตารางเมื่อเลือกเดือน
+// อัปเดตตารางเมื่อเลือกเดือน
 function updateAvailabilityTable(doctorID) {
   const selectedMonth = document.getElementById("monthFilter").value;
 
@@ -708,7 +708,7 @@ function renderAvailabilityTable(doctorID) {
   attachDeleteAvailabilityListeners(doctorID);
 }
 
-// ✅ สร้างปุ่มเปลี่ยนหน้า
+//  สร้างปุ่มเปลี่ยนหน้า
 function renderPaginationControls() {
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   let controlsHTML = "";
@@ -720,14 +720,14 @@ function renderPaginationControls() {
   document.getElementById("paginationControls").innerHTML = totalPages > 1 ? controlsHTML : "";
 }
 
-// ✅ ฟังก์ชันเปลี่ยนหน้า
+//  ฟังก์ชันเปลี่ยนหน้า
 function changePage(page) {
   currentPage = page;
   renderAvailabilityTable();
   renderPaginationControls();
 }
 
-// ✅ ผูก Event Listener ให้ปุ่มลบ
+//  ผูก Event Listener ให้ปุ่มลบ
 // function attachDeleteAvailabilityListeners() {
 //   document.querySelectorAll(".delete-availability").forEach(button => {
 //     button.addEventListener("click", async (event) => {
@@ -917,7 +917,7 @@ function attachEditAndDeleteEmployee() {
     });
   });
 
-  // ✅ ปุ่มลบ
+  //  ปุ่มลบ
   document.querySelectorAll(".delete-trigger").forEach(button => {
     button.addEventListener("click", async (e) => {
       e.preventDefault();
@@ -966,7 +966,7 @@ function attachDropdownEmployee() {
     });
   });
 
-  // ✅ ปิด dropdown เมื่อคลิกที่อื่น
+  //  ปิด dropdown เมื่อคลิกที่อื่น
   document.addEventListener("click", (event) => {
     document.querySelectorAll(".dropdown-doctor.show").forEach(openDropdown => {
       openDropdown.classList.remove("show");
@@ -980,7 +980,7 @@ function renderEmployeeControls() {
   const paginationContainer = document.getElementById("PaginationEmployeeControls");
 
   if (!paginationContainer) {
-    console.warn("⚠️ ไม่พบ PaginationControls ใน DOM");
+    console.warn(" ไม่พบ PaginationControls ใน DOM");
     return;
   }
 
@@ -995,7 +995,7 @@ function renderEmployeeControls() {
 }
 
 
-// ✅ ฟังก์ชันเปลี่ยนหน้า
+//  ฟังก์ชันเปลี่ยนหน้า
 function changeEmployeePage(page) {
   currentemployeePage = page;
   renderAdminTable();
@@ -1033,7 +1033,7 @@ async function fetchUserlist() {
 
     const response = await axios.post("http://localhost:8000/api/employees/userList");
     userData = response.data?.students || [];
-    filteredData = [...userData]; // ✅ สำเนาข้อมูลเพื่อใช้ในการกรอง
+    filteredData = [...userData]; // สำเนาข้อมูลเพื่อใช้ในการกรอง
 
     if (userData.length === 0) {
       document.getElementById("UserTable").innerHTML = `<tr><td colspan="8">ไม่พบข้อมูลผู้ใช้</td></tr>`;
@@ -1055,7 +1055,7 @@ function filterPatients() {
   const nameFilter = document.getElementById('searchName').value.toLowerCase();
   const facultyFilter = document.getElementById('searchFaculty').value;
 
-  // ✅ กรองข้อมูลจาก userData
+  //  กรองข้อมูลจาก userData
   filteredData = userData.filter(user => {
     const ID = (user.stu_id || "").toLowerCase();
     const name = `${user.title} ${user.stu_fname} ${user.stu_lname}`.toLowerCase();
@@ -1072,7 +1072,7 @@ function filterPatients() {
   renderUserPaginationControls();
 }
 
-// ✅ ฟังก์ชันแบ่งหน้า
+//  ฟังก์ชันแบ่งหน้า
 function renderUserTable() {
   const startIndex = (currentUserPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -1107,7 +1107,7 @@ function renderUserTable() {
 
   document.getElementById("UserTable").innerHTML = rows || `<tr><td colspan="8">ไม่พบข้อมูล</td></tr>`;
 
-  // ✅ เรียกใช้การแนบ Event Listener ทุกครั้งหลัง Render
+  //  เรียกใช้การแนบ Event Listener ทุกครั้งหลัง Render
   attachDropdownUser();
 }
 
@@ -1119,7 +1119,7 @@ function attachDropdownUser() {
       const dropdown = button.closest(".dropdown-user");
       const dropdownContent = dropdown.querySelector(".dropdown-content-user");
 
-      // ✅ ปิด Dropdown อื่นๆ ก่อนเปิดอันที่ต้องการ
+      //  ปิด Dropdown อื่นๆ ก่อนเปิดอันที่ต้องการ
       document.querySelectorAll(".dropdown-content-user.show").forEach(openDropdown => {
         if (openDropdown !== dropdownContent) {
           openDropdown.classList.remove("show");
@@ -1127,13 +1127,13 @@ function attachDropdownUser() {
         }
       });
 
-      // ✅ เปิด/ปิด Dropdown
+      //  เปิด/ปิด Dropdown
       dropdownContent.classList.toggle("show");
 
       const rect = dropdownContent.getBoundingClientRect();
       const windowHeight = window.innerHeight;
 
-      // ✅ ตรวจสอบว่าชนขอบล่างของจอหรือไม่ ถ้าใช่ ให้เปิดขึ้นด้านบน
+      //  ตรวจสอบว่าชนขอบล่างของจอหรือไม่ ถ้าใช่ ให้เปิดขึ้นด้านบน
       if (rect.bottom > windowHeight) {
         dropdownContent.classList.add("above");
       } else {
@@ -1142,7 +1142,7 @@ function attachDropdownUser() {
     });
   });
 
-  // ✅ ปิด Dropdown เมื่อคลิกที่อื่น
+  //  ปิด Dropdown เมื่อคลิกที่อื่น
   document.addEventListener("click", () => {
     document.querySelectorAll(".dropdown-content-user.show").forEach(dropdown => {
       dropdown.classList.remove("show");
@@ -1290,7 +1290,7 @@ async function fetchUserDataAndDisplay() {
             day: 'numeric'
           });
 
-          // ✅ ตรวจสอบระดับผลการประเมินและกำหนดสี
+          //  ตรวจสอบระดับผลการประเมินและกำหนดสี
           let assessmentClass = "";
           if (result.result.includes("ระดับน้อย")) {
             assessmentClass = "assessment-low";
@@ -1336,7 +1336,7 @@ async function fetchUserDataAndDisplay() {
         appointmentBody.innerHTML = '<tr><td colspan="4">ไม่มีข้อมูล</td></tr>';
       } else {
         filteredAppointments
-          .sort((a, b) => new Date(b.date) - new Date(a.date)) // ✅ เรียงจากวันล่าสุด -> วันเก่า
+          .sort((a, b) => new Date(b.date) - new Date(a.date)) //  เรียงจากวันล่าสุด -> วันเก่า
           .forEach(appointment => {
             const appointmentDate = new Date(appointment.date);
             const formattedDate = appointmentDate.toLocaleDateString('th-TH', {
@@ -1623,7 +1623,7 @@ async function loadCaseStatus() {
     selectedCaseStatus.innerText = caseStatusSelect.options[caseStatusSelect.selectedIndex].text;
   });
 
-  // ✅ บันทึกสถานะใหม่
+  //  บันทึกสถานะใหม่
   saveCaseStatusBtn.addEventListener("click", async () => {
     const selectedStatus = caseStatusSelect.value;
 
@@ -2114,7 +2114,7 @@ function attachDropdownManager() {
     });
   });
 
-  // ✅ ปิด dropdown เมื่อคลิกที่อื่น
+  //  ปิด dropdown เมื่อคลิกที่อื่น
   document.addEventListener("click", (event) => {
     document.querySelectorAll(".dropdown-doctor.show").forEach(openDropdown => {
       openDropdown.classList.remove("show");
@@ -2122,12 +2122,12 @@ function attachDropdownManager() {
     });
   });
 }
-// ✅ ฟังก์ชันสร้างปุ่มเปลี่ยนหน้า
+//  ฟังก์ชันสร้างปุ่มเปลี่ยนหน้า
 function renderManagerControls() {
   const paginationContainer = document.getElementById("paginationControls");
 
   if (!paginationContainer) {
-    console.warn("⚠️ ไม่พบ paginationControls ใน DOM");
+    console.warn(" ไม่พบ paginationControls ใน DOM");
     return;
   }
 
@@ -2141,14 +2141,14 @@ function renderManagerControls() {
   paginationContainer.innerHTML = totalPages > 1 ? controlsHTML : "";
 }
 
-// ✅ ฟังก์ชันเปลี่ยนหน้า
+//  ฟังก์ชันเปลี่ยนหน้า
 function changePage(page) {
   currentPage = page;
   renderManagerTable();
   renderManagerControls();
 }
 
-// ✅ ฟังก์ชันแนบ Event ให้ปุ่มแก้ไขและลบ
+//  ฟังก์ชันแนบ Event ให้ปุ่มแก้ไขและลบ
 function attachEditAndDeleteEvents() {
   document.querySelectorAll(".editBtn").forEach(button => {
     button.addEventListener("click", (e) => {
@@ -2243,7 +2243,7 @@ const updateStudyYearAutomatically = async () => {
     const response = await axios.post("http://localhost:8000/api/students/getAllUsers");
 
     if (!response.data.success) {
-      console.error("❌ ไม่สามารถดึงข้อมูลผู้ใช้ได้");
+      console.error(" ไม่สามารถดึงข้อมูลผู้ใช้ได้");
       return;
     }
 
@@ -2269,7 +2269,7 @@ const updateStudyYearAutomatically = async () => {
     }
 
   } catch (error) {
-    console.error("❌ เกิดข้อผิดพลาดในการอัปเดตชั้นปี:", error);
+    console.error(" เกิดข้อผิดพลาดในการอัปเดตชั้นปี:", error);
   }
 };
 // เรียกใช้ฟังก์ชันเมื่อโหลดหน้า
@@ -2343,7 +2343,7 @@ document.addEventListener("DOMContentLoaded", () => {
       break;
 
     default:
-      console.warn("⚠️ หน้านี้ไม่ต้องใช้ฟังก์ชัน fetch");
+      console.warn(" หน้านี้ไม่ต้องใช้ฟังก์ชัน fetch");
   }
 });
 

@@ -97,7 +97,7 @@ async function fetchUserDataAndDisplay() {
                     day: 'numeric'
                 });
     
-                // ✅ ตรวจสอบระดับผลการประเมินและกำหนดสี
+                //  ตรวจสอบระดับผลการประเมินและกำหนดสี
                 let assessmentClass = "";
                 if (result.result.includes("ระดับน้อย")) {
                     assessmentClass = "assessment-low";
@@ -152,7 +152,7 @@ async function fetchUserDataAndDisplay() {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
-            }); // ✅ แปลงวันที่ให้แสดงในรูปแบบไทย
+            }); //  แปลงวันที่ให้แสดงในรูปแบบไทย
         
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -185,7 +185,7 @@ async function fetchUserDataAndDisplay() {
         return;
     }
 
-    // ✅ ดึงค่าที่เลือกจาก Checkbox
+    //  ดึงค่าที่เลือกจาก Checkbox
     const selectedSymptoms = [...document.querySelectorAll("input[name='symptoms']:checked")]
         .map(input => input.value);
 
@@ -201,7 +201,7 @@ async function fetchUserDataAndDisplay() {
         stu_id: userId,
         appointment_id: appointmentId,
         symptoms: selectedSymptoms,
-        ...(additionalSymptom && { additionalSymptom }) // ✅ ส่งไปเฉพาะถ้ามีข้อมูล
+        ...(additionalSymptom && { additionalSymptom }) //  ส่งไปเฉพาะถ้ามีข้อมูล
     };
 
     try {

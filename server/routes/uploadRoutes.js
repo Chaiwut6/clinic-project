@@ -5,15 +5,15 @@ const fs = require("fs");
 
 const router = express.Router();
 
-// 📂 กำหนดโฟลเดอร์อัปโหลด
+//  กำหนดโฟลเดอร์อัปโหลด
 const uploadDir = path.join(__dirname, "../uploads");
 
-// ✅ ตรวจสอบว่ามีโฟลเดอร์ `uploads` หรือไม่ ถ้าไม่มีให้สร้าง
+//  ตรวจสอบว่ามีโฟลเดอร์ `uploads` หรือไม่ ถ้าไม่มีให้สร้าง
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// ✅ ตั้งค่า `multer` สำหรับอัปโหลดไฟล์
+//  ตั้งค่า `multer` สำหรับอัปโหลดไฟล์
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, uploadDir),
     filename: (req, file, cb) => {
@@ -24,7 +24,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// ✅ API สำหรับอัปโหลดรูปภาพ
+//  API สำหรับอัปโหลดรูปภาพ
 router.post("/upload-image", upload.single("image"), (req, res) => {
     try {
         if (!req.file) {
@@ -57,14 +57,14 @@ router.get("/latest-image", (req, res) => {
     try {
         const uploadDir = path.join(__dirname, "../uploads");
 
-        // ✅ อ่านไฟล์ทั้งหมดจากโฟลเดอร์ `uploads`
+        //  อ่านไฟล์ทั้งหมดจากโฟลเดอร์ `uploads`
         const files = fs.readdirSync(uploadDir);
 
         if (files.length === 0) {
             return res.status(404).json({ message: "ไม่มีไฟล์รูปภาพในโฟลเดอร์" });
         }
 
-        // ✅ เรียงลำดับตามวันที่อัปโหลด (ใช้ timestamp ในชื่อไฟล์)
+        //  เรียงลำดับตามวันที่อัปโหลด (ใช้ timestamp ในชื่อไฟล์)
         const sortedFiles = files
             .map(file => ({
                 name: file,
@@ -72,7 +72,7 @@ router.get("/latest-image", (req, res) => {
             }))
             .sort((a, b) => b.time - a.time); 
 
-        // ✅ ดึงไฟล์ล่าสุด
+        //  ดึงไฟล์ล่าสุด
         const latestFile = sortedFiles[0].name;
         const latestFilePath = `/uploads/${latestFile}`;
         const imageUrl = `http://localhost:8000${latestFilePath}`;
@@ -87,7 +87,7 @@ router.get("/latest-image", (req, res) => {
 
 
 
-// ✅ API แสดงรูปภาพที่อัปโหลด
+//  API แสดงรูปภาพที่อัปโหลด
 router.get("/uploads/:filename", (req, res) => {
     const filePath = path.join(uploadDir, req.params.filename);
     if (fs.existsSync(filePath)) {
@@ -97,7 +97,7 @@ router.get("/uploads/:filename", (req, res) => {
     }
 });
 
-// ✅ API ลบรูปภาพ
+//  API ลบรูปภาพ
 router.delete("/delete-image/:filename", (req, res) => {
     const filePath = path.join(uploadDir, req.params.filename);
     if (fs.existsSync(filePath)) {

@@ -13,14 +13,14 @@ const path = require("path");
 const uploadDir = path.join(__dirname, "../uploads/profiles");
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
-// 📌 ตั้งค่า Multer สำหรับอัปโหลดรูป
+//  ตั้งค่า Multer สำหรับอัปโหลดรูป
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => cb(null, `profile_${Date.now()}${path.extname(file.originalname)}`)
 });
 const upload = multer({ storage });
 
-// ✅ Route สำหรับอัปโหลดโปรไฟล์
+//  Route สำหรับอัปโหลดโปรไฟล์
 router.post("/upload-profile", upload.single("profileImage"), async (req, res) => {
   let conn;
   try {
@@ -31,21 +31,21 @@ router.post("/upload-profile", upload.single("profileImage"), async (req, res) =
       return res.status(400).json({ success: false, message: "Missing stu_id" });
     }
 
-    // ✅ ค้นหารูปโปรไฟล์ปัจจุบันของ user
+    //  ค้นหารูปโปรไฟล์ปัจจุบันของ user
     const [existingUser] = await conn.query("SELECT profile_image FROM students WHERE stu_id = ?", [stu_id]);
 
     let imageUrl = existingUser.length > 0 ? existingUser[0].profile_image : null;
 
-    // ✅ ถ้ามีการอัปโหลดไฟล์ใหม่ ให้อัปเดต
+    //  ถ้ามีการอัปโหลดไฟล์ใหม่ ให้อัปเดต
     if (req.file) {
       const newFilePath = `/uploads/profiles/${req.file.filename}`;
-      
-      // ✅ ลบรูปเก่า ถ้ามี
+    
+      // ลบรูปเก่า ถ้ามี
       if (imageUrl && fs.existsSync(path.join(__dirname, "..", imageUrl))) {
         fs.unlinkSync(path.join(__dirname, "..", imageUrl));
       }
 
-      // ✅ อัปเดตฐานข้อมูลด้วยรูปใหม่
+      //  อัปเดตฐานข้อมูลด้วยรูปใหม่
       await conn.query("UPDATE students SET profile_image = ? WHERE stu_id = ?", [newFilePath, stu_id]);
       imageUrl = newFilePath;
     }
@@ -60,7 +60,7 @@ router.post("/upload-profile", upload.single("profileImage"), async (req, res) =
   }
 });
 
-// ✅ ให้ Express เสิร์ฟไฟล์รูปภาพ
+// ให้ Express เสิร์ฟไฟล์รูปภาพ
 router.use("/uploads/profiles", express.static(path.join(__dirname, "../uploads/profiles")));
 
 
@@ -234,7 +234,7 @@ router.post('/getAllstudents', async (req, res) => {
           return res.status(500).json({ message: "เกิดข้อผิดพลาด: students ไม่ใช่ array" });
       }
 
-      res.json({ success: true, students }); // ✅ ส่งเป็น JSON รูปแบบที่ถูกต้อง
+      res.json({ success: true, students }); // ส่งเป็น JSON รูปแบบที่ถูกต้อง
   } catch (error) {
       console.error("Error fetching students:", error);
       res.status(500).json({ message: "ไม่สามารถดึงข้อมูลผู้ใช้ได้", error: error.message });
@@ -260,11 +260,11 @@ router.post("/updateStudyYear", async (req, res) => {
     }
 
     await conn.commit();
-    res.json({ success: true, message: "✅ อัปเดตชั้นปีอัตโนมัติสำเร็จ" });
+    res.json({ success: true, message: " อัปเดตชั้นปีอัตโนมัติสำเร็จ" });
 
   } catch (error) {
     if (conn) await conn.rollback();
-    console.error("❌ Error updating study year:", error);
+    console.error(" Error updating study year:", error);
     res.status(500).json({ message: "เกิดข้อผิดพลาดในการอัปเดตชั้นปี", error: error.message });
   } finally {
     if (conn) await conn.end();

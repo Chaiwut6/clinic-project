@@ -116,7 +116,7 @@ const register = async () => {
     if (profileImage) {
       const formData = new FormData();
       formData.append("profileImage", profileImage);
-      formData.append("stu_id", stu_id); // ✅ ใส่ stu_id
+      formData.append("stu_id", stu_id); //  ใส่ stu_id
  
     
       try {
@@ -187,7 +187,7 @@ const register = async () => {
 //     const response = await axios.post("http://localhost:8000/api/students/getAllUsers");
 
 //     if (!response.data.success) {
-//       console.error("❌ ไม่สามารถดึงข้อมูลผู้ใช้ได้");
+//       console.error(" ไม่สามารถดึงข้อมูลผู้ใช้ได้");
 //       return;
 //     }
 
@@ -213,7 +213,7 @@ const register = async () => {
 //     } 
 
 //   } catch (error) {
-//     console.error("❌ เกิดข้อผิดพลาดในการอัปเดตชั้นปี:", error);
+//     console.error(" เกิดข้อผิดพลาดในการอัปเดตชั้นปี:", error);
 //   }
 // };
 
@@ -290,33 +290,33 @@ document.addEventListener("DOMContentLoaded", () => {
         const userInfo = response.data.user;
         const userAssess = response.data.Assess;
 
-        // ✅ เรียงลำดับวันและเดือน ก่อนแสดงผล
+        //  เรียงลำดับวันและเดือน ก่อนแสดงผล
         const sortedAssessments = sortAssessmentsByDate(userAssess);
 
         populateAssessments(sortedAssessments);
         updatePageData(userInfo, sortedAssessments);
 
       } else {
-        console.error('❌ Invalid data format received from API');
+        console.error(' Invalid data format received from API');
       }
     } catch (error) {
-      console.error('❌ Error fetching user info:', error);
+      console.error(' Error fetching user info:', error);
     }
   };
 
-  // ✅ ฟังก์ชันเรียงลำดับวันที่จากใหม่ไปเก่า
+  //  ฟังก์ชันเรียงลำดับวันที่จากใหม่ไปเก่า
   const sortAssessmentsByDate = (assessments) => {
     return assessments.sort((a, b) => new Date(b.date) - new Date(a.date)); // ✅ เรียงจากวันที่ใหม่ไปเก่า
   };
 
-  // ✅ ฟังก์ชันแสดงผลข้อมูลการประเมิน
+  //  ฟังก์ชันแสดงผลข้อมูลการประเมิน
   const populateAssessments = (assessments) => {
     const tableBody = document.getElementById("assessmentTableBody");
     if (!tableBody) {
       return;
     }
 
-    // ✅ เคลียร์ข้อมูลเก่า
+    //  เคลียร์ข้อมูลเก่า
     tableBody.innerHTML = '';
 
     assessments.forEach((assessment) => {
@@ -331,12 +331,12 @@ document.addEventListener("DOMContentLoaded", () => {
           <td class="result">${result}</td>
       `;
 
-      // ✅ เพิ่มแถวในตาราง
+      //  เพิ่มแถวในตาราง
       tableBody.appendChild(row);
     });
   };
 
-  // ✅ ฟังก์ชันอัปเดตข้อมูลผู้ใช้บนหน้าเว็บ
+  //  ฟังก์ชันอัปเดตข้อมูลผู้ใช้บนหน้าเว็บ
   const updatePageData = (userInfo, userAssess) => {
     const updateElements = (selector, value) => {
       const elements = document.querySelectorAll(selector);
@@ -345,7 +345,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
 
-    // ✅ อัปเดตข้อมูลผู้ใช้
+    //  อัปเดตข้อมูลผู้ใช้
     if (userInfo) {
       updateElements('.id', userInfo.stu_id);
       updateElements('.fname', userInfo.stu_fname);
@@ -355,11 +355,11 @@ document.addEventListener("DOMContentLoaded", () => {
       updateElements('.phone', userInfo.phone);
       updateElements('.faculty', userInfo.faculty);
     } else {
-      console.warn("⚠️ User info is missing");
+      console.warn(" User info is missing");
     }
   };
 
-  // ✅ ฟังก์ชันแปลงวันที่เป็นภาษาไทย
+  //  ฟังก์ชันแปลงวันที่เป็นภาษาไทย
   const formatDateThai = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
@@ -370,7 +370,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // ✅ เรียก fetchUserInfo เมื่อโหลดหน้าเสร็จ
+  //  เรียก fetchUserInfo เมื่อโหลดหน้าเสร็จ
   if (window.location.pathname !== '/view/index.html') {
     fetchUserInfo();
   }
@@ -443,7 +443,7 @@ const changePassword = async () => {
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("profileForm");
 
-  // ✅ ฟังก์ชันดึงข้อมูลผู้ใช้จาก API
+  //  ฟังก์ชันดึงข้อมูลผู้ใช้จาก API
   const fetchUserInfo = async () => {
       try {
           const response = await axios.post('http://localhost:8000/api/students/userinfo', {}, {
@@ -455,7 +455,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
               populateForm(userInfo);
 
-              // ✅ อัปเดตรูปโปรไฟล์ถ้ามี
+              //  อัปเดตรูปโปรไฟล์ถ้ามี
               if (userInfo.profile_image) {
                   updateProfileImage(userInfo.profile_image);
               }
@@ -467,7 +467,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
   };
 
-  // ✅ ฟังก์ชันเติมข้อมูลในฟอร์ม
+  //  ฟังก์ชันเติมข้อมูลในฟอร์ม
   const populateForm = (userInfo) => {
       document.getElementById("first-name").value = userInfo.stu_fname || '';
       document.getElementById("last-name").value = userInfo.stu_lname || '';
@@ -476,13 +476,13 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("phone").value = userInfo.phone || '';
   };
 
-  // ✅ ฟังก์ชันอัปเดตรูปโปรไฟล์
+  //  ฟังก์ชันอัปเดตรูปโปรไฟล์
   const updateProfileImage = (imagePath) => {
       const profileImg = document.getElementById("user-profile");
       profileImg.src = `http://localhost:8000${imagePath}`;
   };
 
-  // ✅ ฟังก์ชันอัปเดตข้อมูลผู้ใช้
+  //  ฟังก์ชันอัปเดตข้อมูลผู้ใช้
   if (form) {
       form.addEventListener("submit", async (event) => {
           event.preventDefault(); // ป้องกันการโหลดหน้าใหม่
@@ -543,7 +543,7 @@ async function uploadProfileImage() {
   const formData = new FormData();
   formData.append("stu_id", userId);
 
-  // ✅ ถ้าผู้ใช้ **อัปโหลดรูปใหม่** ให้แนบไฟล์ไปด้วย
+  //  ถ้าผู้ใช้ **อัปโหลดรูปใหม่** ให้แนบไฟล์ไปด้วย
   if (fileInput.files.length > 0) {
       const file = fileInput.files[0];
       formData.append("profileImage", file);
@@ -562,7 +562,7 @@ async function uploadProfileImage() {
       if (response.data.success) {
           alert("อัปโหลดรูปโปรไฟล์สำเร็จ");
 
-          // ✅ ถ้ามีรูปใหม่ ให้เปลี่ยนภาพ
+          //  ถ้ามีรูปใหม่ ให้เปลี่ยนภาพ
           if (response.data.imageUrl) {
               const profileImg = document.getElementById("user-profile");
               profileImg.src = `http://localhost:8000${response.data.imageUrl}`;
@@ -604,7 +604,7 @@ const fetchUserProfile = async () => {
   }
 };
 
-// ✅ โหลดข้อมูลเมื่อหน้า `profile.html` โหลดเสร็จ
+//  โหลดข้อมูลเมื่อหน้า `profile.html` โหลดเสร็จ
 document.addEventListener("DOMContentLoaded", () => {
   if (window.location.pathname.includes("profile.html")) {
     fetchUserProfile();

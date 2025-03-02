@@ -245,7 +245,7 @@ async function fetchDoctors() {
   }
 }
 
-// ✅ ฟังก์ชันกรองข้อมูลแพทย์
+//  ฟังก์ชันกรองข้อมูลแพทย์
 function filterDoctor() {
   const nameFilter = document.getElementById('searchdoctor').value.toLowerCase();
 
@@ -261,7 +261,7 @@ function filterDoctor() {
   renderDoctorPaginationControls();
 }
 
-// ✅ ฟังก์ชันเรนเดอร์ตารางแพทย์
+//  ฟังก์ชันเรนเดอร์ตารางแพทย์
 function renderDoctorTable() {
   const startIndex = (currentDoctorPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -306,7 +306,7 @@ function renderDoctorTable() {
   
 }
 
-// ✅ ฟังก์ชันจัดการ Dropdown
+//  ฟังก์ชันจัดการ Dropdown
 function attachDropdownEventListeners() {
   document.querySelectorAll(".actionBtn").forEach(button => {
     button.addEventListener("click", (event) => {
@@ -333,7 +333,7 @@ function attachDropdownEventListeners() {
     });
   });
 
-  // ✅ ปิด dropdown เมื่อคลิกที่อื่น
+  //  ปิด dropdown เมื่อคลิกที่อื่น
   document.addEventListener("click", (event) => {
     document.querySelectorAll(".dropdown-doctor.show").forEach(openDropdown => {
       openDropdown.classList.remove("show");
@@ -342,12 +342,12 @@ function attachDropdownEventListeners() {
   });
 }
 
-// ✅ ฟังก์ชันสร้างปุ่มเปลี่ยนหน้า
+//  ฟังก์ชันสร้างปุ่มเปลี่ยนหน้า
 function renderDoctorPaginationControls() {
   const paginationContainer = document.getElementById("doctorPaginationControls");
   
   if (!paginationContainer) {
-    console.warn("⚠️ ไม่พบ doctorPaginationControls ใน DOM");
+    console.warn("ไม่พบ doctorPaginationControls ใน DOM");
     return; // หยุดทำงานถ้าไม่พบ element
   }
 
@@ -455,7 +455,7 @@ async function fetchAvailability(doctorID) {
   }
 }
 
-// ✅ อัปเดตตารางเมื่อเลือกเดือน
+//  อัปเดตตารางเมื่อเลือกเดือน
 function updateAvailabilityTable() {
   const selectedMonth = document.getElementById("monthFilter").value;
   
@@ -494,7 +494,7 @@ function renderAvailabilityTable() {
   attachDeleteAvailabilityListeners();
 }
 
-// ✅ สร้างปุ่มเปลี่ยนหน้า
+//  สร้างปุ่มเปลี่ยนหน้า
 function renderPaginationControls() {
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   let controlsHTML = "";
@@ -506,14 +506,14 @@ function renderPaginationControls() {
   document.getElementById("paginationControls").innerHTML = totalPages > 1 ? controlsHTML : "";
 }
 
-// ✅ ฟังก์ชันเปลี่ยนหน้า
+//  ฟังก์ชันเปลี่ยนหน้า
 function changePage(page) {
   currentPage = page;
   renderAvailabilityTable();
   renderPaginationControls();
 }
 
-// ✅ ผูก Event Listener ให้ปุ่มลบ
+//  ผูก Event Listener ให้ปุ่มลบ
 function attachDeleteAvailabilityListeners() {
   document.querySelectorAll(".delete-availability").forEach(button => {
     button.addEventListener("click", async (event) => {
@@ -591,7 +591,7 @@ function addAvailabilityEventListener() {
 let adminData = [];
 let filteredAdminData = [];
 
-// ✅ ฟังก์ชันโหลดข้อมูลเจ้าหน้าที่จาก API
+//  ฟังก์ชันโหลดข้อมูลเจ้าหน้าที่จาก API
 async function fetchEmployee(page = 1) {
     currentPage = page;
     try {
@@ -657,7 +657,7 @@ function renderAdminTable() {
 }
 
 function attachEditAndDeleteEvents() {
-  // ✅ ปุ่มแก้ไข
+  //  ปุ่มแก้ไข
   document.querySelectorAll(".editBtn").forEach(button => {
       button.addEventListener("click", (e) => {
           e.preventDefault();
@@ -705,7 +705,7 @@ function attachEditAndDeleteEvents() {
       });
   });
 
-  // ✅ ปุ่มลบ
+  //  ปุ่มลบ
   document.querySelectorAll(".delete-trigger").forEach(button => {
       button.addEventListener("click", async (e) => {
           e.preventDefault();
@@ -754,7 +754,7 @@ function attachDropdownEmployee() {
     });
   });
 
-  // ✅ ปิด dropdown เมื่อคลิกที่อื่น
+  //  ปิด dropdown เมื่อคลิกที่อื่น
   document.addEventListener("click", (event) => {
     document.querySelectorAll(".dropdown-doctor.show").forEach(openDropdown => {
       openDropdown.classList.remove("show");
@@ -782,7 +782,7 @@ function renderPaginationControls() {
   paginationContainer.innerHTML = totalPages > 1 ? controlsHTML : "";
 }
 
-// ✅ ฟังก์ชันเปลี่ยนหน้า
+//  ฟังก์ชันเปลี่ยนหน้า
 function changePage(page) {
   currentPage = page;
   renderAdminTable();
@@ -791,7 +791,7 @@ function changePage(page) {
 
 
 
-// ✅ ฟังก์ชันกรองข้อมูลเจ้าหน้าที่
+//  ฟังก์ชันกรองข้อมูลเจ้าหน้าที่
 function filterAddmin() {
     const nameFilter = document.getElementById('searchaddmin').value.trim().toLowerCase();
     const idFilter = document.getElementById('searchaddmin').value.trim().toLowerCase();
@@ -817,7 +817,7 @@ const itemsPerPage = 12;
 let userData = []; // เก็บข้อมูลทั้งหมด
 let filteredData = []; // เก็บข้อมูลที่ถูกกรอง
 
-// ✅ ดึงข้อมูลผู้ใช้
+//  ดึงข้อมูลผู้ใช้
 async function fetchUserlist() {
   try {
     document.getElementById("UserTable").innerHTML = `<tr><td colspan="8">กำลังโหลดข้อมูล...</td></tr>`;
@@ -827,7 +827,7 @@ async function fetchUserlist() {
     userData = response.data?.students || [];
     
 
-    filteredData = [...userData]; // ✅ สำเนาข้อมูลเพื่อใช้ในการกรอง
+    filteredData = [...userData]; //  สำเนาข้อมูลเพื่อใช้ในการกรอง
 
     if (userData.length === 0) {
       document.getElementById("UserTable").innerHTML = `<tr><td colspan="8">ไม่พบข้อมูลผู้ใช้</td></tr>`;
@@ -849,7 +849,7 @@ function filterPatients() {
   const nameFilter = document.getElementById('searchName').value.toLowerCase();
   const facultyFilter = document.getElementById('searchFaculty').value;
 
-  // ✅ กรองข้อมูลจาก userData
+  //  กรองข้อมูลจาก userData
   filteredData = userData.filter(user => {
     const ID = (user.stu_id || "").toLowerCase();
     const name = `${user.title} ${user.stu_fname} ${user.stu_lname}`.toLowerCase();
@@ -861,19 +861,19 @@ function filterPatients() {
     );
   });
 
-  currentUserPage = 1; // ✅ รีเซ็ตไปหน้าที่ 1 หลังค้นหา
+  currentUserPage = 1; //  รีเซ็ตไปหน้าที่ 1 หลังค้นหา
   renderUserTable();
   renderUserPaginationControls();
 }
 
-// ✅ ฟังก์ชันแบ่งหน้า
+//  ฟังก์ชันแบ่งหน้า
 function renderUserTable() {
   const startIndex = (currentUserPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const pageData = filteredData.slice(startIndex, endIndex);
 
   const rows = pageData.map((user, index) => {
-    const displayIndex = startIndex + index + 1; // ✅ ลำดับแสดงในตาราง
+    const displayIndex = startIndex + index + 1; //  ลำดับแสดงในตาราง
     return `
       <tr data-id="${user.stu_id}">
         <td>${displayIndex}</td>  
@@ -1003,7 +1003,7 @@ async function fetchUserDataAndDisplay() {
               day: 'numeric'
           });
 
-          // ✅ ตรวจสอบระดับผลการประเมินและกำหนดสี
+          //  ตรวจสอบระดับผลการประเมินและกำหนดสี
           let assessmentClass = "";
           if (result.result.includes("ระดับน้อย")) {
               assessmentClass = "assessment-low";
@@ -1056,7 +1056,7 @@ async function fetchUserDataAndDisplay() {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
-          }); // ✅ แปลงวันที่ให้แสดงในรูปแบบไทย
+          }); //  แปลงวันที่ให้แสดงในรูปแบบไทย
       
           const row = document.createElement('tr');
           row.innerHTML = `
@@ -1765,7 +1765,7 @@ function attachDropdownManager() {
     });
   });
 
-  // ✅ ปิด dropdown เมื่อคลิกที่อื่น
+  //  ปิด dropdown เมื่อคลิกที่อื่น
   document.addEventListener("click", (event) => {
     document.querySelectorAll(".dropdown-doctor.show").forEach(openDropdown => {
       openDropdown.classList.remove("show");
@@ -1773,12 +1773,12 @@ function attachDropdownManager() {
     });
   });
 }
-// ✅ ฟังก์ชันสร้างปุ่มเปลี่ยนหน้า
+//  ฟังก์ชันสร้างปุ่มเปลี่ยนหน้า
 function renderPaginationControls() {
   const paginationContainer = document.getElementById("paginationControls");
 
   if (!paginationContainer) {
-      console.warn("⚠️ ไม่พบ paginationControls ใน DOM");
+      console.warn(" ไม่พบ paginationControls ใน DOM");
       return;
   }
 
@@ -1792,14 +1792,14 @@ function renderPaginationControls() {
   paginationContainer.innerHTML = totalPages > 1 ? controlsHTML : "";
 }
 
-// ✅ ฟังก์ชันเปลี่ยนหน้า
+//  ฟังก์ชันเปลี่ยนหน้า
 function changePage(page) {
   currentPage = page;
   renderManagerTable();
   renderPaginationControls();
 }
 
-// ✅ ฟังก์ชันแนบ Event ให้ปุ่มแก้ไขและลบ
+//  ฟังก์ชันแนบ Event ให้ปุ่มแก้ไขและลบ
 function attachEditAndDeleteEvents() {
   document.querySelectorAll(".editBtn").forEach(button => {
       button.addEventListener("click", (e) => {

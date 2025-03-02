@@ -199,10 +199,6 @@ function closeModal() {
 }
 
 
-
-
-
-
 //ค้นหาaddmin
 document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.querySelectorAll(".searchaddmin");
@@ -277,7 +273,7 @@ function toggleSymptomsForm() {
   formContainer.style.display = (formContainer.style.display === "none") ? "block" : "none";
 }
 
-// ✅ ฟังก์ชันบันทึกอาการ
+//  ฟังก์ชันบันทึกอาการ
 function saveSymptoms() {
   // ดึงค่าจาก Checkbox ที่ถูกเลือก
   const selectedSymptoms = [...document.querySelectorAll("input[name='symptoms']:checked")]

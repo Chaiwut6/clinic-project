@@ -7,11 +7,11 @@ async function saveSymptoms() {
         return;
     }
 
-    // ✅ ดึงค่าที่เลือกจาก Checkbox
+    //  ดึงค่าที่เลือกจาก Checkbox
     const selectedSymptoms = [...document.querySelectorAll("input[name='symptoms']:checked")]
         .map(input => input.value);
 
-    // ✅ ดึงค่าอาการที่พิมพ์เพิ่ม
+    //  ดึงค่าอาการที่พิมพ์เพิ่ม
     const additionalSymptom = document.getElementById("additional-symptom").value.trim();
 
     try {
