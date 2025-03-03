@@ -939,55 +939,50 @@ router.post('/appointmentsByFaculty', async (req, res) => {
   try {
     conn = await initMySQL();
     const { year, symptom, faculty } = req.body;
-
     const selectedYear = year || new Date().getFullYear();
 
     let query = `
-    SELECT 
-        u.faculty, 
-        COUNT(DISTINCT CONCAT(a.stu_id, symptom_details.symptom)) AS total,
-        symptom_details.symptom AS symptom_name
-    FROM appointments a
-    JOIN students u ON a.stu_id = u.stu_id
-    JOIN JSON_TABLE(
-        CAST(a.symptoms AS JSON), 
-        '$[*]' COLUMNS (
-            symptom VARCHAR(255) PATH '$'
-        )
-    ) symptom_details ON 1=1
-    WHERE a.status = 'ยืนยัน' 
-    AND YEAR(a.date) = ?
-    AND JSON_LENGTH(a.symptoms) > 0
-    ${faculty ? "AND u.faculty = ?" : ""}
-    ${symptom ? "AND symptom_details.symptom = ?" : ""}
-    GROUP BY u.faculty, symptom_details.symptom
-    ORDER BY total DESC;
+      SELECT 
+          u.faculty, 
+          COUNT(DISTINCT a.stu_id) AS total_patients, 
+          symptom_details.symptom AS symptom_name
+      FROM appointments a
+      JOIN students u ON a.stu_id = u.stu_id
+      JOIN JSON_TABLE(
+          CAST(a.symptoms AS JSON), 
+          '$[*]' COLUMNS (
+              symptom VARCHAR(255) PATH '$'
+          )
+      ) symptom_details ON 1=1
+      WHERE a.status = 'ยืนยัน' 
+      AND YEAR(a.date) = ?
+      AND JSON_LENGTH(a.symptoms) > 0
+      ${faculty ? "AND u.faculty = ?" : ""}
+      ${symptom ? "AND symptom_details.symptom = ?" : ""}
+      GROUP BY u.faculty, symptom_details.symptom
+      ORDER BY total_patients DESC;
     `;
 
-    // ปรับปรุง params ให้รองรับทุกตัวกรอง
-    let params = [];
-    params.push(selectedYear);
+    let params = [selectedYear];
     if (faculty) params.push(faculty);
     if (symptom) params.push(symptom);
 
     const [facultyAppointments] = await conn.query(query, params);
 
-    // จัดการข้อมูลให้อยู่ในรูปแบบที่เหมาะสม
     let facultyData = {};
     facultyAppointments.forEach(row => {
       if (!facultyData[row.faculty]) {
         facultyData[row.faculty] = { total: 0, symptoms: {} };
       }
 
-      facultyData[row.faculty].total += row.total;
+      facultyData[row.faculty].total += row.total_patients;
 
       if (!facultyData[row.faculty].symptoms[row.symptom_name]) {
         facultyData[row.faculty].symptoms[row.symptom_name] = 0;
       }
-      facultyData[row.faculty].symptoms[row.symptom_name] += row.total;
+      facultyData[row.faculty].symptoms[row.symptom_name] += row.total_patients;
     });
 
-    // แปลงข้อมูลให้อยู่ในรูปแบบ Array
     const formattedData = Object.keys(facultyData).map(faculty => ({
       faculty,
       total: facultyData[faculty].total,
