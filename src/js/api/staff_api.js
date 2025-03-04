@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       if (response.data && response.data.message === "User registered successfully") {
-        alert(`เพิ่มข้อมูลผู้ใช้งานสำเร็จ`);
+        alert(`เพิ่มข้อมูลนักศึกษาสำเร็จ`);
         document.getElementById("addUserModal").style.display = "none";
         form.reset();
       }
