@@ -206,14 +206,14 @@ router.post('/managerDelete', async (req, res) => {
 
       res.status(200).json({
         success: true,
-        message: 'ลบข้อมูลพนักงานและข้อมูลเข้าสู่ระบบสำเร็จ'
+        message: 'ลบข้อมูลเจ้าหน้าที่และข้อมูลเข้าสู่ระบบสำเร็จ'
       });
     } else {
       await conn.rollback(); // ยกเลิก transaction
 
       res.status(404).json({
         success: false,
-        message: 'ไม่พบข้อมูลพนักงานหรือข้อมูลเข้าสู่ระบบที่ต้องการลบ'
+        message: 'ไม่พบข้อมูลเจ้าหน้าที่หรือข้อมูลเข้าสู่ระบบที่ต้องการลบ'
       });
     }
   } catch (error) {

@@ -203,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // เปลี่ยนข้อความในการตรวจสอบให้ตรงกับข้อความที่ API ส่งกลับ
       if (response.data && response.data.message === "Employee registered successfully") {
-        alert("เพิ่มข้อมูลพนักงานสำเร็จ");
+        alert("เพิ่มข้อมูลเจ้าหน้าที่สำเร็จ");
         document.getElementById("addEmployeeModal").style.display = "none";
         form.reset();
       } else {
@@ -251,7 +251,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // เปลี่ยนข้อความในการตรวจสอบให้ตรงกับข้อความที่ API ส่งกลับ
       if (response.data && response.data.message === "Manager registered successfully") {
-        alert("เพิ่มข้อมูลพนักงานสำเร็จ");
+        alert("เพิ่มข้อมูลผู้บริหารสำเร็จ");
         document.getElementById("addMangerModal").style.display = "none";
         form.reset();
       } else {
@@ -814,7 +814,7 @@ async function fetchEmployee() {
     const { employee } = response.data;
 
     if (!employee || employee.length === 0) {
-      document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">ไม่พบข้อมูลพนักงาน</td></tr>`;
+      document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">ไม่พบข้อมูลเจ้าหน้าที่</td></tr>`;
       document.getElementById("paginationControls").innerHTML = "";
       return;
     }
@@ -884,7 +884,7 @@ function attachEditAndDeleteEmployee() {
                     <span class="close" id="cancelEdit">&times;</span>
                   </div>
                   <label for="editFname">ชื่อ:</label>
-                  <input type="text" id="editFname" value="${empFname}" placeholder="ชื่อพนักงาน..." required />
+                  <input type="text" id="editFname" value="${empFname}" placeholder="ชื่อเจ้าหน้าที่..." required />
                   <label for="editLname">นามสกุล:</label>
                   <input type="text" id="editLname" value="${empLname}" placeholder="นามสกุล..." required />
                   <button id="saveEditempoloyee">บันทึก</button>
@@ -906,7 +906,7 @@ function attachEditAndDeleteEmployee() {
             emp_lname: document.getElementById("editLname").value,
           });
 
-          alert("ข้อมูลพนักงานได้รับการอัปเดตเรียบร้อยแล้ว");
+          alert("ข้อมูลเจ้าหน้าที่ได้รับการอัปเดตเรียบร้อยแล้ว");
           fetchEmployee();
           document.querySelector(".popup-container").remove();
         } catch (err) {
@@ -923,13 +923,13 @@ function attachEditAndDeleteEmployee() {
       e.preventDefault();
       const empId = button.getAttribute("data-id");
 
-      if (confirm("คุณต้องการลบข้อมูลพนักงานนี้หรือไม่?")) {
+      if (confirm("คุณต้องการลบข้อมูลเจ้าหน้าที่นี้หรือไม่?")) {
         try {
           await axios.post("http://localhost:8000/api/employees/employeeDelete", {
             employee_id: empId,
           });
 
-          alert("ลบข้อมูลพนักงานสำเร็จ");
+          alert("ลบข้อมูลเจ้าหน้าที่สำเร็จ");
           fetchEmployee(); // รีเฟรชข้อมูล
         } catch (err) {
           console.error("Error deleting employee:", err);
