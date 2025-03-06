@@ -484,45 +484,62 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //  ฟังก์ชันอัปเดตข้อมูลผู้ใช้
   if (form) {
-      form.addEventListener("submit", async (event) => {
-          event.preventDefault(); // ป้องกันการโหลดหน้าใหม่
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault(); // ป้องกันการโหลดหน้าใหม่
 
-          const encrypUser = sessionStorage.getItem("stu_id");
-          const userId = encrypUser ? atob(encrypUser) : null;
+        const encrypUser = sessionStorage.getItem("stu_id");
+        const userId = encrypUser ? atob(encrypUser) : null;
 
-          if (!userId) {
-              alert("ไม่พบ stu_id กรุณาลองเข้าสู่ระบบใหม่");
-              return;
-          }
+        if (!userId) {
+            alert("ไม่พบ stu_id กรุณาลองเข้าสู่ระบบใหม่");
+            return;
+        }
 
-          const updatedData = {
-              stu_id: userId, 
-              stu_fname: document.getElementById("first-name").value,
-              stu_lname: document.getElementById("last-name").value,
-              nickname: document.getElementById("nickname").value,
-              faculty: document.getElementById("faculty").value,
-              phone: document.getElementById("phone").value,
-          };
+        // ดึงค่าจากฟอร์ม
+        const stu_fname = document.getElementById("first-name").value.trim();
+        const stu_lname = document.getElementById("last-name").value.trim();
+        const nickname = document.getElementById("nickname").value.trim();
+        const faculty = document.getElementById("faculty").value.trim();
+        const phone = document.getElementById("phone").value.trim();
 
-          try {
-              const response = await axios.post('http://localhost:8000/api/students/updateuser', updatedData, {
-                  withCredentials: true
-              });
+        if (!stu_fname || !stu_lname || !nickname || !faculty || !phone) {
+            alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
+            return;
+        }
 
-              if (response.data.success) {
-                  alert("ข้อมูลได้รับการอัปเดตเรียบร้อยแล้ว!");
-                  fetchUserInfo();
-                  location.reload();
-              } else {
-                  console.error(" Update failed:", response.data.message);
-                  alert("ไม่สามารถอัปเดตข้อมูลได้: " + (response.data.message || "ไม่ทราบสาเหตุ"));
-              }
-          } catch (error) {
-              console.error(" Error updating user info:", error);
-              alert(' เกิดข้อผิดพลาด: ' + (error.response?.data?.message || error.message || 'Unknown error'));
-          }
-      });
-  }
+        if (!/^\d{10}$/.test(phone)) {
+            alert("กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (10 หลัก)");
+            return;
+        }
+
+        const updatedData = {
+            stu_id: userId, 
+            stu_fname,
+            stu_lname,
+            nickname,
+            faculty,
+            phone,
+        };
+
+        try {
+            const response = await axios.post('http://localhost:8000/api/students/updateuser', updatedData, {
+                withCredentials: true
+            });
+
+            if (response.data.success) {
+                alert("ข้อมูลได้รับการอัปเดตเรียบร้อยแล้ว!");
+                fetchUserInfo();
+                location.reload();
+            } else {
+                console.error(" Update failed:", response.data.message);
+                alert("ไม่สามารถอัปเดตข้อมูลได้: " + (response.data.message || "ไม่ทราบสาเหตุ"));
+            }
+        } catch (error) {
+            console.error(" Error updating user info:", error);
+            alert('เกิดข้อผิดพลาด: ' + (error.response?.data?.message || error.message || 'Unknown error'));
+        }
+    });
+}
   if (window.location.pathname.endsWith('profile.html')) {
       fetchUserInfo();
   }
@@ -532,11 +549,20 @@ async function uploadProfileImage() {
   const fileInput = document.getElementById("profile-image");
   const encrypUser = sessionStorage.getItem("stu_id");
   const userId = encrypUser ? atob(encrypUser) : null;
+  const stu_fname = document.getElementById("first-name").value.trim();
+  const stu_lname = document.getElementById("last-name").value.trim();
+  const nickname = document.getElementById("nickname").value.trim();
+  const faculty = document.getElementById("faculty").value.trim();
+  const phone = document.getElementById("phone").value.trim();
 
   if (!userId) {
       alert("ไม่พบ stu_id กรุณาลองเข้าสู่ระบบใหม่");
       return;
   }
+  if (!stu_fname || !stu_lname || !nickname || !faculty || !phone) {
+    alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
+    return;
+}
 
   // console.log("User ID:", userId);
 
@@ -560,7 +586,7 @@ async function uploadProfileImage() {
       // console.log("Upload Response:", response.data);
 
       if (response.data.success) {
-          alert("อัปโหลดรูปโปรไฟล์สำเร็จ");
+          // alert("อัปโหลดรูปโปรไฟล์สำเร็จ");
 
           //  ถ้ามีรูปใหม่ ให้เปลี่ยนภาพ
           if (response.data.imageUrl) {
