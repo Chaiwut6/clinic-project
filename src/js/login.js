@@ -53,6 +53,8 @@ const register = async () => {
     const faculty = document.querySelector('#faculty').value;
     const stu_id = document.querySelector('#stu_id').value;
     const profileImage = document.querySelector('#profileImage').files[0];
+    const encrypUser = btoa(stu_id);
+    sessionStorage.setItem('stu_id', encrypUser);
 
     const currentYear = new Date().getFullYear() + 543; 
     const admissionYear = parseInt(stu_id.substring(2, 4)); 

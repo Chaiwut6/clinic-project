@@ -7,10 +7,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         const response = await axios.post(`${apiUrl}/api/students/userinfo`, {}, {
             withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
         });
+
         const stu_id = response.data.user.stu_id;
         const stu_fname = response.data.user.stu_fname;
         const stu_lname = response.data.user.stu_lname;
-
         const buttons = document.querySelectorAll('.button');
         const choiceContainers = document.querySelectorAll('.choice-container');
         const progressBar = document.querySelector('.progress');
