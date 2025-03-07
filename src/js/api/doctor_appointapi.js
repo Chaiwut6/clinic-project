@@ -11,6 +11,7 @@ async function fetchPatientslist(page = 1) {
         const response = await axios.post("http://localhost:8000/api/doctors/doctorappointments", {}, {
             withCredentials: true
         });
+     console.log(response);
 
         if (!response.data || !response.data.appointments || response.data.appointments.length === 0) {
             document.getElementById("patientTable").innerHTML = `<tr><td colspan="9">ไม่พบข้อมูลผู้ป่วย</td></tr>`;
@@ -69,10 +70,6 @@ async function fetchPatientslist(page = 1) {
     }
 }
 
-
-
-
-
 //  ฟังก์ชันเรนเดอร์ตารางผู้ป่วย
 function renderPatientsTable(page = 1) {
     currentPages = page;  //  อัปเดตค่าปัจจุบัน
@@ -111,8 +108,6 @@ const goToAppointmentPage = (userId, appointmentId) => {
     window.location.href = 'doctormange_data.html';
 };
   
-
-
 //  ฟังก์ชันสร้างปุ่มเปลี่ยนหน้า
 function renderPaginationControls() {
     const paginationContainer = document.getElementById("paginationControls");

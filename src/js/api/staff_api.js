@@ -1058,7 +1058,7 @@ function filterPatients() {
   //  กรองข้อมูลจาก userData
   filteredData = userData.filter(user => {
     const ID = (user.stu_id || "").toLowerCase();
-    const name = `${user.title} ${user.stu_fname} ${user.stu_lname}`.toLowerCase();
+    const name = `${user.title} ${user.stu_fname} ${user.stu_lname} ${user.nickname}`.toLowerCase();
     const faculty = user.faculty?.trim() || "";
 
     return (

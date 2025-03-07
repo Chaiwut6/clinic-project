@@ -635,9 +635,12 @@ router.post('/doctorappointments', verifyToken, async (req, res) => {
       `SELECT a.*, u.title, u.stu_fname, u.stu_lname, u.nickname, u.faculty, u.phone
        FROM appointments a 
        JOIN students u ON a.stu_id = u.stu_id
-       WHERE a.doc_id = ? AND a.status = 'ยืนยัน' AND a.caseStatus != 'ปิดเคส' `,
+       WHERE a.doc_id = ? 
+       AND a.status = 'ยืนยัน' 
+       AND (a.caseStatus IS NULL OR a.caseStatus = 'ติดตามอาการ')`,
       [login_id]
     );
+    
     
 
     if (!appointmentsResults || appointmentsResults.length === 0) {
