@@ -194,7 +194,8 @@ function filterReceivecare() {
 
     //  ใช้ `patientsData` ที่โหลดจาก API
     filteredPatientsData = patientsData.filter(patient => {
-        const name = (patient.stu_fname + " " + patient.stu_lname).trim().toLowerCase();
+        const name = (patient.title + " " + patient.stu_fname + " " + patient.stu_lname).trim().toLowerCase();
+        const nickname = (patient.nickname).trim().toLowerCase();
         const userID = (patient.stu_id || "").trim().toLowerCase();
         const doctor = (patient.doctor || "").trim();
         const dateText = (patient.appointmentDate || "").trim();
@@ -210,7 +211,7 @@ function filterReceivecare() {
         }
 
         return (
-            (!nameFilter || name.includes(nameFilter) || userID.includes(nameFilter)) &&
+            (!nameFilter || name.includes(nameFilter) || userID.includes(nameFilter) || nickname.includes(nameFilter)) &&
             (!doctorFilter || doctor === doctorFilter) &&
             (!monthFilter || formattedMonth === monthFilter) &&
             (!yearFilter || formattedYear === yearFilter)  //  เพิ่มการกรองตามปี

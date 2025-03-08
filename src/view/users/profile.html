@@ -212,13 +212,22 @@
                         <!-- <button class="submit-profile" type="button" id="upload-btn" onclick="uploadProfileImage()">อัปโหลดรูป</button> -->
 
                         <label for="first-name">ชื่อจริง</label>
-                        <input type="text" id="first-name" name="first-name" required>
+                        <input type="text" id="first-name" name="first-name" required
+                        pattern="^[a-zA-Zก-ฮะ-์]+$"
+                        title="กรุณากรอกตัวอักษรเท่านั้น"
+                        oninput="this.value = this.value.replace(/[^a-zA-Zก-ฮะ-์]/g, '')">
 
                         <label for="last-name">นามสกุล</label>
-                        <input type="text" id="last-name" name="last-name" required>
+                        <input type="text" id="last-name" name="last-name" required 
+                        pattern="^[a-zA-Zก-ฮะ-์]+$"
+                        title="กรุณากรอกตัวอักษรเท่านั้น"
+                        oninput="this.value = this.value.replace(/[^a-zA-Zก-ฮะ-์]/g, '')">
 
                         <label for="nickname">ชื่อเล่น</label>
-                        <input type="text" id="nickname" name="nickname" required>
+                        <input type="text" id="nickname" name="nickname"required
+                        pattern="^[a-zA-Zก-ฮะ-์]+$"
+                        title="กรุณากรอกตัวอักษรเท่านั้น"
+                        oninput="this.value = this.value.replace(/[^a-zA-Zก-ฮะ-์]/g, '')">
 
                         <label for="faculty">คณะ</label>
                         <select id="faculty" name="faculty" required>
@@ -246,8 +255,9 @@
                         </select> -->
 
                         <label for="phone">เบอร์โทร</label>
-                        
-                        <input id=phone type="text" maxlength="10" required required autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+
+                        <input id=phone type="text" maxlength="10" required required autocomplete="off"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')">
 
                         <button type="submit" class="submit-btn" onclick="uploadProfileImage()">บันทึก</button>
                     </form>

@@ -316,10 +316,16 @@
                             <input type="text" id="mangerID" class="form-control" required />
                 
                             <label for="man_fname">ชื่อ</label>
-                            <input type="text" id="man_fname" class="form-control" required pattern="^[a-zA-Zก-ฮะ-์]+$" title="กรุณากรอกตัวอักษรเท่านั้น" />
+                            <input type="text" id="man_fname" class="form-control" required
+                            pattern="^[a-zA-Zก-ฮะ-์]+$"
+                            title="กรุณากรอกตัวอักษรเท่านั้น"
+                            oninput="this.value = this.value.replace(/[^a-zA-Zก-ฮะ-์]/g, '')" />
                 
                             <label for="man_lname">นามสกุล</label>
-                            <input type="text" id="man_lname" class="form-control" required pattern="^[a-zA-Zก-ฮะ-์]+$" title="กรุณากรอกตัวอักษรเท่านั้น" />
+                            <input type="text" id="man_lname" class="form-control" required
+                            pattern="^[a-zA-Zก-ฮะ-์]+$"
+                            title="กรุณากรอกตัวอักษรเท่านั้น"
+                            oninput="this.value = this.value.replace(/[^a-zA-Zก-ฮะ-์]/g, '')" />
                 
                             <label for="password">รหัสผ่าน</label>
                             <input type="password" id="man_password" class="form-control" required />

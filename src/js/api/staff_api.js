@@ -65,7 +65,12 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("phone").focus();
       return;
     }
-
+    
+    if (!/^\d{12}-\d{1}$/.test(stu_id)) {
+      alert('กรุณากรอกรหัสประจำตัวให้ถูกต้อง เช่น 116510001001-2');
+      document.querySelector('#stu_id').focus();
+      return;
+    }
     
 
     try {
@@ -590,7 +595,11 @@ function editDoctor(docId, docName, docPhone) {
           <span class="close" id="cancelEdit">&times;</span>
         </div>
         <label for="editName">ชื่อหมอ</label>
-        <input type="text" id="editName" value="${docName}" required />
+        <input type="text" id="editName" value="${docName}" required 
+        pattern="^[a-zA-Zก-ฮะ-์]+$"
+        title="กรุณากรอกตัวอักษรเท่านั้น"
+        oninput="this.value = this.value.replace(/[^a-zA-Zก-ฮะ-์]/g, '')"/>
+
         <label for="editPhone">เบอร์โทรศัพท์</label>
         <input type="text" id="editPhone" value="${docPhone}" pattern="^\\d{10}$" title="กรุณากรอกตัวเลข 10 หลัก" required />
         <button id="saveEdit">บันทึก</button>
@@ -884,9 +893,15 @@ function attachEditAndDeleteEmployee() {
                     <span class="close" id="cancelEdit">&times;</span>
                   </div>
                   <label for="editFname">ชื่อ:</label>
-                  <input type="text" id="editFname" value="${empFname}" placeholder="ชื่อเจ้าหน้าที่..." required />
+                  <input type="text" id="editFname" value="${empFname}" placeholder="ชื่อเจ้าหน้าที่..." required
+                  pattern="^[a-zA-Zก-ฮะ-์]+$"
+                  title="กรุณากรอกตัวอักษรเท่านั้น"
+                  oninput="this.value = this.value.replace(/[^a-zA-Zก-ฮะ-์]/g, '')" />
                   <label for="editLname">นามสกุล:</label>
-                  <input type="text" id="editLname" value="${empLname}" placeholder="นามสกุล..." required />
+                  <input type="text" id="editLname" value="${empLname}" placeholder="นามสกุล..." required 
+                  pattern="^[a-zA-Zก-ฮะ-์]+$"
+                  title="กรุณากรอกตัวอักษรเท่านั้น"
+                  oninput="this.value = this.value.replace(/[^a-zA-Zก-ฮะ-์]/g, '')" />
                   <button id="saveEditempoloyee">บันทึก</button>
                 </div>
               </div>
@@ -2164,9 +2179,15 @@ function attachEditAndDeleteEvents() {
                     <span class="close" id="cancelEdit">&times;</span>
                   </div>
                   <label for="editFname">ชื่อ:</label>
-                  <input type="text" id="editFname" value="${manFname}" required />
+                  <input type="text" id="editFname" value="${manFname}" required
+                  pattern="^[a-zA-Zก-ฮะ-์]+$"
+                  title="กรุณากรอกตัวอักษรเท่านั้น"
+                  oninput="this.value = this.value.replace(/[^a-zA-Zก-ฮะ-์]/g, '')"  />
                   <label for="editLname">นามสกุล:</label>
-                  <input type="text" id="editLname" value="${manLname}" required />
+                  <input type="text" id="editLname" value="${manLname}" required
+                  pattern="^[a-zA-Zก-ฮะ-์]+$"
+                  title="กรุณากรอกตัวอักษรเท่านั้น"
+                  oninput="this.value = this.value.replace(/[^a-zA-Zก-ฮะ-์]/g, '')" />
                   <button id="saveEdit">บันทึก</button>
                 </div>
               </div>

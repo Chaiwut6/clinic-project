@@ -145,7 +145,8 @@ function filterReceivecare() {
     };
 
     filteredPatientsData = patientsData.filter(patient => {
-        const fullName = (patient.stu_fname + " " + patient.stu_lname).trim().toLowerCase();
+        const fullName = (patient.title + " " + patient.stu_fname + " " + patient.stu_lname).trim().toLowerCase();
+        const nickname = (patient.nickname).trim().toLowerCase();
         const userID = (patient.stu_id || "").trim().toLowerCase();
         const faculty = (patient.faculty || "").trim();
         const dateText = (patient.appointmentDate || "").trim();
@@ -163,7 +164,7 @@ function filterReceivecare() {
 
         return (
             //  ค้นหาจาก ชื่อ-นามสกุล หรือ รหัสประจำตัว
-            (!searchFilter || fullName.includes(searchFilter) || userID.includes(searchFilter)) &&
+            (!searchFilter || fullName.includes(searchFilter) || userID.includes(searchFilter)|| nickname.includes(searchFilter)) &&
             (!facultyFilter || faculty === facultyFilter) &&
             (!monthFilter || formattedMonth === monthFilter) &&
             (!yearFilter || formattedYear === yearFilter)

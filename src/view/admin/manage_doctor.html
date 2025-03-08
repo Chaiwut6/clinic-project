@@ -322,7 +322,10 @@
                             <label for="doctorID">รหัสประจำตัว</label>
                             <input type="text" id="doctorID" />
                             <label for="doctorName">ชื่อหมอ</label>
-                            <input type="text" id="doctorName" />
+                            <input type="text" id="doctorName" pattern="^[a-zA-Zก-ฮะ-์]+$"
+                            title="กรุณากรอกตัวอักษรเท่านั้น"
+                            onkeydown="return /[a-zA-Zก-ฮะ-์]/.test(event.key)"
+                            title="กรุณากรอกตัวอักษรเท่านั้น"/>
                             <label for="phoneNumber">เบอร์โทรศัพท์</label>
                             <input type="text" id="phoneNumber" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                 maxlength="10" />
@@ -348,8 +351,11 @@
                             <input type="email" class="email" />
 
                             <label for="doctorName">ชื่อหมอ</label>
-                            <input type="text" class="doctorName" pattern="^[a-zA-Zก-ฮะ-์]+$"
-                                title="กรุณากรอกตัวอักษรเท่านั้น" />
+                            <input type="text" class="doctorName" 
+                            pattern="^[a-zA-Zก-ฮะ-์]+$"
+                            title="กรุณากรอกตัวอักษรเท่านั้น"
+                            onkeydown="return /[a-zA-Zก-ฮะ-์]/.test(event.key)"
+                            title="กรุณากรอกตัวอักษรเท่านั้น" />
 
                             <label for="phoneNumber">เบอร์โทรศัพท์</label>
                             <input type="text" class="phoneNumber" />

@@ -195,10 +195,16 @@
                     <!-- Page Heading -->
                     <form class="profile" id="profileAdmin">
                         <label for="first-name">ชื่อจริง</label>
-                        <input type="text" id="first-name" name="first-name" required>
+                        <input type="text" id="first-name" name="first-name" required
+                        pattern="^[a-zA-Zก-ฮะ-์]+$"
+                        title="กรุณากรอกตัวอักษรเท่านั้น"
+                        oninput="this.value = this.value.replace(/[^a-zA-Zก-ฮะ-์]/g, '')">
                     
                         <label for="last-name">นามสกุล</label>
-                        <input type="text" id="last-name" name="last-name" required>
+                        <input type="text" id="last-name" name="last-name"required
+                        pattern="^[a-zA-Zก-ฮะ-์]+$"
+                        title="กรุณากรอกตัวอักษรเท่านั้น"
+                        oninput="this.value = this.value.replace(/[^a-zA-Zก-ฮะ-์]/g, '')">
                     
                         <button type="submit" class="submit-btn">บันทึก</button>
                     </form>

@@ -256,7 +256,7 @@
       
               <form id="addUserForm">
                   <label for="userID">รหัสประจำตัว</label>
-                  <input type="text" id="userID" oninput="generatePassword()" />
+                  <input type="text" id="userID" oninput="generatePassword()" maxlength="14" required required autocomplete="off" />
       
                   <label for="title">คำนำหน้า</label>
                   <select id="title">
@@ -266,13 +266,25 @@
                   </select>
       
                   <label for="stu_fname">ชื่อจริง</label>
-                  <input type="text" id="stu_fname" />
+                  <input type="text" id="stu_fname" required 
+                  pattern="^[a-zA-Zก-ฮะ-์]+$"
+                  title="กรุณากรอกตัวอักษรเท่านั้น"
+                  onkeydown="return /[a-zA-Zก-ฮะ-์]/.test(event.key)"
+                  title="กรุณากรอกตัวอักษรเท่านั้น" />
 
                   <label for="stu_lname">นามสกุล</label>
-                  <input type="text" id="stu_lname" />
+                  <input type="text" id="stu_lname" required 
+                  pattern="^[a-zA-Zก-ฮะ-์]+$"
+                  title="กรุณากรอกตัวอักษรเท่านั้น"
+                  onkeydown="return /[a-zA-Zก-ฮะ-์]/.test(event.key)"
+                  title="กรุณากรอกตัวอักษรเท่านั้น" />
       
                   <label for="nickname">ชื่อเล่น</label>
-                  <input type="text" id="nickname" />
+                  <input type="text" id="nickname" required 
+                  pattern="^[a-zA-Zก-ฮะ-์]+$"
+                  title="กรุณากรอกตัวอักษรเท่านั้น"
+                  onkeydown="return /[a-zA-Zก-ฮะ-์]/.test(event.key)"
+                  title="กรุณากรอกตัวอักษรเท่านั้น" />
       
                   <label for="phone">เบอร์โทรศัพท์</label>
                   <input type="text" id="phone" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
