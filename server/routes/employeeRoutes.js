@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const initMySQL = require('../database'); // Import database connection
 const verifyToken = require('../middleware/verifyToken');
-const router = express.Router();
+const router = express();
 require('dotenv').config();
 const secret = process.env.JWT_SECRET;
 
