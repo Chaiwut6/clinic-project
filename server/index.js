@@ -12,7 +12,6 @@ const uploadRoutes = require("./routes/uploadRoutes");
 const app = express();
 const port = process.env.PORT || 8000;
 const allowedOrigins = [
-  "http://localhost:8888",  // สำหรับ Dev
   "https://clinic-project-w900.onrender.com"  // ✅ เปลี่ยนเป็น URL จริงของแอป
 ];
 // Middleware
