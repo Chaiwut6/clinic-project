@@ -13,7 +13,7 @@ const app = express();
 const port = 8000;
 const allowedOrigins = [
   "http://localhost:8888",  // สำหรับ Dev
-  "https://your-app-name.onrender.com"  // ✅ เปลี่ยนเป็น URL จริงของแอป
+  "https://clinic-project-w900.onrender.com"  // ✅ เปลี่ยนเป็น URL จริงของแอป
 ];
 // Middleware
 app.use(express.json());
