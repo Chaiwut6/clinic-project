@@ -11,14 +11,17 @@ const uploadRoutes = require("./routes/uploadRoutes");
 
 const app = express();
 const port = 8000;
-
+const allowedOrigins = [
+  "http://localhost:8888",  // สำหรับ Dev
+  "https://your-app-name.onrender.com"  // ✅ เปลี่ยนเป็น URL จริงของแอป
+];
 // Middleware
 app.use(express.json());
 const uploadDir = path.join(__dirname, "uploads");
 app.use(cookieParser());
 app.use(cors({
   credentials: true,
-  origin: ['http://localhost:8888'], //ต้องเปลี่ยนต้อนอัพ server
+  origin: allowedOrigins
 }));
 app.use("/uploads", express.static(uploadDir));
 
