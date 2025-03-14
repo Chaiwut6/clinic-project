@@ -120,9 +120,6 @@ router.post("/register-doctor", async (req, res) => {
   }
 });
 
-
-
-
 // router.post("/login-doctor", async (req, res) => {
 //   let conn;
 //   try {
