@@ -20,7 +20,8 @@ const uploadDir = path.join(__dirname, "uploads");
 app.use(cookieParser());
 app.use(cors({
   credentials: true,
-  origin: allowedOrigins
+  origin: allowedOrigins,
+  methods: "GET,POST,PUT,DELETE"
 }));
 app.use("/uploads", express.static(uploadDir));
 
