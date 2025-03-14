@@ -37,3 +37,7 @@ app.use('/api/upload', uploadRoutes);
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
+
+app.get('/', (req, res) => {
+  res.send("🚀 Welcome to Clinic Management System API");
+});
