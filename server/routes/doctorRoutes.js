@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const initMySQL = require('../database'); // Import database connection
 const verifyToken = require('../middleware/verifyToken');
-const router = express();
+const router = express.Router();
 require('dotenv').config();
 const secret = process.env.JWT_SECRET;
 
@@ -119,6 +119,7 @@ router.post("/register-doctor", async (req, res) => {
     }
   }
 });
+
 
 // router.post("/login-doctor", async (req, res) => {
 //   let conn;

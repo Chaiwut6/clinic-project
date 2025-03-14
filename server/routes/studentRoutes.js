@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const initMySQL = require('../database');
 const verifyToken = require('../middleware/verifyToken');
 require('dotenv').config();
-const router = express();
+const router = express.Router();
 const secret = process.env.JWT_SECRET;
 const fs = require("fs");
 const multer = require("multer");

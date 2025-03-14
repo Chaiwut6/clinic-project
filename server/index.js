@@ -23,6 +23,8 @@ app.use(cors({
   origin: allowedOrigins,
   methods: "GET,POST,PUT,DELETE"
 }));
+app.use(express.static(path.join(__dirname, "src", "view")));
+
 app.use("/uploads", express.static(uploadDir));
 
 // Routes
@@ -36,4 +38,8 @@ app.use('/api/upload', uploadRoutes);
 // Start server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
+});
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "src", "view", "index.html"));
 });
