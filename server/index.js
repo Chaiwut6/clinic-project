@@ -11,8 +11,10 @@ const uploadRoutes = require("./routes/uploadRoutes");
 
 const app = express();
 const port = process.env.PORT || 8000;
+console.log("Static Folder Path:", path.join(__dirname, "src", "view"));
+console.log("Index File Path:", path.join(__dirname, "src", "view", "index.html"));
 const allowedOrigins = [
-  "https://clinic-project-w900.onrender.com"  // ✅ เปลี่ยนเป็น URL จริงของแอป
+  "https://clinic-project-w900.onrender.com"  
 ];
 // Middleware
 app.use(express.json());
