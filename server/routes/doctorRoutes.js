@@ -7,14 +7,6 @@ const router = express.Router();
 require('dotenv').config();
 const secret = process.env.JWT_SECRET;
 
-router.get("/", (req, res) => {
-  res.json({ message: "Doctor API is working!" });
-});
-
-// เพิ่มเส้นทางอื่น ๆ ตามต้องการ เช่น
-router.get("/all", (req, res) => {
-  res.json({ message: "List of doctors" });
-});
 
 // Route: Register user
 router.post("/register-doctor", async (req, res) => {
