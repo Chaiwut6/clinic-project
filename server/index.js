@@ -28,6 +28,9 @@ app.use(cors({
   methods: "GET,POST,PUT,DELETE"
 }));
 app.use(express.static(path.join(__dirname, "../src/view")));
+app.use('/css', express.static(path.join(__dirname, "../src/view/css")));
+app.use('/js', express.static(path.join(__dirname, "../src/view/js")));
+app.use('/images', express.static(path.join(__dirname, "../src/view/images")));
 app.use("/uploads", express.static(uploadDir));
 
 // Routes
