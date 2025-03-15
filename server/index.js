@@ -14,8 +14,6 @@ const app = express();
 const port = process.env.PORT || 8000;
 
 
-app.use(express.static(path.join(__dirname, '../src/view')));
-
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
