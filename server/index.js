@@ -13,6 +13,7 @@ const app = express();
 const port = process.env.PORT || 8000;
 
 const allowedOrigins = [
+  'http://localhost:8888',
   "https://clinic-project-w900.onrender.com"  
 ];
 // Middleware
