@@ -17,8 +17,10 @@ const allowedOrigins = [
 ];
 // Middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); 
 const uploadDir = path.join(__dirname, "uploads");
 app.use(cookieParser());
+
 app.use(cors({
   credentials: true,
   origin: allowedOrigins,
@@ -38,4 +40,8 @@ app.use('/api/upload', uploadRoutes);
 // Start server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
+});
+
+app.get("/", (req, res) => {
+  res.send("Welcome to Clinic Management System API");
 });
