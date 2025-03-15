@@ -30,7 +30,7 @@ app.use(cors({
 app.use(express.static(path.join(__dirname, "../src/view")));
 app.use('/style', express.static(path.join(__dirname, "../src/style")));
 app.use('/js', express.static(path.join(__dirname, "../src/js")));
-app.use('/images', express.static(path.join(__dirname, "../src/image")));
+app.use('/image', express.static(path.join(__dirname, "../src/image")));
 app.use("/uploads", express.static(uploadDir));
 
 // Routes
