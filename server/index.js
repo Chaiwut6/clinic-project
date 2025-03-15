@@ -27,7 +27,7 @@ app.use(cors({
   origin: allowedOrigins,
   methods: "GET,POST,PUT,DELETE"
 }));
-
+app.use(express.static(path.join(__dirname, "src")));
 app.use("/uploads", express.static(uploadDir));
 
 // Routes
@@ -44,5 +44,5 @@ app.listen(port, () => {
 });
 
 app.get("/", (req, res) => {
-  res.send("Welcome to Clinic Management System API");
+  res.sendFile(path.join(__dirname, "src/view/index.html"));
 });
