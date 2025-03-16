@@ -8,9 +8,15 @@ services:
     volumes:
       - ./:/usr/src/app   
     environment:
+      DB_HOST: db  # เชื่อมต่อ MySQL โดยใช้ชื่อ `db` จาก Compose
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: clinic
+      DB_PORT: 3306
       JWT_SECRET: '62d8d2b190b5d642f9651d1c7042116ac7180f01619788ac15b6e880a527f7b4'   
+    depends_on:
+      - db  # ให้รอ MySQL Container เริ่มทำงานก่อน
     
-      
   db:
     image: mysql:latest
     container_name: db
