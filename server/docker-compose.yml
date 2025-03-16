@@ -8,13 +8,13 @@ services:
     volumes:
       - ./:/usr/src/app
     environment:
-      DB_HOST: db  # ✅ ใช้ `db` เป็น Host
+      DB_HOST: db
       DB_USER: root
       DB_PASSWORD: root
       DB_NAME: clinic
       DB_PORT: 3306
     depends_on:
-      - db
+      - db  # ✅ ให้ Node.js รอ MySQL ก่อนเริ่ม
 
   db:
     image: mysql:latest
