@@ -5,20 +5,19 @@ services:
     build: .
     ports:
       - "8000:8000"
-    volumes:
-      - ./:/usr/src/app
     environment:
-      DB_HOST: db
-      DB_USER: root
-      DB_PASSWORD: root
-      DB_NAME: clinic
-      DB_PORT: 3306
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASS=root
+      - DB_NAME=clinic
+      - DB_PORT=3306
     depends_on:
-      - db  # ✅ ให้ Node.js รอ MySQL ก่อนเริ่ม
+      - db  # ✅ ให้ Node รอ MySQL พร้อมก่อนเริ่มทำงาน
 
   db:
     image: mysql:latest
     container_name: db
+    restart: always
     command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -28,19 +27,5 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
-    container_name: phpmyadmin
-    environment:
-      PMA_HOST: db
-      PMA_PORT: 3306
-      PMA_USER: root
-      PMA_PASSWORD: root
-    ports:
-      - "8080:80"
-    depends_on:
-      - db
-
 volumes:
   mysql_data:
-    driver: local
