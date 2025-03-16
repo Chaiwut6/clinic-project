@@ -27,7 +27,7 @@
             try {
                 
                 // เรียก API เพื่อดึงข้อมูลของผู้ใช้
-                const response = await axios.post('http://localhost:8000/api/students/userinfo', {}, {
+                const response = await axios.post('https://clinic-project-w900.onrender.com/api/students/userinfo', {}, {
                     withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
                 });
                 

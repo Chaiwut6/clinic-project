@@ -1,7 +1,7 @@
 
 async function fetchDoctorCount() {
     try {
-      const response = await axios.post("http://localhost:8000/api/doctors/doctorCount");
+      const response = await axios.post("https://clinic-project-w900.onrender.com/api/doctors/doctorCount");
       if (response.status === 200) {
         const doctorCount = response.data.doctorCount;
   

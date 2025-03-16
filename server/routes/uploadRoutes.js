@@ -34,7 +34,7 @@ router.post("/upload-image", upload.single("image"), (req, res) => {
         // ✅ ดึงชื่อไฟล์จาก multer
         const filename = req.file.filename;
         const filePath = `/uploads/${filename}`;
-        const imageUrl = `http://localhost:8000${filePath}`;
+        const imageUrl = `https://clinic-project-w900.onrender.com${filePath}`;
 
         // ✅ อ่านไฟล์เป็น Base64
         const fileBuffer = fs.readFileSync(req.file.path);
@@ -75,7 +75,7 @@ router.get("/latest-image", (req, res) => {
         //  ดึงไฟล์ล่าสุด
         const latestFile = sortedFiles[0].name;
         const latestFilePath = `/uploads/${latestFile}`;
-        const imageUrl = `http://localhost:8000${latestFilePath}`;
+        const imageUrl = `https://clinic-project-w900.onrender.com${latestFilePath}`;
 
         res.json({ imageUrl });
 
