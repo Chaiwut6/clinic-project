@@ -394,8 +394,7 @@ const Logout = async () => {
       sessionStorage.removeItem('stu_lname');
 
       // เปลี่ยนเส้นทางไปยังหน้าเข้าสู่ระบบ
-      window.location.href = '/view/index.html'; // 
-      // หรือหน้าอื่นที่คุณต้องการ
+      window.location.href = '/'; 
     } else {
       console.error('การออกจากระบบล้มเหลว');
     }

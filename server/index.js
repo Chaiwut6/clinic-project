@@ -13,7 +13,7 @@ const uploadRoutes = require("./routes/uploadRoutes");
 const app = express();
 const port = process.env.PORT || 8000;
 
-// ✅ กำหนด Static Path สำหรับไฟล์ HTML, CSS, JS, และรูปภาพ
+// ✅ กำหนด Static Path สำหรับให้ Express เสิร์ฟไฟล์ HTML, CSS, JS, และรูปภาพ
 app.use(express.static(path.join(__dirname, "../src/view")));
 app.use('/style', express.static(path.join(__dirname, "../src/style")));
 app.use('/js', express.static(path.join(__dirname, "../src/js")));
@@ -32,7 +32,7 @@ app.use(cors({
   methods: "GET,POST,PUT,DELETE"
 }));
 
-// ✅ Routes
+// ✅ Routes API
 app.use('/api/students', studentRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/employees', employeeRoutes);
@@ -45,10 +45,10 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../src/view/index.html"));
 });
 
-// ✅ Route สำหรับ users (แก้ปัญหา Cannot GET /users/user_info.html)
-app.get("/users/:page", (req, res) => {
+// ✅ Route สำหรับ `view` (แก้ปัญหา Cannot GET /view/index.html)
+app.get("/view/:page", (req, res) => {
   const page = req.params.page;
-  res.sendFile(path.join(__dirname, `../src/view/users/${page}`));
+  res.sendFile(path.join(__dirname, `../src/view/${page}`));
 });
 
 // ✅ Start Server

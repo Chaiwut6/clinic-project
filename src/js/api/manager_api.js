@@ -53,7 +53,7 @@ const Logout = async () => {
         console.log('คุณออกจากระบบเรียบร้อยแล้ว');
   
         // เปลี่ยนเส้นทางไปยังหน้าเข้าสู่ระบบ
-        window.location.href = '/view/index.html'; // 
+        window.location.href = '/'; // 
         // หรือหน้าอื่นที่คุณต้องการ
       } else {
         console.error('การออกจากระบบล้มเหลว');
