@@ -253,15 +253,15 @@ const login = async () => {
       if (responseData.roles === 'student') {
         const encrypUser = btoa(login_id);
         sessionStorage.setItem('stu_id', encrypUser);
-        window.location.href = 'https://clinic-project-w900.onrender.com/view/users/user_info.html';
+        window.location.href = '/users/user_info.html';
       } else if (responseData.roles === 'doctor') {
-        window.location.href = 'https://clinic-project-w900.onrender.com/view/doctor/doc_main.html';
+        window.location.href = '/doctor/doc_main.html';
       } else if (responseData.roles === 'employee') {
-        window.location.href = 'https://clinic-project-w900.onrender.com/view/staff/dashboard.html';
+        window.location.href = '/staff/dashboard.html';
       } else if (responseData.roles === 'manager') {
-        window.location.href = 'https://clinic-project-w900.onrender.com/view/manager/man_main.html';
+        window.location.href = '/manager/man_main.html';
       } else if (responseData.roles === 'admin') {
-        window.location.href = 'https://clinic-project-w900.onrender.com/view/admin/admin_main.html';
+        window.location.href = '/admin/admin_main.html';
       }
     } else {
       alert('กรุณากรอก ID ผู้ใช้');
