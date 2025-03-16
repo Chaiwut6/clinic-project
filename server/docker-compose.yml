@@ -14,8 +14,9 @@ services:
       DB_NAME: clinic
       DB_PORT: 3306
     depends_on:
-      - db  # ✅ รอให้ MySQL เริ่มก่อน
-    
+      - db
+    entrypoint: ["/usr/src/app/server/wait-for-it.sh", "db", "3306", "--", "npm", "start"]
+
   db:
     image: mysql:latest
     container_name: db
