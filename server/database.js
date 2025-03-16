@@ -6,7 +6,7 @@ const initMySQL = async () => {
     while (retries) {
         try {
             const connection = await mysql.createConnection({
-                host: process.env.DB_HOST || 'db',  
+                host: process.env.DB_HOST || 'db',   // ใช้ 'db' ถ้าไม่มีค่าใน .env
                 user: process.env.DB_USER || 'root',
                 password: process.env.DB_PASSWORD || 'root',
                 database: process.env.DB_NAME || 'clinic',
