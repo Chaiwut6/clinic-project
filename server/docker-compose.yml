@@ -1,4 +1,4 @@
-version: '3' 
+version: '3.8'
 services:
   node-server: 
     container_name: node
@@ -8,12 +8,21 @@ services:
     volumes:
       - ./:/usr/src/app   
     environment:
-      JWT_SECRET: '62d8d2b190b5d642f9651d1c7042116ac7180f01619788ac15b6e880a527f7b4'   
-    
-      
+      - JWT_SECRET=62d8d2b190b5d642f9651d1c7042116ac7180f01619788ac15b6e880a527f7b4
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASS=root
+      - DB_NAME=clinic
+      - DB_PORT=3306
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always
+
   db:
     image: mysql:latest
     container_name: db
+    restart: always
     command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_ROOT_PASSWORD: root 
@@ -22,10 +31,16 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     container_name: phpmyadmin
+    restart: always
     environment:
       PMA_HOST: db 
       PMA_PORT: 3306 
