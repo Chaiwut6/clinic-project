@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const fetchManagerInfo = async () => {
         try {
-            const response = await axios.post("http://localhost:8000/api/manager/managerinfo", {}, {
+            const response = await axios.post("https://clinic-project-w900.onrender.com/api/manager/managerinfo", {}, {
                 withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
             });
 
@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const Logout = async () => {
     try {
       // เรียก API logout ไปที่เซิร์ฟเวอร์
-      const response = await axios.post('http://localhost:8000/api/students/logout', {}, { withCredentials: true });
+      const response = await axios.post('https://clinic-project-w900.onrender.com/api/students/logout', {}, { withCredentials: true });
       sessionStorage.removeItem('managerID');
       if (response.data.message === 'ออกจากระบบสำเร็จ') {
         console.log('คุณออกจากระบบเรียบร้อยแล้ว');
@@ -76,7 +76,7 @@ const Logout = async () => {
       }
   
       try {
-        const response = await axios.post('http://localhost:8000/api/manager/change-password', {
+        const response = await axios.post('https://clinic-project-w900.onrender.com/api/manager/change-password', {
           oldPassword: currentPassword,
           newPassword: newPassword,
           confirmPassword: confirmPassword

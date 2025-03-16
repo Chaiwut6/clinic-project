@@ -1,4 +1,4 @@
-const baseURL = "http://localhost:8000";
+const baseURL = "https://clinic-project-w900.onrender.com/";
 var inputs = document.querySelectorAll('input');
 inputs.forEach(function (input) {
   input.addEventListener('invalid', function (event) {
@@ -104,7 +104,7 @@ const register = async () => {
 
 
     // Check if stu_id already exists
-    const checkUserApiUrl = 'http://localhost:8000/api/students/checkuser';
+    const checkUserApiUrl = 'https://clinic-project-w900.onrender.com/api/students/checkuser';
     const checkResponse = await axios.post(checkUserApiUrl, { stu_id });
 
     if (!checkResponse.data.success) {
@@ -122,7 +122,7 @@ const register = async () => {
  
     
       try {
-        const uploadResponse = await axios.post("http://localhost:8000/api/students/upload-profile", formData, {
+        const uploadResponse = await axios.post("https://clinic-project-w900.onrender.com/api/students/upload-profile", formData, {
           headers: { "Content-Type": "multipart/form-data" }
         });
     
@@ -139,7 +139,7 @@ const register = async () => {
 
 
     // Define the API URL for registration
-    const registerApiUrl = 'http://localhost:8000/api/students/register-user';
+    const registerApiUrl = 'https://clinic-project-w900.onrender.com/api/students/register-user';
 
     // Call the API to register the user
     const response = await axios.post(registerApiUrl, {
@@ -236,7 +236,7 @@ const login = async () => {
       return;
     }
     if (login_id) {
-      const response_user = await axios.post('http://localhost:8000/api/students/login', {
+      const response_user = await axios.post('https://clinic-project-w900.onrender.com/api/students/login', {
         login_id,
         password
       }, {
@@ -284,7 +284,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const fetchUserInfo = async () => {
     try {
       // ใช้ POST แทน GET ในการดึงข้อมูล
-      const response = await axios.post('http://localhost:8000/api/students/userinfo', {}, {
+      const response = await axios.post('https://clinic-project-w900.onrender.com/api/students/userinfo', {}, {
         withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
       });
 
@@ -382,7 +382,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const Logout = async () => {
   try {
     // เรียก API logout ไปที่เซิร์ฟเวอร์
-    const response = await axios.post('http://localhost:8000/api/students/logout', {}, { withCredentials: true });
+    const response = await axios.post('https://clinic-project-w900.onrender.com/api/students/logout', {}, { withCredentials: true });
 
     // ตรวจสอบผลลัพธ์จากการออกจากระบบ
     if (response.data.message === 'ออกจากระบบสำเร็จ') {
@@ -419,7 +419,7 @@ const changePassword = async () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:8000/api/students/change-password', {
+      const response = await axios.post('https://clinic-project-w900.onrender.com/api/students/change-password', {
         oldPassword: currentPassword,
         newPassword: newPassword,
         confirmPassword: confirmPassword
@@ -448,7 +448,7 @@ document.addEventListener("DOMContentLoaded", () => {
   //  ฟังก์ชันดึงข้อมูลผู้ใช้จาก API
   const fetchUserInfo = async () => {
       try {
-          const response = await axios.post('http://localhost:8000/api/students/userinfo', {}, {
+          const response = await axios.post('https://clinic-project-w900.onrender.com/api/students/userinfo', {}, {
               withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
           });
 
@@ -481,7 +481,7 @@ document.addEventListener("DOMContentLoaded", () => {
   //  ฟังก์ชันอัปเดตรูปโปรไฟล์
   const updateProfileImage = (imagePath) => {
       const profileImg = document.getElementById("user-profile");
-      profileImg.src = `http://localhost:8000${imagePath}`;
+      profileImg.src = `https://clinic-project-w900.onrender.com${imagePath}`;
   };
 
   //  ฟังก์ชันอัปเดตข้อมูลผู้ใช้
@@ -524,7 +524,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         try {
-            const response = await axios.post('http://localhost:8000/api/students/updateuser', updatedData, {
+            const response = await axios.post('https://clinic-project-w900.onrender.com/api/students/updateuser', updatedData, {
                 withCredentials: true
             });
 
@@ -580,7 +580,7 @@ async function uploadProfileImage() {
   }
 
   try {
-      const response = await axios.post("http://localhost:8000/api/students/upload-profile", formData, {
+      const response = await axios.post("https://clinic-project-w900.onrender.com/api/students/upload-profile", formData, {
           headers: { "Content-Type": "multipart/form-data" },
           withCredentials: true
       });
@@ -593,7 +593,7 @@ async function uploadProfileImage() {
           //  ถ้ามีรูปใหม่ ให้เปลี่ยนภาพ
           if (response.data.imageUrl) {
               const profileImg = document.getElementById("user-profile");
-              profileImg.src = `http://localhost:8000${response.data.imageUrl}`;
+              profileImg.src = `https://clinic-project-w900.onrender.com${response.data.imageUrl}`;
               profileImg.onload = () => URL.revokeObjectURL(profileImg.src);
           }
       } else {
@@ -607,7 +607,7 @@ async function uploadProfileImage() {
 
 const fetchUserProfile = async () => {
   try {
-      const response = await axios.post('http://localhost:8000/api/students/userinfo', {}, {
+      const response = await axios.post('https://clinic-project-w900.onrender.com/api/students/userinfo', {}, {
           withCredentials: true 
       });
 

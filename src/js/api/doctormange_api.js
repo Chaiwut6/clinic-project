@@ -1,4 +1,4 @@
-const baseURL = "http://localhost:8000";
+const baseURL = "https://clinic-project-w900.onrender.com";
 async function fetchUserDataAndDisplay() {
     const encrypUser = sessionStorage.getItem("stu_id");
     try {
@@ -7,7 +7,7 @@ async function fetchUserDataAndDisplay() {
         throw new Error('User ID is not available in session storage');
       }
   
-      const response = await axios.post("http://localhost:8000/api/employees/userdetails", { userId: stu_id });
+      const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/userdetails", { userId: stu_id });
   
       if (response.status < 200 || response.status >= 300) {
         throw new Error('Error fetching user data');
@@ -205,7 +205,7 @@ async function fetchUserDataAndDisplay() {
     };
 
     try {
-        const response = await axios.post("http://localhost:8000/api/doctors/saveSymptoms", requestBody);
+        const response = await axios.post("https://clinic-project-w900.onrender.com/api/doctors/saveSymptoms", requestBody);
 
         if (response.status === 200) {
             alert("บันทึกอาการสำเร็จ");

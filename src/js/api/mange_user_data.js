@@ -15,7 +15,7 @@ async function saveSymptoms() {
     const additionalSymptom = document.getElementById("additional-symptom").value.trim();
 
     try {
-        const response = await axios.post("http://localhost:8000/api/employees/saveSymptoms", {
+        const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/saveSymptoms", {
             stu_id: userId,
             symptoms: selectedSymptoms,
             additionalSymptom: additionalSymptom

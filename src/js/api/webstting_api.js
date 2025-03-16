@@ -12,14 +12,14 @@ async function uploadImage() {
 
     try {
         //  อัปโหลดไปยังเซิร์ฟเวอร์
-        await axios.post("http://localhost:8000/api/upload/upload-image", formData, {
+        await axios.post("https://clinic-project-w900.onrender.com/api/upload/upload-image", formData, {
             headers: { "Content-Type": "multipart/form-data" }
         });
 
         alert("อัปโหลดรูปภาพสำเร็จ!");
 
         //  โหลดรูปใหม่ทันที
-        const response = await axios.get("http://localhost:8000/api/upload/latest-image");
+        const response = await axios.get("https://clinic-project-w900.onrender.com/api/upload/latest-image");
         document.querySelector(".clinic-image").src = response.data.imageUrl;
 
     } catch (error) {
@@ -31,9 +31,9 @@ async function uploadImage() {
 document.addEventListener("DOMContentLoaded", async () => {
     try {
         //  เรียก API เพื่อตรวจสอบรูปล่าสุดในโฟลเดอร์ uploads
-        const response = await axios.get("http://localhost:8000/api/upload/latest-image");
+        const response = await axios.get("https://clinic-project-w900.onrender.com/api/upload/latest-image");
         let latestImageUrl = response.data.imageUrl;
-        const defaultImage = "http://localhost:8000/uploads/default_page.jpg";
+        const defaultImage = "https://clinic-project-w900.onrender.com/uploads/default_page.jpg";
         
         //  ค้นหา .clinic-image ก่อนเปลี่ยน src
         const clinicImage = document.querySelector(".clinic-image");
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         //  ใช้รูป default เมื่อเกิดข้อผิดพลาด
         const clinicImage = document.querySelector(".clinic-image");
         if (clinicImage) {
-            clinicImage.src = "http://localhost:8000/uploads/default_page.jpg";
+            clinicImage.src = "https://clinic-project-w900.onrender.com/uploads/default_page.jpg";
         }
     }
 });

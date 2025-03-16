@@ -1,6 +1,6 @@
 async function fetchAppointment() {
   try {
-    const response = await axios.post("http://localhost:8000/api/doctors/doctorResult");
+    const response = await axios.post("https://clinic-project-w900.onrender.com/api/doctors/doctorResult");
     if (response.status >= 200 && response.status < 300) {
       let doctors = response.data.doctor;
 
@@ -64,7 +64,7 @@ async function fetchPatientslist(page = 1) {
     try {
         document.getElementById("patientTable").innerHTML = `<tr><td colspan="9">กำลังโหลดข้อมูล...</td></tr>`;
 
-        const response = await axios.post("http://localhost:8000/api/employees/receivecare");
+        const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/receivecare");
         const { students, appointments } = response.data;
 
         if (!students || students.length === 0) {

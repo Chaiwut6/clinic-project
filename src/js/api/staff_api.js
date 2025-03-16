@@ -1,4 +1,4 @@
-const baseURL = "http://localhost:8000";
+const baseURL = "https://clinic-project-w900.onrender.com";
 
 document.addEventListener("DOMContentLoaded", () => {
   const addUserBtn = document.getElementById('addUserBtn');
@@ -75,14 +75,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
 
-    const checkUserApiUrl = 'http://localhost:8000/api/students/checkuser';
+    const checkUserApiUrl = 'https://clinic-project-w900.onrender.com/api/students/checkuser';
     const checkResponse = await axios.post(checkUserApiUrl, { stu_id });
 
     if (!checkResponse.data.success) {
       alert('รหัสนักศึกษานี้มีการลงทะเบียนแล้ว');
     }
 
-      const response = await axios.post("http://localhost:8000/api/students/register-user", {
+      const response = await axios.post("https://clinic-project-w900.onrender.com/api/students/register-user", {
         title: title,
         stu_id: stu_id,
         stu_fname: stu_fname,
@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       // ส่งข้อมูลไปยัง API
-      const response = await axios.post("http://localhost:8000/api/doctors/register-doctor", {
+      const response = await axios.post("https://clinic-project-w900.onrender.com/api/doctors/register-doctor", {
         doc_id: doctorID,
         doc_name: doctorName,
         phone: phoneNumber,
@@ -199,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       // ส่งข้อมูลไปยัง API
-      const response = await axios.post('http://localhost:8000/api/employees/register-employee', {
+      const response = await axios.post('https://clinic-project-w900.onrender.com/api/employees/register-employee', {
         employee_id: employeeID,
         password: emp_password,
         emp_fname: emp_fname,
@@ -247,7 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       // ส่งข้อมูลไปยัง API
-      const response = await axios.post('http://localhost:8000/api/manager/register-manger', {
+      const response = await axios.post('https://clinic-project-w900.onrender.com/api/manager/register-manger', {
         man_id: mangerID,
         password: man_password,
         man_fname: man_fname,
@@ -274,7 +274,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const Logout = async () => {
   try {
     // เรียก API logout ไปที่เซิร์ฟเวอร์
-    const response = await axios.post('http://localhost:8000/api/students/logout', {}, { withCredentials: true });
+    const response = await axios.post('https://clinic-project-w900.onrender.com/api/students/logout', {}, { withCredentials: true });
     sessionStorage.removeItem('employeeID');
     sessionStorage.removeItem('stu_id');
     // ตรวจสอบผลลัพธ์จากการออกจากระบบ
@@ -295,7 +295,7 @@ const Logout = async () => {
 const fetchEmployeeInfo = async () => {
   try {
     // ใช้ POST แทน GET ในการดึงข้อมูล employee
-    const response = await axios.post("http://localhost:8000/api/employees/employeeinfo", {}, {
+    const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/employeeinfo", {}, {
       withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
     });
 
@@ -337,7 +337,7 @@ const updatePageData = (employeeInfo) => {
 const fetchAdminInfo = async () => {
   try {
     // ใช้ POST แทน GET ในการดึงข้อมูล employee
-    const response = await axios.post(`http://localhost:8000/api/admin/admininfo`, {}, {
+    const response = await axios.post(`https://clinic-project-w900.onrender.com/api/admin/admininfo`, {}, {
       withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
     });
     // console.log(response);
@@ -378,7 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const fetchAdminInfo = async () => {
       try {
-          const response = await axios.post('http://localhost:8000/api/admin/admininfo', {}, {
+          const response = await axios.post('https://clinic-project-w900.onrender.com/api/admin/admininfo', {}, {
               withCredentials: true 
           });
           console.log(response);
@@ -410,7 +410,7 @@ document.addEventListener("DOMContentLoaded", () => {
           };
 
           try {
-              const response = await axios.post('http://localhost:8000/api/admin/updateadmin', updatedData, {
+              const response = await axios.post('https://clinic-project-w900.onrender.com/api/admin/updateadmin', updatedData, {
                   withCredentials: true
               });
 
@@ -443,7 +443,7 @@ async function fetchDoctors() {
     document.getElementById("doctorinTable").innerHTML = `<tr><td colspan="5">กำลังโหลดข้อมูล...</td></tr>`;
 
     // ดึงข้อมูลแพทย์จาก API
-    const response = await axios.post("http://localhost:8000/api/doctors/doctorResult");
+    const response = await axios.post("https://clinic-project-w900.onrender.com/api/doctors/doctorResult");
     doctorData = response.data?.doctor || [];
 
     if (doctorData.length === 0) {
@@ -613,7 +613,7 @@ function editDoctor(docId, docName, docPhone) {
     const newPhone = document.getElementById("editPhone").value;
 
     try {
-      await axios.post("http://localhost:8000/api/doctors/doctorUpdate", {
+      await axios.post("https://clinic-project-w900.onrender.com/api/doctors/doctorUpdate", {
         doc_id: docId,
         doc_name: newName,
         phone: newPhone,
@@ -637,7 +637,7 @@ async function deleteDoctor(docId) {
   if (!confirm("คุณต้องการลบข้อมูลหมอนี้หรือไม่?")) return;
 
   try {
-    await axios.post("http://localhost:8000/api/doctors/doctorDelete", { doc_id: docId });
+    await axios.post("https://clinic-project-w900.onrender.com/api/doctors/doctorDelete", { doc_id: docId });
     alert("ลบข้อมูลหมอสำเร็จ");
     fetchDoctors();
   } catch (err) {
@@ -665,7 +665,7 @@ let availabilityData = []; // เก็บข้อมูลทั้งหม�
 
 async function fetchAvailability(doctorID) {
   try {
-    const response = await axios.post("http://localhost:8000/api/doctors/get-availability", { doc_id: doctorID });
+    const response = await axios.post("https://clinic-project-w900.onrender.com/api/doctors/get-availability", { doc_id: doctorID });
     availabilityData = response.data.availability || [];
     // เรียงวันจากน้อยไปมาก
     availabilityData.sort((a, b) => new Date(a.available_date) - new Date(b.available_date));
@@ -762,7 +762,7 @@ function attachDeleteAvailabilityListeners(doctorID) {
       const availabilityId = event.target.dataset.id;
       if (confirm("คุณต้องการลบรายการนี้หรือไม่?")) {
         try {
-          await axios.post("http://localhost:8000/api/doctors/delete-availability", { Availability_id: availabilityId });
+          await axios.post("https://clinic-project-w900.onrender.com/api/doctors/delete-availability", { Availability_id: availabilityId });
           alert("ลบรายการสำเร็จ");
           fetchAvailability(doctorID);
         } catch (error) {
@@ -792,7 +792,7 @@ function addAvailabilityEventListener() {
     }
 
     try {
-      const response = await axios.post("http://localhost:8000/api/doctors/add-availability", {
+      const response = await axios.post("https://clinic-project-w900.onrender.com/api/doctors/add-availability", {
         doc_id: doctorID,
         available_date: availableDate,
         start_time: startTime,
@@ -819,7 +819,7 @@ async function fetchEmployee() {
   try {
     document.getElementById("addminTable").innerHTML = `<tr><td colspan="4">กำลังโหลดข้อมูล...</td></tr>`;
 
-    const response = await axios.post("http://localhost:8000/api/employees/employeeResult");
+    const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/employeeResult");
     const { employee } = response.data;
 
     if (!employee || employee.length === 0) {
@@ -915,7 +915,7 @@ function attachEditAndDeleteEmployee() {
 
       document.getElementById("saveEditempoloyee").addEventListener("click", async () => {
         try {
-          await axios.post("http://localhost:8000/api/employees/employeeUpdate", {
+          await axios.post("https://clinic-project-w900.onrender.com/api/employees/employeeUpdate", {
             employee_id: empId,
             emp_fname: document.getElementById("editFname").value,
             emp_lname: document.getElementById("editLname").value,
@@ -940,7 +940,7 @@ function attachEditAndDeleteEmployee() {
 
       if (confirm("คุณต้องการลบข้อมูลเจ้าหน้าที่นี้หรือไม่?")) {
         try {
-          await axios.post("http://localhost:8000/api/employees/employeeDelete", {
+          await axios.post("https://clinic-project-w900.onrender.com/api/employees/employeeDelete", {
             employee_id: empId,
           });
 
@@ -1046,7 +1046,7 @@ async function fetchUserlist() {
   try {
     document.getElementById("UserTable").innerHTML = `<tr><td colspan="8">กำลังโหลดข้อมูล...</td></tr>`;
 
-    const response = await axios.post("http://localhost:8000/api/employees/userList");
+    const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/userList");
     userData = response.data?.students || [];
     filteredData = [...userData]; // สำเนาข้อมูลเพื่อใช้ในการกรอง
 
@@ -1169,7 +1169,7 @@ function attachDropdownUser() {
 async function resetUserPassword(stu_id) {
   if (confirm("คุณต้องการรีเซ็ตรหัสผ่านสำหรับผู้ใช้นี้หรือไม่?")) {
       try {
-          const response = await axios.post("http://localhost:8000/api/employees/reset-password", {
+          const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/reset-password", {
             stu_id: stu_id
           });
 
@@ -1214,7 +1214,7 @@ async function fetchUserDataAndDisplay() {
       throw new Error('User ID is not available in session storage');
     }
 
-    const response = await axios.post("http://localhost:8000/api/employees/userdetails", { userId: stu_id });
+    const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/userdetails", { userId: stu_id });
 
     if (response.status < 200 || response.status >= 300) {
       throw new Error('Error fetching user data');
@@ -1460,7 +1460,7 @@ async function fetchUserDataAndDisplay() {
       const appointmentId = event.target.getAttribute('data-appointment-id');
 
       try {
-        const response = await axios.post("http://localhost:8000/api/employees/Statusappointments", {
+        const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/Statusappointments", {
           Appointment_id: appointmentId,
           status: 'ยกเลิก'
         });
@@ -1483,7 +1483,7 @@ async function fetchUserDataAndDisplay() {
       const appointmentId = event.target.getAttribute('data-appointment-id');
 
       try {
-        const response = await axios.post("http://localhost:8000/api/employees/Statusappointments", {
+        const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/Statusappointments", {
           Appointment_id: appointmentId,
           status: 'ยืนยัน',
         });
@@ -1619,7 +1619,7 @@ async function loadCaseStatus() {
   }
 
   try {
-    const response = await axios.post("http://localhost:8000/api/employees/showcasesStatus", {
+    const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/showcasesStatus", {
       stu_id: userId,
     });
     // console.log(response.data);
@@ -1643,7 +1643,7 @@ async function loadCaseStatus() {
     const selectedStatus = caseStatusSelect.value;
 
     try {
-      const response = await axios.post("http://localhost:8000/api/employees/casesStatus", {
+      const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/casesStatus", {
         stu_id: userId,
         status: selectedStatus
       });
@@ -1677,7 +1677,7 @@ const changePassword = async () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:8000/api/employees/change-password', {
+      const response = await axios.post('https://clinic-project-w900.onrender.com/api/employees/change-password', {
         oldPassword: currentPassword,
         newPassword: newPassword,
         confirmPassword: confirmPassword
@@ -1710,7 +1710,7 @@ let userLname = '';
 // ดึงข้อมูลผู้ใช้
 async function fetchUserDetails() {
   try {
-    const response = await axios.post("http://localhost:8000/api/employees/userdetails", { userId: userId });
+    const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/userdetails", { userId: userId });
     const user = response.data.user;
     if (user && user.length > 0) {
       userFname = user[0].stu_fname;
@@ -1727,7 +1727,7 @@ let selectedAvailability = null;
 
 async function fetchAppointment() {
   try {
-    const response = await axios.post("http://localhost:8000/api/doctors/doctorResult");
+    const response = await axios.post("https://clinic-project-w900.onrender.com/api/doctors/doctorResult");
     const doctors = response.data.doctor;
     if (doctors && doctors.length > 0) {
       populateDoctorDropdown(doctors);
@@ -1797,7 +1797,7 @@ let availability = [];
 
 async function fetchAvailabilityList(docId) {
   try {
-    const response = await axios.post("http://localhost:8000/api/doctors/getAvailabilitytime", {
+    const response = await axios.post("https://clinic-project-w900.onrender.com/api/doctors/getAvailabilitytime", {
       doc_id: docId,
     });
 
@@ -1893,7 +1893,7 @@ async function saveAppointment() {
   }
 
   try {
-    const checkResponse = await axios.post("http://localhost:8000/api/employees/appointments-count", {
+    const checkResponse = await axios.post("https://clinic-project-w900.onrender.com/api/employees/appointments-count", {
       doc_id: selectedDoctorId,
       date: available_date
     });
@@ -1919,7 +1919,7 @@ async function saveAppointment() {
       status: "รอการยืนยัน",
     };
 
-    const response = await axios.post("http://localhost:8000/api/employees/appointments", appointmentData);
+    const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/appointments", appointmentData);
 
     if (response.status === 201) {
       alert(response.data.message);
@@ -1938,7 +1938,7 @@ async function saveAppointment() {
 
 async function fetchAppointments(doc_id, selectedDate) {
   try {
-    const response = await axios.post("http://localhost:8000/api/employees/getAppointments", {
+    const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/getAppointments", {
       doc_id,
       date: selectedDate,
     });
@@ -2050,7 +2050,7 @@ async function fetchManager(page = 1) {
   try {
     document.getElementById("managerinTable").innerHTML = `<tr><td colspan="5">กำลังโหลดข้อมูล...</td></tr>`;
 
-    const response = await axios.post("http://localhost:8000/api/manager/managerResult");
+    const response = await axios.post("https://clinic-project-w900.onrender.com/api/manager/managerResult");
     const { manager } = response.data;
 
     if (!manager || manager.length === 0) {
@@ -2201,7 +2201,7 @@ function attachEditAndDeleteEvents() {
 
       document.getElementById("saveEdit").addEventListener("click", async () => {
         try {
-          await axios.post("http://localhost:8000/api/manager/managerUpdate", {
+          await axios.post("https://clinic-project-w900.onrender.com/api/manager/managerUpdate", {
             man_id: manId,
             man_fname: document.getElementById("editFname").value,
             man_lname: document.getElementById("editLname").value,
@@ -2225,7 +2225,7 @@ function attachEditAndDeleteEvents() {
 
       if (confirm("คุณต้องการลบข้อมูลนี้หรือไม่?")) {
         try {
-          await axios.post("http://localhost:8000/api/manager/managerDelete", {
+          await axios.post("https://clinic-project-w900.onrender.com/api/manager/managerDelete", {
             man_id: manId,
           });
 
@@ -2261,7 +2261,7 @@ function filterManager() {
 
 const updateStudyYearAutomatically = async () => {
   try {
-    const response = await axios.post("http://localhost:8000/api/students/getAllUsers");
+    const response = await axios.post("https://clinic-project-w900.onrender.com/api/students/getAllUsers");
 
     if (!response.data.success) {
       console.error(" ไม่สามารถดึงข้อมูลผู้ใช้ได้");
@@ -2284,7 +2284,7 @@ const updateStudyYearAutomatically = async () => {
     });
 
     if (updatedUsers.length > 0) {
-      await axios.post("http://localhost:8000/api/students/updateStudyYear", {
+      await axios.post("https://clinic-project-w900.onrender.com/api/students/updateStudyYear", {
         students: updatedUsers
       });
     }

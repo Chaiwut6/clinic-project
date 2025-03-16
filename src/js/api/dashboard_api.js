@@ -16,7 +16,7 @@ async function fetchDoctorCount() {
   }
   async function fetchUserCount() {
     try {
-      const response = await axios.post("http://localhost:8000/api/students/userCount");
+      const response = await axios.post("https://clinic-project-w900.onrender.com/api/students/userCount");
   
       if (response.data.success) {
         document.getElementById("userCount").textContent = response.data.userCount;
@@ -31,7 +31,7 @@ async function fetchDoctorCount() {
 
   async function fetchAppointmentCount() {
     try {
-      const response = await axios.post("http://localhost:8000/api/employees/appointmentCount");
+      const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/appointmentCount");
   
       if (response.data.success) {
         document.getElementById("appointmentCount").textContent = response.data.appointmentCount;
@@ -45,7 +45,7 @@ async function fetchDoctorCount() {
   }
   async function fetchConfirmedAppointmentCount() {
     try {
-      const response = await axios.post("http://localhost:8000/api/employees/confirmedAppointmentCount");
+      const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/confirmedAppointmentCount");
   
       if (response.data.success) {
         document.getElementById("confirmedAppointmentCount").textContent = response.data.confirmedAppointmentCount;
@@ -59,7 +59,7 @@ async function fetchDoctorCount() {
   }
   async function fetchClosedCasesCount() {
     try {
-      const response = await axios.post("http://localhost:8000/api/employees/closedCasesCount");
+      const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/closedCasesCount");
   
       if (response.data.success) {
         document.getElementById("closedCasesCount").textContent = response.data.closedCasesCount;
@@ -77,7 +77,7 @@ async function fetchDoctorCount() {
         const selectedYear = document.getElementById("yearFilterAppointments").value;
         const selectedMonth = document.getElementById("monthFilterAppointments").value;
 
-        const response = await axios.post("http://localhost:8000/api/employees/appointmentsOverview", {
+        const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/appointmentsOverview", {
             year: selectedYear,
             month: selectedMonth
         });
@@ -212,7 +212,7 @@ async function loadAppointmentsBreakdownChart() {
       const selectedFaculty = document.getElementById("facultyFilterUsers").value;
 
       //  ส่งค่าปี, อาการ และ คณะ ไปยัง API
-      const response = await axios.post("http://localhost:8000/api/employees/appointmentsByFaculty", {
+      const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/appointmentsByFaculty", {
           year: selectedYear,
           symptom: selectedSymptom || null,
           faculty: selectedFaculty || null
@@ -315,7 +315,7 @@ async function exportToExcel() {
       const selectedYear = parseInt(document.getElementById("yearFilterUsers").value) || new Date().getFullYear();
       const thaiYear = selectedYear + 543; // แปลงเป็นปี พ.ศ.
 
-      const response = await axios.post("http://localhost:8000/api/employees/appointmentsByFaculty", {
+      const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/appointmentsByFaculty", {
           year: selectedYear
       });
 
@@ -389,7 +389,7 @@ async function exportAppointmentsOverview() {
         let fileName = `ภาพรวมการนัดหมาย${fileMonthName}_${thaiYear}.xlsx`;
 
         //  ดึงข้อมูลจาก API
-        const response = await axios.post("http://localhost:8000/api/employees/appointmentsOverview", {
+        const response = await axios.post("https://clinic-project-w900.onrender.com/api/employees/appointmentsOverview", {
             year: selectedYear,
             month: selectedMonth
         });

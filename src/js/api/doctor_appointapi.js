@@ -8,7 +8,7 @@ async function fetchPatientslist(page = 1) {
     try {
         document.getElementById("patientTable").innerHTML = `<tr><td colspan="9">ยังไม่มีข้อมูล</td></tr>`;
 
-        const response = await axios.post("http://localhost:8000/api/doctors/doctorappointments", {}, {
+        const response = await axios.post("https://clinic-project-w900.onrender.com/api/doctors/doctorappointments", {}, {
             withCredentials: true
         });
      console.log(response);

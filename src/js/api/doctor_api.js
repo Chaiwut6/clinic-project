@@ -1,7 +1,7 @@
 const fetchDoctorInfo = async () => {
   try {
     // ใช้ POST แทน GET ในการดึงข้อมูล employee
-    const response = await axios.post(`http://localhost:8000/api/doctors/doctorinfo`, {}, {
+    const response = await axios.post(`https://clinic-project-w900.onrender.com/api/doctors/doctorinfo`, {}, {
       withCredentials: true // ใช้ส่ง cookies (ถ้ามี)
     });
 
@@ -51,7 +51,7 @@ const changePassword = async () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:8000/api/doctors/change-password', {
+      const response = await axios.post('https://clinic-project-w900.onrender.com/api/doctors/change-password', {
         oldPassword: currentPassword,
         newPassword: newPassword,
         confirmPassword: confirmPassword
@@ -116,7 +116,7 @@ async function saveAvailability() {
     //   return;
     // }
 
-    const response = await axios.post("http://localhost:8000/api/doctors/saveAvailability", {
+    const response = await axios.post("https://clinic-project-w900.onrender.com/api/doctors/saveAvailability", {
       Availability_id,
       date,
       time_start,
@@ -144,7 +144,7 @@ let availabilityData = []; // เก็บข้อมูลทั้งหม�
 
 async function fetchAvailabilityList() {
   try {
-    const response = await axios.post("http://localhost:8000/api/doctors/getAvailabilitydoctor", {}, {
+    const response = await axios.post("https://clinic-project-w900.onrender.com/api/doctors/getAvailabilitydoctor", {}, {
       withCredentials: true
     });
 
@@ -226,7 +226,7 @@ async function deleteAvailability(event) {
     const row = event.target.closest('tr'); // หาค่าของ tr ที่ปุ่มลบอยู่
     const Availability_id = row.getAttribute('data-id'); // ดึงค่า data-id
 
-    const response = await axios.delete(`http://localhost:8000/api/doctors/deleteAvailability`, {
+    const response = await axios.delete(`https://clinic-project-w900.onrender.com/api/doctors/deleteAvailability`, {
       data: { Availability_id }  // ส่ง Availability_id ใน request body
     });
 
@@ -244,7 +244,7 @@ async function deleteAvailability(event) {
 const Logout = async () => {
   try {
     // เรียก API logout ไปที่เซิร์ฟเวอร์
-    const response = await axios.post('http://localhost:8000/api/students/logout', {}, { withCredentials: true });
+    const response = await axios.post('https://clinic-project-w900.onrender.com/api/students/logout', {}, { withCredentials: true });
     sessionStorage.removeItem('doctorID');
     if (response.data.message === 'ออกจากระบบสำเร็จ') {
       console.log('คุณออกจากระบบเรียบร้อยแล้ว');

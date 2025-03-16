@@ -1,4 +1,4 @@
-const apiUrl = 'http://localhost:8000'; 
+const apiUrl = 'https://clinic-project-w900.onrender.com/'; 
 
 document.addEventListener("DOMContentLoaded", async function () {
     // const stu_id = sessionStorage.getItem('stu_id');
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             const resultId = `R${stu_id.slice(-2)}${reversedTimestamp.slice(0, 7)}`; // ใช้ 2 ตัวท้ายของ stu_id และ 7 ตัวแรกของ timestamp ที่สลับ
         
             try {
-                const response = await axios.post("http://localhost:8000/api/students/save-result", {
+                const response = await axios.post("https://clinic-project-w900.onrender.com/api/students/save-result", {
                     result_id: resultId, // ส่ง result_id ไปด้วย
                     stu_id: stu_id,
                     totalScore: totalScore,
