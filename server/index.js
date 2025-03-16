@@ -15,10 +15,11 @@ const port = process.env.PORT || 8000;
 
 // ✅ กำหนด Static Path สำหรับให้ Express เสิร์ฟไฟล์ HTML, CSS, JS, และรูปภาพ
 app.use(express.static(path.join(__dirname, "../src/view")));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/style', express.static(path.join(__dirname, "../src/style")));
 app.use('/js', express.static(path.join(__dirname, "../src/js")));
 app.use('/image', express.static(path.join(__dirname, "../src/image")));
-
+app.use('/uploads/profiles', express.static(path.join(__dirname, 'uploads', 'profiles')));
 // ✅ Middleware อื่น ๆ
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
